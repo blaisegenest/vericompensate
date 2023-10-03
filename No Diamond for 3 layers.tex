@@ -74,7 +74,7 @@ Moreover, by the algorithm of DeepPoly, for any case of $\bar{f_i}$, if $b_i$ ge
 Put all together, when all $c_j$ of sign $+,-$ gets values $s(c_j)$, $b_i=\sum_{c_j}W_{b_ic_j}s(c_j)+B_i$ gets its actual upper bounds and DeepPoly upper bounds, and then  $\bar{f_i}(b_i)=\ReLU(b_i)$, the actual value of $\hat{b}_i$. This is what we want to show.
 
 
-\subsubsection*{negative}Now we consider a node $b_i$ that $W_{xb_i}<0$. All are similar. Now, each $W_{b_ic_j}$ has the opposite sign of $c_j$. So when all $c_j$ of $+,-$ sign get $s(c_j)$ value, $b_i$ also gets its lower bound and DeepPoly lower bound. By the assumption, when $b_i$ gets its DeepPoly lower bound, $\underline{f_i}(b_i)=\ReLU(b_i)$.
+\subsubsection*{negative}Now we consider a node $b_i$ that $W_{xb_i}<0$. All are similar. Now, each $W_{b_ic_j}$ has the opposite sign of $c_j$. So when all $c_j$ of $+,-$ sign get $s(c_j)$ value, $b_i$ also gets its lower bound and DeepPoly lower bound. By the assumption, when $b_i$ gets its DeepPoly lower bound, $\underline{f_i}(b_i)=\ReLU(b_i)$. This is what we need.
 
 
 
