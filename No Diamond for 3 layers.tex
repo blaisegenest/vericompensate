@@ -1,0 +1,128 @@
+\documentclass[]{article}
+\usepackage{amsmath, amsthm, amssymb, amsfonts}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newcommand{\ReLU}{\mathrm{ReLU}}
+
+\title{Proof part 1: 3 layers}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+
+First we consider the case when there are only three layers: input layer, one hidden layer, and output layer. For convenience, we assume that the output only has one node. Of course, we assume all active functions are ReLU function.
+
+We use $c_i$ to denote nodes in the input layer, use $b_j$ to denote nodes in the hidden layer and use $x$ to denote the output node. We use $W$ to denote the weights and $W_{bc}$ and $W_{xb}$ to denote the components. We use capital letter $B$ to denote bias, although it is not important here.
+
+
+
+\begin{definition}
+	1. We use $b$ to denote the node before ReLU and $\hat{b}$ to denote the node after ReLU: $\hat{b} = \ReLU(b)$.
+	
+	2. $\bar{f}$ is the upper bound approximation function of DeepPoly, and $\underline{f}$ is the lower bound approximation function.
+\end{definition}
+
+
+
+\begin{theorem}
+	If there following conditions holds, then the bounds of $x$ obtained by DeepPoly are equal to the actual bounds:
+	
+	1. All DeepPoly triangle are right-angled triangle: for any ReLU node $b$ that upper bound $u(b)>0$ and lower bound $l(b)<0$, the approximation of lower bound is the zero function $\underline{f}(b)=0$.
+	
+	2. No Diamond: for any input node $c$, any output node $x$, any two paths $p_1,p_2$ from $c$ to $x$ along the direction of forward propagation. If $p_1$ is $c,b_i,x$, $p_2$ is $c,b_j,x$, then for $W_{b_jc}W_{xb_j}$ and $W_{b_ic}W_{xb_i}$, either one of them is $0$, or they have the same sign: both positive or negative.
+\end{theorem}
+
+
+\subsection*{One} First, we compute the bounds obtained by DeepPoly. Without loss of generality, we only consider the upper bound of $x$.   By the algorithm, the DeepPoly upper bound of $x$ is computed by following steps: \begin{align}
+ \rightarrow&\sum_{W_{xb_i}<0}W_{xb_i}\underline{f_i}(b_i)+\sum_{W_{xb_i}>0}W_{xb_i}\bar{f_i}(b_i)+B_x\\
+ \rightarrow&\sum_{W_{xb_i}<0}W_{xb_i}\underline{f_i}(\sum_{c_j}W_{b_ic_j}c_j+B_i)+\sum_{W_{xb_i}>0}W_{xb_i}\bar{f_i}(\sum_{c_j}W_{b_ic_j}c_j+B_i)+B_x\\
+ =& C+\sum_{W_{xb_i}<0}W_{xb_i}\cdot\underline{k_i}\cdot(\sum_{c_j}W_{b_ic_j}c_j+B_i)+\sum_{W_{xb_i}>0}W_{xb_i}\cdot\bar{k_i}\cdot(\sum_{c_j}W_{b_ic_j}c_j+B_i)\\
+ =& C+\sum_{c_j}c_j\cdot\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i\\
+ \rightarrow& C+\sum_{\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i<0}\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i\cdot l(c_j)\\
+ &+\sum_{\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i>0}\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i\cdot u(c_j)
+\end{align} Here, $\bar{k_i}$ is the coefficient of $\bar{f_i}$, which is a linear function, and $\underline{k_i}$ is the coefficient of $\underline{f_i}$, which is also a linear function. $C$ is the sum of all constants that occurs in above computations. $K_i$ is the coefficient $\bar{k_i}$ or $\underline{k_i}$ depending on $i$. Notice that by the definition of DeepPoly, all $K_i$ are non negative. 
+
+Among these formulas, (1) to (4) are abstract formula with formal variables $b_i,c_j$. The result of (5)(6) is the upper bound of DeepPoly for node $x$. 
+
+For for each fixed $c_j$, because we assumed no Diamond, so all (for different $b_i$) $W_{xb_i}W_{b_ic_j}$ must have the same sign, or be $0$, and so is $\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i$. So we assign each node $c_j$ a sign of $+,-,0$,  if at least one of $W_{xb_i}W_{b_ic_j}$ is positive, at least one of $W_{xb_i}W_{b_ic_j}$ is negative, or all $W_{xb_i}W_{b_ic_j}$ are 0. Then we use $s(c_j)$ be $u(c_j)$ or $l(c_j)$ or $0$ if $c_j$ has sign of $+$ or $-$ or $0$.
+
+
+
+Then (5)(6) can be simplified as \begin{align}
+	=C+\sum_{c_j}s(c_j)\cdot\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i
+\end{align} This is the DeepPoly upper bound of $x$.
+
+\subsection*{Two} Second, we show that when each $c_j$ of $+,-$ sign gets $s(c_j)$ value, the actual value of $x$ is the same as its DeepPoly upper bound, hence the DeepPoly upper bound is the actual upper bound.
+
+Using the chain from (4) to (2), (7) is equal to: \begin{align*}
+&\sum_{W_{xb_i}<0}W_{xb_i}\underline{f_i}(\sum_{c_j}W_{b_ic_j}s(c_j)+B_i)\\
++&\sum_{W_{xb_i}>0}W_{xb_i}\bar{f_i}(\sum_{c_j}W_{b_ic_j}s(c_j)+B_i)+B_x
+\end{align*} 
+
+We only need to show when all $c_j$ of $+,-$ sign get $s(c_j)$ value, each $\bar{f_i}(\cdots)$ in above formula (or $\underline{f_i}$) is equal to the actual value of $\hat{b}_i$. 
+
+\subsubsection*{positive} We fix a node $b_i$ that $W_{xb_i}>0$. If so, every $W_{b_ic_j}$ has the same sign as $W_{x_bi}W_{b_ic_j}$, and hence has the same sign as $c_j$ or is $0$ (and if $c_j$ has sign $0$, then $W_{b_ic_j}=0$, too). Consider all nonzero $W_{b_ic_j}$: because \begin{align}
+	b_i = \sum_{c_j} W_{b_ic_j}c_j+B_i,
+\end{align}  when all $c_j$ of $+,-$ sign get $s(c_j)$ value, $b_i$ also gets its upper bound. Because $b_i$ is in the second layer, this upper bound is equal to the DeepPoly upper bound of $b_i$. 
+
+
+Moreover, by the algorithm of DeepPoly, for any case of $\bar{f_i}$, if $b_i$ get its DeepPoly upper bound, then $\bar{f_i}(b_i)=\ReLU(b_i)$. 
+
+Put all together, when all $c_j$ of sign $+,-$ gets values $s(c_j)$, $b_i=\sum_{c_j}W_{b_ic_j}s(c_j)+B_i$ gets its actual upper bounds and DeepPoly upper bounds, and then  $\bar{f_i}(b_i)=\ReLU(b_i)$, the actual value of $\hat{b}_i$. This is what we want to show.
+
+
+\subsubsection*{negative}Now we consider a node $b_i$ that $W_{xb_i}<0$. All are similar. Now, each $W_{b_ic_j}$ has the opposite sign of $c_j$. So when all $c_j$ of $+,-$ sign get $s(c_j)$ value, $b_i$ also gets its lower bound and DeepPoly lower bound. By the assumption, when $b_i$ gets its DeepPoly lower bound, $\underline{f_i}(b_i)=\ReLU(b_i)$.
+
+
+151+124+103+48+3(estimate)=428
+
+
+
+
+0 : 1, 6.942969230753979, 933.6970219612122
+
+open 30 : 59 : -1, 1.3304800987255705, 213.07373809814453, DiamondMin of Min: -2.4831832946871297
+
+open 0:   59 : -1, 2.2208665044849285, 110.11069464683533, DiamondMin of Min: -3.2142924202998118
+
+open 20:  59 : -1, 1.5128416712774397, 169.37895846366882, DiamondMin of Min: -2.5436423082465973
+
+
+open 40: 59 : -1, 1.1588057492305743, 167.29228901863098, DiamondMin of Min: -2.322909620171307
+
+open 50: 59 : -1, 1.1332793237397172, 216.03394603729248, DiamondMin of Min: -2.3194345600969135
+
+open 50: 59 : -1, 1.136410977665245, 250.3934416770935, DiamondMin of Min: -2.3194345600969135
+
+open 50 (more data): 59 : -1, 1.1033637386628505, 321.2751393318176, DiamondMin of Min: -2.279701100000497
+
+open 10: 59 : -1, 1.7965610184250298, 144.45073246955872, DiamondMin of Min: -2.8121700263290466
+
+%random open 10: 59 : -1, 2.0868988971016167, 133.93379545211792, DiamondMin of Min: -3.070953068366777
+
+%random open 20: 59 : -1, 1.9800122543451073, 130.6924500465393, DiamondMin of Min: -3.0701026929909143
+%
+%random open 20: 59 : -1, 1.97995359889014, 135.06353521347046, DiamondMin of Min: -2.9642806539605853
+
+random open 21: 59 : -1, 1.8202823109335369, 158.56950044631958, DiamondMin of Min: -2.926562550850029
+
+random open 21: 59 : -1, 1.8113843758166142, 128.9297330379486, DiamondMin of Min: -2.986175395636058
+
+random open 31: 59 : -1, 1.617607152194705, 142.7976849079132, DiamondMin of Min: -2.7544434938921665
+
+random open 31: 59 : -1, 1.6338272022581422, 147.04282569885254, DiamondMin of Min: -2.734869999570412
+
+random open 41: 59 : -1, 1.4376834177337172, 141.38413166999817, DiamondMin of Min: -2.591134103101991
+
+random open 51: 59 : -1, 1.2285876079490041, 218.22643494606018, DiamondMin of Min: -2.461825229746404
+
+random open 61: 59 : -1, 1.0442270697364395, 315.7167875766754, DiamondMin of Min: -2.219210859797969
+
+random open 61: 59 : -1, 1.0458496294859592, 375.4530429840088, DiamondMin of Min: -2.219210859797969
+
+
+
+\end{document}
