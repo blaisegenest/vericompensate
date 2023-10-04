@@ -1,6 +1,7 @@
 \documentclass[]{article}
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
 \newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 \newcommand{\ReLU}{\mathrm{ReLU}}
@@ -14,6 +15,9 @@
 
 \maketitle
 
+All DNNs $N$ considered only use ReLU activation function, and are fully connected (some wheight between neurons can be 0 though).
+A path $\pi$ in $N$ is a sequence of neurons $(a_i)_{i=0}^n$ such that for all $i < n$, layer($a_{i+1}$) = 1 + layer($a_{i}$).
+
 \begin{definition}
 	A pair of paths $(\pi,\pi')$
 	is called {\em compensating} if they start in the same neuron $a$ and ends in the same neuron $z$, and the product of weights over $\pi$ is strictly positive and the product of weights over $\pi'$ is strictly negative.
@@ -25,45 +29,56 @@ as when one of this node gets negative input, it will clip it to 0.
 
 
 \begin{theorem}
-	If for all $(a,d)$ there is no compensation paths $(\pi,\pi')$ 
-	in the network from $a$ to $d$, then the LP approximation is 
-	$100\%$ accurate (or deepoly with the $f(x) \geq 0$ abstraction only, never using the 
+	If for all $(a,c)$ there is no compensation paths $(\pi,\pi')$ 
+	in the network from $a$ to $c$, then the LP approximation is 
+	$100\%$ accurate (or DeepPoly with the $f(x) \geq 0$ abstraction only, never using the 
 	$f(x) \geq x$ abstraction). 
 \end{theorem}
 
 
 \begin{proof}
-First we consider the case when there are only three layers: input layer, one hidden layer, and output layer. For convenience, we assume that the output only has one node. Of course, we assume all active functions are ReLU function.
 
-We use $c_i$ to denote nodes in the input layer, use $b_j$ to denote nodes in the hidden layer and use $x$ to denote the output node. We use $W$ to denote the weights and $W_{bc}$ and $W_{xb}$ to denote the components. We use capital letter $B$ to denote bias, although it is not important here.
-
+	First we consider the case when there are only three layers: input layer, one hidden layer, and output layer. 
 
 
-\begin{definition}
-	1. We use $b$ to denote the node before ReLU and $\hat{b}$ to denote the node after ReLU: $\hat{b} = \ReLU(b)$.
+%We use $c_i$ to denote nodes in the input layer, use $b_j$ to denote nodes in the hidden layer and use $x$ to denote the output node. 
+%We use $W$ to denote the weights and $W_{bc}$ and $W_{xb}$ to denote the components. We use capital letter $B$ to denote bias, although it is not important here.
+
+
+
+\begin{itemize}
+    \item We will denote by $a_i$ nodes in the input layer, and by $b_i$ nodes in the hidden layer.
+
+	\item We use $x^-$ to denote a node before applying the ReLU activation function (but after the linear weighted sum) and $x^+$ to denote the node after applying the ReLU: $x^+ = \ReLU(x^-)$.
 	
-	2. $\bar{f}$ is the upper bound approximation function of DeepPoly, and $\underline{f}$ is the lower bound approximation function.
-\end{definition}
+	\item We denote by $\bar{f}(x)$ the upper bound approximation function of DeepPoly (using the $f(x) \geq 0$ abstraction only) for node $x$, 
+	and $\underline{f}(x)$ its lower bound approximation function.
+\end{itemize}
+
+We want to show that for any $c$ in the output layer (3rd layer), there exist 
+input $\bar{Y}$ such that $W_{\bar{Y}}(x) = \bar{f}(c)(\bar{Y}) = \min_Y \bar{f}(c)(Y)$, and 
+ $\underline{Y}$ such that $W_{\underline{Y}}(x) = \underline{f}(c)(\underline{Y}) = \min_Y \underline{f}(c)(Y)$.
+
+Let $c$ be any output node.
 
 
+\paragraph{DeepPoly bounds} 
 
-\begin{theorem}
-	If there following conditions holds, then the bounds of $x$ obtained by DeepPoly are equal to the actual bounds:
-	
-	1. All DeepPoly triangle are right-angled triangle: for any ReLU node $b$ that upper bound $u(b)>0$ and lower bound $l(b)<0$, the approximation of lower bound is the zero function $\underline{f}(b)=0$.
-	
-	2. No Diamond: for any input node $c$, any output node $x$, any two paths $p_1,p_2$ from $c$ to $x$ along the direction of forward propagation. If $p_1$ is $c,b_i,x$, $p_2$ is $c,b_j,x$, then for $W_{b_jc}W_{xb_j}$ and $W_{b_ic}W_{xb_i}$, either one of them is $0$, or they have the same sign: both positive or negative.
-\end{theorem}
+First, we compute the bounds obtained by DeepPoly.
+The case of the lower bound is symetrical (because the abstraction $f(x)\geq 0$ is used, ensuring that the lower bound of $f(x)$ is reached at 0). 
 
+The DeepPoly upper bound of $x$ can be expressed by the following steps: 
 
-\subsection*{One} First, we compute the bounds obtained by DeepPoly. Without loss of generality, we only consider the upper bound of $x$.   By the algorithm, the DeepPoly upper bound of $x$ is computed by following steps: \begin{align}
+\begin{align}
  \rightarrow&\sum_{W_{xb_i}<0}W_{xb_i}\underline{f_i}(b_i)+\sum_{W_{xb_i}>0}W_{xb_i}\bar{f_i}(b_i)+B_x\\
  \rightarrow&\sum_{W_{xb_i}<0}W_{xb_i}\underline{f_i}(\sum_{c_j}W_{b_ic_j}c_j+B_i)+\sum_{W_{xb_i}>0}W_{xb_i}\bar{f_i}(\sum_{c_j}W_{b_ic_j}c_j+B_i)+B_x\\
  =& C+\sum_{W_{xb_i}<0}W_{xb_i}\cdot\underline{k_i}\cdot(\sum_{c_j}W_{b_ic_j}c_j+B_i)+\sum_{W_{xb_i}>0}W_{xb_i}\cdot\bar{k_i}\cdot(\sum_{c_j}W_{b_ic_j}c_j+B_i)\\
  =& C+\sum_{c_j}c_j\cdot\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i\\
  \rightarrow& C+\sum_{\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i<0}\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i\cdot l(c_j)\\
  &+\sum_{\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i>0}\sum_{b_i}W_{xb_i}W_{b_ic_j}\cdot K_i\cdot u(c_j)
-\end{align} Here, $\bar{k_i}$ is the coefficient of $\bar{f_i}$, which is a linear function, and $\underline{k_i}$ is the coefficient of $\underline{f_i}$, which is also a linear function. $C$ is the sum of all constants that occurs in above computations. $K_i$ is the coefficient $\bar{k_i}$ or $\underline{k_i}$ depending on $i$. Notice that by the definition of DeepPoly, all $K_i$ are non negative. 
+\end{align} 
+
+Here, $\bar{k_i}$ is the coefficient of $\bar{f_i}$, which is a linear function, and $\underline{k_i}$ is the coefficient of $\underline{f_i}$, which is also a linear function. $C$ is the sum of all constants that occurs in above computations. $K_i$ is the coefficient $\bar{k_i}$ or $\underline{k_i}$ depending on $i$. Notice that by the definition of DeepPoly, all $K_i$ are non negative. 
 
 Among these formulas, (1) to (4) are abstract formula with formal variables $b_i,c_j$. The result of (5)(6) is the upper bound of DeepPoly for node $x$. 
 
