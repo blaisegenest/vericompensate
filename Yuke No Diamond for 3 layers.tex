@@ -165,15 +165,44 @@ $\underline{f}(x)=\min(x)$ and $\bar{f}(x)=\max(x)$.
 
 \paragraph{DeepPoly bounds}
 
+The DeepPoly function for $b$ can be expressed by the following steps.
+First, we partition the set of indices $i$ as $I,I_0,I^+,I^-$ with:
+\begin{itemize}
+	\item $i \in I$ if the sign of $b_i^-=\sum_{j} w_{a_j b_i} a_j + B_{b_i}$ is always positive irrespective of $Y=(a_j)_j$, in which case 
+	$\bar{f}(b_i^+)(Y)=\underline{f}(b_i^+)=\sum_{j} w_{a_j b_i} a_j + B_{b_i}$, and else:
+	\item $i \in I_0$ if the sign of $b_i^-=\sum_{j} w_{a_j b_i} a_j + B_{b_i}$ is always negative irrespective of $Y=(a_j)_j$, in which case $\bar{f}(b_i^+)=\underline{f}(b_i^+)=0$,	and else:
+	\item $i \in I^+$ if $w_{b_i c}>0$, and:
+	\item $i \in I^-$ if $w_{b_i c}<0$.
+	\end{itemize}
+	
+Remark that for all $i \notin I$, we have $\underline{f_i}(b_i^+)(Y)=0$.
+	
+
+We have:
+\begin{align*}
+	\bar{f}(c)(Y) = &
+	bias_c + \sum_{b \in I} w_{bc}\sum_{a} w_{a b} weight(a) + bias_{b} \\
+	& + \sum_{b \in I^+} w_{b c} \cdot \bar{f}(ReLU(\sum_{a} w_{a b} weight(a) 
+	+ Bias_{b}))(Y) 
+	\end{align*}
+
+
+
+We proceed inductively, and prove the inductive step.
+The initialization is obvious as DeepPoly is always exact for the initialization layer.
 
 \begin{lemma}
-	Suppose $L$ is a layer and $L'$ is the next layer, and  the lower and upper bounds for each node $n$ such that $S(n)\neq 0$ in $L$ stored by the approximation method Interval Arithmetic equal to the exact lower and upper bounds of it.
+	Let $L,L'$ two consecutive layers.
+	Assume for all node $m$ of $L$ that the lower and upper bounds for $m$ used by DeepPoly equals to the exact lower and upper bounds of $m$.
 	
-	 Then Interval Arithmetic can obtain the exact lower and upper bounds for every node $m$ such that $S(m)\neq 0$ in $L'$.
+	Then DeepPoly computes the exact lower and upper bounds for every node $n$ of layer $L'$.
 \end{lemma}
 
 \begin{proof}
-	Suppose $m$ is a node in $L'$ such that $S(m)\neq 0$. Without loss of generality, we assume $S(m)=1$, and $S(m)=-1$ will be similar. Interval Arithmetic will compute its upper bound using $m=\sum_{n}w(mn)\hat{n}+b,$ by taking all $n$ that $w(mn)>0$ to upper bound and taking all $n$ that $w(mn)<0$ to lower bound.
+	Suppose $n$ is a node in $L'$ such that $S(n)\neq 0$ (otherwise, it is trivial). 
+	First assume $S(n)=1$. The case $S(n)=-1$ is similar. 
+
+	Deeppoly computes its upper bound using $m=\sum_{n}w(mn)\hat{n}+b,$ by taking all $n$ that $w(mn)>0$ to upper bound and taking all $n$ that $w(mn)<0$ to lower bound.
 	
 	On the other hand, by assumption, for all $n$ that $S(n)\neq 0$(which is equivalent to $w(mn)\neq 0$), the upper and lower bounds stored by Interval Arithmetic is equal to their exact upper and lower bounds, i.e., their maximal and minimal values. And for every $n$, its upper bound if $w(mn)>0$ or lower bound if $w(mn)<0$ is equal to the maximal value of $n^s$. 
 	
