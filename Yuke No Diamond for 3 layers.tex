@@ -1,0 +1,142 @@
+\documentclass[]{article}
+\usepackage{amsmath, amsthm, amssymb, amsfonts}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newcommand{\ReLU}{\mathrm{ReLU}}
+
+
+
+\title{Proof No Diamond (3 layers)}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{definition}
+	A pair of paths $(\pi,\pi')$
+	is called {\em compensating} if they start in the same neuron $a$ and ends in the same neuron $z$, and the product of weights over $\pi$ is strictly positive and the product of weights over $\pi'$ is strictly negative.
+\end{definition}
+
+Intuitively, compensating paths will partially cancel out each other as they conribute the same weight $w(a)$ to the weight of the same neuron $w(z)$, but with opposite sign. 
+It is not simple to take this compensation into account because of ReLUs: the particular compensation will depend upon the weight of intermediate nodes seen along $\pi$ and $\pi'$, 
+as when one of this node gets negative input, it will clip it to 0.
+
+
+\begin{theorem}
+	If for all $(a,d)$ there is no compensation paths $(\pi,\pi')$ 
+	in the network from $a$ to $d$, then the LP approximation is 
+	$100\%$ accurate (or deepoly with the $f(x) \geq 0$ abstraction only, never using the 
+	$f(x) \geq x$ abstraction). 
+\end{theorem}
+
+
+In this section, we only consider the case of 3 layers: that is, one input layer, one hidden layer and one output layer, which contains only one node. Of course, we assume all active functions are ReLU function. Before we introduce the proof, we list some definitions.
+
+\begin{definition}
+	1. We use $a_i$ to denote nodes in the input layer, use $b_j$ to denote nodes in the hidden layer and use $z$ to denote the output node. We use $W$ to denote the weights and $w({ba})$ and $w({zb})$ to denote the components: weight from one node to another. We use capital letter $B$ to denote bias, although it is not important here.
+	
+	
+	2. We use $b$ to denote the node before ReLU and $\hat{b}$ to denote the node after ReLU: $\hat{b} = \ReLU(b)$.
+	
+%	3. $\bar{f}$ is the upper bound approximation function of DeepPoly, and $\underline{f}$ is the lower bound approximation function.
+\end{definition}
+
+\begin{proof} 
+
+The following definition is the most important concept in this proof.
+
+\begin{definition}[Sign of Node]
+	We define a sign function $S$ on every node $n$ such that: 	(1). $S(n)=0$ if all path from $n$ to $z$ has 0 weight; (2). $S(n)=1$ if all path from $n$ to $z$ has non-negative weight, and at least one path has a positive weight; (3). $S(n)=1$ if all path from $n$ to $z$ has non-positive weight, and at least one path has a negative weight. 
+	
+	More specifically, for an input node $a_i$:
+	
+	(1) $S(a_i)=0$ if \begin{align}
+		\forall b_j\ w(b_ja_i)\cdot w(zb_j) = 0.
+	\end{align}
+	
+	(2) $S(a_i)=1$ if\begin{align}
+		\forall b_j\ w(b_ja_i)\cdot w(zb_j) \geq 0 \wedge \exists b_j\ w(b_ja_i)\cdot w(zb_j) > 0. 
+	\end{align}
+	
+	(3) $S(a_i)=1$ if \begin{align}
+	\forall b_j\ w(b_ja_i)\cdot w(zb_j) \leq 0 \wedge \exists b_j\ w(b_ja_i)\cdot w(zb_j) < 0. 
+\end{align}	 
+
+And for a node $b_j$ in the hidden layer, $S(b_j)=1,-1,0$ if $w(zb_j)$ is positive, negative, or 0. Finally, for the output node $z$, we define $S(z)=1$.
+\end{definition}
+
+Notice that, if there is no Diamond, then $S$ is defined on all nodes, i.e., any input node must be one of above cases (1),(2),(3).
+
+\begin{definition}
+	For node $n$, we use $n^s$ to denote $S(n)\cdot n$. And we define that $n^s$ gets maximal value means that: if $S(n)=1$, then $n$ gets maximal value; if $S(n)=-1$, then $n$ gets minimal value (if $S(n)=0$, we say $n^s$ always gets maximal value).
+	
+	Similarly we define the meaning of $n^s$ gets minimal value.  
+\end{definition}
+
+\begin{lemma}[Sign and Weight]
+	1. When one node $b$ (before $\ReLU$ function) gets its maximal or minimal value, $\hat{b}=\ReLU(b)$ also gets maximal or minimal.
+	
+	2. Suppose $L$ is a layer and $L'$ is the next layer. Then for any $n$ on $L$ and $m$ on $L'$, if both $S(m)$ and $w(mn)$ are nonzero, then we have that: \begin{align}
+		S(n)=S(m)\mathrm{sign}(w(mn))
+	\end{align}
+\end{lemma}
+\begin{proof}
+	1. This is obvious.
+	
+	2. This can be proved by using definition. If $S(m)$ are nonzero, then there is a path $P$ from $m$ to the output node  $z$ with a nonzero weight of the same sign as $S(m)$. 
+	
+	Then from $n$ to $m$ and along $P$ to $z$ is a path from $n$ to $z$, and the weight of this path is the product of weight of $P$ and $w(mn)$, which is nonzero and have the same sign as $S(m)\cdot w(mn)$. This is what we want to show.
+\end{proof}
+
+The following lemma shows the reason why this theorem is true.
+
+\begin{lemma}
+	Suppose $L$ is a layer (before $\ReLU$ function) other than output layer. Then when all $n^s$ gets their maximal value (where $n$ are node on $L$), for the next layer $L'$, and every node $m$ on $L'$, $m^s$ gets its maximal value. In formula: \begin{align}
+		\max(m^s)=\sum_{n}w(mn)\ReLU(\max(n^s))+b
+	\end{align}
+	
+	And for $m^s$ minimal value, we have the same result: \begin{align}
+		\min(m^s)=\sum_{n}w(mn)\ReLU(\min(n^s))+b
+	\end{align}
+\end{lemma}
+
+\begin{proof}
+	Assume all $n^s$ on $L$ get their maximal, and $m$ is a node on $L'$, we try to show that $m^s$ gets its maximal value.
+	
+	If $S(m)=0$, then we have nothing to do. Without loss of generality,  we assume $S(m)=1$; for $S(m)=-1$, it is highly similar. Then by Lemma 1, for any $n$ in layer $L$ such that $w(mn)\neq 0$, $$S(n)=S(m)\mathrm{sign}(w(mn))=\mathrm{sign}(w(mn)).$$
+	
+	On the other hand, $$m=\sum_{n}w(mn)\hat{n}+b.$$ This means if all $\hat{n}$ with $w(mn)>0$ get maximal value and all $\hat{n}$ with $w(mn)<0$ get minimal value, $m$ also gets its maximal value. By Lemma 1, $\hat{n}$ gets maximal value or minimal value if $n$ does. So, when all $n^s$ get maximal value, $m$ will also get its maximal value.
+	
+	So, $m^s$ gets maximal if all $n^s$ in previous layer gets their maximal. The part for $m^s$ minimal value is almost the same, by replacing all maximal to minimal.
+\end{proof}
+
+
+From Lemma 2, we can easily see that: when all nodes $a_i^s$ in the input layer get their maximal/minimal value, all nodes $b_j^s$ in the hidden layer get their maximal/minimal value, and then the output node $z$.
+
+The rest part is to show, interval arithmetic, and hence any approximation as accuracy as it, can get these exact bounds. 
+
+\begin{lemma}
+	Suppose $L$ is a layer and $L'$ is the next layer, and  the lower and upper bounds for each node $n$ such that $S(n)\neq 0$ in $L$ stored by the approximation method Interval Arithmetic equal to the exact lower and upper bounds of it.
+	
+	 Then Interval Arithmetic can obtain the exact lower and upper bounds for every node $m$ such that $S(m)\neq 0$ in $L'$.
+\end{lemma}
+
+\begin{proof}
+	Suppose $m$ is a node in $L'$ such that $S(m)\neq 0$. Without loss of generality, we assume $S(m)=1$, and $S(m)=-1$ will be similar. Interval Arithmetic will compute its upper bound using $m=\sum_{n}w(mn)\hat{n}+b,$ by taking all $n$ that $w(mn)>0$ to upper bound and taking all $n$ that $w(mn)<0$ to lower bound.
+	
+	On the other hand, by assumption, for all $n$ that $S(n)\neq 0$(which is equivalent to $w(mn)\neq 0$), the upper and lower bounds stored by Interval Arithmetic is equal to their exact upper and lower bounds, i.e., their maximal and minimal values. And for every $n$, its upper bound if $w(mn)>0$ or lower bound if $w(mn)<0$ is equal to the maximal value of $n^s$. 
+	
+	Hence $$u(m)_{IA}=\sum_{n}w(mn)\ReLU(\max(n^s))+b=\max(m^s).$$ This is what we want to show.
+\end{proof}
+
+Use Lemma 3, we can see the Interval Arithmetic upper and lower bounds of the output node $z$ are equal to the actual upper and lower bounds of $z$
+
+
+
+\end{proof}
+
+
+\end{document}
