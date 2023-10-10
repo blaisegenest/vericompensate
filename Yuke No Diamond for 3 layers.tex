@@ -2,6 +2,7 @@
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 \newcommand{\ReLU}{\mathrm{ReLU}}
@@ -106,10 +107,11 @@ while for $S(n)=-1$, $n_s$ gets maximal value whenever $n$ gets minimal value (a
 
 \begin{lemma}
 	\label{lemma2}
-	Let $L,L'$ be consecutive layers of a compensation free DNN, and $n \in L'$. Then:
+	Let $L,L'$ be consecutive layers of a compensation free DNN, and $n \in L'$. 
+	Then:
 		$$ \max(n^-_s)=\sum_{m \in L}w(m n) \max(m^+_s)+bias_n \text{ and }$$
 		$$\max(n^+_s)=ReLU(\sum_{m \in L}w(m n) max(m^+_s)+bias_n)$$
-
+		
 	
 	
 	Similarly  for minimal value,	
@@ -153,7 +155,14 @@ $max(z_s)=max(z)$ is reached at configuration $\bar{Y}$.
 The case for $min(x_s)$ is similar, reached at configuration $\underline{Y}$.
 \end{proof}
 
+As direct corrolary of Lemma \ref{lemma2}, we obtain:
 
+\begin{corollary}
+	\label{cor1}
+	$$\max(n^-)=\sum_{m \in L, w(m n)>0}w(m n) \max(m^+) + \sum_{m \in L, w(m n)<0}w(m n) \min(m^+) + bias_n$$
+	$$\min(n^-)=\sum_{m \in L, w(m n)>0}w(m n) \min(m^+) + \sum_{m \in L, w(m n)<0}w(m n) \max(m^+) + bias_n$$
+\end{corollary}
+	
 
 Notice that for all $x$, either $S(x)=+1$ and 
 $(\min(x),\max(x))=(\min(x_s),\max(x_s))$, 
@@ -164,6 +173,59 @@ We now show that DeepPoly will generate the same bounds
 $\underline{f}(x)=\min(x)$ and $\bar{f}(x)=\max(x)$.
 
 \paragraph{DeepPoly bounds}
+
+To prove that DeepPoly bounds are the same as the exact bounds computed above, 
+we show that even the box abstraction (which is easier) would reach the exact bounds.
+We proceed inductively, and prove the inductive step.
+The initialization is obvious as Box Abstraction/DeepPoly is always exact for the initialization layer.
+
+\begin{lemma}
+	Let $L,L'$ be two consecutive layers.
+	Assume for all node $m$ of $L$ that the lower and upper bounds for $m$ used by box abstraction equals to the exact lower and upper bounds of $m$ (as expressed above), i.e.
+	$\bar{f}(m)=max(m)$ and $\underline{f}(m)=min(m)$.
+	
+	Then Box abstraction computes the exact lower and upper bounds for every node $n$ of layer $L'$, ie $\bar{f}(n)=max(n)$ and $\underline{f}(n)=min(n)$.
+\end{lemma}
+
+\begin{proof}
+	Suppose $n$ is a node in $L'$ such that $S(n)\neq 0$ (otherwise, it is trivial). 
+	First assume $S(n)=1$. The case $S(n)=-1$ is similar. 
+
+	The Box absraction computes its upper bound using:
+	$$\bar{f}(n^-)= \sum_{w(mn)>0} w(mn) \bar{f}(m^+) + \sum_{w(mn)<0} w(mn) \underline{f}(m^+) + bias_n$$
+
+	By induction hypothesis, we have 
+	$\bar{f}(m^+)=max(m^+)$ and
+	$\underline{f}(m^+)=min(m^+)$, thus 
+	applying Corollary \ref{cor1}, we obtain
+	$\bar{f}(n^-)=max(n^-)$ and 
+	$\underline{f}(n^-)=min(n^-)$.
+
+	Now, if $\underline{f}(n^-)=min(n^-)<0$, 
+	then $\underline{f}(n^+)=min(n^+)=0$, 
+	and otherwise 
+	$\underline{f}(n^+)=min(n^+)=\underline{f}(n^-)=min(n^-)$.
+
+	
+
+
+\end{proof}
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
 
 The DeepPoly function for $b$ can be expressed by the following steps.
 First, we partition the set of indices $i$ as $I,I_0,I^+,I^-$ with:
@@ -186,31 +248,3 @@ We have:
 	+ Bias_{b}))(Y) 
 	\end{align*}
 
-
-
-We proceed inductively, and prove the inductive step.
-The initialization is obvious as DeepPoly is always exact for the initialization layer.
-
-\begin{lemma}
-	Let $L,L'$ two consecutive layers.
-	Assume for all node $m$ of $L$ that the lower and upper bounds for $m$ used by DeepPoly equals to the exact lower and upper bounds of $m$.
-	
-	Then DeepPoly computes the exact lower and upper bounds for every node $n$ of layer $L'$.
-\end{lemma}
-
-\begin{proof}
-	Suppose $n$ is a node in $L'$ such that $S(n)\neq 0$ (otherwise, it is trivial). 
-	First assume $S(n)=1$. The case $S(n)=-1$ is similar. 
-
-	Deeppoly computes its upper bound using $m=\sum_{n}w(mn)\hat{n}+b,$ by taking all $n$ that $w(mn)>0$ to upper bound and taking all $n$ that $w(mn)<0$ to lower bound.
-	
-	On the other hand, by assumption, for all $n$ that $S(n)\neq 0$(which is equivalent to $w(mn)\neq 0$), the upper and lower bounds stored by Interval Arithmetic is equal to their exact upper and lower bounds, i.e., their maximal and minimal values. And for every $n$, its upper bound if $w(mn)>0$ or lower bound if $w(mn)<0$ is equal to the maximal value of $n^s$. 
-	
-	Hence $$u(m)_{IA}=\sum_{n}w(mn)\ReLU(\max(n^s))+b=\max(m^s).$$ This is what we want to show.
-\end{proof}
-
-Use Lemma 3, we can see the Interval Arithmetic upper and lower bounds of the output node $z$ are equal to the actual upper and lower bounds of $z$
-
-
-
-\end{document}
