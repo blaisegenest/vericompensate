@@ -206,9 +206,13 @@ The initialization is obvious as Box Abstraction/DeepPoly is always exact for th
 	and otherwise 
 	$\underline{f}(n^+)=min(n^+)=\underline{f}(n^-)=min(n^-)$.
 
+	Similarly, 
+	if $\bar{f}(n^-)=max(n^-)<0$, 
+	then $\bar{f}(n^+)=max(n^+)=0$, 
+	and otherwise 
+	$\bar{f}(n^+)=max(n^+)=\bar{f}(n^-)=bar(n^-)$.
 	
-
-
+	Hence we have equality before and after ReLU in all cases.
 \end{proof}
 
 
