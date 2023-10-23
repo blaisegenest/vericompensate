@@ -216,9 +216,9 @@ The initialization is obvious as Box Abstraction/DeepPoly is always exact for th
 \end{proof}
 
 
-\section{No Diamond theorem part 2}
+	\section{No Diamond theorem part 2}
 
-Now we try to show the part 2 of No Diamond theorem. Again, we begin with 3 layers with only one output node $z$.
+Now we try to show the part 2 of No Diamond theorem. Again, we begin with 3 layers with one output node $z$.
 
 \begin{theorem}[No Diamond theorem, part 2] \label{no_diamond_2}
 	Using MILP method, if all nodes $b_j$ such that there is a compensating path pair $\pi,\pi'$ with $\pi = a_k,b_j,z$ are opened, then the upper and lower bounds computed by MILP are the exact max and min value of $z$.
@@ -237,7 +237,7 @@ With out loss of generality, we only need to show the max side. The min side is 
 \end{definition} 
 
 
-\begin{lemma}
+\begin{lemma} \label{lem:open_node}
 	A node $b_i$ in the hidden layer will not be opened in Theorem \ref{no_diamond_2} iff one of the following two happen:
 	
 	1. $w_{zb_i}=0$.
@@ -258,53 +258,78 @@ With out loss of generality, we only need to show the max side. The min side is 
 \end{proof}
 
 
-Because for input nodes in $I$, they also do not have compensating path pair, we can define the sign as in Definition \ref{sign_of_nodes}:
+Now we need the function in Definition \ref{sign_of_nodes}. The difference is that now it is a partial function.
 
-\begin{definition}[Sign of Nodes in $I$]\label{sign_of_nodes_in_I}
-	We define a sign function $S$ on $I$ such that: 	(1). $S(n)=0$ if all path from $n$ to $z$ has 0 weight; (2). $S(n)=1$ if all path from $n$ to $z$ has non-negative weight, and at least one path has a positive weight; (3). $S(n)=-1$ if all path from $n$ to $z$ has non-positive weight, and at least one path has a negative weight. 
+\begin{definition}\label{sign_of_nodes_in_I}
+	We define a partial sign function all nodes such that: 	(1). $S(n)=0$ if all path from $n$ to $z$ has 0 weight; (2). $S(n)=1$ if all path from $n$ to $z$ has non-negative weight, and at least one path has a positive weight; (3). $S(n)=-1$ if all path from $n$ to $z$ has non-positive weight, and at least one path has a negative weight. 
 	
 	
 	For an input node $a_i$ in $I$:
 	\begin{enumerate}
 		\item  $S(a_i)=0$ if 
-		for all $b_j, w(a_i b_j)\cdot w(b_j c) = 0$
+		for all $b_j, w(a_i b_j)\cdot w(b_j z) = 0$
 		
 		
-		\item  $S(a_i)=1$ if for all $b_j, w(a_i b_j)\cdot w(b_j c) \geq 0$ and there exists 
-		$j, w(a_i b_j)\cdot w(b_j c) > 0$
+		\item  $S(a_i)=1$ if for all $b_j, w(a_i b_j)\cdot w(b_j z) \geq 0$ and there exists 
+		$j, w(a_i b_j)\cdot w(b_j z) > 0$
 		
-		\item $S(a_i)=-1$ if for all $b_j\ w(a_i b_j)\cdot w(b_j c) \leq 0$ and there exists 
-		$j, w(a_i b_j)\cdot w(b_j c) < 0$ 
+		\item $S(a_i)=-1$ if for all $b_j\ w(a_i b_j)\cdot w(b_j z) \leq 0$ and there exists 
+		$j, w(a_i b_j)\cdot w(b_j z) < 0$ 
 	\end{enumerate}
 \end{definition}
 
 
 
 
-\begin{lemma}
-	node $z$ can get its maximal value if for all $a_i$ in $I$, $a_i$ gets its maximal if $S(a_i)=1$ or $a_i$ gets its minimal if $S(a_i)=-1$.
+
+
+
+Because for input nodes in $I$, they do not have compensating path pair, so the sign function is defined on
+all nodes in $I$.
+
+
+
+We use $a_S$ where $S\subseteq K$ to refer the input vector $\langle a_k\rangle_{a_k\in S}$. Then $a_I\oplus a_J = a_K$ and $z=z(a_K)=z(a_I,a_J)$.		Let $a_I^*$ be the input vector that for all $a_i$ in $I$, $a_i$ gets its maximal (if $S(a_i)=1$) or $a_i$ gets its minimal (if $S(a_i)=-1$).
+
+\begin{lemma} \label{lem:reach_max}
+	
+	1. Node $z$ can get its maximal value if $a_I=a_I^*$
+	
+	2. Similarly, for every node $b$ in the hidden layer (notice that $S(b)$ is always defined since there is only one path from $b$ to $z$), for any fixed input of $a_J$,  $b(\cdot,a_J)$ will get its max/min (if $S(b)=1$ or $-1$) if $a_I=a_I^*$.
 \end{lemma}
 
 \begin{proof}
 	
-	We use $a_S$ where $S\subseteq K$ to refer the input vector $\langle a_k\rangle_{a_k\in S}$. Then $a_I\oplus a_J = a_K$ and $c=c(a_K)=c(a_I,a_J)$.
 	
-	This is because \begin{align*}
-		\max_{a_K} c(a_K) = \max_{a_J}\max_{a_I} c(a_I,a_J)
+	
+	1. This is because \begin{align*}
+		\max_{a_K} z(a_K) = \max_{a_J}\max_{a_I} z(a_I,a_J)
 	\end{align*}
 	
-	For any fixed input of $a_J$, $c(\cdot, a_J)$ can be regarded as a DNN $D'$ with input nodes $a_i\in I$ by regarding all $a_J$ and their propagation in hidden layers as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply the No Diamond theorem, part 1 to get that: (for fixed $a_J$) $c(\cdot,a_J)$ can get its maximal value if for all $a_i$ in $I$, $a_i$ gets its maximal if $S(a_i)=1$ or $a_i$ gets its minimal if $S(a_i)=-1$.
+	For any fixed input of $a_J$, $z(\cdot, a_J)$ can be regarded as a DNN $D'$ with input nodes $a_i\in I$ by regarding all $a_J$ and their propagation in hidden layers as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply the No Diamond theorem, part 1 to get that: (for fixed $a_J$) $z(\cdot,a_J)$ can get its maximal value if for all $a_i$ in $I$, $a_i$ gets its maximal if $S(a_i)=1$ or $a_i$ gets its minimal if $S(a_i)=-1$.
 	
-	If we use $\max(\tilde{a}_I$ to denote above values, then we have $$\max_{a_I}c(a_I,a_J)=c(\max(\tilde{a}_I),a_J).$$ And therefore, $\max c=\max_{a_J} c(\max\tilde{a}_I,a_J)$
+	If we use $\max(\tilde{a}_I$ to denote above values, then we have $$\max_{a_I}z(a_I,a_J)=z(\max(\tilde{a}_I),a_J).$$ And therefore, $\max z=\max_{a_J} z(\max\tilde{a}_I,a_J)$
+	
+	2. This is simpler because for each fixed input of $a_J$, $$b= B'+\sum_{a_i\in I} w_{ba_i}a_i,$$ where $B'$ is a constant which is the sum of rest terms, including bias and $a_J$. By Lemma \ref{lemma1}, we can easily see the claim of this lemma is true.
 \end{proof}
 
 
-Because for any method, like MILP, the upper bound computed will not be smaller that the actual maximal value, so we only need to show, $\mathrm{UB}_{\mathrm{MILP}}\leq \max c$ in any case.
+Because for any  sound method, like MILP, the upper bound computed will not be smaller that the actual maximal value, so we only need to show, $\mathrm{UB}_{\mathrm{MILP}}\leq \max c$ in any case.
 
 Suppose $O$ is the set of nodes opened. Then for any $b_h\notin O$, $b_h=\sum_{a_i\in I}w_{b_ha_i}+B_h$ ($B_h$ is the bias). Then for any subdomain $d$ in one of  $2^{|O|}$ subdomains, suppose we compute an upper bound when $a_J=\bar{a}_J$ and $a_I=\bar{a}_I$, we show that this upper bound does not exceed the maximal value of $z$. 
 
-By the algorithm, $$\mathrm{UB} = B_z+\sum_{b_h\in O}w_{ab_h}\ReLU(b_h(\bar{a}_I,\bar{a}_J))+$$
+By the algorithm, \begin{align*}
+	\mathrm{UB} = B_z+\sum_{b_h\in O}w_{zb_h}\ReLU(b_h(\bar{a}_I,\bar{a}_J))+\sum_{b_k\notin O}w_{zb_k}\mathrm{Approx}(b_k(\bar{a}_I,\bar{a}_J)).
+\end{align*} Here, $\mathrm{Approx}$ is the approximation function of $\mathrm{ReLU}$. In our case (LP), it will equal to $\ReLU$ if $w_{zb_k}<0$, or a linear function if  if $w_{zb_k}>0$. $\mathrm{ReLU}$ and $\mathrm{Approx}$ are both non-decrease function.
 
+Then by Lemma \ref{lem:reach_max}, for any fixed $a_J$, for all nodes $b$ in the hidden layer, $b$ will get its max/min (if $S(b)=\mathrm{sign}(w_{zb})=1,-1$) if $a_I=a_I^*$. Hence we have \begin{align*}
+	\mathrm{UB} \leq  B_z+\sum_{b_h\in O}w_{zb_h}\ReLU(b_h(a_I^*,\bar{a}_J))+\sum_{b_k\notin O}w_{zb_k}\mathrm{Approx}(b_k(a_I^*,\bar{a}_J)).
+\end{align*} Meanwhile, when $b_k$ reaches its max or min, we have $\mathrm{Approx}(b_k)=\ReLU(b_k)$, hence we have: \begin{align*}
+	\mathrm{UB} \leq & B_z+\sum_{b}w_{zb}\ReLU(b(a_I^*,\bar{a}_J))\\
+	= & \max_{a_I} z(a_I,\bar{a}_J)\\
+	\leq & \max_{a_J}\max_{a_I} z(a_I,a_J)\\
+	= & \max_{a_K} z(a_K) = \max z
+\end{align*}
 
 
 
