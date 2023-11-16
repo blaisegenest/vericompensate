@@ -45,6 +45,7 @@ We assume all active functions are ReLU function.
 \end{definition}
 
 
+\section{Theorem 1}
 
 
 
@@ -155,7 +156,7 @@ $max(z_s)=max(z)$ is reached at configuration $\bar{Y}$.
 The case for $min(x_s)$ is similar, reached at configuration $\underline{Y}$.
 \end{proof}
 
-As direct corrolary of Lemma \ref{lemma2}, we obtain:
+As direct corollary of Lemma \ref{lemma2}, we obtain:
 
 \begin{corollary}
 	\label{cor1}
@@ -216,120 +217,164 @@ The initialization is obvious as Box Abstraction/DeepPoly is always exact for th
 \end{proof}
 
 
-	\section{No Diamond theorem part 2}
+\section{Theorem 2}
 
-Now we try to show the part 2 of No Diamond theorem. Again, we begin with 3 layers with one output node $z$.
+We now show that if all intermediates nodes that are on compensating pairs are opened as MILP nodes, then MILP will be correct. First, we do the proof with 3 layers, assuming (without loss of generality) a unique output node $z$.
 
-\begin{theorem}[No Diamond theorem, part 2] \label{no_diamond_2}
-	Using MILP method, if all nodes $b_j$ such that there is a compensating path pair $\pi,\pi'$ with $\pi = a_k,b_j,z$ are opened, then the upper and lower bounds computed by MILP are the exact max and min value of $z$.
+\begin{theorem}
+	\label{no_diamond_2}
+	Using MILP method, if every nodes $b_j$ in any compensating path pair
+	 $(\pi,\pi')$ is encoded as a binary/integer variable, then the upper and lower 
+	 bounds computed by MILP are the exact max and min value of $z$.
 \end{theorem}
 
-With out loss of generality, we only need to show the max side. The min side is almost the same.
+By symetry, we only show the max side. 
 
 
 
 \begin{definition}
-	Let $K$ be the set of all input nodes $a_k$. We define a decomposition $K=I\sqcup J$ as follows:  
-	
-	An input node $a_k$ is in $I$ if for any two paths $\pi,\pi'$ that begin with $a_k$ (end with $z$), they are not compensating, i.e., the weights of them are both non negative or both non positive; hence all path $\pi$ that begin with $a_k$ (end with $z$) are non negative (or non positive).
-	
-	An input node $a_k$ is in $J$ if it is not in $I$. We use $a_i$ to denote input nodes in $I$ and use $a_j$ to denote input nodes in $J$.
+	Let $K$ be the set of all input nodes $a_k$. 
+	We define a decomposition $K=I\sqcup J$ as follows:  
+	\begin{itemize}
+ \item $k \in I$  if
+ \begin{enumerate}
+	 \item every path from $a_k$ to $z$ has weight $\geq 0$, or
+	\item every path from $a_k$ to $z$ has weight $\leq 0$.
+ \end{enumerate}
+That is, $a_k$ is not a source of a compensating pair.
+	\item $k \in J$ if $k \notin I$, that is there exists two paths $\pi,\pi'$ from $a_k$, 
+	one with positive and one with negative weight.
+\end{itemize}
 \end{definition} 
 
 
 \begin{lemma} \label{lem:open_node}
-	A node $b_i$ in the hidden layer will not be opened in Theorem \ref{no_diamond_2} iff one of the following two happen:
-	
-	1. $w_{zb_i}=0$.
-	
-	2. For any input nodes $a_j\in J$, $w_{b_ia_j}=0$.
+	A node $b$ in the hidden layer will not be on a compensating pair iff one of the following two happens:
+	\begin{enumerate}
+	 \item $w_{b,z}=0$, or
+	 \item For every input node $j\in J$, we have $w_{a_j,b}=0$.
+	\end{enumerate}
+	We denote $B_{pure}$ the set of such nodes $b$ such that at least one of the above holds.
 \end{lemma}
 
 \begin{proof}
-	First, we show if one of 1,2 happens, then $b_i$ will not be opened. If $w_{zb_i}=0$, it is obvious.
+	First, we show that if either one of 1,2 happens, then $b_i$ will not be opened. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of compensating paths 	$(\pi,\pi')$ starting with $a$, with $k$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $w_{a_j,b}=0$ implies weight$(\pi)=0$.
 	
-	If 2 happens, suppose $\pi,\pi'$ is a pair of compensating path, then $\pi = a_k,b_i,z$. Because this is a compensating path, $w_{b_ia_k}\neq 0$. But because of 2, this means that $a_k$ is in $I$, and hence there is a compensating path begin with $a_k\in I$, a contradiction. Therefore, $b_i$ cannot be a node in a compensating pair.
-	
-	Second, we show if both 1,2 not happen, then $b_i$ will be opened. Because of negation 2, there is a node $a_j$ in $J$ such that $w_{a_jb_i}\neq 0$, and since $w_{zb_i}\neq 0$, $\pi=a_j,b_i,z$ is a path with a  nonzero weight. By symmetry, we assume, $w_{zb_i}w_{b_ia_j}>0$. 
-	
-	Now, since $a_j$ is in $J$, there are two paths $\pi',\pi''$ that begin with $a_j$ but $\pi''$ has a positive weight and $\pi'$ has a negative weight. Consider $\pi'$. We claim that $\pi,\pi'$ is a compensating pair that make $b_i$ opened. $\pi'$ cannot be $a_j,b_i,z=\pi$ because $\pi$ has a positive weight. So $\pi,\pi'$ are two different paths with opposite signs of values.
-	
-	So, $b_i$ will be opened. Now we prove this lemma. 
+	Second, we show that if neither 1 nor 2 hold, then $b$ will be on a compensating path.
+	Because 2) does not hold, there is a $j \in J$ with $w_{a_j,b} \neq 0$, say $>0$.
+	Because 1) does not hold, $w_{b,z} \neq 0$, say $>0$.
+	Now, by definition of $J$, there is a pair of compensating paths $\pi,\pi'$ 
+	from $a_j$ to $z$, say with $\pi'$ with weight $<0$.
+	Then $((a_j,b,z), \pi')$ is also a compensating pair.
 \end{proof}
 
+Consider the sign of nodes function from Definition \ref{sign_of_nodes}. Because now we allow compensating paths, we cannot define this function over all nodes.
 
-Now we need the function in Definition \ref{sign_of_nodes}. The difference is that now it is a partial function.
 
 \begin{definition}\label{sign_of_nodes_in_I}
-	We define a partial sign function all nodes such that: 	(1). $S(n)=0$ if all path from $n$ to $z$ has 0 weight; (2). $S(n)=1$ if all path from $n$ to $z$ has non-negative weight, and at least one path has a positive weight; (3). $S(n)=-1$ if all path from $n$ to $z$ has non-positive weight, and at least one path has a negative weight. 
-	
-	
-	For an input node $a_i$ in $I$:
-	\begin{enumerate}
-		\item  $S(a_i)=0$ if 
-		for all $b_j, w(a_i b_j)\cdot w(b_j z) = 0$
-		
-		
-		\item  $S(a_i)=1$ if for all $b_j, w(a_i b_j)\cdot w(b_j z) \geq 0$ and there exists 
-		$j, w(a_i b_j)\cdot w(b_j z) > 0$
-		
-		\item $S(a_i)=-1$ if for all $b_j\ w(a_i b_j)\cdot w(b_j z) \leq 0$ and there exists 
-		$j, w(a_i b_j)\cdot w(b_j z) < 0$ 
+	We define a partial sign function $S$ over nodes $n$ such that : 	
+	\begin{enumerate} 
+		 \item all paths from $n$ to $z$ have 0 weight, and then $S(n)=0$; 
+		 \item all paths from $n$ to $z$ have non-negative weight, and at least one path has a positive weight, and then $S(n)=1$; 
+		 \item all path from $n$ to $z$ has non-positive weight, and at least one path has a negative weight, and then $S(n)=-1$.
+		 \item Otherwise $S(n)$ is undefined.
 	\end{enumerate}
-\end{definition}
+\end{definition}	
+	
+Notice that $S$ is defined on all nodes $a_i$ with $i \in I$ (it can also be defined trivially for all nodes $b$ as there is a unique path to $z$, and at $z$ also). Hence it is undefined only for nodes $a_j$ with $j \in J$.
 
 
-
-
-
-
-
-Because for input nodes in $I$, they do not have compensating path pair, so the sign function is defined on
-all nodes in $I$.
-
-
-
-We use $a_S$ where $S\subseteq K$ to refer the input vector $\langle a_k\rangle_{a_k\in S}$. Then $a_I\oplus a_J = a_K$ and $z=z(a_K)=z(a_I,a_J)$.		Let $a_I^*$ be the input vector that for all $a_i$ in $I$, $a_i$ gets its maximal (if $S(a_i)=1$) or $a_i$ gets its minimal (if $S(a_i)=-1$).
+We denote $a_S$ for any subset $S\subseteq K$ to refer the input vector $\langle a_k\rangle_{a_k\in S}$. We also denote $a_I\oplus a_J = a_K$ and $z=z(a_K)=z(a_I,a_J)$.
+Consider $a_I^*$ the input vector such that for all $i \in I$, the value for $a_i$ gets its maximal value (if $S(a_i)=1$) or $a_i$ gets its minimal value (if $S(a_i)=-1$).
 
 \begin{lemma} \label{lem:reach_max}
+	$max_a (weight_{a}(z)) = max_{\{a \mid a_I=a^*_I\}} (weight_{a}(z))$
 	
-	1. Node $z$ can get its maximal value if $a_I=a_I^*$
-	
-	2. Similarly, for every node $b$ in the hidden layer (notice that $S(b)$ is always defined since there is only one path from $b$ to $z$), for any fixed input of $a_J$,  $b(\cdot,a_J)$ will get its max/min (if $S(b)=1$ or $-1$) if $a_I=a_I^*$.
+	Further, for every intermediate node $b$ in the hidden layer, for any valuation $a^0_J$, 
+	we have $max_{\{a \mid a_J=a^0_J\}} (weight_{a}(b)) = max_{\{a \mid a_J=a^0_J,a_I=a_I^*\}} (weight_{a}(b))$.	
 \end{lemma}
 
 \begin{proof}
+	For the first statement, we use 
+	$$max_{a_K} (weight_{a_K}(z)) = max_{a_J} max_{a_I} (weight_{a_I,a_J}(z))$$
 	
+	Now, for any fixed input $a^0_J$, we can regard $weight_{a_I,a^0_J}(z)$ as a DNN $D'$ with input nodes $a_i\in I$, with all $a^0_J$ %and their propagation in hidden layers 
+	as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Theorem \ref{th1} (make a more precise corollary) to get that $z(\cdot,a^0_J)$ reaches its maximal value for $a_I=a_I^*$, and we are done.
 	
-	
-	1. This is because \begin{align*}
-		\max_{a_K} z(a_K) = \max_{a_J}\max_{a_I} z(a_I,a_J)
-	\end{align*}
-	
-	For any fixed input of $a_J$, $z(\cdot, a_J)$ can be regarded as a DNN $D'$ with input nodes $a_i\in I$ by regarding all $a_J$ and their propagation in hidden layers as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply the No Diamond theorem, part 1 to get that: (for fixed $a_J$) $z(\cdot,a_J)$ can get its maximal value if for all $a_i$ in $I$, $a_i$ gets its maximal if $S(a_i)=1$ or $a_i$ gets its minimal if $S(a_i)=-1$.
-	
-	If we use $\max(\tilde{a}_I$ to denote above values, then we have $$\max_{a_I}z(a_I,a_J)=z(\max(\tilde{a}_I),a_J).$$ And therefore, $\max z=\max_{a_J} z(\max\tilde{a}_I,a_J)$
-	
-	2. This is simpler because for each fixed input of $a_J$, $$b= B'+\sum_{a_i\in I} w_{ba_i}a_i,$$ where $B'$ is a constant which is the sum of rest terms, including bias and $a_J$. By Lemma \ref{lemma1}, we can easily see the claim of this lemma is true.
+	The second statement is simpler because for each fixed partial input $a^0_J$, 
+	$$b= B^0 +\sum_{a_i\in I} w_{a_i, b} a_i,$$ where $B^0$ is a constant which is the sum of the term including bias and $a^0_J$. Applying Lemma \ref{lemma1}, we obtain the statement.
 \end{proof}
 
+\subsection{MILP abstraction}
 
-Because for any  sound method, like MILP, the upper bound computed will not be smaller that the actual maximal value, so we only need to show, $\mathrm{UB}_{\mathrm{MILP}}\leq \max c$ in any case.
+Consider now an MILP abstraction using the abstraction from \cite{MILP}, 
+where each variable $\alpha_b$ for the ReLU from $b^-$ to $b^+$ is:
+\begin{itemize}
+	\item linear  (i.e. $\alpha_b \in [0,1]$) for $b \in B_{pure}$
+	\item binary/integer (i.e. $\alpha_b \in \{0,1\}$) for $b \notin B_{pure}$
+\end{itemize}
 
-Suppose $O$ is the set of nodes opened. Then for any $b_h\notin O$, $b_h=\sum_{a_i\in I}w_{b_ha_i}+B_h$ ($B_h$ is the bias). Then for any subdomain $d$ in one of  $2^{|O|}$ subdomains, suppose we compute an upper bound when $a_J=\bar{a}_J$ and $a_I=\bar{a}_I$, we show that this upper bound does not exceed the maximal value of $z$. 
+Notice that there is only one layer of ReLUs, in the hidden layer.
+Denote by $\mathrm{UB}$ the maximal bound on $z$ considering the MILP constraints above, with ReLUs being either linear or binary depending on whether $b \in B_{pure}$ or not.
 
-By the algorithm, \begin{align*}
-	\mathrm{UB} = B_z+\sum_{b_h\in O}w_{zb_h}\ReLU(b_h(\bar{a}_I,\bar{a}_J))+\sum_{b_k\notin O}w_{zb_k}\mathrm{Approx}(b_k(\bar{a}_I,\bar{a}_J)).
-\end{align*} Here, $\mathrm{Approx}$ is the approximation function of $\mathrm{ReLU}$. In our case (LP), it will equal to $\ReLU$ if $w_{zb_k}<0$, or a linear function if  if $w_{zb_k}>0$. $\mathrm{ReLU}$ and $\mathrm{Approx}$ are both non-decrease function.
+We want to show that $\mathrm{UB} = \max z$. As the MILP abstraction is a sound overapproximation, 
+it suffices to show that $\mathrm{UB}\leq \max c$.
 
-Then by Lemma \ref{lem:reach_max}, for any fixed $a_J$, for all nodes $b$ in the hidden layer, $b$ will get its max/min (if $S(b)=\mathrm{sign}(w_{zb})=1,-1$) if $a_I=a_I^*$. Hence we have \begin{align*}
-	\mathrm{UB} \leq  B_z+\sum_{b_h\in O}w_{zb_h}\ReLU(b_h(a_I^*,\bar{a}_J))+\sum_{b_k\notin O}w_{zb_k}\mathrm{Approx}(b_k(a_I^*,\bar{a}_J)).
-\end{align*} Meanwhile, when $b_k$ reaches its max or min, we have $\mathrm{Approx}(b_k)=\ReLU(b_k)$, hence we have: \begin{align*}
-	\mathrm{UB} \leq & B_z+\sum_{b}w_{zb}\ReLU(b(a_I^*,\bar{a}_J))\\
-	= & \max_{a_I} z(a_I,\bar{a}_J)\\
-	\leq & \max_{a_J}\max_{a_I} z(a_I,a_J)\\
-	= & \max_{a_K} z(a_K) = \max z
+For any $b_h\in B_{pure}$, we have $b_h=\sum_{a_i\in I}w_{b_ha_i}+B_h$ ($B_h$ is the bias). 
+Denote by $B_O$ the set of nodes $b$ for which $\alpha_b$ is binary, i.e. 
+$b \notin B_{pure}$. %For any subdomain $D \subseteq B_O$, 
+Let $a^0_J$ and $a^0_I$ be fixed inputs, and consider the associated upper bound 
+$\mathrm{UB}_{a^0_J,a^0_I}$. We have:
+%We show that this upper bound does not exceed the maximal value of $z$: 
+
+\begin{align*}
+	\mathrm{UB}_{a^0_J,a^0_I} = B_z + \sum_{b\in B_O} w_{b,z}\ReLU(weight_{a^0_I,a^0_J}(b)) + \sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{a^0_I,a^0_J}(b)).
+\end{align*} 
+
+where $\mathrm{AppB}(weight_{a^0_I,a^0_J}(b))$ is the upper bound of 
+the (LP) approximation of $weight_{a^0_I,a^0_J}(b)$ if $w_{b,z}>0$, and the lower bound
+of its (LP) approximation if $w_{b,z}<0$. 
+
+By Lemma \ref{lem:reach_max}, for any fixed input $a^0_J$, for all nodes $b$ in the hidden layer, if $S(b)=\mathrm{sign}(w_{zb})=1$, then 
+$weight_{a_I,a^0_J}(b)$ will get its maximal value for $a_I=a_I^*$,
+and if $S(b)=\mathrm{sign}(w_{zb})=-1$, then $weight_{a^0_I,a^0_J}(b)$ will get its minimal value for $a_I=a_I^*$.
+Notice that $\mathrm{ReLU}$ and $\mathrm{AppB}$ are both non decreasing functions, and thus:
+
+\begin{align*}
+	\mathrm{UB}_{a^0_J,a^0_I} \leq B_z + \sum_{b\in B_O} w_{b,z}\ReLU(weight_{a^*_I,a^0_J}(b)) +
+	\sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{a^*_I,a^0_J}(b)).
+\end{align*} 
+
+Added FIX:
+Consider $B_{pure}=B^1 \cup B^2$, with $b \in B^1$ iff
+$w_{b,z} = 0$ and $b \in B^2$ iff $w_{b,z} \neq 0$.
+Hence:
+
+$$\sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{a^*_I,a^0_J}(b)) = 
+\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{a^*_I,a^0_J}(b))$$
+
+For $b \in B^2$, we have $w_{a_j,b}=0$ for all $j \in J$
+by definition of $B_{pure}$ (Lemma 4.), hence
+
+$$\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{a^*_I,a^0_J}(b)) = 
+\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{a^*_I}(b))
+=\sum_{b\in B^2} w_{b,z} \mathrm{ReLU}(weight_{a^*_I}(b))
+$$
+
+as $\mathrm{AppB}(weight_{a^*_I}(b))=\mathrm{ReLU}(weight_{a^*_I}(b))$ since 
+$weight_{a^*_I}(b)$ is an extremal value (minimum or maximal) and 
+$\mathrm{AppB}$ equals $\mathrm{ReLU}$ for extremal values (make a lemma about that in the begining).
+
+Hence we have: \begin{align*}
+	\mathrm{UB}_{a^0_J,a^0_I}  \leq & B_z+\sum_{b}w_{zb}\ReLU(b(a_I^*,\bar{a}_J))
+	= \max_{a_I} z(a_I,\bar{a}_J) \\
+	\leq & \max_{a_J}\max_{a_I} z(a_I,a_J) 	= \max_{a_K} weight_{a_K}(z)
 \end{align*}
+
+Considering the maximal over all inputs $a_J,a_I$, we obtain 
+
+$$\mathrm{UB} = max_{a_J,a_I} \mathrm{UB}_{a_J,a_I} \leq \max_{a_J,a_I} weight_{a_J,a_I}(z)$$
+
 
 
 
