@@ -194,7 +194,7 @@ The following needs a chart of pseudo-code
 
 The more general case is when the source node can be any node in a fixed layer. In this case, the process is very similar to previous case, except the value of a pair.
 
-In this case, the value of a pair $P_1,P_2$ with the source node $a$, is $\min(|V_1|,|V_2|)\times \text{upper bound of } a$.
+In this case, the value of a pair $P_1,P_2$ with values $V_1,V_2$ with the source node $a$, is $\min(|V_1|,|V_2|)\times \text{upper bound of } a$.
 
 \subsubsection*{Pseudocode}
 
@@ -222,9 +222,25 @@ The following needs a chart of pseudo-code
 
 
 
-\subsection*{Source nodes in different layers}
+\subsection*{Case: Source nodes in different layers}
 
-The general case is that when the location of source nodes can be different layers. This case is much more complex, because the values of paths from different layers has very different size. This is because the every weight from one node to another is mostly much less than $1$ (absolute value). So longer path will usually has much less values than shorter path.
+The general case is that when the location of source nodes can be different layers. This case is much more complex, because the values of paths from different layers are very different. This is because the every weight from one node to another is mostly much less than $1$ (absolute value). So longer path will usually has much less values than shorter path.
+
+In our experiments, we only consider the paths of length 3 and length 4: that means, the source node is 2 layers or 3 layers before the target node. In this case, we will dynamically adjust the values during the process of node chosen.
+
+\subsubsection*{Pseudocode}
+
+The following needs a chart of pseudo-code
+
+\vspace*{1ex}
+
+1. Generate the two lists of pairs sorted by their values for source nodes in 2 layers before the target node and 3 layers before separately as in the previous case.
+
+2. Enumerate pair from two lists one by one by their values and pick nodes as previous case. When comparing the values between pairs of length 4 and pairs of length 3, multiply the numbers of nodes in 1 layer before to the value of pair of length 4.
+
+In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 with value $V_3$ and a pair $P_4$ of length 4 with value $V_4$, if we have chosen $N$ nodes in layer $L-1$. Then the adjusted values for $P_3$ and $P_4$ are: $$V_3, N\cdot V_4.$$ Then we pick the next pair by the adjust value in two lists.
+
+3. Repeat 2 until choosing sufficiently many nodes.
 
 
 \section{Experimental Evaluation}
@@ -237,7 +253,53 @@ We used MNIST image datasets for our experiments. MNIST contains grayscale image
 1000 images from the test set of each dataset.
 
 Each data example is associated with an $L^\infty$ norm $\varepsilon$ and a target label
-for verification 
+for verification.
+
+\subsection{Experiment setting}
+
+Our experiments are carried by different version codes, and the global process has been changed. 
+
+The basic unit of running is image: all parameters will reset when one image is finished and turn to another image.
+
+\subsubsection*{Global Process}
+
+In the newest version, we do images by batches for 100 images each. For each batch, the running consists of three turns, very fast turn, fast turn and slow turn.
+
+In the very fast turn, it will run DeepPoly for all images to get a preliminary bounds for all nodes and verify the easiest images. Images verified and images with false predication will be deleted from the image list.
+
+Then sort all remain images by the size of uncertainty of DeepPoly from smaller to larger. The fast turn is to run the images from the smaller side to larger side until consecutive two images cannot be verified. All remain images and images tried but not verified will be put into the next list. And then run the list with parameters for slow turn.
+
+\subsubsection*{Run one image}
+
+In the very fast turn, we use DeepPoly. So, all discussion below only consider fast and slow turns.
+
+An image is the basic unit in the running. The running is carrying layer by layer. The bounds obtained in previous layer will be used to build the model for the next layer, till the output layer.
+
+Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
+
+In one layer, in principle, running for nodes are in principle independent and can be done in parallel. In our experiments, some local parameters will be adjusted from nodes to nodes.
+
+
+\subsubsection*{Create Models}
+
+The most important parameter is the number $O$ mentioned in last section:  the number of open nodes. When the program creates a model for a node, we will read this parameter to decide how many nodes to open in this model. This parameter can change during the running of an image by the mechanic of the code.
+
+\subsubsection*{Optimization for a node}
+
+Another group of parameters is for the optimization of models. 
+
+The optimization of a model is carrying by loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
+
+During the loop of optimization, parameters might be changed and the model may be rebuild by the new parameter.
+
+\subsubsection*{Other Setting}
+
+In our experiments, we have not used PGD-attack to rule out images. In principle, there is no obstacle to use PGD-attack and it will save a lots of time.
+
+\subsection{Experiments Result}
+
+The following chart is the summary of 5 experiments.
+
 
 \subsection{Comparison to Incomplete Verifiers}
 
