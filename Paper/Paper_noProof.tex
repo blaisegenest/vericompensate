@@ -22,7 +22,7 @@
 
 \subsection{The neural network and Verification problem}
 
-% test
+% testtest
 
 In this paper, we focus on full-connected neural network. The network has weights and bias to send the input to output along hidden layers. In formula, the input layer of a neural network is a vector $x$ in $\mathbb{R}^{d_0}$, and the $i$-th hidden layer  is a vector in $\mathbb{R}^{d_i}$, and the output layer can be a vector in $\mathbb{R}^{d'}$ or a scale. The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight $W^i$ is matrix of $d_i\times d_{i-1}$, the bias is a vector $b^i$ in $\mathbb{R}^{d_i}$, and the activation function is $\sigma$, then  if the $i-1$-th layer is $\hat{z}^{(i-1)}$, then the value of $i$-th layer is computed by: \begin{align*}
 	{z}^{i} &= W^i\cdot \hat{z}^{(i-1)}+ b^i\\
