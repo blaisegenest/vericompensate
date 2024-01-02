@@ -1,20 +1,30 @@
-\documentclass[8pt]{article}
-\usepackage{amsmath, amsthm, amssymb, amsfonts}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
-\newtheorem{corollary}{Corollary}
+\documentclass{llncs}
+%\usepackage{amsmath, amsthm, amssymb, amsfonts}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{corollary}{Corollary}
 \theoremstyle{definition}
-\newtheorem{definition}{Definition}
+%\newtheorem{definition}{Definition}
 \newcommand{\ReLU}{\mathrm{ReLU}}
 
 
 
-\title{Diamond and Vericompensate}
+\title{I Compensate, therefore I Am \\ (accurate for DNN verification)}
 \date{}
 
 \begin{document}
 
 \maketitle
+
+\begin{abstract}
+  Deep Neural Networks (DNNs) verification is now a mature research field, with many methodologies and tools to verify formaly  that they are correct, with an annual competition to compare them, etc. Formally, the question is, given a DNN and a property to check, does the property hold over a set of inputs of the DNN. This allows e.g. to check local robustness around an input $I$, by checking that the i-th output neuron has the largest weight among all output neurons uniformly over a neighbourhood around $I$.
+  In the most recent years, the focus has been on combining several of these efficient techniques to optimize the speed/accuracy trade-offs (branch and bound, multi neuron encoding, milp encoding). While some relatively large DNNs (tens of thousands of neurons) can be checked very efficiently with modern tools, 
+  some smaller DNNs (hundreds of neurons) are still paradoxally challenging to address with efficient algorithms.
+
+  In this paper, we analyze efficient DNNs algorithm based on abstraction (DeepPoly, PRIMA, different version of Crown), and uncover the main reason for the loss of accuracy, namely compensation. Intuitively, a compensation happens when there are 2 paths 
+   Based on this finding, we propose a novel methodology to obtain interesting trade-offs in terms of speed/accuracy.
+\end{abstract}	
+
 
 \section{Introduction}
 
