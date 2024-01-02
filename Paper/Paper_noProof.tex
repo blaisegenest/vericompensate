@@ -1,0 +1,261 @@
+\documentclass[8pt]{article}
+\usepackage{amsmath, amsthm, amssymb, amsfonts}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newcommand{\ReLU}{\mathrm{ReLU}}
+
+
+
+\title{Diamond and Vericompensate}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\section{Background}
+
+\subsection{The neural network and Verification problem}
+
+% testtesttesttest
+
+In this paper, we focus on full-connected neural network. The network has weights and bias to send the input to output along hidden layers. In formula, the input layer of a neural network is a vector $x$ in $\mathbb{R}^{d_0}$, and the $i$-th hidden layer  is a vector in $\mathbb{R}^{d_i}$, and the output layer can be a vector in $\mathbb{R}^{d'}$ or a scale. The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight $W^i$ is matrix of $d_i\times d_{i-1}$, the bias is a vector $b^i$ in $\mathbb{R}^{d_i}$, and the activation function is $\sigma$, then  if the $i-1$-th layer is $\hat{z}^{(i-1)}$, then the value of $i$-th layer is computed by: \begin{align*}
+	{z}^{i} &= W^i\cdot \hat{z}^{(i-1)}+ b^i\\
+	\hat{z}^{i}(n) &= \sigma({z}^i(n)).
+\end{align*} The vector $\hat{z}$ is called pre-activation values, while $z$ is called post-activation values, and $z^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $x$ to denote the vector of input and  $f(x)$ to denote the output.
+
+
+The verification problem is to determine whether the output of a neural network will be affected under small perturbations to the input. In formula, if we use a distance $d$, and if the $x_0$ is a ordinary input, then the considered domain $\mathcal{D}=\{x: d(x,x_0)<\epsilon\}$ where $\epsilon$ is the parameter measuring the size of perturbation. And the problem will be \begin{align*}
+	\forall x\in\mathcal{D} \   f(x) = f(x_0).
+\end{align*} In some cases, the output is a vector but the aim to get the label of dimension with the minimal value. In this case, the problem can be written as:\begin{align*}
+\forall x \in\mathcal{D} \  \min f(x) = \min f(x_0)
+\end{align*}
+
+If so, the question of verification can turn to the following optimization question: \begin{align*}
+	\min f(x) \ s.t. {z}^{i} &= W^i\cdot \hat{z}^{(i-1)}+ b^i\\
+	\hat{z}^{i}(n) &= \sigma({z}^i(n)), x\in\mathcal{D}.
+\end{align*}
+
+In this paper, we only consider $\ReLU$ function as the activation function: $\sigma(a)=\ReLU(a)=\max(0,a)$. We consider $L^{\infty}$ norm, that is $d(x,x_0)=\max |x(n)-x_0(n)|$, the max value of distance of each dimension.
+
+
+
+\subsection{MILP formation of $\ReLU$ functions}
+
+
+
+It is known in literature that if $x=\ReLU(y)$, and $y$ has its upper and lower bounds $u>0$ and $l<0$ (we call this unstable node; and if $u\geq 0$ or $l\leq 0$ then it is called stable node, and does not need MILP formulation), then this function can be formulated in MILP with one integer variable $a$ valued in ${0,1}$ (i.e., a binary variable) by:
+
+\vspace*{-4ex}
+
+\begin{align*}
+	&x \geq 0, \ 
+	x \geq y-l\cdot (1-a)\\
+	&x \leq y,\ 
+	x \leq u\cdot a
+\end{align*} 
+
+It is a standard method to compute the lower bounds and upper bounds of neurons in a pure $\ReLU$ activation network by MILP optimization, because from previous subsection, the verification problem is equivalent to an optimization problem.
+
+However, the cost of optimization of an MILP model is very expensive, especially when the number of binaries increases: solving MILPs are NP-hard, and often needs exponential time to solve it. A typical relaxation is to change the binary variable $a$ to a continue variable, then it will be equivalent to the standard triangle LP model for $\ReLU$ function.
+
+Our strategy is to restrict the number of binary variables, and this will definitely lose accuracy of results.  The key problem is how to use fewer binary variables to get more accuracy. That is, to choose which node to be binary, and which not.
+
+\begin{definition}
+	1. For a full-connected DNN with $\ReLU$ activation, to compute the upper or lower bound of a node (in a hidden layer or output layer), its MILP model is formulated as follows: 
+	
+	(1) For every node in the input layer $a$, set a $z_a$ variable with the same input interval: $l_a\leq z_a\leq u_a$
+	
+	(2) For each hidden layer $l^i$, set two variables , $z_c,\hat{z}_c$ for each node $c$ in this layer for pre-activation and post-activation. 
+	
+	The constraints for pre-activation $z_a$ is the natural linear equation by the network. 	$$z_c=\sum_{d\in l^{i-1}} W^i_{cd} z_d+b^i_c.$$
+	
+	
+	The constraints for $\hat{z}_a$ is defined by the standard MILP formulation mentioned above with known upper bound and lower bound as parameters.
+	
+	\vspace*{1ex}
+	
+	Since we only consider such MILP models, so when we say an MILP model, it is for a full-connected DNN with $\ReLU$ activation. 
+	
+	2. In an MILP model, we say a $\ReLU$ node is open, if the binary variable corresponds to this function is still an binary variable; otherwise, it is relaxed as a continue variable. 
+\end{definition}
+
+We aim is to find an algorithm, to decide which nodes should be opened such that we can have more accuracy.
+
+\section{Compensate, Diamond and Path chosen}
+
+In this section, we will develop the process of open node chosen. 
+
+
+
+\subsection{Compensating pair}
+
+In this subsection, we will explore the key factor for the loss of accuracy in our LP/MILP models. The answer is the \emph{compensating pair}.
+
+
+In above figure, $a$ is the input neuron, $bc,b'c'$ are two nodes in the hidden layer, before and after the activation function, and $d$ is the unique output neuron. The numbers next to the arrows are the weights. So, $W_{ba}=1$ and $W_{b'a}=-1$, $W_{dc}=W_{dc'}=1$. The paths, $a$ to $bc$ to $d$, and $a$ to $b'c'$ to $d$, is the so called compensating pair, or a Diamond. The key point is that, the products of all weights in the paths, have two different signs: along $bc$, the product is (strictly) positive, while along $b'c'$, the product is (strictly) negative.
+
+But if both pairs are negative or positive, LP or even Interval Arithmetic will get the exact values of lower and upper bounds.
+
+The definition of compensating pair is as follows:
+
+\begin{definition} In a full-connected network with $\ReLU$ as activation function:
+	
+	1. A path is a sequence of nodes $\langle a,b,c,d,e,\cdots\rangle$ of nodes from one layer by one layer. We call the first node source node and the last node target node.  
+	
+	2. The \emph{Value} of a path is the product of of weights along the path (with sign): for a path $\langle a,b,c,d,e,\cdots\rangle$, its values is $$V = W_{ba}\cdot W_{cb}\cdot W_{dc}\cdot W_{ed}\cdot \cdots$$
+	
+	3. A compensating pair is a pair of path with the same starting node and end node, such that the two paths have no common node, and the values of two paths have opposite signs (one is strictly positive and another is strictly negative).
+	
+	We also use \emph{Diamond} to call a compensating pair in the network.
+\end{definition}
+
+
+To explain the of meaning of compensating pair, we introduce the following theorems about Diamond:
+
+\begin{theorem}[No Diamond Theorem, part 1]
+	For a full-connected network with $\ReLU$ as the unique activation function, if there is no Diamond, then for any approximation that at least as accurate as Interval Arithmetic, it can get the exact upper and lower bounds of all output nodes and all hidden nodes.
+\end{theorem}
+
+Of course, in practice, it is very unlike to have a network without any Diamond. Therefore, the second theorem is more important in practice.
+
+\begin{theorem}[No Diamond Theorem, part 2]
+	For a full-connected network with $\ReLU$ as the unique activation function. If we open all nodes that occurs in a compensating pair path, then the we can get the exactly bounds.
+\end{theorem}
+
+The proofs of above theorems are in the Appendix.
+
+\subsection{Choice of path and open nodes}
+
+Based on No Diamond Theorem, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we will set a parameter $O$ and choose up to $O$ many nodes to open.
+
+In this subsection, we will introduce the process of open node chosen: given a target node, choose up to $O$ many nodes to open.
+
+
+Basically, we do the process of open nodes chosen for one node each time, that is, receive one node as input each time. But in principle, we can develop a method receive more than one nodes as input. But in our experiences, this does not work well.  
+
+
+
+\subsubsection*{Value of a pair}
+
+
+First we define the value of a compensating pair: for a compensating pair, if $V_1,V_2$ are the values of two paths, then the value of this compensating pair is defined by: $V=\min(|V_1|,|V_2|)$.
+
+
+\subsection*{Case: Source node fixed}
+
+The simplest case is we only consider compensating pairs with a fixed source node. 
+
+\subsubsection*{Sort all paths by values}
+
+The first step is to sort all paths by their values and divide paths into two groups, a group of paths with positive values and a group of paths with negative values.
+
+Since we have set a bound $O$ for open nodes, we will store  a fixed number of path for each group.
+
+\subsubsection*{Sort pairs by values}
+
+The second step is to sort all pairs by their values. Enumerate paths from the positive group and the negative group one by one and put the pairs obtained into a new list of pairs. Then sort all pair by their values from largest to the smallest: recall that the value of a pair $\langle P_1,P_2\rangle$ is $\min(|V_1|,|V_2|)$.
+
+\subsubsection*{Choosing nodes}
+
+The third step is to choose nodes from the list of pairs. According to the sorted list of pairs, enumerate pair one by one; for each pair, pick the nodes unstable in the two paths except the source and target node into the open node list. Repeat this process until $O$ nodes chosen or reach the end of the list.
+
+\subsubsection*{Pseudocode}
+
+The following needs a chart of pseudo-code
+
+\vspace*{1ex}
+
+1. Enumerate all path from the fixed source node to the target node. 
+
+2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
+
+3. Divide all paths into two group: positive paths and negative paths.
+
+4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
+
+5. For each pair, its value is the min of the weight positive paths and absolute negative values.
+
+6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
+
+7. Repeat 6 until choosing sufficiently many nodes.
+
+
+
+
+
+
+\subsection*{Case: Source nodes in a fixed layer}
+
+The more general case is when the source node can be any node in a fixed layer. In this case, the process is very similar to previous case, except the value of a pair.
+
+In this case, the value of a pair $P_1,P_2$ with the source node $a$, is $\min(|V_1|,|V_2|)\times \text{upper bound of } a$.
+
+\subsubsection*{Pseudocode}
+
+The following needs a chart of pseudo-code
+
+\vspace*{1ex}
+
+1. Enumerate all path from the fixed source node to the target node. 
+
+2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
+
+3. Divide all paths into two group: positive paths and negative paths.
+
+4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
+
+5. For each pair, its value is the min of the weight positive paths and absolute negative values, times the upper bound (at least 0) of the source node.
+
+6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
+
+7. Repeat 6 until choosing sufficiently many nodes.
+
+
+
+
+
+
+
+\subsection*{Source nodes in different layers}
+
+The general case is that when the location of source nodes can be different layers. This case is much more complex, because the values of paths from different layers has very different size. This is because the every weight from one node to another is mostly much less than $1$ (absolute value). So longer path will usually has much less values than shorter path.
+
+
+\section{Experimental Evaluation}
+
+The neural network certification benchmarks for fully connected networks were run on a 32 core
+GHz Intel with 256 GB of main memory. We use Gurobi 9.52 for solving MILP and LP problems
+
+
+We used MNIST image datasets for our experiments. MNIST contains grayscale images of size 28 × 28 pixels. For our evaluation, we chose the first
+1000 images from the test set of each dataset.
+
+Each data example is associated with an $L^\infty$ norm $\varepsilon$ and a target label
+for verification 
+
+\subsection{Comparison to Incomplete Verifiers}
+
+We compare our method to two famous verifiers (their incomplete mode): PRIMA and $\beta$-Crown on 5 typical MNIST models. Basically, our method can exceed PRIMA on both accuracy and speed, and exceed $\beta$-Crown on accuracy. 
+
+
+We do tests on 5 typical MNIST models.
+
+\section{Related Work}
+
+\section{Conclusion}
+
+\section*{Appendix: Proofs of No Diamond Theorem}
+
+
+
+
+
+\end{document}
+
+
