@@ -17,6 +17,7 @@
 \usepackage{url}
 \usepackage{tikz}
 \usepackage{calc}
+\usetikzlibrary{positioning, arrows.meta,calc}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -60,36 +61,44 @@
 
 \section{Background}
 
-\subsection{The neural network and Verification problem}
+We follow some notions in PRIMA's and Beta-Crown's papers: we use lower case Latin for scalars, bold for vectors
+$\boldsymbol{z}$, capitalized bold for matrices $\boldsymbol{W}$. In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
+
+
+
+
+\subsection{Neural Network and Verification}
 
 % testtesttesttest
 
-In this paper, we focus on full-connected neural network. The network has weights and bias to send the input to output along hidden layers. In formula, the input layer of a neural network is a vector $x$ in $\mathbb{R}^{d_0}$, and the $i$-th hidden layer  is a vector in $\mathbb{R}^{d_i}$, and the output layer can be a vector in $\mathbb{R}^{d'}$ or a scale. The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight $W^i$ is matrix of $d_i\times d_{i-1}$, the bias is a vector $b^i$ in $\mathbb{R}^{d_i}$, and the activation function is $\sigma$, then  if the $i-1$-th layer is $\hat{z}^{(i-1)}$, then the value of $i$-th layer is computed by: \begin{align*}
-	{z}^{i} &= W^i\cdot \hat{z}^{(i-1)}+ b^i\\
-	\hat{z}^{i}(n) &= \sigma({z}^i(n)).
-\end{align*} The vector $\hat{z}$ is called pre-activation values, while $z$ is called post-activation values, and $z^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $x$ to denote the vector of input and  $f(x)$ to denote the output.
+We focus on full-connected neural network. The network has weights and bias to send the input to output along hidden layers. In formula, the input layer of a neural network is a vector $\boldsymbol{x}$ in $\mathbb{R}^{d_0}$, and the $i$-th hidden layer  is a vector in $\mathbb{R}^{d_i}$, and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight $\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, the bias is a vector $\boldsymbol{b}^i$ in $\mathbb{R}^{d_i}$, and the activation function is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, then the value of $i$-th layer is computed by: \begin{align*}
+	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \boldsymbol{b}^i\\
+	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)).
+\end{align*} The vector $\hat{\boldsymbol{z}}$ is called post-activation values, and $\boldsymbol{z}$ is called pre-activation values, and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
 
 
-The verification problem is to determine whether the output of a neural network will be affected under small perturbations to the input. In formula, if we use a distance $d$, and if the $x_0$ is a ordinary input, then the considered domain $\mathcal{D}=\{x: d(x,x_0)<\epsilon\}$ where $\epsilon$ is the parameter measuring the size of perturbation. And the problem will be \begin{align*}
-	\forall x\in\mathcal{D} \   f(x) = f(x_0).
+The verification problem is to determine whether the output of a neural network will be affected under small perturbations to the input. In formula, if we use a distance $d$, and if the $\boldsymbol{x}_0$ is a ordinary input, then the considered domain $\mathcal{D}=\{x: d(\boldsymbol{x},\boldsymbol{x}_0)<\varepsilon\}$ where $\varepsilon$ is the parameter measuring the size of perturbation. And the problem will be \begin{align*}
+	\forall \boldsymbol{x}\in\mathcal{D} \   f(\boldsymbol{x}) = f(\boldsymbol{x}_0).
 \end{align*} In some cases, the output is a vector but the aim to get the label of dimension with the minimal value. In this case, the problem can be written as:\begin{align*}
-\forall x \in\mathcal{D} \  \min f(x) = \min f(x_0)
+\forall \boldsymbol{x} \in\mathcal{D} \  \min f(\boldsymbol{x}) = \min f(\boldsymbol{x}_0)
 \end{align*}
 
 If so, the question of verification can turn to the following optimization question: \begin{align*}
-	\min f(x) \ s.t. {z}^{i} &= W^i\cdot \hat{z}^{(i-1)}+ b^i\\
-	\hat{z}^{i}(n) &= \sigma({z}^i(n)), x\in\mathcal{D}.
+	\min f(\boldsymbol{x}) \ s.t. {\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ b^i\\
+	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)), \boldsymbol{x}\in\mathcal{D}.
 \end{align*}
 
-In this paper, we only consider $\ReLU$ function as the activation function: $\sigma(a)=\ReLU(a)=\max(0,a)$. We consider $L^{\infty}$ norm, that is $d(x,x_0)=\max |x(n)-x_0(n)|$, the max value of distance of each dimension.
+In this paper, we only consider $\ReLU$ function as the activation function: $\sigma(a)=\ReLU(a)=\max(0,a)$. We will consider $L^{\infty}$ norm, that is $$d(\boldsymbol{x},\boldsymbol{x}_0)=\max |\boldsymbol{x}(n)-\boldsymbol{x}_0(n)|,$$ the max value of distance of each dimension.
 
 
 
 \subsection{MILP formation of $\ReLU$ functions}
 
+In literature, many methods have been used to approximate $\ReLU$ functions. One of them is MILP (or MIP, Mixed Integer Linear Programming).
 
+For a activation $x=\ReLU(y)$, if we already know $y's$ rough upper and lower bounds $u,l$, then if $u>0$ and $l<0$, we call $y$ is unstable; otherwise, $y$ is stable. In practice, stable node is easier because $\ReLU$ function becomes a linear function on this node. The key problem is to deal with unstable nodes.
 
-It is known in literature that if $x=\ReLU(y)$, and $y$ has its upper and lower bounds $u>0$ and $l<0$ (we call this unstable node; and if $u\geq 0$ or $l\leq 0$ then it is called stable node, and does not need MILP formulation), then this function can be formulated in MILP with one integer variable $a$ valued in ${0,1}$ (i.e., a binary variable) by:
+In literature, if $x=\ReLU(y)$, and $y$ is unstable, then this function can be formulated in MILP with one integer variable $a$ valued in ${0,1}$ (i.e., a binary variable) by:
 
 \vspace*{-4ex}
 
@@ -100,7 +109,7 @@ It is known in literature that if $x=\ReLU(y)$, and $y$ has its upper and lower 
 	x \leq u\cdot a
 \end{align*} 
 
-It is a standard method to compute the lower bounds and upper bounds of neurons in a pure $\ReLU$ activation network by MILP optimization, because from previous subsection, the verification problem is equivalent to an optimization problem.
+MILP becomes one of standard methods to compute the lower bounds and upper bounds of neurons in a pure $\ReLU$ activation network. Combining with the discussion from previous subsection, the verification problem is equivalent to an MILP optimization problem.
 
 However, the cost of optimization of an MILP model is very expensive, especially when the number of binaries increases: solving MILPs are NP-hard, and often needs exponential time to solve it. A typical relaxation is to change the binary variable $a$ to a continue variable, then it will be equivalent to the standard triangle LP model for $\ReLU$ function.
 
@@ -129,16 +138,50 @@ We aim is to find an algorithm, to decide which nodes should be opened such that
 
 \section{Compensate, Diamond and Node Chosen}
 
-In this section, we will develop the process of open node chosen. 
+In this section, we will explore the key factor for the loss of accuracy in our LP/MILP models: \emph{compensating pair}. And we will develop a process of open node chosen by the principle of \emph{Compensating Pairs}. 
 
 
 
 \subsection{Compensating pair}
 
-In this subsection, we will explore the key factor for the loss of accuracy in our LP/MILP models. The answer is the \emph{compensating pair}.
+The basic mode of compensating pair is as follows:
 
+\vspace*{2ex}
 
-In above figure, $a$ is the input neuron, $bc,b'c'$ are two nodes in the hidden layer, before and after the activation function, and $d$ is the unique output neuron. The numbers next to the arrows are the weights. So, $W_{ba}=1$ and $W_{b'a}=-1$, $W_{dc}=W_{dc'}=1$. The paths, $a$ to $bc$ to $d$, and $a$ to $b'c'$ to $d$, is the so called compensating pair, or a Diamond. The key point is that, the products of all weights in the paths, have two different signs: along $bc$, the product is (strictly) positive, while along $b'c'$, the product is (strictly) negative.
+\begin{tikzpicture}
+	\node[circle, draw= purple, thick, minimum width = 20,
+	minimum height = 20] (input1) {$a$};
+
+	
+	% Hidden layers
+	\node[circle, draw= blue, thick, minimum width = 20,
+	minimum height = 20] (hidden1) at ($(input1) + (2,1)$) {$b$};
+	\node[circle, draw= blue, thick] (hidden2) at ($(input1) + (2,-1)$) {$b'$};
+	
+	\node[circle, draw= blue, thick, minimum width = 20,
+	minimum height = 20] (hidden3) at ($(input1) + (4,1)$){$c$};
+	\node[circle, draw= blue, thick] (hidden4) at ($(input1) + (4,-1)$) {$c'$};
+	
+	% Output layer
+	\node[circle, draw= blue, thick, minimum width = 20,
+	minimum height = 20] (output) at ($(input1) + (6,0)$){$d$};
+	
+	% Connections
+	\draw[->,thick,draw= red] (input1) -- (hidden1) node[midway, below] {$1$};
+	\draw[->,thick,draw= green] (input1) -- (hidden2)node[midway, below] {$-1$};
+	
+	\draw[->,thick,draw= red] (hidden1) -- (hidden3) node[midway, below] {$\ReLU$};
+	\draw[->,thick,draw= green] (hidden2) -- (hidden4) node[midway, below] {$\ReLU$};
+	
+	\draw[->,thick,draw= red] (hidden3) -- (output)node[midway, below] {$1$};
+	\draw[->,thick,draw= green] (hidden4) -- (output)node[midway, below] {$1$};
+\end{tikzpicture}
+
+\vspace*{2ex}
+
+In this figure, $a$ is the input neuron; $bc,b'c'$ are two nodes in the hidden layer, pre and post activation; and $d$ is the unique output neuron. The numbers next to the arrows are the weights. So, $W_{ba}=1$ and $W_{b'a}=-1$, $W_{dc}=W_{dc'}=1$. The paths, $a$ to $bc$ to $d$, and $a$ to $b'c'$ to $d$, is the so called \emph{Compensating Pair}. Because this figure looks like a diamond, it is also called a Diamond. 
+
+The key point is that, the products of all weights in the paths, have two different signs: along $bc$, the product is (strictly) positive, while along $b'c'$, the product is (strictly) negative.
 
 But if both pairs are negative or positive, LP or even Interval Arithmetic will get the exact values of lower and upper bounds.
 
@@ -283,19 +326,9 @@ In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 w
 3. Repeat 2 until choosing sufficiently many nodes.
 
 
-\section{Experimental Evaluation}
-
-The neural network certification benchmarks for fully connected networks were run on a 32 core
-GHz Intel with 256 GB of main memory. We use Gurobi 9.52 for solving MILP and LP problems
+\section{Verification Framework}
 
 
-We used MNIST image datasets for our experiments. MNIST contains grayscale images of size 28 × 28 pixels. For our evaluation, we chose the first
-1000 images from the test set of each dataset.
-
-Each data example is associated with an $L^\infty$ norm $\varepsilon$ and a target label
-for verification.
-
-\subsection{Experiment setting}
 
 Our experiments are carried by different version codes, and the global process has been changed. 
 
@@ -336,9 +369,39 @@ During the loop of optimization, parameters might be changed and the model may b
 
 In our experiments, we have not used PGD-attack to rule out images. In principle, there is no obstacle to use PGD-attack and it will save a lots of time.
 
+
+
+\section{Experimental Evaluation}
+
+The neural network certification benchmarks for fully connected networks were run on a 32 core
+GHz Intel with 256 GB of main memory. We use Gurobi 9.52 for solving MILP and LP problems
+
+
+We used MNIST image datasets for our experiments. MNIST contains grayscale images of size 28 × 28 pixels. For our evaluation, we chose the first
+1000 images from the test set of each dataset.
+
+Each data example is associated with an $L^\infty$ norm $\varepsilon$ and a target label
+for verification.
+
+\subsection{Experiments about Node Chosen}
+
+The first group of experiments is to test the direct effect of node chosen by compensating pair, comparing to random chosen. We use the average of uncertainty of all nodes in a layer to measure the effect of node chosen: for a node $a$, its uncertainty $UN(a) = UB(a)-LB(a)$, and the average uncertainty of a layer $l$ is $$UN(l) = \dfrac{\sum_{a\in l}UN(a)}{|l|}.$$
+
+The test neural network is MNIST fully-connected $6\times 100$, and the test image is the image 59 in the standard MNIST image database. This image can have more unstable nodes in each layer.
+
+\subsubsection*{Node chosen in second hidden layer}
+
+The following table shows the average uncertainty of the second hidden layer when choosing different numbers of open nodes by random or by compensating pairs.
+
+
+\subsubsection*{Node chosen in the third hidden layer}
+
+The following table shows the average uncertainty of the third hidden layer when choosing different numbers of open nodes, by random or by compensating pairs.
+
+
 \subsection{Experiments Results}
 
-The following chart is the summary of 5 experiments.
+The following table is the summary of 5 experiments.
 
 
 \subsection{Comparison to Incomplete Verifiers}
