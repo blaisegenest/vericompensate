@@ -51,8 +51,7 @@
   In the most recent years, the focus has been on combining several of these efficient techniques to optimize the speed/accuracy trade-offs (branch and bound, multi neuron encoding, milp encoding). While some relatively large DNNs (tens of thousands of neurons) can be checked very efficiently with modern tools, 
   some smaller DNNs (hundreds of neurons) are still paradoxally challenging to address with efficient algorithms.
 
-  In this paper, we analyze efficient DNNs algorithm based on abstraction (DeepPoly, PRIMA, different version of Crown), and uncover the main reason for the loss of accuracy, namely compensation. Intuitively, a compensation happens when there are 2 paths 
-   Based on this finding, we propose a novel methodology to obtain interesting trade-offs in terms of speed/accuracy.
+  In this paper, we analyze efficientalgorithms to verify ReLU DNNs, based on abstractions (DeepPoly, Linear Programing, PRIMA, different version of Crown), and uncover the main reason for the loss of accuracy, namely compensation. Intuitively, a compensation happens when there are 2 paths from the same neuron to the same neuron, one with positive and one with negative (product of) weights, which therefore (partly) compensate each other. It is however hard to compute exactly by how much is the compensation due to the ReLU activation functions. Based on this finding, we propose a novel methodology to obtain interesting trade-offs in terms of speed/accuracy, using many queries with few 'open' ReLU nodes (for which we consider both linear modes), rather than the usual few queries with potentially many 'open' ReLU nodes.
 \end{abstract}	
 
 
