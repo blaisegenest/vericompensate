@@ -193,16 +193,16 @@ The general formal definition of compensating pair is as follows:
 	
 	2. The \emph{Value} of a path is the product of of weights along the path (with sign): for a path $\langle a,b,c,d,e,\cdots\rangle$, its values is $$V = W_{ba}\cdot W_{cb}\cdot W_{dc}\cdot W_{ed}\cdot \cdots$$
 	
-	3. A \emph{compensating pair} is a pair of paths with the same source node and target node, such that the two paths have no common node, and the values of two paths have opposite signs (one is strictly positive and another is strictly negative).
+	3. A \emph{Compensating Pair} is a pair of paths with the same source node and target node, such that the two paths have no common node, and the values of two paths have opposite signs (one is strictly positive and another is strictly negative).
 	
 	We also use \emph{Diamond} to call a compensating pair in the network.
 \end{definition}
 
 
-The following theorem shows the meaning of compensating pairs:
+The following theorem shows the role of compensating pairs in the computation:
 
 \begin{theorem}[No Diamond Theorem, part 1]
-	For a full-connected network with $\ReLU$ as the unique activation function, if there is no Diamond, then for any approximation that at least as accurate as Interval Arithmetic, it can get the exact upper and lower bounds of all output nodes and all hidden nodes.
+	For a full-connected network with $\ReLU$ as the unique activation function, if there is no Diamond, then for any method/approximation that at least as accurate as Interval Arithmetic, it can get the exact upper and lower bounds of all output nodes and all hidden nodes.
 \end{theorem}
 
 Of course, in practice, it is very unlike to have a network without any Diamond. Therefore, the second theorem is more important in practice.
@@ -213,93 +213,93 @@ Of course, in practice, it is very unlike to have a network without any Diamond.
 
 The proofs of above theorems are in the Appendix.
 
-\subsection{Choice of path and open nodes}
+\subsection{Paths and Open Nodes Chosen}
 
-In this subsection, we will introduce the method to choose open nodes for MILP model by compensating pairs.
+In this subsection, we will introduce the method to choose open nodes for MILP model by considering compensating pairs.
 
-Based on No Diamond Theorem, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we will set a parameter $O$ and choose up to $O$ many nodes to open.
-
-In this subsection, we will introduce the process of open node chosen: given a target node, choose up to $O$ many nodes to open.
+Based on No Diamond Theorem, for a target node, in its MILP model, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we can only choose a limited number of compensating pairs and nodes. This is by setting a parameter $O$ such that the process only choose at most $O$ many nodes to open. Therefore, in this subsection, we will introduce the process of open node chosen: given a target node, choose up to $O$ many nodes to open.
 
 
-Basically, we do the process of open nodes chosen for one node each time, that is, receive one node as input each time. But in principle, we can develop a method receive more than one nodes as input. But in our experiences, this does not work well.  
+Basically, we do the process of open nodes chosen for one target node each time, that is, receive one target node (and other data) as input each time. But in principle, we can develop a method receive more than one nodes as input. But in our experiences, this does not work well.  
 
-
+This process is not the unique method but the most natural way to choose open nodes. We introduce it in three steps from the simplest case to more complex case.
 
 \subsubsection*{Value of a pair}
 
 
-First we define the value of a compensating pair: for a compensating pair, if $V_1,V_2$ are the values of two paths, then the value of this compensating pair is defined by: $V=\min(|V_1|,|V_2|)$.
+For a compensating pair, if $V_1,V_2$ are the values of two paths, then the value of this compensating pair is defined by: $V=\min(|V_1|,|V_2|)$.
 
 
 \subsection*{Case: Source node fixed}
 
-The simplest case is we only consider compensating pairs with a fixed source node. 
+The simplest case is when we only consider compensating pairs with a fixed source node. 
 
-\subsubsection*{Sort all paths by values}
+In this case, the process is very simple: enumerate all compensating pairs, and then sort them by their values. Finally, from the first to the last compensating pair, pick all unstable nodes in its two paths except the target and source nodes into the list of open nodes, until $O$ many open nodes. 
 
-The first step is to sort all paths by their values and divide paths into two groups, a group of paths with positive values and a group of paths with negative values.
+%\subsubsection*{Sort all paths by values}
+%
+%The first step is to sort all paths by their values and divide paths into two groups, a group of paths with positive values and a group of paths with negative values.
+%
+%Since we have set a bound $O$ for open nodes, we will store  a fixed number of path for each group.
+%
+%\subsubsection*{Sort pairs by values}
+%
+%The second step is to sort all pairs by their values. Enumerate paths from the positive group and the negative group one by one and put the pairs obtained into a new list of pairs. Then sort all pair by their values from largest to the smallest: recall that the value of a pair $\langle P_1,P_2\rangle$ is $\min(|V_1|,|V_2|)$.
+%
+%\subsubsection*{Choosing nodes}
+%
+%The third step is to choose nodes from the list of pairs. According to the sorted list of pairs, enumerate pair one by one; for each pair, pick the nodes unstable in the two paths except the source and target node into the open node list. Repeat this process until $O$ nodes chosen or reach the end of the list.
+%
+%\subsubsection*{Pseudocode}
+%
+%The following needs a chart of pseudo-code
+%
+%\vspace*{1ex}
+%
+%1. Enumerate all path from the fixed source node to the target node. 
+%
+%2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
+%
+%3. Divide all paths into two group: positive paths and negative paths.
+%
+%4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
+%
+%5. For each pair, its value is the min of the weight positive paths and absolute negative values.
+%
+%6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
+%
+%7. Repeat 6 until choosing sufficiently many nodes.
+%
 
-Since we have set a bound $O$ for open nodes, we will store  a fixed number of path for each group.
-
-\subsubsection*{Sort pairs by values}
-
-The second step is to sort all pairs by their values. Enumerate paths from the positive group and the negative group one by one and put the pairs obtained into a new list of pairs. Then sort all pair by their values from largest to the smallest: recall that the value of a pair $\langle P_1,P_2\rangle$ is $\min(|V_1|,|V_2|)$.
-
-\subsubsection*{Choosing nodes}
-
-The third step is to choose nodes from the list of pairs. According to the sorted list of pairs, enumerate pair one by one; for each pair, pick the nodes unstable in the two paths except the source and target node into the open node list. Repeat this process until $O$ nodes chosen or reach the end of the list.
-
-\subsubsection*{Pseudocode}
-
-The following needs a chart of pseudo-code
-
-\vspace*{1ex}
-
-1. Enumerate all path from the fixed source node to the target node. 
-
-2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
-
-3. Divide all paths into two group: positive paths and negative paths.
-
-4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
-
-5. For each pair, its value is the min of the weight positive paths and absolute negative values.
-
-6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
-
-7. Repeat 6 until choosing sufficiently many nodes.
 
 
 
 
-
-
-\subsection*{Case: Source nodes in a fixed layer}
+\subsection*{Case: Source nodes in one layer}
 
 The more general case is when the source node can be any node in a fixed layer. In this case, the process is very similar to previous case, except the value of a pair.
 
-In this case, the value of a pair $P_1,P_2$ with values $V_1,V_2$ with the source node $a$, is $\min(|V_1|,|V_2|)\times \text{upper bound of } a$.
+In this case, for a pair $P_1,P_2$ with values $V_1,V_2$ with the source node $a$, its value is $\min(|V_1|,|V_2|)\times \text{upper bound of } a$.
 
-\subsubsection*{Pseudocode}
-
-The following needs a chart of pseudo-code
-
-\vspace*{1ex}
-
-1. Enumerate all path from the fixed source node to the target node. 
-
-2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
-
-3. Divide all paths into two group: positive paths and negative paths.
-
-4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
-
-5. For each pair, its value is the min of the weight positive paths and absolute negative values, times the upper bound (at least 0) of the source node.
-
-6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
-
-7. Repeat 6 until choosing sufficiently many nodes.
+%\subsubsection*{Pseudocode}
+%
+%The following needs a chart of pseudo-code
+%
+%\vspace*{1ex}
+%
+%1. Enumerate all path from the fixed source node to the target node. 
+%
+%2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
+%
+%3. Divide all paths into two group: positive paths and negative paths.
+%
+%4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
+%
+%5. For each pair, its value is the min of the weight positive paths and absolute negative values, times the upper bound (at least 0) of the source node.
+%
+%6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
+%
+%7. Repeat 6 until choosing sufficiently many nodes.
 
 
 
@@ -309,9 +309,9 @@ The following needs a chart of pseudo-code
 
 \subsection*{Case: Source nodes in different layers}
 
-The general case is that when the location of source nodes can be different layers. This case is much more complex, because the values of paths from different layers are very different. This is because the every weight from one node to another is mostly much less than $1$ (absolute value). So longer path will usually has much less values than shorter path.
+The general case is that when the location of source nodes can be in different layers. This case is much more complex, because the scale level of values of paths from different layers are very different: usually a weight will be very small since every layer has a large number of nodes, therefore values of longer paths are products of more small numbers, and is definitely much smaller. If we sort all compensating pairs from different layers directly, then a very long initial segment of this list will be occupied by compensating pairs with the shortest length. Therefore, we need use some scale factors when comparing values of compensating pairs of different length.
 
-In our experiments, we only consider the paths of length 3 and length 4: that means, the source node is 2 layers or 3 layers before the target node. In this case, we will dynamically adjust the values during the process of node chosen.
+In our experiments, we only consider the paths of length 3 (the source node is 2 layers before) and length 4 (the source node is 3 layers before). We will dynamically adjust the values during the process of node chosen.
 
 \subsubsection*{Pseudocode}
 
@@ -332,11 +332,27 @@ In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 w
 
 
 
-Our experiments are carried by different version codes, and the global process has been changed. 
+%Our experiments are carried by different version codes, and the global process has been changed. 
 
-The basic unit of running is image: all parameters will reset when one image is finished and turn to another image.
+We explain the framework in 4 subsections: precomputation, process for one image, process for one node, and global process.
 
-\subsubsection*{Global Process}
+\subsection{Process for one image}
+
+The basic unit of running is image: all parameters will be reset when one image is finished.
+
+The process for one image is clear: compute the upper and lower bounds of nodes layer by layer to the output layer. 
+
+Suppose we have reached a new layer $l_i$ and have upper and lower bounds of all nodes in previous layers. Then we will compute bounds of every node in $l_i$ in parallel.
+
+\subsection{Precomputation}
+
+The open node chosen is the key part of the whole framework, and it will cost two much time without precomputation because we must do open node chosen for every node.
+
+
+\subsection{Process for one node}
+
+
+\subsection{Global Process}
 
 In the newest version, we do images by batches for 100 images each. For each batch, the running consists of three turns, very fast turn, fast turn and slow turn.
 
