@@ -181,25 +181,25 @@ The basic mode of compensating pair is as follows:
 
 In this figure, $a$ is the input neuron; $bc,b'c'$ are two nodes in the hidden layer, pre and post activation; and $d$ is the unique output neuron. The numbers next to the arrows are the weights. So, $W_{ba}=1$ and $W_{b'a}=-1$, $W_{dc}=W_{dc'}=1$. The paths, $a$ to $bc$ to $d$, and $a$ to $b'c'$ to $d$, is the so called \emph{Compensating Pair}. Because this figure looks like a diamond, it is also called a Diamond. 
 
-The key point is that, the products of all weights in the paths, have two different signs: along $bc$, the product is (strictly) positive, while along $b'c'$, the product is (strictly) negative.
+The characteristic is that, the products of all weights in the paths, have two different signs: along $bc$, the product is (strictly) positive, while along $b'c'$, the product is (strictly) negative. This is key reason why fast approximation like LP cannot get the exact upper and lower bounds.
 
-But if both pairs are negative or positive, LP or even Interval Arithmetic will get the exact values of lower and upper bounds.
+If both pairs are negative or positive, LP or even Interval Arithmetic will get the exact values of lower and upper bounds.
 
-The definition of compensating pair is as follows:
+The general formal definition of compensating pair is as follows:
 
 \begin{definition} In a full-connected network with $\ReLU$ as activation function:
 	
-	1. A path is a sequence of nodes $\langle a,b,c,d,e,\cdots\rangle$ of nodes from one layer by one layer. We call the first node source node and the last node target node.  
+	1. A path is a sequence of nodes $\langle a,b,c,d,e,\cdots\rangle$ of nodes that goes consecutively through each layer. We call the first node source node and the last node target node.  
 	
 	2. The \emph{Value} of a path is the product of of weights along the path (with sign): for a path $\langle a,b,c,d,e,\cdots\rangle$, its values is $$V = W_{ba}\cdot W_{cb}\cdot W_{dc}\cdot W_{ed}\cdot \cdots$$
 	
-	3. A compensating pair is a pair of path with the same starting node and end node, such that the two paths have no common node, and the values of two paths have opposite signs (one is strictly positive and another is strictly negative).
+	3. A \emph{compensating pair} is a pair of paths with the same source node and target node, such that the two paths have no common node, and the values of two paths have opposite signs (one is strictly positive and another is strictly negative).
 	
 	We also use \emph{Diamond} to call a compensating pair in the network.
 \end{definition}
 
 
-To explain the of meaning of compensating pair, we introduce the following theorems about Diamond:
+The following theorem shows the meaning of compensating pairs:
 
 \begin{theorem}[No Diamond Theorem, part 1]
 	For a full-connected network with $\ReLU$ as the unique activation function, if there is no Diamond, then for any approximation that at least as accurate as Interval Arithmetic, it can get the exact upper and lower bounds of all output nodes and all hidden nodes.
@@ -214,6 +214,8 @@ Of course, in practice, it is very unlike to have a network without any Diamond.
 The proofs of above theorems are in the Appendix.
 
 \subsection{Choice of path and open nodes}
+
+In this subsection, we will introduce the method to choose open nodes for MILP model by compensating pairs.
 
 Based on No Diamond Theorem, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we will set a parameter $O$ and choose up to $O$ many nodes to open.
 
