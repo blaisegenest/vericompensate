@@ -179,11 +179,49 @@ The basic mode of compensating pair is as follows:
 
 \vspace*{2ex}
 
-In this figure, $a$ is the input neuron; $bc,b'c'$ are two nodes in the hidden layer, pre and post activation; and $d$ is the unique output neuron. The numbers next to the arrows are the weights. So, $W_{ba}=1$ and $W_{b'a}=-1$, $W_{dc}=W_{dc'}=1$. The paths, $a$ to $bc$ to $d$, and $a$ to $b'c'$ to $d$, is the so called \emph{Compensating Pair}. Because this figure looks like a diamond, it is also called a Diamond. 
+In this figure, $a$ is the input neuron; $bc,b'c'$ are nodes in the hidden layer, ($b,b'$ are pre-activation and $c,c'$ are post activation); and $d$ is the unique output neuron. The numbers next to the arrows are the weights. So, $W_{ba}=1$ and $W_{b'a}=-1$, $W_{dc}=W_{dc'}=1$. The pair of these two paths, $a$ to $bc$ to $d$, and $a$ to $b'c'$ to $d$, is a so called \emph{Compensating Pair}. Because its shape looks like a diamond, it is also called a Diamond. The characteristic is that, the products of all weights in the paths, have two different signs: along $bc$, the product is (strictly) positive, while along $b'c'$, the product is (strictly) negative. 
 
-The characteristic is that, the products of all weights in the paths, have two different signs: along $bc$, the product is (strictly) positive, while along $b'c'$, the product is (strictly) negative. This is key reason why fast approximation like LP cannot get the exact upper and lower bounds.
+The existence of compensating pairs is key reason why simple approximation like LP or Interval Arithmetic cannot get the exact upper and lower bounds. If both pairs are negative or positive, LP or even Interval Arithmetic will get the exact values of lower and upper bounds.
 
-If both pairs are negative or positive, LP or even Interval Arithmetic will get the exact values of lower and upper bounds.
+
+To explain why, suppose we have another input node $a'$, such that both $a$ and $a'$ has an input interval $[0,1]$, but the weight from $a'$ to $b$ or $b'$ are both $1$. Then both $b$ will have an interval $[0,2]$ and $b'$ will have an interval $[-1,1]$. More importantly, in LP formulation, $c$ will be $b$ but $c'$ will be $0.5(b')+0.5$. The upper bound of $d$ will be $c+c'$, and hence $b+0.5(b')+0.5$, and hence $a+a'+0.5a'-0.5a'+0.5=0.5a+1.5a'+0.5$. And this will leads to a upper bound $2.5$ but this is not exact.
+
+\vspace*{2ex}
+\begin{tikzpicture}
+	\node[circle, draw= purple, thick, minimum width = 20,
+	minimum height = 20] (input1) {$a$};
+	
+	\node[circle, draw= purple, thick, minimum width = 20,
+	minimum height = 20] (input2) at ($(input1) + (0,-2)$) {$a'$};
+	
+	
+	% Hidden layers
+	\node[circle, draw= blue, thick, minimum width = 20,
+	minimum height = 20] (hidden1) at ($(input1) + (2,0)$) {$b$};
+	\node[circle, draw= blue, thick] (hidden2) at ($(input1) + (2,-2)$) {$b'$};
+	
+	\node[circle, draw= blue, thick, minimum width = 20,
+	minimum height = 20] (hidden3) at ($(input1) + (4,0)$){$c$};
+	\node[circle, draw= blue, thick] (hidden4) at ($(input1) + (4,-2)$) {$c'$};
+	
+	% Output layer
+	\node[circle, draw= blue, thick, minimum width = 20,
+	minimum height = 20] (output) at ($(input1) + (6,-1)$){$d$};
+	
+	% Connections
+	\draw[->,thick,draw= red] (input1) -- (hidden1);
+	\draw[->,thick,draw= green] (input1) -- (hidden2);
+	
+	\draw[->,thick,draw= red] (input2) -- (hidden1) node[midway, below] {$1$};
+	\draw[->,thick,draw= red] (input2) -- (hidden2)node[midway, below] {$1$};
+	
+	\draw[->,thick,draw= red] (hidden1) -- (hidden3) node[midway, below] {$\ReLU$};
+	\draw[->,thick,draw= green] (hidden2) -- (hidden4) node[midway, below] {$\ReLU$};
+	
+	\draw[->,thick,draw= red] (hidden3) -- (output)node[midway, below] {$1$};
+	\draw[->,thick,draw= green] (hidden4) -- (output)node[midway, below] {$1$};
+\end{tikzpicture}
+\vspace*{2ex}
 
 The general formal definition of compensating pair is as follows:
 
@@ -342,14 +380,33 @@ The basic unit of running is image: all parameters will be reset when one image 
 
 The process for one image is clear: compute the upper and lower bounds of nodes layer by layer to the output layer. 
 
-Suppose we have reached a new layer $l_i$ and have upper and lower bounds of all nodes in previous layers. Then we will compute bounds of every node in $l_i$ in parallel.
+Suppose we have reached a new layer $l_i$ and have upper and lower bounds of all nodes in previous layers. Then we will compute bounds of every node in $l_i$ in parallel using the data of bounds of previous nodes. The method is to build and optimize an MILP model.
+
+Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
+
+In one layer, in principle, running for nodes are in principle independent and can be done in parallel. In our experiments, some local parameters will be adjusted from nodes to nodes.
 
 \subsection{Precomputation}
 
-The open node chosen is the key part of the whole framework, and it will cost two much time without precomputation because we must do open node chosen for every node.
+The open node chosen is the key part of the whole framework, and it will cost two much time without precomputation because we must do open node chosen for every node. 
+
+The precomputation corresponds to the simplest case: source node fixed. We will compute and store a limited number of paths with highest (absolute) values before running any image. This does not rely on other parameters or results(bounds).
+
+Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
 
 
 \subsection{Process for one node}
+
+For one node, we will build the MILP model for it.
+
+The most important parameter is the number $O$ mentioned in last section:  the number of open nodes. When the program creates a model for a node, we will read this parameter to decide how many nodes to open in this model. This parameter can change during the running of an image by the mechanic of the code.
+
+
+Another group of parameters is for the optimization of models. 
+
+The optimization of a model is carrying by loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
+
+During the loop of optimization, parameters might be changed and the model may be rebuild by the new parameter.
 
 
 \subsection{Global Process}
@@ -360,32 +417,32 @@ In the very fast turn, it will run DeepPoly for all images to get a preliminary 
 
 Then sort all remain images by the size of uncertainty of DeepPoly from smaller to larger. The fast turn is to run the images from the smaller side to larger side until consecutive two images cannot be verified. All remain images and images tried but not verified will be put into the next list. And then run the list with parameters for slow turn.
 
-\subsubsection*{Run one image}
+%\subsubsection*{Run one image}
+%
+%In the very fast turn, we use DeepPoly. So, all discussion below only consider fast and slow turns.
+%
+%An image is the basic unit in the running. The running is carrying layer by layer. The bounds obtained in previous layer will be used to build the model for the next layer, till the output layer.
+%
+%Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
+%
+%In one layer, in principle, running for nodes are in principle independent and can be done in parallel. In our experiments, some local parameters will be adjusted from nodes to nodes.
 
-In the very fast turn, we use DeepPoly. So, all discussion below only consider fast and slow turns.
 
-An image is the basic unit in the running. The running is carrying layer by layer. The bounds obtained in previous layer will be used to build the model for the next layer, till the output layer.
-
-Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
-
-In one layer, in principle, running for nodes are in principle independent and can be done in parallel. In our experiments, some local parameters will be adjusted from nodes to nodes.
-
-
-\subsubsection*{Create Models}
-
-The most important parameter is the number $O$ mentioned in last section:  the number of open nodes. When the program creates a model for a node, we will read this parameter to decide how many nodes to open in this model. This parameter can change during the running of an image by the mechanic of the code.
-
-\subsubsection*{Optimization for a node}
-
-Another group of parameters is for the optimization of models. 
-
-The optimization of a model is carrying by loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
-
-During the loop of optimization, parameters might be changed and the model may be rebuild by the new parameter.
+%\subsubsection*{Create Models}
+%
+%The most important parameter is the number $O$ mentioned in last section:  the number of open nodes. When the program creates a model for a node, we will read this parameter to decide how many nodes to open in this model. This parameter can change during the running of an image by the mechanic of the code.
+%
+%\subsubsection*{Optimization for a node}
+%
+%Another group of parameters is for the optimization of models. 
+%
+%The optimization of a model is carrying by loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
+%
+%During the loop of optimization, parameters might be changed and the model may be rebuild by the new parameter.
 
 \subsubsection*{Other Setting}
 
-In our experiments, we have not used PGD-attack to rule out images. In principle, there is no obstacle to use PGD-attack and it will save a lots of time.
+In our experiments, we have not used PGD-attack to rule out images. In principle, there is no obstacle to use PGD-attack.
 
 
 
