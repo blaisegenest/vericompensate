@@ -188,30 +188,68 @@ The basic mode of compensating pair is as follows:
 
 \vspace*{2ex}
 
-In this figure, $a$ is the input neuron; $bc,b'c'$ are two nodes in the hidden layer, pre and post activation; and $d$ is the unique output neuron. The numbers next to the arrows are the weights. So, $W_{ba}=1$ and $W_{b'a}=-1$, $W_{dc}=W_{dc'}=1$. The paths, $a$ to $bc$ to $d$, and $a$ to $b'c'$ to $d$, is the so called \emph{Compensating Pair}. Because this figure looks like a diamond, it is also called a Diamond. 
+In this figure, $a$ is the input neuron; $bc,b'c'$ are nodes in the hidden layer, ($b,b'$ are pre-activation and $c,c'$ are post activation); and $d$ is the unique output neuron. The numbers next to the arrows are the weights. So, $W_{ba}=1$ and $W_{b'a}=-1$, $W_{dc}=W_{dc'}=1$. The pair of these two paths, $a$ to $bc$ to $d$, and $a$ to $b'c'$ to $d$, is a so called \emph{Compensating Pair}. Because its shape looks like a diamond, it is also called a Diamond. The characteristic is that, the products of all weights in the paths, have two different signs: along $bc$, the product is (strictly) positive, while along $b'c'$, the product is (strictly) negative. 
 
-The key point is that, the products of all weights in the paths, have two different signs: along $bc$, the product is (strictly) positive, while along $b'c'$, the product is (strictly) negative.
+The existence of compensating pairs is key reason why simple approximation like LP or Interval Arithmetic cannot get the exact upper and lower bounds. If both pairs are negative or positive, LP or even Interval Arithmetic will get the exact values of lower and upper bounds.
 
-But if both pairs are negative or positive, LP or even Interval Arithmetic will get the exact values of lower and upper bounds.
 
-The definition of compensating pair is as follows:
+To explain why, suppose we have another input node $a'$, such that both $a$ and $a'$ has an input interval $[0,1]$, but the weight from $a'$ to $b$ or $b'$ are both $1$. Then both $b$ will have an interval $[0,2]$ and $b'$ will have an interval $[-1,1]$. More importantly, in LP formulation, $c$ will be $b$ but $c'$ will be $0.5(b')+0.5$. The upper bound of $d$ will be $c+c'$, and hence $b+0.5(b')+0.5$, and hence $a+a'+0.5a'-0.5a'+0.5=0.5a+1.5a'+0.5$. And this will leads to a upper bound $2.5$ but this is not exact.
+
+\vspace*{2ex}
+\begin{tikzpicture}
+	\node[circle, draw= purple, thick, minimum width = 20,
+	minimum height = 20] (input1) {$a$};
+	
+	\node[circle, draw= purple, thick, minimum width = 20,
+	minimum height = 20] (input2) at ($(input1) + (0,-2)$) {$a'$};
+	
+	
+	% Hidden layers
+	\node[circle, draw= blue, thick, minimum width = 20,
+	minimum height = 20] (hidden1) at ($(input1) + (2,0)$) {$b$};
+	\node[circle, draw= blue, thick] (hidden2) at ($(input1) + (2,-2)$) {$b'$};
+	
+	\node[circle, draw= blue, thick, minimum width = 20,
+	minimum height = 20] (hidden3) at ($(input1) + (4,0)$){$c$};
+	\node[circle, draw= blue, thick] (hidden4) at ($(input1) + (4,-2)$) {$c'$};
+	
+	% Output layer
+	\node[circle, draw= blue, thick, minimum width = 20,
+	minimum height = 20] (output) at ($(input1) + (6,-1)$){$d$};
+	
+	% Connections
+	\draw[->,thick,draw= red] (input1) -- (hidden1);
+	\draw[->,thick,draw= green] (input1) -- (hidden2);
+	
+	\draw[->,thick,draw= red] (input2) -- (hidden1) node[midway, below] {$1$};
+	\draw[->,thick,draw= red] (input2) -- (hidden2)node[midway, below] {$1$};
+	
+	\draw[->,thick,draw= red] (hidden1) -- (hidden3) node[midway, below] {$\ReLU$};
+	\draw[->,thick,draw= green] (hidden2) -- (hidden4) node[midway, below] {$\ReLU$};
+	
+	\draw[->,thick,draw= red] (hidden3) -- (output)node[midway, below] {$1$};
+	\draw[->,thick,draw= green] (hidden4) -- (output)node[midway, below] {$1$};
+\end{tikzpicture}
+\vspace*{2ex}
+
+The general formal definition of compensating pair is as follows:
 
 \begin{definition} In a full-connected network with $\ReLU$ as activation function:
 	
-	1. A path is a sequence of nodes $\langle a,b,c,d,e,\cdots\rangle$ of nodes from one layer by one layer. We call the first node source node and the last node target node.  
+	1. A path is a sequence of nodes $\langle a,b,c,d,e,\cdots\rangle$ of nodes that goes consecutively through each layer. We call the first node source node and the last node target node.  
 	
 	2. The \emph{Value} of a path is the product of of weights along the path (with sign): for a path $\langle a,b,c,d,e,\cdots\rangle$, its values is $$V = W_{ba}\cdot W_{cb}\cdot W_{dc}\cdot W_{ed}\cdot \cdots$$
 	
-	3. A compensating pair is a pair of path with the same starting node and end node, such that the two paths have no common node, and the values of two paths have opposite signs (one is strictly positive and another is strictly negative).
+	3. A \emph{Compensating Pair} is a pair of paths with the same source node and target node, such that the two paths have no common node, and the values of two paths have opposite signs (one is strictly positive and another is strictly negative).
 	
 	We also use \emph{Diamond} to call a compensating pair in the network.
 \end{definition}
 
 
-To explain the of meaning of compensating pair, we introduce the following theorems about Diamond:
+The following theorem shows the role of compensating pairs in the computation:
 
 \begin{theorem}[No Diamond Theorem, part 1]
-	For a full-connected network with $\ReLU$ as the unique activation function, if there is no Diamond, then for any approximation that at least as accurate as Interval Arithmetic, it can get the exact upper and lower bounds of all output nodes and all hidden nodes.
+	For a full-connected network with $\ReLU$ as the unique activation function, if there is no Diamond, then for any method/approximation that at least as accurate as Interval Arithmetic, it can get the exact upper and lower bounds of all output nodes and all hidden nodes.
 \end{theorem}
 
 Of course, in practice, it is very unlike to have a network without any Diamond. Therefore, the second theorem is more important in practice.
@@ -222,91 +260,93 @@ Of course, in practice, it is very unlike to have a network without any Diamond.
 
 The proofs of above theorems are in the Appendix.
 
-\subsection{Choice of path and open nodes}
+\subsection{Paths and Open Nodes Chosen}
 
-Based on No Diamond Theorem, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we will set a parameter $O$ and choose up to $O$ many nodes to open.
+In this subsection, we will introduce the method to choose open nodes for MILP model by considering compensating pairs.
 
-In this subsection, we will introduce the process of open node chosen: given a target node, choose up to $O$ many nodes to open.
-
-
-Basically, we do the process of open nodes chosen for one node each time, that is, receive one node as input each time. But in principle, we can develop a method receive more than one nodes as input. But in our experiences, this does not work well.  
+Based on No Diamond Theorem, for a target node, in its MILP model, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we can only choose a limited number of compensating pairs and nodes. This is by setting a parameter $O$ such that the process only choose at most $O$ many nodes to open. Therefore, in this subsection, we will introduce the process of open node chosen: given a target node, choose up to $O$ many nodes to open.
 
 
+Basically, we do the process of open nodes chosen for one target node each time, that is, receive one target node (and other data) as input each time. But in principle, we can develop a method receive more than one nodes as input. But in our experiences, this does not work well.  
+
+This process is not the unique method but the most natural way to choose open nodes. We introduce it in three steps from the simplest case to more complex case.
 
 \subsubsection*{Value of a pair}
 
 
-First we define the value of a compensating pair: for a compensating pair, if $V_1,V_2$ are the values of two paths, then the value of this compensating pair is defined by: $V=\min(|V_1|,|V_2|)$.
+For a compensating pair, if $V_1,V_2$ are the values of two paths, then the value of this compensating pair is defined by: $V=\min(|V_1|,|V_2|)$.
 
 
 \subsection*{Case: Source node fixed}
 
-The simplest case is we only consider compensating pairs with a fixed source node. 
+The simplest case is when we only consider compensating pairs with a fixed source node. 
 
-\subsubsection*{Sort all paths by values}
+In this case, the process is very simple: enumerate all compensating pairs, and then sort them by their values. Finally, from the first to the last compensating pair, pick all unstable nodes in its two paths except the target and source nodes into the list of open nodes, until $O$ many open nodes. 
 
-The first step is to sort all paths by their values and divide paths into two groups, a group of paths with positive values and a group of paths with negative values.
+%\subsubsection*{Sort all paths by values}
+%
+%The first step is to sort all paths by their values and divide paths into two groups, a group of paths with positive values and a group of paths with negative values.
+%
+%Since we have set a bound $O$ for open nodes, we will store  a fixed number of path for each group.
+%
+%\subsubsection*{Sort pairs by values}
+%
+%The second step is to sort all pairs by their values. Enumerate paths from the positive group and the negative group one by one and put the pairs obtained into a new list of pairs. Then sort all pair by their values from largest to the smallest: recall that the value of a pair $\langle P_1,P_2\rangle$ is $\min(|V_1|,|V_2|)$.
+%
+%\subsubsection*{Choosing nodes}
+%
+%The third step is to choose nodes from the list of pairs. According to the sorted list of pairs, enumerate pair one by one; for each pair, pick the nodes unstable in the two paths except the source and target node into the open node list. Repeat this process until $O$ nodes chosen or reach the end of the list.
+%
+%\subsubsection*{Pseudocode}
+%
+%The following needs a chart of pseudo-code
+%
+%\vspace*{1ex}
+%
+%1. Enumerate all path from the fixed source node to the target node. 
+%
+%2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
+%
+%3. Divide all paths into two group: positive paths and negative paths.
+%
+%4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
+%
+%5. For each pair, its value is the min of the weight positive paths and absolute negative values.
+%
+%6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
+%
+%7. Repeat 6 until choosing sufficiently many nodes.
+%
 
-Since we have set a bound $O$ for open nodes, we will store  a fixed number of path for each group.
-
-\subsubsection*{Sort pairs by values}
-
-The second step is to sort all pairs by their values. Enumerate paths from the positive group and the negative group one by one and put the pairs obtained into a new list of pairs. Then sort all pair by their values from largest to the smallest: recall that the value of a pair $\langle P_1,P_2\rangle$ is $\min(|V_1|,|V_2|)$.
-
-\subsubsection*{Choosing nodes}
-
-The third step is to choose nodes from the list of pairs. According to the sorted list of pairs, enumerate pair one by one; for each pair, pick the nodes unstable in the two paths except the source and target node into the open node list. Repeat this process until $O$ nodes chosen or reach the end of the list.
-
-\subsubsection*{Pseudocode}
-
-The following needs a chart of pseudo-code
-
-\vspace*{1ex}
-
-1. Enumerate all path from the fixed source node to the target node. 
-
-2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
-
-3. Divide all paths into two group: positive paths and negative paths.
-
-4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
-
-5. For each pair, its value is the min of the weight positive paths and absolute negative values.
-
-6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
-
-7. Repeat 6 until choosing sufficiently many nodes.
 
 
 
 
-
-
-\subsection*{Case: Source nodes in a fixed layer}
+\subsection*{Case: Source nodes in one layer}
 
 The more general case is when the source node can be any node in a fixed layer. In this case, the process is very similar to previous case, except the value of a pair.
 
-In this case, the value of a pair $P_1,P_2$ with values $V_1,V_2$ with the source node $a$, is $\min(|V_1|,|V_2|)\times \text{upper bound of } a$.
+In this case, for a pair $P_1,P_2$ with values $V_1,V_2$ with the source node $a$, its value is $\min(|V_1|,|V_2|)\times \text{upper bound of } a$.
 
-\subsubsection*{Pseudocode}
-
-The following needs a chart of pseudo-code
-
-\vspace*{1ex}
-
-1. Enumerate all path from the fixed source node to the target node. 
-
-2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
-
-3. Divide all paths into two group: positive paths and negative paths.
-
-4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
-
-5. For each pair, its value is the min of the weight positive paths and absolute negative values, times the upper bound (at least 0) of the source node.
-
-6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
-
-7. Repeat 6 until choosing sufficiently many nodes.
+%\subsubsection*{Pseudocode}
+%
+%The following needs a chart of pseudo-code
+%
+%\vspace*{1ex}
+%
+%1. Enumerate all path from the fixed source node to the target node. 
+%
+%2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
+%
+%3. Divide all paths into two group: positive paths and negative paths.
+%
+%4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
+%
+%5. For each pair, its value is the min of the weight positive paths and absolute negative values, times the upper bound (at least 0) of the source node.
+%
+%6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
+%
+%7. Repeat 6 until choosing sufficiently many nodes.
 
 
 
@@ -316,9 +356,9 @@ The following needs a chart of pseudo-code
 
 \subsection*{Case: Source nodes in different layers}
 
-The general case is that when the location of source nodes can be different layers. This case is much more complex, because the values of paths from different layers are very different. This is because the every weight from one node to another is mostly much less than $1$ (absolute value). So longer path will usually has much less values than shorter path.
+The general case is that when the location of source nodes can be in different layers. This case is much more complex, because the scale level of values of paths from different layers are very different: usually a weight will be very small since every layer has a large number of nodes, therefore values of longer paths are products of more small numbers, and is definitely much smaller. If we sort all compensating pairs from different layers directly, then a very long initial segment of this list will be occupied by compensating pairs with the shortest length. Therefore, we need use some scale factors when comparing values of compensating pairs of different length.
 
-In our experiments, we only consider the paths of length 3 and length 4: that means, the source node is 2 layers or 3 layers before the target node. In this case, we will dynamically adjust the values during the process of node chosen.
+In our experiments, we only consider the paths of length 3 (the source node is 2 layers before) and length 4 (the source node is 3 layers before). We will dynamically adjust the values during the process of node chosen.
 
 \subsubsection*{Pseudocode}
 
@@ -339,34 +379,37 @@ In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 w
 
 
 
-Our experiments are carried by different version codes, and the global process has been changed. 
+%Our experiments are carried by different version codes, and the global process has been changed. 
 
-The basic unit of running is image: all parameters will reset when one image is finished and turn to another image.
+We explain the framework in 4 subsections: precomputation, process for one image, process for one node, and global process.
 
-\subsubsection*{Global Process}
+\subsection{Process for one image}
 
-In the newest version, we do images by batches for 100 images each. For each batch, the running consists of three turns, very fast turn, fast turn and slow turn.
+The basic unit of running is image: all parameters will be reset when one image is finished.
 
-In the very fast turn, it will run DeepPoly for all images to get a preliminary bounds for all nodes and verify the easiest images. Images verified and images with false predication will be deleted from the image list.
+The process for one image is clear: compute the upper and lower bounds of nodes layer by layer to the output layer. 
 
-Then sort all remain images by the size of uncertainty of DeepPoly from smaller to larger. The fast turn is to run the images from the smaller side to larger side until consecutive two images cannot be verified. All remain images and images tried but not verified will be put into the next list. And then run the list with parameters for slow turn.
-
-\subsubsection*{Run one image}
-
-In the very fast turn, we use DeepPoly. So, all discussion below only consider fast and slow turns.
-
-An image is the basic unit in the running. The running is carrying layer by layer. The bounds obtained in previous layer will be used to build the model for the next layer, till the output layer.
+Suppose we have reached a new layer $l_i$ and have upper and lower bounds of all nodes in previous layers. Then we will compute bounds of every node in $l_i$ in parallel using the data of bounds of previous nodes. The method is to build and optimize an MILP model.
 
 Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
 
 In one layer, in principle, running for nodes are in principle independent and can be done in parallel. In our experiments, some local parameters will be adjusted from nodes to nodes.
 
+\subsection{Precomputation}
 
-\subsubsection*{Create Models}
+The open node chosen is the key part of the whole framework, and it will cost two much time without precomputation because we must do open node chosen for every node. 
+
+The precomputation corresponds to the simplest case: source node fixed. We will compute and store a limited number of paths with highest (absolute) values before running any image. This does not rely on other parameters or results(bounds).
+
+Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
+
+
+\subsection{Process for one node}
+
+For one node, we will build the MILP model for it.
 
 The most important parameter is the number $O$ mentioned in last section:  the number of open nodes. When the program creates a model for a node, we will read this parameter to decide how many nodes to open in this model. This parameter can change during the running of an image by the mechanic of the code.
 
-\subsubsection*{Optimization for a node}
 
 Another group of parameters is for the optimization of models. 
 
@@ -374,9 +417,41 @@ The optimization of a model is carrying by loops. For each loop, the model will 
 
 During the loop of optimization, parameters might be changed and the model may be rebuild by the new parameter.
 
+
+\subsection{Global Process}
+
+In the newest version, we do images by batches for 100 images each. For each batch, the running consists of three turns, very fast turn, fast turn and slow turn.
+
+In the very fast turn, it will run DeepPoly for all images to get a preliminary bounds for all nodes and verify the easiest images. Images verified and images with false predication will be deleted from the image list.
+
+Then sort all remain images by the size of uncertainty of DeepPoly from smaller to larger. The fast turn is to run the images from the smaller side to larger side until consecutive two images cannot be verified. All remain images and images tried but not verified will be put into the next list. And then run the list with parameters for slow turn.
+
+%\subsubsection*{Run one image}
+%
+%In the very fast turn, we use DeepPoly. So, all discussion below only consider fast and slow turns.
+%
+%An image is the basic unit in the running. The running is carrying layer by layer. The bounds obtained in previous layer will be used to build the model for the next layer, till the output layer.
+%
+%Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
+%
+%In one layer, in principle, running for nodes are in principle independent and can be done in parallel. In our experiments, some local parameters will be adjusted from nodes to nodes.
+
+
+%\subsubsection*{Create Models}
+%
+%The most important parameter is the number $O$ mentioned in last section:  the number of open nodes. When the program creates a model for a node, we will read this parameter to decide how many nodes to open in this model. This parameter can change during the running of an image by the mechanic of the code.
+%
+%\subsubsection*{Optimization for a node}
+%
+%Another group of parameters is for the optimization of models. 
+%
+%The optimization of a model is carrying by loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
+%
+%During the loop of optimization, parameters might be changed and the model may be rebuild by the new parameter.
+
 \subsubsection*{Other Setting}
 
-In our experiments, we have not used PGD-attack to rule out images. In principle, there is no obstacle to use PGD-attack and it will save a lots of time.
+In our experiments, we have not used PGD-attack to rule out images. In principle, there is no obstacle to use PGD-attack.
 
 
 
