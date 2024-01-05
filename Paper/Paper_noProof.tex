@@ -49,14 +49,24 @@
 
 \begin{abstract}
   Deep Neural Networks (DNNs) verification is now a mature research field, with many methodologies and tools to verify formaly  that they are correct, with an annual competition to compare them, etc. Formally, the question is, given a DNN and a property to check, does the property hold over a set of inputs of the DNN. This allows e.g. to check local robustness around an input $I$, by checking that the i-th output neuron has the largest weight among all output neurons uniformly over a neighbourhood around $I$.
-  In the most recent years, the focus has been on combining several of these efficient techniques to optimize the speed/accuracy trade-offs (branch and bound, multi neuron encoding, milp encoding). While some relatively large DNNs (tens of thousands of neurons) can be checked very efficiently with modern tools, 
-  some smaller DNNs (hundreds of neurons) are still paradoxally challenging to address with efficient algorithms.
+  In the most recent years, the focus has been on combining several of these efficient techniques (branch and bound, multi neuron encoding, MILP encoding, ...) to optimize speed/accuracy trade-offs. While some relatively large DNNs (tens of thousands of neurons) can be checked very efficiently with modern tools, some DNNs are still challenging to address with efficient algorithms, even small ReLU DNNs with hundreds of neurons, showing the need for new methodologies.
 
-  In this paper, we analyze efficientalgorithms to verify ReLU DNNs, based on abstractions (DeepPoly, Linear Programing, PRIMA, different version of Crown), and uncover the main reason for the loss of accuracy, namely compensation. Intuitively, a compensation happens when there are 2 paths from the same neuron to the same neuron, one with positive and one with negative (product of) weights, which therefore (partly) compensate each other. It is however hard to compute exactly by how much is the compensation due to the ReLU activation functions. Based on this finding, we propose a novel methodology to obtain interesting trade-offs in terms of speed/accuracy, using many queries with few 'open' ReLU nodes (for which we consider both linear modes), rather than the usual few queries with potentially many 'open' ReLU nodes.
-\end{abstract}	
+  In this paper, we analyze efficient algorithms to verify ReLU DNNs, based on abstractions (DeepPoly, Linear Programing, PRIMA, different version of Crown), and uncover the main reason for the loss of accuracy, namely {\em compensations}. Intuitively, a compensation happens when there are 2 paths between the same pair of neurons, one path with positive and one path with negative (product of) weights, which therefore (partly) compensate each other. It is however hard to compute exactly by how much is the compensation due to the ReLU activation functions. Based on this finding, we propose a novel methodology to obtain interesting trade-offs in terms of speed/accuracy, using many queries with few 'open' ReLU nodes (for which both linear modes are considered), rather than the usual few queries with potentially many 'open' ReLU nodes. These promising results open up many different applications of the concept of compensating paths in the field of verification of DNNs.
+\end{abstract}
 
 
 \section{Introduction}
+
+
+Complexity
+
+
+This paper does not focuss on producing the most efficient tool, and we did not spend engeenierial effort to optimize it. The focus is instead on the novel notion of compensation, the associated methodology and its evaluation. For instance, our implementation is fully in Python, with uncompetitive runtime for our DeepPoly implementation ($\approx 100$ slower than in $\beta$-CROWN). Still, evaluation of the methodology versus even the most efficient tools reveal a lot of potential for the notion of compensation, opening up several opportunities for applying it in different contexts of DNN verification.
+
+
+
+
+
 
 \section{Background}
 
