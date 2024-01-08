@@ -57,14 +57,63 @@
 
 \section{Introduction}
 
-
-Complexity
-
-
-This paper does not focuss on producing the most efficient tool, and we did not spend engeenierial effort to optimize it. The focus is instead on the novel notion of compensation, the associated methodology and its evaluation. For instance, our implementation is fully in Python, with uncompetitive runtime for our DeepPoly implementation ($\approx 100$ slower than in $\beta$-CROWN). Still, evaluation of the methodology versus even the most efficient tools reveal a lot of potential for the notion of compensation, opening up several opportunities for applying it in different contexts of DNN verification.
+In the past 15 years, Deep Learning has revolutionized many tasks which were thought to be very hard to be handled by computers. This revolution however poses new challenges, as its automatically obtained product, namely Deep Neural Networks (DNNs), does not come with guidelines or rational : it has tens of thousands of parameters (even for shallow networks with hundreds of neurons), it is very hard to understand, it is brittle to small perturbations \cite{Szegedy}\dots
 
 
+In this context, application of DNNs in safety critical applications is therefore cautiously envisioned. For that to happen at a large scale, hard guarantees should be provided, so that to avoid tremendous consequences. It is the reason for the developpement of (hard) verification tools since 2016, with now many tools with different trade offs from exact computation but slow (e.g. Marabou/Reluplex), up to very efficient but also incomplete (e.g. ERAN-DeepPoly). To benchmark these tools, a competition has been run since 2019, namely VNNcomp. The current overall better performing tool is $\alpha$-$\beta$-Crown, a fairly sophisticately engineered tool based mainly on "branch and bound", and which can scale all the way from complete on smaller DNNs down to very efficient on larger DNNs.
 
+While the verification engines are generic, the benchmarks usually focus on local robustness, i.e. given a Network, an Image and a small neighbourhood around this image, 
+is it the case that all the images in the neighbourhood are classified in the same way.
+While some quite large DNNs (e.g. ResNet with tens of thousands of neurons) can be verified very efficiently (tens of seconds per input to check local robustness), with all inputs either certified robust or an attack on robustness is found in the neighbourhood, 
+some smaller DNNs (with hundreds of neurons, only using the simpler ReLU activation function) cannot be analyzed fully, with $\approx 20 \%$ of inputs where neither of the decisions can be reached. The main difference between these DNNs with very different behaviors lies in that the DNNs which are trained to be robust are much easier to verify, while the DNNs trained in a "natural" way are much harder to verify.
+
+In this paper, we focus on uncovering what makes the DNNs trained in a natural way so hard to verify. To do so, we analyze the abstraction mechanisms at the heart of several efficient algorithms, namely Eran-DeepPoly, the Linear Programming approximation, PRIMA, and different versions of ($\alpha$)($\beta$)-CROWN. All these algorithms compute lower or/and upper bounds for the values of neurons (abstraction on values) for inputs in the considered input region, and conclude based on such bounds. For instance, if for all image $I'$ in the neighborhood of image $I$, we have $weight_{I'}(n'-n) < 0$ for $n$ the output neuron corresponding to the expected class, then we know that the DNN is robust in the neighborhood of image $I$. We restrict the formal study to DNNs using only the standard ReLU activation function, although nothing specific prevents the results to be extended to more general architectures. We uncover that {\em compensations} (see next paragraph) is the phenomenon creating  inacurracy. We verified experimentally that indeed DNNs trained in a natural way have much more heavy compensating pairs than DNNs trained in a robust way.
+
+Formally, a compensating pair is a pair of path $(\pi,\pi')$ between a pair of neurons 
+$(a,b)$, such that we have $w < 0 < w'$, for $w,w'$ the products of weight seen along $\pi$ and $\pi'$. Ignoring the (ReLU) activation functions, the weight of $b$ is loaded with $w \cdot weight(a)$ by $\pi$, while it is loaded with $w' \cdot weight(a)$ by $\pi'$. That is, it is loaded by $(w+w') weight(a)$. As $w,w'$ have oppositve sign, they will compensate (partly) each other. The compensation is only partial due to the ReLU activation seen along the way of $\pi$ which can "clip" a part of $w \cdot weight(a)$, and similarly for $\pi'$. However, it is very hard to evaluate by how much without explicitly considering both phases of the ReLUs, which all the efficient tools try to avoid because it is very expansive (could be exponential in the number of such ReLU nodes opened).
+
+
+Our first main contribution is to formally show, in Theorem \ref{th1}, that compensation is the sole reason for the inacuraccy as (most) efficient algorithms will compute exact bounds for all neurons if there is no compensating pair of paths at all.
+While this theorem is theoretically interesting, it is not usable in practice as (almost) all networks have some compensating pairs. However, this notion of compensating pairs opens a first interesting optimization concerning an exact abstraction of the network using a Mixed Integer Linear Program \cite{MILP}, where the weight of each neuron is a linear variable, and each ReLU node is associated with a binary variable, so that the values that can be reached by the neuron variable is exactly the value that can be reached by the weight of this neuron considering inputs of the DNN in the fixed neighbourhood. While LP tools can scale to thousands of variables, MILP encoding can only be solved for a limited number of binary variables. This suggests that a simpler encoding could be used for those ReLUs that are not on compensating pairs, as their precise outcome may not be necessary.
+
+Our second main contribution is to show formally in Theorem \ref{th2}, that 
+encoding all ReLU nodes on a pair of compensating paths with a binary variable,
+and using linear relaxation for the other ReLU nodes, will lead to exact bounds for (most) of the algorithms considered. This theorem allows to restrict the number of integer variables, and thus to obtain encodings that are faster to solve. Practically, however, (almost) all ReLU nodes are on some compensating path, and using this exact restricted MILP encoding will be too time consuming.
+
+Our third main contribution is more practical, proposing Algorithm \ref{algo1} based on this knowledge that compensating pair of paths are the reason for inacurracy. The idea is thus to use this information to rank the ReLU nodes in terms of importance, and only keep the most important ones as binary variables, and use linear relaxation for the least important ones.
+%More precisely, the algorithm will, as DeepPoly, consider layers one by one and neurons $b$ %on this layer one by one, selecting the most heavy pairs of compensating path ending in $b$
+%and associating these nodes with a binary variable. Then an MILP tool such as Gurobi is used %to compute the lower and upper bound for node $b$. 
+Overall, the worst case complexity of algorithm \ref{algo1} is lower than $O(N 2^k LP(N))$, where $N$ is the number of nodes of the DNN, $k$ the number of ReLU nodes selected as binary variable, and $LP(N)$ is the (polynomial time) complexity of solving a linear program representing a DNN with $N$ nodes. This complexity is an upper bound, as e.g. Gurobi is fairly efficient and never need to consider all of the $2^k$ ReLU configurations to compute the bounds. Keeping $k$ reasonably low thus provides an efficient algorithm. 
+By design, it will never run into a complexity wall (unlike the full MILP encoding), although it can take a while on large networks because of the linear factor $N$ in the number of nodes. An additional interesting point is that it is extremely easy to parallelize, as all the nodes in the same layer can be run in parallel. 
+We verify experimentally that the algorithm offers interesting trade offs, by testing on local robustness for DNNs trained "naturally" 
+(and thus difficult to verify).
+
+
+
+This paper does not focuss on producing the most efficient tool, and we did not spend engeenierial effort to optimize it. The focus is instead on the novel notion of compensation, the associated methodology and its evaluation. For instance, our implementation is fully in Python, with uncompetitive runtime for our DeepPoly implementation ($\approx 100$ slower than in $\beta$-CROWN). Still, evaluation of the methodology versus even the most efficient tools reveal a lot of potential for the notion of compensation, opening up several opportunities for applying it in different contexts of DNN verification. 
+
+\smallskip
+
+\noindent {\bf Comparison with related work:}
+Compared with the exact encoding of a DNN using MILP \cite{MILP}, our algorithm can be seen as a way to help the MILP tool by telling it to not spend time to branch on some ReLU nodes which have low impact on the particular node we are treating, at the cost of a small inacurracy. If the ReLU nodes to abstract are chosen accurately, the result should be more accurate than early stopping the MILP algorithm using all the nodes.
+
+Compared with the linear relaxation of the MILP encoding, our algorithm is strictly more accurate by design, but it will also be slower.
+
+Compared with ERAN-Deeppoly \cite{deeppoly}, which compute bounds on the value in a very efficient way, we prove that the LP encoding is strictly more accurate, which as far as we know is a another novel result. To be more precise, DeepPoly
+abstract the weight of every node using two functions, one upper functions and one lower function. While the upper funciton is fixed, there are 2 choices for the lower bound.
+We prove in Proposition  \ref{LP} that the LP relaxation corresponds exactly to the intersection of both choices. It is thus more accurate than DeepPoly, but also not as efficient. Therefore, our algorithm will also be (much) more accurate than DeepPoly, but also not as efficient.
+
+For comparison, $\alpha$-$\beta$ CROWN (and other Branch and Bound algorithms, such as \cite{BaB}) will run few instances of branch and bound (one per output neuron), in worst case considering all the possible ReLU configurations (although the branch and bound algorithm avoids most of the possibilities). On simple networks, such as those trained robust, 
+this is particularly efficient because branch and bound can find very efficiently the bounds
+focusing on the actual question, considering the important branchs, while our algorithm will be less efficient as it has to consider each nodes one by one from the start.
+However, branch and bound faces a complexity wall when the network is hard to verify, such as the DNNs trained naturally, as there are too many branches to consider and not enough can be discarded early.
+
+On such complex DNN, $\alpha$-$\beta$ CROWN resorts to a "refined" path, where the bounds on the first few layers are computed using the (exact) MILP encoding, with a time-out, reporting the best bounds that can be obtained. In our algorithm, this is pushed to all layers, which is possible in our case as we select only a limited number of important ReLU nodes to encode as binary variables, while this would be infeasible without the selection based on the compensating pairs. The refined version is particularly efficient on small networks, but as the network grows, the more work BaB needs to do and faces the same wall, and our algorithm becomes more accurate.
+
+Concerning PRIMA, the idea is to keep explicitly dependencies between neurons, computing bounds layer by layer (as we do). This allows to keep very efficiently dependencies from potentially many layers beforehand. We take care of dependencies between neurons in a different way, as compensation is the reason why there are dependencies between nodes. 
+Our method is much more accurate locally, but we will tend to loose precision for  dependencies created many layers ago. Experimental tend to show that most of the dependencies are local, in the few last layers (because ReLU nodes will likely clip those that happened many layers ago). Also, the dependencies between nodes limit the paralelism, unlike in our method, which explains why we obtain both faster and more accurate results than Prima.
+
+Finally, alogirthms resorting to absraction on the network rather than abstraction of the values are much more different. For instance, Reluplex/Marabou is such an algorithm. Its original aim is to be a complete tool, so much slower but also more accurate than what we propose.
 
 
 
