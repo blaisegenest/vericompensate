@@ -253,7 +253,7 @@ The proofs of above theorems are in the Appendix.
 
 \subsection{Paths and Open Nodes Chosen}
 
-In this subsection, we will introduce the method to choose open nodes for MILP model by considering compensating pairs.
+In this subsection, we will introduce the method to choose open nodes for MILP model based on compensating pairs.
 
 Based on No Diamond Theorem, for a target node, in its MILP model, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we can only choose a limited number of compensating pairs and nodes. This is by setting a parameter $O$ such that the process only choose at most $O$ many nodes to open. Therefore, in this subsection, we will introduce the process of open node chosen: given a target node, choose up to $O$ many nodes to open.
 
@@ -372,7 +372,7 @@ In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 w
 
 %Our experiments are carried by different version codes, and the global process has been changed. 
 
-We explain the framework in 4 subsections: precomputation, process for one image, process for one node, and global process.
+We explain our framework in 4 subsections: precomputation, process for one image, process for one node, and global process.
 
 \subsection{Process for one image}
 
@@ -462,11 +462,24 @@ for verification.
 
 The first group of experiments is to test the direct effect of node chosen by compensating pair, comparing to random chosen. We use the average of uncertainty of all nodes in a layer to measure the effect of node chosen: for a node $a$, its uncertainty $UN(a) = UB(a)-LB(a)$, and the average uncertainty of a layer $l$ is $$UN(l) = \dfrac{\sum_{a\in l}UN(a)}{|l|}.$$
 
-The test neural network is MNIST fully-connected $6\times 100$, and the test image is the image 59 in the standard MNIST image database. This image can have more unstable nodes in each layer.
+The test neural network is MNIST fully-connected $6\times 100$, and the test image is the image 59 in the MNIST image dataset. 
 
 \subsubsection*{Node chosen in second hidden layer}
 
 The following table shows the average uncertainty of the second hidden layer when choosing different numbers of open nodes by random or by compensating pairs.
+
+\[
+\begin{array}{c|c|c}
+
+	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
+	0  &  2.22 & 2.22  \\ \hline
+	10  &  1.84 & 2.03  \\ \hline
+	20  &  1.50 & 1.82  \\ \hline
+	30  &  1.28 & 1.62  \\ \hline
+	40  &  1.14 & 1.44  \\ \hline
+	50  &  1.06 & 1.23  \\ \hline
+\end{array}
+\]
 
 
 \subsubsection*{Node chosen in the third hidden layer}
@@ -474,9 +487,36 @@ The following table shows the average uncertainty of the second hidden layer whe
 The following table shows the average uncertainty of the third hidden layer when choosing different numbers of open nodes, by random or by compensating pairs.
 
 
+\[
+\begin{array}{c|c|c}
+	
+	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
+	0  &  1.758 & 1.758  \\ \hline
+	10  &  1.677 & 1.695  \\ \hline
+	20  &  1.539 & 1.622  \\ \hline
+	30  &  1.431 & 1.542  \\ \hline
+	40  &  1.329 & 1.47  \\ \hline
+	50  &  1.243 & 1.39  \\ \hline
+\end{array}
+\]
+
+
 \subsection{Experiments Results}
 
 The following table is the summary of 5 experiments.
+
+\[
+\begin{array}{c|c|c}
+	
+	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
+	0  &  1.758 & 1.758  \\ \hline
+	10  &  1.677 & 1.695  \\ \hline
+	20  &  1.539 & 1.622  \\ \hline
+	30  &  1.431 & 1.542  \\ \hline
+	40  &  1.329 & 1.47  \\ \hline
+	50  &  1.243 & 1.39  \\ \hline
+\end{array}
+\]
 
 
 \subsection{Comparison to Incomplete Verifiers}
