@@ -17,6 +17,7 @@
 \usepackage{url}
 \usepackage{tikz}
 \usepackage{calc}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usetikzlibrary{positioning, arrows.meta,calc}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -365,6 +366,21 @@ In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 w
 
 3. Repeat 2 until choosing sufficiently many nodes.
 
+\begin{algorithm}
+	\caption{Process for length 3 + length 4}
+	\KwData{Input data}
+	\KwResult{Open node list}
+	\While{condition}{
+		Perform operation 1\;
+		\If{condition}{
+			Perform operation 2\;
+		}
+		\Else{
+			Perform operation 3\;
+		}
+	}
+\end{algorithm}
+
 
 \section{Verification Framework}
 
@@ -468,8 +484,9 @@ The test neural network is MNIST fully-connected $6\times 100$, and the test ima
 
 The following table shows the average uncertainty of the second hidden layer when choosing different numbers of open nodes by random or by compensating pairs.
 
-\[
-\begin{array}{c|c|c}
+\begin{table}
+	\centering
+	\begin{tabular}{c|c|c}
 
 	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
 	0  &  2.22 & 2.22  \\ \hline
@@ -478,17 +495,21 @@ The following table shows the average uncertainty of the second hidden layer whe
 	30  &  1.28 & 1.62  \\ \hline
 	40  &  1.14 & 1.44  \\ \hline
 	50  &  1.06 & 1.23  \\ \hline
-\end{array}
-\]
+\end{tabular}
+\caption{}
+\label{tab:example0}
+\end{table}
 
+\vspace*{-8ex}
 
 \subsubsection*{Node chosen in the third hidden layer}
 
 The following table shows the average uncertainty of the third hidden layer when choosing different numbers of open nodes, by random or by compensating pairs.
 
 
-\[
-\begin{array}{c|c|c}
+\begin{table}
+	\centering
+	\begin{tabular}{c|c|c}
 	
 	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
 	0  &  1.758 & 1.758  \\ \hline
@@ -497,32 +518,38 @@ The following table shows the average uncertainty of the third hidden layer when
 	30  &  1.431 & 1.542  \\ \hline
 	40  &  1.329 & 1.47  \\ \hline
 	50  &  1.243 & 1.39  \\ \hline
-\end{array}
-\]
+\end{tabular}
+\caption{}
+\label{tab:example1}
+\end{table}
+
 
 
 \subsection{Experiments Results}
 
-The following table is the summary of 5 experiments.
 
-\[
-\begin{array}{c|c|cc|cc|cc|cc}
+
+\begin{table}
+	\centering
+	\begin{tabular}{c|c|cc|cc|cc|cc}
 	
-	\text{Network}  & \varepsilon&  \multicolumn{2}{@{}c@{}|}{\text{Comp(fast)}} & \multicolumn{2}{@{}c@{}|}{\text{PRIMA}} &  \multicolumn{2}{@{}c@{}|}{\text{Comp(slow)}} & \multicolumn{2}{@{}c@{}|}{\text{beta-Crown}}  \\ 
+	\text{Network}  & $\varepsilon$&  \multicolumn{2}{@{}c@{}|}{\text{Comp(fast)}} & \multicolumn{2}{@{}c@{}|}{\text{PRIMA}} &  \multicolumn{2}{@{}c@{}|}{\text{Comp(slow)}} & \multicolumn{2}{@{}c@{}|}{\text{beta-Crown}}  \\ 
 	
-  &  & \mathrm{Ver}.\% & \mathrm{Time}(s) & \mathrm{Ver}.\% & \mathrm{Time}(s) &\mathrm{Ver}.\% & \mathrm{Time}(s) & \mathrm{Ver}.\% & \mathrm{Time}(s) \\ \hline
+  &  & \textrm{Ver}.\% & \textrm{Time}(s) & \textrm{Ver}.\% & \textrm{Time}(s) &\textrm{Ver}.\% & \textrm{Time}(s) & \textrm{Ver}.\% & \textrm{Time}(s) \\ \hline
 	
-	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+	\textrm{MLP}\ 5$\times$100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
 	
-	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+	\textrm{MLP}\ 5$\times$100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
 		
-	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+	\textrm{MLP}\ 5$\times$100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
 			
-	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+	\textrm{MLP}\ 5$\times$100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
 				
-	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
-\end{array}
-\]
+	\textrm{MLP}\ 5$\times$100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+\end{tabular}
+\caption{The data of verified accuracy (\%) and average time (s) of 1000 images evaluated on the PRIMA and on the beta-Crown are in CITE.}
+\label{tab:example}
+\end{table}
 
 
 \subsection{Comparison to Incomplete Verifiers}
@@ -532,7 +559,7 @@ verifiers on 4 MLP networks for MNIST under the same
 set of 1000 images. beta-Crown is the state-of-the-art verifier based on branch-and-bound. PRIMA is another strong and representative method based on multi-neuron linear relaxation.
 
 
-We do tests on 5 typical MNIST models.
+
 
 \section{Related Work}
 
