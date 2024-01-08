@@ -506,22 +506,30 @@ The following table shows the average uncertainty of the third hidden layer when
 The following table is the summary of 5 experiments.
 
 \[
-\begin{array}{c|c|c}
+\begin{array}{c|c|cc|cc|cc|cc}
 	
-	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
-	0  &  1.758 & 1.758  \\ \hline
-	10  &  1.677 & 1.695  \\ \hline
-	20  &  1.539 & 1.622  \\ \hline
-	30  &  1.431 & 1.542  \\ \hline
-	40  &  1.329 & 1.47  \\ \hline
-	50  &  1.243 & 1.39  \\ \hline
+	\text{Network}  & \varepsilon&  \multicolumn{2}{@{}c@{}|}{\text{Comp(fast)}} & \multicolumn{2}{@{}c@{}|}{\text{PRIMA}} &  \multicolumn{2}{@{}c@{}|}{\text{Comp(slow)}} & \multicolumn{2}{@{}c@{}|}{\text{beta-Crown}}  \\ 
+	
+  &  & \mathrm{Ver}.\% & \mathrm{Time}(s) & \mathrm{Ver}.\% & \mathrm{Time}(s) &\mathrm{Ver}.\% & \mathrm{Time}(s) & \mathrm{Ver}.\% & \mathrm{Time}(s) \\ \hline
+	
+	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+	
+	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+		
+	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+			
+	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+				
+	\mathrm{MLP}\ 5\times100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
 \end{array}
 \]
 
 
 \subsection{Comparison to Incomplete Verifiers}
 
-We compare our method to two famous verifiers (their incomplete mode): PRIMA and $\beta$-Crown on 5 typical MNIST models. Basically, our method can exceed PRIMA on both accuracy and speed, and exceed $\beta$-Crown on accuracy. 
+In Table 3, we compare against two representative incomplete
+verifiers on 4 MLP networks for MNIST under the same
+set of 1000 images. beta-Crown is the state-of-the-art verifier based on branch-and-bound. PRIMA is another strong and representative method based on multi-neuron linear relaxation.
 
 
 We do tests on 5 typical MNIST models.
