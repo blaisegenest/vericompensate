@@ -17,6 +17,7 @@
 \usepackage{url}
 \usepackage{tikz}
 \usepackage{calc}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usetikzlibrary{positioning, arrows.meta,calc}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -311,7 +312,7 @@ The proofs of above theorems are in the Appendix.
 
 \subsection{Paths and Open Nodes Chosen}
 
-In this subsection, we will introduce the method to choose open nodes for MILP model by considering compensating pairs.
+In this subsection, we will introduce the method to choose open nodes for MILP model based on compensating pairs.
 
 Based on No Diamond Theorem, for a target node, in its MILP model, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we can only choose a limited number of compensating pairs and nodes. This is by setting a parameter $O$ such that the process only choose at most $O$ many nodes to open. Therefore, in this subsection, we will introduce the process of open node chosen: given a target node, choose up to $O$ many nodes to open.
 
@@ -407,11 +408,7 @@ In this case, for a pair $P_1,P_2$ with values $V_1,V_2$ with the source node $a
 
 The general case is that when the location of source nodes can be in different layers. This case is much more complex, because the scale level of values of paths from different layers are very different: usually a weight will be very small since every layer has a large number of nodes, therefore values of longer paths are products of more small numbers, and is definitely much smaller. If we sort all compensating pairs from different layers directly, then a very long initial segment of this list will be occupied by compensating pairs with the shortest length. Therefore, we need use some scale factors when comparing values of compensating pairs of different length.
 
-In our experiments, we only consider the paths of length 3 (the source node is 2 layers before) and length 4 (the source node is 3 layers before). We will dynamically adjust the values during the process of node chosen.
-
-\subsubsection*{Pseudocode}
-
-The following needs a chart of pseudo-code
+In our experiments, we only consider the paths of length 3 (the source node is 2 layers before) and length 4 (the source node is 3 layers before). We will dynamically adjust the values during the process of node chosen. In text, the process of node chosen for length 3 plus length 4 is as follows:
 
 \vspace*{1ex}
 
@@ -423,6 +420,36 @@ In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 w
 
 3. Repeat 2 until choosing sufficiently many nodes.
 
+\vspace*{1ex}
+
+And the pseudo-code is as follows:
+
+\begin{algorithm}
+	\caption{Process for length 3 + length 4}
+	\KwData{Sorted lists of length 3 + length 4}
+	\KwResult{Open node list}
+	
+	Let $N = 0$ be the number of Chosen length 4 pair.
+	
+	\While{len(Open node) $<O$}{
+		Pick the first element $P_3$ in the list of length 3\;
+		
+		Let $V_3$ be the value of $P_3$\;
+		
+		Pick the first element $P_4$ in the list of length 4\;
+		
+		Let $V_4$ be the value of $P_4$\;
+		
+		\If{$V_3 > V_4 \cdot N$}{
+			Add nodes in $P_3$ into Open list\;
+			Number of Chosen lentgh pair $N$ += 1\; 
+		}
+		\Else{
+			Add nodes in $P_4$ into Open list\;
+		}
+	}
+\end{algorithm}
+
 
 \section{Verification Framework}
 
@@ -430,7 +457,7 @@ In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 w
 
 %Our experiments are carried by different version codes, and the global process has been changed. 
 
-We explain the framework in 4 subsections: precomputation, process for one image, process for one node, and global process.
+In this section, We will explain our framework in 4 subsections: precomputation, process for one image, process for one node, and global process.
 
 \subsection{Process for one image}
 
@@ -520,11 +547,28 @@ for verification.
 
 The first group of experiments is to test the direct effect of node chosen by compensating pair, comparing to random chosen. We use the average of uncertainty of all nodes in a layer to measure the effect of node chosen: for a node $a$, its uncertainty $UN(a) = UB(a)-LB(a)$, and the average uncertainty of a layer $l$ is $$UN(l) = \dfrac{\sum_{a\in l}UN(a)}{|l|}.$$
 
-The test neural network is MNIST fully-connected $6\times 100$, and the test image is the image 59 in the standard MNIST image database. This image can have more unstable nodes in each layer.
+The test neural network is MNIST fully-connected $6\times 100$, and the test image is the image 59 in the MNIST image dataset. 
 
 \subsubsection*{Node chosen in second hidden layer}
 
 The following table shows the average uncertainty of the second hidden layer when choosing different numbers of open nodes by random or by compensating pairs.
+
+\begin{table}
+	\centering
+	\begin{tabular}{c|c|c}
+
+	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
+	0  &  2.22 & 2.22  \\ \hline
+	10  &  1.84 & 2.03  \\ \hline
+	20  &  1.50 & 1.82  \\ \hline
+	30  &  1.28 & 1.62  \\ \hline
+	40  &  1.14 & 1.44  \\ \hline
+	50  &  1.06 & 1.23  \\ \hline
+\end{tabular}
+\caption{}
+\label{tab:example0}
+\end{table}
+
 
 
 \subsubsection*{Node chosen in the third hidden layer}
@@ -532,17 +576,61 @@ The following table shows the average uncertainty of the second hidden layer whe
 The following table shows the average uncertainty of the third hidden layer when choosing different numbers of open nodes, by random or by compensating pairs.
 
 
+\begin{table}
+	\centering
+	\begin{tabular}{c|c|c}
+	
+	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
+	0  &  1.758 & 1.758  \\ \hline
+	10  &  1.677 & 1.695  \\ \hline
+	20  &  1.539 & 1.622  \\ \hline
+	30  &  1.431 & 1.542  \\ \hline
+	40  &  1.329 & 1.47  \\ \hline
+	50  &  1.243 & 1.39  \\ \hline
+\end{tabular}
+\caption{}
+\label{tab:example1}
+\end{table}
+
+
+
 \subsection{Experiments Results}
 
-The following table is the summary of 5 experiments.
+
+
+
 
 
 \subsection{Comparison to Incomplete Verifiers}
 
-We compare our method to two famous verifiers (their incomplete mode): PRIMA and $\beta$-Crown on 5 typical MNIST models. Basically, our method can exceed PRIMA on both accuracy and speed, and exceed $\beta$-Crown on accuracy. 
+In Table 3, we compare against two representative incomplete
+verifiers on 4 MLP networks for MNIST under the same
+set of 1000 images. beta-Crown is the state-of-the-art verifier based on branch-and-bound. PRIMA is another strong and representative method based on multi-neuron linear relaxation.
 
+\begin{table}
+	\centering
+	\begin{tabular}{c|c|cc|cc|cc|cc}
+		
+		\text{Network}  & $\varepsilon$&  \multicolumn{2}{@{}c@{}|}{\text{Comp(fast)}} & \multicolumn{2}{@{}c@{}|}{\text{PRIMA}} &  \multicolumn{2}{@{}c@{}|}{\text{Comp(slow)}} & \multicolumn{2}{@{}c@{}|}{\text{beta-Crown}}  \\ 
+		
+		&  & \textrm{Ver}.\% & \textrm{Time}(s) & \textrm{Ver}.\% & \textrm{Time}(s) &\textrm{Ver}.\% & \textrm{Time}(s) & \textrm{Ver}.\% & \textrm{Time}(s) \\ \hline
+		
+		\textrm{MLP}\ 5$\times$100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+		
+		\textrm{MLP}\ 8$\times$100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+		
+		\textrm{MLP}\ 5$\times$200\  &   0.015& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+		
+		\textrm{MLP}\ 8$\times$200\  &   0.015& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+		
+		\textrm{MLP}\ 6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+	\end{tabular}
+	\caption{The data of verified accuracy (\%) and average time (s) of 1000 images evaluated on the PRIMA and on the beta-Crown are in CITE.}
+	\label{tab:example}
+\end{table}
 
-We do tests on 5 typical MNIST models.
+On all 4 networks, our fast version can exceed PRIMA both in accuracy and speed. On all 4 networks, our slow version can have a similar verified accuracy as beta-Crown.
+
 
 \section{Related Work}
 
