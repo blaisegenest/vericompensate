@@ -61,11 +61,13 @@
 \input{introduction}
 
 
-\section{Preliminaries}
+\section{Background}
 
-In this paper, we will use lower case Latin $a$ for scalars, bold for vectors $\boldsymbol{z}$, 
-capitalized bold for matrices $\boldsymbol{W}$, similar to 
-notations in \cite{prima,crown}.
+In this paper, we will use lower case latin $a$ for scalars, bold for vectors $\boldsymbol{z}$, 
+capitalized bold for matrices $\boldsymbol{W}$, similar to notations in \cite{prima,crown}.
+To simplify the notations, we restrict the presentation to feed-forward, 
+fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
+$ReLU(x)=x$ for $x \geq 0$ and $f(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
 
 %In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
 
@@ -79,12 +81,41 @@ notations in \cite{prima,crown}.
 \end{figure}
 
 % testtesttesttest
+An $\ell$-layer DNN is provided by $\ell$ weight matrices 
+$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
+and $\ell$ bias vectors $\boldsymbol{b}^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
+We call $d_i$ the number of neurons of hidden layer $i \in \{1, \ldots, \ell-1\}$,
+$d_0$ the input dimension, and $d_\ell$ the output dimension.
 
-We focus on full-connected neural network. The network has weights and bias to send the input to output along hidden layers. In formula, the input layer of a neural network is a vector $\boldsymbol{x}$ in $\mathbb{R}^{d_0}$, and the $i$-th hidden layer  is a vector in $\mathbb{R}^{d_i}$, and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight $\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, the bias is a vector $\boldsymbol{b}^i$ in $\mathbb{R}^{d_i}$, and the activation function is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, then the value of $i$-th layer is computed by: \begin{align*}
+Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
+denoting $\hat{\boldsymbol{z}}^{i}(n)={\boldsymbol{z}}^0$, we define inductively the weight vector $\boldsymbol{z}^i$ at layer $1 \leq i \leq \ell$ with
+\begin{align*}
+	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \boldsymbol{b}^i\\
+	\hat{\boldsymbol{z}}^{i} &= ReLU({\boldsymbol{z}}^i).
+\end{align*} 
+
+The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
+$\boldsymbol{z}$ is called pre-activation values, 
+and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
+Neurons are also called \emph{nodes}, and when we refer to a specific neuron, we use $a,b,c,d$ to denote them, and $W_{a,b}$ to denote the weight from neuron $a$ to $b$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
+
+
+
+
+
+\iffalse
+and the $i$-th hidden layer is a vector in $\mathbb{R}^{d_i}$, 
+and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. 
+The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight 
+$\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, 
+the bias is a vector $\boldsymbol{b}^i$ in $\mathbb{R}^{d_i}$, and the activation function 
+is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, 
+then the value of $i$-th layer is computed by: 
+\begin{align*}
 	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \boldsymbol{b}^i\\
 	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)).
 \end{align*} The vector $\hat{\boldsymbol{z}}$ is called post-activation values, and $\boldsymbol{z}$ is called pre-activation values, and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
-
+\fi
 
 The verification problem is to determine whether the output of a neural network will be affected under small perturbations to the input. In formula, if we use a distance $d$, and if the $\boldsymbol{x}_0$ is a ordinary input, then the considered domain $\mathcal{D}=\{x: d(\boldsymbol{x},\boldsymbol{x}_0)<\varepsilon\}$ where $\varepsilon$ is the parameter measuring the size of perturbation. And the problem will be \begin{align*}
 	\forall \boldsymbol{x}\in\mathcal{D} \   f(\boldsymbol{x}) = f(\boldsymbol{x}_0).
