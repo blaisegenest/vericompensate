@@ -23,6 +23,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\vx}{\boldsymbol{x}}
+\newcommand{\vy}{\boldsymbol{y}}
 \newcommand{\vW}{\boldsymbol{W}}
 \newcommand{\vz}{\boldsymbol{z}}
 \newcommand{\vb}{\boldsymbol{b}}
@@ -145,19 +146,43 @@ In this paper, we consider $L^{\infty}$ norm the max value of distance of each d
 
 \section{Value Abstraction for DNN verification}
 
+In this section, we describe different value (over)-abstractions that are used by efficient algorithms to certify the networks. Although the analysis can be approximated, the over-abstraction ensures that all behavior in the original network are possible in the overabstraction, and thus if the over abstraction is safe, then so will be the original network.
+
+\subsection{Box and DeepPoly Abstraction}
 
 \begin{figure}[t!]
 	\centering
 		\includegraphics[scale=0.4]{example.png}
-	\caption{A DNN example from \cite{kneuron}}
+	\caption{A DNN example from \cite{kneuron}, where every node is separated into its linear and its ReLU functions.}
 	\label{fig1}
 	\end{figure}
 	
-
 An efficient and prolific line of work concerning DNN verification has been to develop value abstraction of the network. The idea is to compute upper and lower bounds on the values of (some) neurons in the DNN when the inputs are in a given neighbourhood, in order to conclude on the robustness without needing to compute the values exactly for all inputs.
 
-Consider the simpler abstraction, called the box abstraction \cite{deeppoly}: from the bounds in the input, one compute by the linear step the bound on the next layer, apply the ReLU function, and so on.
-For instance, on the DNN example of Fig \ref{fig1}, 
+Consider the simpler abstraction, called the {\em box abstraction} \cite{deeppoly}: from the bounds in the input, one compute by the linear step the bound on the next layer, apply the ReLU function, and so on. For instance, on the DNN example of Fig \ref{fig1}, $x_1,x_2 \in [-1,1]$, then $x_3,x_4 \in [-2,2]$, using ReLU $X_5,x_6 \in [0,2]$, and $x_7 \in [0,6]$ while $x_8 \in [1.5,3.5]$. While the bounds of $x_1, \ldots, x_6$ are correct (for all $\alpha$ 
+in the range, there is an input $\vy$ such that $weight_{\vy}(x_i))=\alpha$), 
+it is no more the case from the next layer (starting in $x_7,x_8$) because of potential 
+dependencies between earlier neurons: $x_3$ reaches weight $2$ only when $x_1=x_2=2$,
+in which case $x_4$ reaches weight $0$. Hence, it is impossible that $weight(x_7)$ reaches $6$, as it would require both $x_3$ and $x_4$ to have weight $2$.
+
+A still extremely fast algorithm that aleviates some of this issue is known as {\em DeepPoly} \cite{DeepPoly}, also rediscovered as the CROWN algorithm \cite{Crown}. Instead of 
+hard bounds, for each neuron $n$ of layer $k$, two affine functions (with input at the previous layer $k-1$) are kept as lower bound and upper bound of the weight of the node.
+For instance, $f_i \leq weight(x_i) \leq g_i$ with $f_5(x_3)=f_6(x_4)=0$ and 
+$g_5(x_3) = \frac{x_3+2}{2}$,
+$g_6(x_4) = \frac{x_4+2}{2}$. 
+With that, we get 
+$x_7 \leq g_5(x_3) + 2 g_6(x_4) = \frac{x_3 + 2x_4 + 6}{2} = \frac{2x_1 - x_4 + 6}{2}\leq 4.5$.
+
+While there is an optimal linear function for the upper bound $g_i$ for ReLU nodes, there are two choices for the lower bound: $f_i(x_i) = 0$ or $x_i$.
+In the DeepPoly algorithm, the choice is made by considering the range of $x_i=[a,b]$ with $a < 0 < b$. If $|a|\geq |b|$ then $0$ is used, while if $|b|>|a|$ then $x_i$ (the identity function) is used. Let us call 
+$\overline{\mbox{DeepPoly}}$ the Deeppoly algorithm such that 
+$f_i(x_i) = 0$ is always used, and $f_i(x_i) = x_i$ is never used. 
+It has a main advantage, as it subsmues the box abstraction.
+Indeed, taking an interval $x_i \in [-0.2,5]$, it gives $ReLU(x_i) \in [0,5]$, 
+while the normal DeepPoly algorithm would only allow to conclude that $ReLU(x_i) \in [-0.2,5]$.
+
+\subsection{PRIMA and $\beta$-CROWN}
+
 
 
 \subsection{MILP formation of $\ReLU$ functions}
