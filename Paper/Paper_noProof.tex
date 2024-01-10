@@ -205,17 +205,17 @@ ${0,1}$ are relaxed to be real in interval $[0,1]$, using otherwise the same enc
 Solving LP instances being Polynomial time, much more efficient solution could be found, but at the price of a lack of accuracy (e.g. with not as thight bounds). This is called the {\em LP abstraction}.
 
 As far as we know, no formal result states the relationship between the LP approximation and DeepPoly.
-We state here and prove later that the LP abstraction is strictly more accurate than the DeepPoly abstraction. It actually corresponds to consider in DeepPoly both linear functions lower bounding the ReLU function, $ReLU{y} \geq 0$ and $ReLU{y} \geq y$, while DeepPoly consider exactly one.
+We state here and prove later that the LP abstraction is strictly more accurate than the DeepPoly abstraction. It actually corresponds to consider in DeepPoly both linear functions lower bounding the ReLU function, $ReLU{y} \geq 0$ and $ReLU{y} \geq y$, while DeepPoly considers exactly one.
 
-\begin{theorem}
- Given $y \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems of constraints are equivalent:
+\begin{proposition}
+	\label{LP}
+ Given $y \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems 1) and 2) of constraints are equivalent:
  \vspace{-0.1cm}
  \begin{align*}
-	 \hat{y} \leq y \quad \wedge \quad \hat{y} \leq \beta \cdot a \quad & \wedge \quad \hat{y} \geq 0, \quad \wedge \quad \hat{y} \geq y-\alpha \cdot (1-a), a \in [0,1] \\
-	 \text{and} \quad \hat{y} \geq 0 \quad & \wedge \quad \hat{y} \geq y \quad \wedge \quad \hat{y} \leq \beta \frac{y-\alpha}{\beta-\alpha}
+	 1) \quad \hat{y} \leq y \quad \wedge \quad \hat{y} \leq \beta \cdot a \quad & \wedge \quad \hat{y} \geq 0, \quad \wedge \quad \hat{y} \geq y-\alpha \cdot (1-a), \, a \in [0,1] \\
+	 \text{and} \quad  2) \quad \hat{y} \geq 0 \quad & \wedge \quad \hat{y} \geq y \quad \wedge \quad \hat{y} \leq \beta \frac{y-\alpha}{\beta-\alpha}
 \end{align*} 
-
-\end{theorem}
+\end{proposition}
 
 
 \iffalse
