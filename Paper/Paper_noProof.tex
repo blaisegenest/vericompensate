@@ -298,7 +298,7 @@ The general formal definition of compensating pair is as follows:
 	
 	1. A path is a sequence of nodes $\langle a,b,c,d,e,\cdots\rangle$ of nodes that goes consecutively through each layer. We call the first node source node and the last node target node.  
 	
-	2. The \emph{Value} of a path is the product of of weights along the path (with sign): for a path $\langle a,b,c,d,e,\cdots\rangle$, its values is $$V = W_{ba}\cdot W_{cb}\cdot W_{dc}\cdot W_{ed}\cdot \cdots$$
+	2. The \emph{Value} of a path is the product of of weights along the path (with sign): for a path $\langle a,b,c,d,e,\cdots\rangle$, its values is $$V = W_{ab}\cdot W_{bc}\cdot W_{cd}\cdot W_{ed}\cdot \cdots$$
 	
 	3. A \emph{Compensating Pair} is a pair of paths with the same source node and target node, such that the two paths have no common node, and the values of two paths have opposite signs (one is strictly positive and another is strictly negative).
 	
@@ -650,7 +650,8 @@ On all 4 networks, our fast version can exceed PRIMA both in accuracy and speed.
 \section*{Appendix: Proofs of No Diamond Theorem}
 
 
-
+\bibliographystyle{plain}
+\bibliography{references}
 
 
 \end{document}
