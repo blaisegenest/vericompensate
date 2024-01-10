@@ -169,7 +169,7 @@ it is no more the case from the next layer (starting in $x_7,x_8$) because of po
 dependencies between earlier neurons: $x_3$ reaches weight $2$ only when $x_1=x_2=2$,
 in which case $x_4$ reaches weight $0$. Hence, it is impossible that $weight(x_7)$ reaches $6$, as it would require both $x_3$ and $x_4$ to have weight $2$.
 
-A still extremely fast algorithm that aleviates some of this issue is known as {\em deeppoly} \cite{deeppoly}, also rediscovered as the CROWN algorithm \cite{crown}. Instead of 
+A still extremely fast algorithm that aleviates some of this issue is known as {\em DeepPoly} \cite{deeppoly}, also rediscovered as the {\em CROWN} algorithm \cite{crown}. Instead of 
 hard bounds, for each neuron $n$ of layer $k$, two affine functions (with input at the previous layer $k-1$) are kept as lower bound and upper bound of the weight of the node.
 For instance, $f_i \leq weight(x_i) \leq g_i$ with $f_5(x_3)=f_6(x_4)=0$ and 
 $g_5(x_3) = \frac{x_3+2}{2}$,
@@ -178,39 +178,47 @@ With that, we get
 $x_7 \leq g_5(x_3) + 2 g_6(x_4) = \frac{x_3 + 2x_4 + 6}{2} = \frac{2x_1 - x_4 + 6}{2}\leq 4.5$.
 
 While there is an optimal linear function for the upper bound $g_i$ for ReLU nodes, there are two choices for the lower bound: $f_i(x_i) = 0$ or $x_i$.
-In the DeepPoly algorithm, the choice is made by considering the range of $x_i=[a,b]$ with $a < 0 < b$. If $|a|\geq |b|$ then $0$ is used, while if $|b|>|a|$ then $x_i$ (the identity function) is used. Let us call 
+In the DeepPoly algorithm, the choice is made by considering the range of an unstable neuron $x_i=[\alpha,\beta]$ with $\alpha < 0 < \beta$. If $|\alpha|\geq |\beta|$ then $0$ is used, while if $|\beta|>|\alpha|$ then $x_i$ (the identity function) is used. Let us call 
 $\overline{\mbox{DeepPoly}}$ the Deeppoly algorithm such that 
 $f_i(x_i) = 0$ is always used, and $f_i(x_i) = x_i$ is never used. 
-It has a main advantage, as it subsmues the box abstraction.
+It has a main advantage, as it subsmumes the box abstraction.
 Indeed, taking an interval $x_i \in [-0.2,5]$, it gives $ReLU(x_i) \in [0,5]$, 
 while the normal DeepPoly algorithm would only allow to conclude that $ReLU(x_i) \in [-0.2,5]$.
 
+\iffalse
 \subsection{PRIMA and $\beta$-CROWN}
+\fi
 
+\subsection{MILP and LP encodings for DNNs}
 
-
-\subsection{MILP formulation of DNNs}
-
-At the other end of the spectrum, we find the Mixed Integer Linear Programming (MILP) value abstraction, which is a priori a complete method:
- 
-
-
-In literature, if $x=\ReLU(y)$, and $y$ is unstable, then this function can be formulated in MILP with one integer variable $a$ valued in ${0,1}$ (i.e., a binary variable) by:
-
-\vspace*{-4ex}
-
+At the other end of the spectrum, we find the Mixed Integer Linear Programming (MILP) value abstraction \cite{MILP}, which is a priori a complete method (but whose complete encoding is much slower). 
+Consider an unstable neuron $y \in[\alpha,\beta]$. The value of $\ReLU(y)$ can be encoded exactly in an MILP formula with one integer (actually even binary) variable $a$ valued in ${0,1}$, using 4 constraints:
+\vspace{-0.1cm}
 \begin{align*}
-	&x \geq 0, \ 
-	x \geq y-l\cdot (1-a)\\
-	&x \leq y,\ 
-	x \leq u\cdot a
+	\hat{y} \leq y \quad \wedge \quad \hat{y} \leq \beta \cdot a \quad \wedge \quad \hat{y} \geq 0, \quad \wedge \quad \hat{y} \geq y-\alpha \cdot (1-a)
 \end{align*} 
 
-MILP becomes one of standard methods to compute the lower bounds and upper bounds of neurons in a pure $\ReLU$ activation network. Combining with the discussion from previous subsection, the verification problem is equivalent to an MILP optimization problem.
+This encoding is exact in the meaning that \cite{MILP} for all $y \in [\alpha,\beta] \setminus 0$, there is a unique solution $(a,\hat{y})$ satisfying the constraints, and we have $\hat{y}=\ReLU(y)$ (and $a$ is 0 if $y < 0$ and 1 if $y>0$, and can be either for $y=0$). Such an encoding can be used for all (unstable) ReLU nodes, and optimizing its value allows to certify a given image. However, for any networks hundreds of nodes or more, it means having hundreds of integer variables, and such network will usually not be solvable efficiently.
+
+MILP instances can be linearly relaxed into LP over-abstraction, where variables which were integers in 
+${0,1}$ are relaxed to be real in interval $[0,1]$, using otherwise the same encoding. 
+Solving LP instances being Polynomial time, much more efficient solution could be found, but at the price of a lack of accuracy (e.g. with not as thight bounds). This is called the {\em LP abstraction}.
+
+As far as we know, no formal result states the relationship between the LP approximation and DeepPoly.
+We state here and prove later that the LP abstraction is strictly more accurate than the DeepPoly abstraction. It actually corresponds to consider in DeepPoly both linear functions lower bounding the ReLU function, $ReLU{y} \geq 0$ and $ReLU{y} \geq y$, while DeepPoly consider exactly one.
+
+\begin{theorem}
+ Given $y \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems of constraints are equivalent:
+ \vspace{-0.1cm}
+ \begin{align*}
+	 \hat{y} \leq y \quad \wedge \quad \hat{y} \leq \beta \cdot a \quad & \wedge \quad \hat{y} \geq 0, \quad \wedge \quad \hat{y} \geq y-\alpha \cdot (1-a), a \in [0,1] \\
+	 \text{and} \quad \hat{y} \geq 0 \quad & \wedge \quad \hat{y} \geq y \quad \wedge \quad \hat{y} \leq \beta \frac{y-\alpha}{\beta-\alpha}
+\end{align*} 
+
+\end{theorem}
 
 
-However, the cost of optimization of an MILP model is very expensive, especially when the number of binaries increases: solving MILPs are NP-hard, and often needs exponential time to solve it. A typical relaxation is to change the binary variable $a$ to a continue variable, then it will be equivalent to the standard triangle LP model for $\ReLU$ function.
-
+\iffalse
 Our strategy is to restrict the number of binary variables, and this will definitely lose accuracy of results.  The key problem is how to use fewer binary variables to get more accuracy. That is, to choose which node to be binary, and which not.
 
 \begin{definition}
@@ -233,6 +241,11 @@ Our strategy is to restrict the number of binary variables, and this will defini
 \end{definition}
 
 We aim is to find an algorithm, to decide which nodes should be opened such that we can have more accuracy.
+\fi
+
+
+
+
 
 \section{Compensate, Diamond and Node Chosen}
 
