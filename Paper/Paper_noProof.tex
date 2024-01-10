@@ -432,7 +432,7 @@ In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 w
 
 \vspace*{1ex}
 
-And the pseudo-code is as follows:
+The pseudo-code is as follows ():
 
 \begin{algorithm}
 	\caption{Process for length 3 + length 4}
@@ -467,44 +467,43 @@ And the pseudo-code is as follows:
 
 %Our experiments are carried by different version codes, and the global process has been changed. 
 
-In this section, We will explain our framework in 4 subsections: precomputation, process for one image, process for one node, and global process.
+In this section, we will sketch the framework. 
 
-\subsection{Process for one image}
+\subsection{Structure}
 
-The basic unit of running is image: all parameters will be reset when one image is finished.
+\subsubsection*{Precomputation}
 
-The process for one image is clear: compute the upper and lower bounds of nodes layer by layer to the output layer. 
+The open node chosen is the key part of the whole framework but costs a lot of time. So some computation (those do not rely on certain image and bounds) is moved to the precomputation part.
 
-Suppose we have reached a new layer $l_i$ and have upper and lower bounds of all nodes in previous layers. Then we will compute bounds of every node in $l_i$ in parallel using the data of bounds of previous nodes. The method is to build and optimize an MILP model.
-
-Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
-
-In one layer, in principle, running for nodes are in principle independent and can be done in parallel. In our experiments, some local parameters will be adjusted from nodes to nodes.
-
-\subsection{Precomputation}
-
-The open node chosen is the key part of the whole framework, and it will cost two much time without precomputation because we must do open node chosen for every node. 
-
-The precomputation corresponds to the simplest case: source node fixed. We will compute and store a limited number of paths with highest (absolute) values before running any image. This does not rely on other parameters or results(bounds).
-
-Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
+%The precomputation corresponds to the simplest case: source node fixed. We will compute and store a limited number of paths with highest (absolute) values before running any image. This does not rely on other parameters or results(bounds).
+%
+%Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
 
 
-\subsection{Process for one node}
 
-For one node, we will build the MILP model for it.
+\subsubsection*{Process for one image} An image is the basic unit in whole process. The process of one image is simple: compute the concrete bounds of nodes layer by layer, use the bounds of previous layer to build MILP models of current layer. In one layer, nodes runs in parallel.
 
-The most important parameter is the number $O$ mentioned in last section:  the number of open nodes. When the program creates a model for a node, we will read this parameter to decide how many nodes to open in this model. This parameter can change during the running of an image by the mechanic of the code.
+%Suppose we have reached a new layer $l_i$ and have upper and lower bounds of all nodes in previous layers. Then we will compute bounds of every node in $l_i$ in parallel using the data of bounds of previous nodes. The method is to build and optimize an MILP model.
 
-
-Another group of parameters is for the optimization of models. 
-
-The optimization of a model is carrying by loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
-
-During the loop of optimization, parameters might be changed and the model may be rebuild by the new parameter.
+%Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
 
 
-\subsection{Global Process}
+
+
+%The open node chosen is the key part of the whole framework, and it will cost two much time without precomputation because we must do open node chosen for every node. 
+%
+%The precomputation corresponds to the simplest case: source node fixed. We will compute and store a limited number of paths with highest (absolute) values before running any image. This does not rely on other parameters or results(bounds).
+%
+%Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
+
+
+\subsubsection*{Process for one node}
+
+ The optimization of a model consists of loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
+
+
+
+\subsubsection*{Global Process}
 
 In the newest version, we do images by batches for 100 images each. For each batch, the running consists of three turns, very fast turn, fast turn and slow turn.
 
@@ -512,32 +511,27 @@ In the very fast turn, it will run DeepPoly for all images to get a preliminary 
 
 Then sort all remain images by the size of uncertainty of DeepPoly from smaller to larger. The fast turn is to run the images from the smaller side to larger side until consecutive two images cannot be verified. All remain images and images tried but not verified will be put into the next list. And then run the list with parameters for slow turn.
 
-%\subsubsection*{Run one image}
-%
-%In the very fast turn, we use DeepPoly. So, all discussion below only consider fast and slow turns.
-%
-%An image is the basic unit in the running. The running is carrying layer by layer. The bounds obtained in previous layer will be used to build the model for the next layer, till the output layer.
-%
-%Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
-%
-%In one layer, in principle, running for nodes are in principle independent and can be done in parallel. In our experiments, some local parameters will be adjusted from nodes to nodes.
 
 
-%\subsubsection*{Create Models}
-%
-%The most important parameter is the number $O$ mentioned in last section:  the number of open nodes. When the program creates a model for a node, we will read this parameter to decide how many nodes to open in this model. This parameter can change during the running of an image by the mechanic of the code.
-%
-%\subsubsection*{Optimization for a node}
-%
-%Another group of parameters is for the optimization of models. 
-%
-%The optimization of a model is carrying by loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
-%
-%During the loop of optimization, parameters might be changed and the model may be rebuild by the new parameter.
 
-\subsubsection*{Other Setting}
+\subsection{Parameters}
 
-In our experiments, we have not used PGD-attack to rule out images. In principle, there is no obstacle to use PGD-attack.
+Parameters like open node parameter $O$ is important in the frame. Basically, all parameters will be reset after one image.
+
+\subsubsection*{Global parameters}
+
+
+
+
+\subsubsection*{Local parameters}
+
+$O$ and timeout parameters for loops will change frequently during the loops of one node. These change will not reset until the end of one layer or one image.
+
+
+
+\subsection{Other Setting}
+
+In our experiments, we have not used PGD-attack to exclude some images. In principle, there is no obstacle to use PGD-attack.
 
 
 
