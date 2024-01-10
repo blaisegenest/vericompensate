@@ -323,7 +323,7 @@ The general formal definition of compensating pair is as follows:
 	
 	1. A path is a sequence of nodes $\langle a,b,c,d,e,\cdots\rangle$ of nodes that goes consecutively through each layer. We call the first node source node and the last node target node.  
 	
-	2. The \emph{Value} of a path is the product of of weights along the path (with sign): for a path $\langle a,b,c,d,e,\cdots\rangle$, its values is $$V = W_{ba}\cdot W_{cb}\cdot W_{dc}\cdot W_{ed}\cdot \cdots$$
+	2. The \emph{Value} of a path is the product of of weights along the path (with sign): for a path $\langle a,b,c,d,e,\cdots\rangle$, its values is $$V = W_{ab}\cdot W_{bc}\cdot W_{cd}\cdot W_{ed}\cdot \cdots$$
 	
 	3. A \emph{Compensating Pair} is a pair of paths with the same source node and target node, such that the two paths have no common node, and the values of two paths have opposite signs (one is strictly positive and another is strictly negative).
 	
@@ -650,13 +650,13 @@ set of 1000 images. beta-Crown is the state-of-the-art verifier based on branch-
 		
 		&  & \textrm{Ver}.\% & \textrm{Time}(s) & \textrm{Ver}.\% & \textrm{Time}(s) &\textrm{Ver}.\% & \textrm{Time}(s) & \textrm{Ver}.\% & \textrm{Time}(s) \\ \hline
 		
-		\textrm{MLP}\ 5$\times$100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+		\textrm{MLP}\ 5$\times$100\  &   0.026& 1.758 & time & 51 & 159 &    68.4 & 142 & 69.9 & 102 \\ \hline
 		
-		\textrm{MLP}\ 8$\times$100\  &   0.026& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+		\textrm{MLP}\ 8$\times$100\  &   0.026& 52.7 & 92.3 & 42.8 & 301 &    65.8 & 364 & 62 & 103 \\ \hline
 		
-		\textrm{MLP}\ 5$\times$200\  &   0.015& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+		\textrm{MLP}\ 5$\times$200\  &   0.015& 1.758 & time & 69 & 224 &    76.8 & 279 & 77.4 & 86 \\ \hline
 		
-		\textrm{MLP}\ 8$\times$200\  &   0.015& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
+		\textrm{MLP}\ 8$\times$200\  &   0.015& 68.1 & 297 & 62.4 & 395 &    79.1 & 535 & 73.5 & 95 \\ \hline
 		
 		\textrm{MLP}\ 6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
 	\end{tabular}
@@ -675,7 +675,8 @@ On all 4 networks, our fast version can exceed PRIMA both in accuracy and speed.
 \section*{Appendix: Proofs of No Diamond Theorem}
 
 
-
+\bibliographystyle{plain}
+\bibliography{references}
 
 
 \end{document}
