@@ -159,13 +159,17 @@ In this section, we describe different value (over)-abstractions that are used b
 	
 An efficient and prolific line of work concerning DNN verification has been to develop value abstraction of the network. The idea is to compute upper and lower bounds on the values of (some) neurons in the DNN when the inputs are in a given neighbourhood, in order to conclude on the robustness without needing to compute the values exactly for all inputs.
 
+First, remark that weighted sums is a linear function, so it is easy to represent it explicitly. The only problematic part to represent accurately is the ReLU function. While it is fairly simple piecewise linear function with 2 modes ($x<0$ and $x \geq 0$), it is not linear. Considering its iterated impact along the different layers of a ReLU DNN is much more complex that it seems. First, let us remark that it is easy to represent exactly $ReLU(x)$
+in case $x$ is known to be entirely positive and in the case where it is entirely negative
+(such a neuron $x$ is called stable), as in both case there is only one known linear mode involved. Hence, the sole problem remains how to treat unstable neurons.
+
 Consider the simpler abstraction, called the {\em box abstraction} \cite{deeppoly}: from the bounds in the input, one compute by the linear step the bound on the next layer, apply the ReLU function, and so on. For instance, on the DNN example of Fig \ref{fig1}, $x_1,x_2 \in [-1,1]$, then $x_3,x_4 \in [-2,2]$, using ReLU $X_5,x_6 \in [0,2]$, and $x_7 \in [0,6]$ while $x_8 \in [1.5,3.5]$. While the bounds of $x_1, \ldots, x_6$ are correct (for all $\alpha$ 
-in the range, there is an input $\vy$ such that $weight_{\vy}(x_i))=\alpha$), 
+in the range, there is an input $\vy$ such that $weight_{\vy}(x_i))=\alpha$, 
 it is no more the case from the next layer (starting in $x_7,x_8$) because of potential 
 dependencies between earlier neurons: $x_3$ reaches weight $2$ only when $x_1=x_2=2$,
 in which case $x_4$ reaches weight $0$. Hence, it is impossible that $weight(x_7)$ reaches $6$, as it would require both $x_3$ and $x_4$ to have weight $2$.
 
-A still extremely fast algorithm that aleviates some of this issue is known as {\em DeepPoly} \cite{DeepPoly}, also rediscovered as the CROWN algorithm \cite{Crown}. Instead of 
+A still extremely fast algorithm that aleviates some of this issue is known as {\em deeppoly} \cite{deeppoly}, also rediscovered as the CROWN algorithm \cite{crown}. Instead of 
 hard bounds, for each neuron $n$ of layer $k$, two affine functions (with input at the previous layer $k-1$) are kept as lower bound and upper bound of the weight of the node.
 For instance, $f_i \leq weight(x_i) \leq g_i$ with $f_5(x_3)=f_6(x_4)=0$ and 
 $g_5(x_3) = \frac{x_3+2}{2}$,
@@ -185,11 +189,11 @@ while the normal DeepPoly algorithm would only allow to conclude that $ReLU(x_i)
 
 
 
-\subsection{MILP formation of $\ReLU$ functions}
+\subsection{MILP formulation of DNNs}
 
-In literature, many methods have been used to approximate $\ReLU$ functions. One of them is MILP (or MIP, Mixed Integer Linear Programming).
+At the other end of the spectrum, we find the Mixed Integer Linear Programming (MILP) value abstraction, which is a priori a complete method:
+ 
 
-For a activation $x=\ReLU(y)$, if we already know $y's$ rough upper and lower bounds $u,l$, then if $u>0$ and $l<0$, we call $y$ is unstable; otherwise, $y$ is stable. In practice, stable node is easier because $\ReLU$ function becomes a linear function on this node. The key problem is to deal with unstable nodes.
 
 In literature, if $x=\ReLU(y)$, and $y$ is unstable, then this function can be formulated in MILP with one integer variable $a$ valued in ${0,1}$ (i.e., a binary variable) by:
 
