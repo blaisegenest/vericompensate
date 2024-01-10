@@ -195,8 +195,8 @@ At the other end of the spectrum, we find the Mixed Integer Linear Programming (
 Consider an unstable neuron $y \in[\alpha,\beta]$. The value of $\ReLU(y)$ can be encoded exactly in an MILP formula with one integer (actually even binary) variable $a$ valued in ${0,1}$, using 4 constraints:
 \vspace{-0.1cm}
 \begin{align*}
-	\hat{y} \leq y \quad \wedge \quad \hat{y} \leq \beta \cdot a \quad \wedge \quad \hat{y} \geq 0, \quad \wedge \quad \hat{y} \geq y-\alpha \cdot (1-a)
-\end{align*} 
+	\hat{y} \geq y \quad \wedge \quad \hat{y} \geq 0, \quad \wedge \quad \hat{y} \leq \beta \cdot a \quad \wedge \quad \hat{y} \leq y-\alpha \cdot (1-a)
+\end{align*}
 
 This encoding is exact in the meaning that \cite{MILP} for all $y \in [\alpha,\beta] \setminus 0$, there is a unique solution $(a,\hat{y})$ satisfying the constraints, and we have $\hat{y}=\ReLU(y)$ (and $a$ is 0 if $y < 0$ and 1 if $y>0$, and can be either for $y=0$). Such an encoding can be used for all (unstable) ReLU nodes, and optimizing its value allows to certify a given image. However, for any networks hundreds of nodes or more, it means having hundreds of integer variables, and such network will usually not be solvable efficiently.
 
@@ -212,8 +212,8 @@ We state here and prove later that the LP abstraction is strictly more accurate 
  Given $y \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems 1) and 2) of constraints are equivalent:
  \vspace{-0.1cm}
  \begin{align*}
-	 1) \quad \hat{y} \leq y \quad \wedge \quad \hat{y} \leq \beta \cdot a \quad & \wedge \quad \hat{y} \geq 0, \quad \wedge \quad \hat{y} \geq y-\alpha \cdot (1-a), \, a \in [0,1] \\
-	 \text{and} \quad  2) \quad \hat{y} \geq 0 \quad & \wedge \quad \hat{y} \geq y \quad \wedge \quad \hat{y} \leq \beta \frac{y-\alpha}{\beta-\alpha}
+	 & 1) \quad \hat{y} \geq y \quad \wedge \quad \hat{y} \geq 0, \quad \wedge \quad \hat{y} \leq \beta \cdot a \quad \wedge \quad \hat{y} \leq y-\alpha \cdot (1-a), \, a \in [0,1] \\
+	 \text{and} \quad  & 2)  \quad \hat{y} \geq y \quad \wedge \quad \hat{y} \geq 0 \quad \wedge \quad \hat{y} \leq \beta \frac{y-\alpha}{\beta-\alpha}
 \end{align*} 
 \end{proposition}
 
