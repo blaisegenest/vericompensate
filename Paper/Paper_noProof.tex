@@ -27,6 +27,7 @@
 \newcommand{\vW}{\boldsymbol{W}}
 \newcommand{\vz}{\boldsymbol{z}}
 \newcommand{\vb}{\boldsymbol{b}}
+\newcommand{\val}{{\textrm{value}}}
 
 
 
@@ -98,7 +99,7 @@ denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively th
 The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
 $\boldsymbol{z}$ is called pre-activation values, 
 and $\boldsymbol{z}^{i}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
-For $\boldsymbol{x}=\vz^0$ the vector of input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, neurons are also called \emph{nodes}, and when we refer to a specific neuron, we use $a,b,c,d$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $weight_{\boldsymbol{x}}(a)$ the weight of neuron $a$ when the the input is $\boldsymbol{x}$. A path $\pi$ will be a sequence 
+For $\boldsymbol{x}=\vz^0$ the vector of input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, neurons are also called \emph{nodes}, and when we refer to a specific neuron, we use $a,b,c,d$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the weight of neuron $a$ when the the input is $\boldsymbol{x}$. A path $\pi$ will be a sequence 
 $\pi=(a_i)_{k \leq  i \leq k'}$ of neurons in consecutive layers, and the weight $w(\pi)=W_{a_k,a_{k+1}} \times \cdots \times  W_{a_{k'-1},a_{k'}}$.
 
 
@@ -157,7 +158,7 @@ In this section, we describe different value (over)-abstractions that are used b
 %	\label{fig1}
 %	\end{figure}
 	
-	\begin{figure}
+	\begin{figure}[t!]
 		\centering
 		\begin{tikzpicture}
 			
@@ -187,23 +188,23 @@ In this section, we describe different value (over)-abstractions that are used b
 			\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$x_4$};
 			
 			\node[circle, draw= black, thick, minimum width = 20,
-			minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$x_5$};
-			\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$x_6$};
+			minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$\hat{x}_3$};
+			\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$\hat{x}_4$};
 			
 			
 			\node[circle, draw= blue, thick, minimum width = 20,
-			minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$x_7$};
-			\node[circle, draw= blue, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$x_8$};
+			minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$x_5$};
+			\node[circle, draw= blue, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$x_6$};
 			
 			
 			
 			
 			% Output layer
 			\node[circle, draw= black, thick, minimum width = 20,
-			minimum height = 20] (output1) at ($(input1) + (10,0)$){$x_9$};
+			minimum height = 20] (output1) at ($(input1) + (10,0)$){$\hat{x}_5$};
 			
 			\node[circle, draw= black, thick, minimum width = 20,
-			minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$x_{10}$};
+			minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$\hat{x}_{6}$};
 			
 			
 			% Connections
@@ -217,7 +218,7 @@ In this section, we describe different value (over)-abstractions that are used b
 			\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$1$};
 			\draw[->,thick] (input1) -- (hidden2)node[near start, above] {$1$};
 			
-			\draw[->,thick] (input2) -- (hidden1) node[near start, above] {$1$};
+			\draw[->,thick] (input2) -- (hidden1) node[near start, below] {$1$};
 			\draw[->,thick] (input2) -- (hidden2)node[near start, below] {$-1$};
 			
 			
@@ -234,18 +235,18 @@ In this section, we describe different value (over)-abstractions that are used b
 			\draw[->,thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
 			\draw[->,thick] (hidden3) -- (hidden6) node[near start, above] {$0$};
 			
-			\draw[->,thick] (hidden4) -- (hidden5)node[near start, above] {$2$};
+			\draw[->,thick] (hidden4) -- (hidden5)node[near start, below] {$2$};
 			\draw[->,thick] (hidden4) -- (hidden6)node[near start, below] {$1$};
 			
 			
 			
 			
-			\draw[->,thick] (hidden5) -- (output1) node[midway, above] {$\max(x_7,0)$};
-			\draw[->,thick] (hidden6) -- (output2) node[midway, above] {$\max(x_8,0)$};
+			\draw[->,thick] (hidden5) -- (output1) node[midway, above] {$\max(x_5,0)$};
+			\draw[->,thick] (hidden6) -- (output2) node[midway, above] {$\max(x_6,0)$};
 			
 			
 		\end{tikzpicture}
-		\caption{A DNN example from \cite{kneuron}, where every node is separated into its linear and its ReLU functions.}
+		\caption{A DNN example from \cite{kneuron}, where every node is separated into 2, $x$ after the weighted sum and $\hat{x}$ after the ReLU activation function.}
 		\label{fig1}
 	\end{figure}
 	
@@ -255,23 +256,26 @@ First, remark that weighted sums is a linear function, so it is easy to represen
 in case $x$ is known to be entirely positive and in the case where it is entirely negative
 (such a neuron $x$ is called stable), as in both case there is only one known linear mode involved. Hence, the sole problem remains how to treat unstable neurons.
 
-Consider the simpler abstraction, called the {\em box abstraction} \cite{deeppoly}: from the bounds in the input, one compute by the linear step the bound on the next layer, apply the ReLU function, and so on. For instance, on the DNN example of Fig \ref{fig1}, $x_1,x_2 \in [-1,1]$, then $x_3,x_4 \in [-2,2]$, using ReLU $X_5,x_6 \in [0,2]$, and $x_7 \in [0,6]$ while $x_8 \in [1.5,3.5]$. While the bounds of $x_1, \ldots, x_6$ are correct (for all $\alpha$ 
-in the range, there is an input $\vy$ such that $weight_{\vy}(x_i))=\alpha$, 
-it is no more the case from the next layer (starting in $x_7,x_8$) because of potential 
+Consider the simpler abstraction, called the {\em box abstraction} \cite{deeppoly}: from the bounds in the input, one compute by the linear step the bound on the next layer, apply the ReLU function, and so on. For instance, on the DNN example of Fig \ref{fig1}, $x_1,x_2 \in [-1,1]$, then $x_3,x_4 \in [-2,2]$, using ReLU $\hat{x}_3,\hat{x}_4 \in [0,2]$, and $x_5 \in [0,6]$ while $x_6 \in [1.5,3.5]$. 
+While the bounds of $x_1, \ldots, x_6$ are exact (for all $\alpha$ 
+in the range, there is an input $\vy$ such that $\val_{\vy}(x_i)=\alpha$), 
+it is no more the case from the next layer (starting in $x_5,x_6$) because of potential 
 dependencies between earlier neurons: $x_3$ reaches weight $2$ only when $x_1=x_2=2$,
-in which case $x_4$ reaches weight $0$. Hence, it is impossible that $weight(x_7)$ reaches $6$, as it would require both $x_3$ and $x_4$ to have weight $2$.
+in which case $x_4$ reaches weight $0$. Hence, it is impossible that $weight(x_5)$ reaches $6$, as it would require both $x_3$ and $x_4$ to have weight $2$.
 
-A still extremely fast algorithm that aleviates some of this issue is known as {\em DeepPoly} \cite{deeppoly}, also rediscovered as the {\em CROWN} algorithm \cite{crown}. Instead of 
+A still extremely fast algorithm that corrects some of this issue is known as {\em DeepPoly} \cite{deeppoly}, also rediscovered as the {\em CROWN} algorithm \cite{crown}. Instead of 
 hard bounds, for each neuron $n$ of layer $k$, two affine functions (with input at the previous layer $k-1$) are kept as lower bound and upper bound of the weight of the node.
-For instance, $f_i \leq weight(x_i) \leq g_i$ with $f_5(x_3)=f_6(x_4)=0$ and 
-$g_5(x_3) = \frac{x_3+2}{2}$,
-$g_6(x_4) = \frac{x_4+2}{2}$. 
+For instance, $f_i \leq weight(\hat{x}_i) \leq g_i$ with 
+$f_{3}(x_3)=f_4(x_4)=0$ and 
+$g_3(x_3) = \frac{x_3+2}{2}$,
+$g_4(x_4) = \frac{x_4+2}{2}$. 
 With that, we get 
-$x_7 \leq g_5(x_3) + 2 g_6(x_4) = \frac{x_3 + 2x_4 + 6}{2} = \frac{3x_1 - x_2 + 6}{2}\leq 5.5$.
+$x_5 \leq g_3(x_3) + 2 g_4(x_4) = \frac{x_3 + 2x_4 + 6}{2} = \frac{3x_1 - x_2 + 6}{2}\leq 5.5$.
 
-While there is an optimal linear function for the upper bound $g_i$ for ReLU nodes, there are two choices for the lower bound: $f_i(x_i) = 0$ or $x_i$.
-In the DeepPoly algorithm, the choice is made by considering the range of an unstable neuron $x_i=[\alpha,\beta]$ with $\alpha < 0 < \beta$. If $|\alpha|\geq |\beta|$ then $0$ is used, while if $|\beta|>|\alpha|$ then $x_i$ (the identity function) is used. Let us call 
-$\overline{\mbox{DeepPoly}}$ the Deeppoly algorithm such that 
+While there is an optimal linear function for the upper bound $g_i$ for ReLU nodes, there are two choices for the lower bound: $f_i(x_i) = 0$ or $f_i(x_i)=x_i$.
+In the DeepPoly algorithm, the choice is made by considering the range of an unstable neuron 
+$x_i=[\alpha,\beta]$ with $\alpha < 0 < \beta$. 
+If $|\alpha|\geq |\beta|$ then $0$ is used, while if $|\beta|>|\alpha|$ then $x_i$ (the identity function) is used. Let us call $\overline{\mbox{DeepPoly}}$ the Deeppoly algorithm such that 
 $f_i(x_i) = 0$ is always used, and $f_i(x_i) = x_i$ is never used. 
 It has a main advantage, as it subsmumes the box abstraction.
 Indeed, taking an interval $x_i \in [-0.2,5]$, it gives $ReLU(x_i) \in [0,5]$, 
@@ -354,34 +358,33 @@ We aim is to find an algorithm, to decide which nodes should be opened such that
 
 
 
-\section{Compensating pair of paths}
+\section{Compensating pairs of paths}
 
 In this section, we explore the key factor for the loss of accuracy in value abstraction methodologies, as those we presented before (except for full MILP which is exact but too costly). 
 Namely, we uncover that \emph{compensating pair of paths} are the reason for the loss of precision.
 
-Formally, a pair $(\pi,\pi')$ of paths is compensating if:
+Formally, a pair $(\pi,\pi')$ of paths is {\em compensating} if:
 \begin{itemize}
  \item they have the same starting node $a$ (called {\em source} state) and ending node $b$ (called {\em target} state of $(\pi,\pi')$),
- \item they are disjoints,
- \item the weight $weight(\pi') < 0 < weight(\pi)$.
+ \item they are disjoints (the only common nodes are the source and the target),
+ \item the weights satisfy $weight(\pi') < 0 < weight(\pi)$.
 \end{itemize}
 
-For instance, on Fig.~\ref{fig1}, the paths $\pi= x_2 x_3 x_7$ has weight $1$, while the
-path $\pi'= x_2 x_4 x_7$ has weight $-2$, hence $(\pi,\pi')$ is a compensating pair of paths.
+For instance, on Fig.~\ref{fig1}, the paths $\pi= x_2 x_3 x_5$ has weight $1$, while the
+path $\pi'= x_2 x_4 x_5$ has weight $-2$, hence $(\pi,\pi')$ is a compensating pair of paths.
 We call a path $\pi$ {\em compensating} if there exists a path $\pi'$ such that either $(\pi,\pi')$ or 
 $(\pi',\pi)$ is compensating.
 
-Compensating pair of paths will make precision of the target state reduce when using overabstraction of values. Here, $weight(x_7) \leq 4$ (the value is reached for $x_1=1$ and $x_2=-1$). However, Box computes an upper bound of $6$, and while DeepPoly recovers some of the dependency in $x_2$, it can only cancel out some of $x_2$ value due to the ReLU over-abstraction (a contribution of $\frac{-x_2+4}{2} \leq 2.5$ instead of the exact $-x_2 \leq 1.5$), and obtain a bound of $weight(x_7) \leq 5.5$ instead of $4$.
+Compensating pair of paths will make precision of the target state reduce when using overabstraction of values. Here, $weight(x_5) \leq 4$ (the value is reached for $x_1=1$ and $x_2=-1$). However, Box computes an upper bound of $6$, and while DeepPoly recovers some of the dependency in $x_2$, it can only cancel out some of $x_2$ value due to the ReLU over-abstraction (a contribution of $\frac{-x_2+4}{2} \leq 2.5$ instead of the exact $-x_2 \leq 1.5$), and obtain a bound $weight(x_5) \leq 5.5$ instead of $4$.
 
-Intuitively, the target state receives the weight from the source state from the different paths from the source to the target. As the weight of the path is opposite, some of this weight will cancel out,
-by an amount up to $2 min(|weight(\pi')|,|weight(\pi')|)$. This amount can however be reduced by the ReLU functions, because of clipping by the ReLU function. Assume that the inputs $x_1,x_2$ lies in $[-1,-0]$. Then the weight at $\hat{x_3}$ will be always 0, no matter the input, and there will be no compensation to 
-$weight(\pi')$.
-
-
+Intuitively, the target state receives the weight from the source state from the different paths from the source to the target. As the weights of the paths is of opposite sign, some of these weights will cancel out,
+by an amount up to $min(|weight(\pi')|,|weight(\pi')|)$. Further, no only do they cancel $min(|weight(\pi')|,|weight(\pi')|)$ out, but they also do not accumulate, in the same way as 
+$0= |1+(-1)| \leq |1|+|-1|=2$ from an inacurate analysis. The amount of compensation can however be reduced by the ReLU functions, because of clipping by the ReLU function. For instance, consider that the inputs $x_1,x_2$ lies in $[-1,-0]$. Then the weight at $\hat{x}_3$ will be always 0, no matter the input, and there will be no compensation to $weight(\pi')$.
 
 
-The basic mode of compensating pair is as follows:
 
+
+\iffalse
 \vspace*{2ex}
 
 \begin{figure}
@@ -476,14 +479,20 @@ The general formal definition of compensating pair is as follows:
 	We also use \emph{Diamond} to call a compensating pair in the network.
 \end{definition}
 
-
 The following theorem shows the role of compensating pairs in the computation:
 
-\begin{theorem}[No Diamond Theorem, part 1]
-	For a full-connected network with $\ReLU$ as the unique activation function, if there is no Diamond, then for any method/approximation that at least as accurate as Interval Arithmetic, it can get the exact upper and lower bounds of all output nodes and all hidden nodes.
+\fi
+
+Hence, compensation is {\em one} factor of inacurracy. We prove now that it is actually the {\em only} reason for inacurracy, in the following meaning.
+If there is no compensating path in the DNN, then any method/approximation at least as accurate as the {\em Box} abstraction, e.g. $\overline{\text{DeepPoly}}$ or {\em LP}, computes the exact upper and lower bounds for every node, that is:
+
+\begin{theorem}
+	Let $n$ be any node of a DNN with {\em no} compensating path. For $[\alpha,\beta]$ the bounds computed by the {\em Box} abstraction for $n$, we have that for all $\gamma \in [\alpha,\beta]$, there exists an input $\vx$ such that $\val_{\vx}(n)=\gamma$.
 \end{theorem}
 
-Of course, in practice, it is very unlike to have a network without any Diamond. Therefore, the second theorem is more important in practice.
+
+
+Notice that standard {\em DeepPoly} does not satisfies the following theorem (it does not necessarily refine {\em Box}), and therefore we are not sure PRIMA or $\beta$-CROWN who refine DeepPoly do, though it would be easy to fix by using $\overline{\text{DeepPoly}}$. Anyway, in practice, it is very unlikely to have a network without any compensating path, it is more of a theoretical results 
 
 \begin{theorem}[No Diamond Theorem, part 2]
 	For a full-connected network with $\ReLU$ as the unique activation function. If we open all nodes that occurs in a compensating pair path, then the we can get the exactly bounds.
