@@ -329,30 +329,6 @@ $\beta \cdot a = \beta \frac{y - \alpha}{\beta-\alpha}$, which is exactly the fu
 \end{proof}
 
 
-\iffalse
-Our strategy is to restrict the number of binary variables, and this will definitely lose accuracy of results.  The key problem is how to use fewer binary variables to get more accuracy. That is, to choose which node to be binary, and which not.
-
-\begin{definition}
-	1. For a full-connected DNN with $\ReLU$ activation, to compute the upper or lower bound of a node (in a hidden layer or output layer), its MILP model is formulated as follows: 
-	
-	(1) For every node in the input layer $a$, set a $z_a$ variable with the same input interval: $l_a\leq z_a\leq u_a$
-	
-	(2) For each hidden layer $l^i$, set two variables , $z_c,\hat{z}_c$ for each node $c$ in this layer for pre-activation and post-activation. 
-	
-	The constraints for pre-activation $z_a$ is the natural linear equation by the network. 	$$z_c=\sum_{d\in l^{i-1}} W^i_{cd} z_d+b^i_c.$$
-	
-	
-	The constraints for $\hat{z}_a$ is defined by the standard MILP formulation mentioned above with known upper bound and lower bound as parameters.
-	
-	\vspace*{1ex}
-	
-	Since we only consider such MILP models, so when we say an MILP model, it is for a full-connected DNN with $\ReLU$ activation. 
-	
-	2. In an MILP model, we say a $\ReLU$ node is open, if the binary variable corresponds to this function is still an binary variable; otherwise, it is relaxed as a continue variable. 
-\end{definition}
-
-We aim is to find an algorithm, to decide which nodes should be opened such that we can have more accuracy.
-\fi
 
 
 
@@ -486,21 +462,69 @@ The following theorem shows the role of compensating pairs in the computation:
 Hence, compensation is {\em one} factor of inacurracy. We prove now that it is actually the {\em only} reason for inacurracy, in the following meaning.
 If there is no compensating path in the DNN, then any method/approximation at least as accurate as the {\em Box} abstraction, e.g. $\overline{\text{DeepPoly}}$ or {\em LP}, computes the exact upper and lower bounds for every node, that is:
 
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+	\hline
+		\text{Source/Target Layers}  &  \text{Natural DNN} & \text{Robust DNN} & \text{Ratio Natural vs Robust} \\ \hline \hline
+	0 / 2 & 0.0304 & 0.00220  & 13.8x\\ \hline
+	1 / 3  & 0.0313 & 0.00875 & 3.58x \\ \hline
+	2 / 4  &  0.0267 & 0.00785 & 3.40x \\ \hline
+	3 / 5  &  0.0253 & 0.00804  & 3.18x \\ \hline
+\end{tabular}
+\caption{Comparison of the average compensation strength over all the pairs of nodes of layer source/target between a Network Naturally trained and a Network Robustly trained with the same architecture and the same training set.}
+\label{tab:compensation}
+\end{table}
+
+
 \begin{theorem}
+	\label{th1}
 	Let $n$ be any node of a DNN with {\em no} compensating path. For $[\alpha,\beta]$ the bounds computed by the {\em Box} abstraction for $n$, we have that for all $\gamma \in [\alpha,\beta]$, there exists an input $\vx$ such that $\val_{\vx}(n)=\gamma$.
 \end{theorem}
 
 
+The proof can be found in Section \ref{sec.proofs}. Notice that standard {\em DeepPoly} does not satisfies the following theorem (it does not necessarily refine {\em Box}), and therefore we are not sure PRIMA or $\beta$-CROWN who refine DeepPoly do, though it would be easy to fix by using $\overline{\text{DeepPoly}}$. Anyway, in practice, it is very unlikely to have a network without any compensating path, it is more of a theoretical results showin that compensation is the reason for inacuracy. 
 
-Notice that standard {\em DeepPoly} does not satisfies the following theorem (it does not necessarily refine {\em Box}), and therefore we are not sure PRIMA or $\beta$-CROWN who refine DeepPoly do, though it would be easy to fix by using $\overline{\text{DeepPoly}}$. Anyway, in practice, it is very unlikely to have a network without any compensating path, it is more of a theoretical results 
+This result has a first interesting application: explain why some DNNs are intrinsically easier to verify than others. This is the case for DNNs trained adversarially to be robust, vs same architecture, but trained in a "natural" way \cite{deeppoly,prima,crown}. Indeed, compensating pairs is a purely structural property on the DNN learnt, rather than more semantical notions, such as the number of unstable ReLUs, which depends heavily upon the image considered and the algorithm used. We compare compensations with source and target separated by 1 ReLU layer, e.g. source in layer 0 and target in layer 2, for two Networks with 5 hidden layers of 100 nodes each from the ERAN GitHub repository, one trained naturally ("$6\times100$"), 
+and one trained using DiffAI ("$5\times100$"). 
+We report in Table \ref{tab:compensation} the average compensation strength, i.e. 
+the average of $max_{\pi,\pi'} min(|weight(\pi')|,|weight(\pi')|)$
+over all source/target states in given layers. The average compensations strenght are much lower in the Robust DNN than in the Natural DNN, and indeed the Robust DNN is much simpler to verify than the Natural DNN.
 
-\begin{theorem}[No Diamond Theorem, part 2]
-	For a full-connected network with $\ReLU$ as the unique activation function. If we open all nodes that occurs in a compensating pair path, then the we can get the exactly bounds.
+
+\subsection{MILP$_{X_n}$}
+
+While Theorem \ref{th1} is interesting to understand that compensation is a key notion for accurate verification of DNNs, it is of little use to analyze DNNs with compensations, which are actually those that are most interesting to tackle, as current efficient algorithms are not accurate enough.
+Intuitively, when there are compensating paths, it seems necessary to consider exactly the (unstable) ReLU nodes that are seen along these paths. 
+Consider a neuron $n$ in layer $k$ for which we want to have accurate bounds $[\alpha,\beta]$.
+Let $X_n$ be the set of neurons $x$ in layer up to $k-1$ such that there is a compensating path with target $n$ passing by $x$ (but not as its source or target). Let $Y_n$ be the complement of this set $X_n$ of neurons in the first $k-1$ layers. A quite efficient way to consider exactly this set $X$ of neurons is to use MILP$_{X_n}$, the relaxation of the MILP encoding where all the nodes in $Y_n$ are linearly relaxed (thus with $|X_n|$ binary variable, one per neuron in $X_n$), and including exact bounds for every neurons $n'$ in the first $k-1$ layers. We state now that the bounds $[\alpha,\beta]$ on neuron $n$ computed by such MILP$_{X_n}$ are accurate.
+
+\begin{theorem}
+	\label{th2} 
+	Let $n$ be any node of a DNN. Then for $[\alpha,\beta]$ the bounds computed by MILP$_{X_n}$ for neuron $n$, for all $\gamma \in [\alpha,\beta]$, there exists an input $\vy$ such that $\val_{\vy}(n)=\gamma$.
 \end{theorem}
 
-The proofs of above theorems are in the Appendix.
+Similarly, the proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs}.
 
-\subsection{Paths and Open Nodes Chosen}
+
+\subsection{Sketch of Proofs}
+\label{sec.proofs}
+
+Intuitively, our first proof shows that if there are no compensation, then there are no correlations between nodes, and one can maximize/minimize independently the different input nodes in order to optimize any desired node.
+
+
+\subsection{An efficient algorithm}
+
+Using Theorem \ref{th2}, one could thus obtain accurate bounds by running MILP$_{X}$ inductively on every node layer by layer, obtaining accurate bounds $[\alpha,\beta]$ that can be used to compute the next layer accurate bound. In practice, such an algorithm would however be inefficient, as $X_n$ comprises most of the nodes from layer up to $k-1$ for $n$ on layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the the strenght of compensation that are meaningful, and consider that paths below this treshold are not compensating strongly enough to deserve an integer variable (there are cases where the MILP algorithm is exponential in the number of integer variables), calling $Z_n$ the resulting set of nodes on {\em strongly compensating} paths. In practice, one could take the $K$ nodes covering the strongest compensating pair of paths to obtain set $Z_n$, for $K$ reasonably small. 
+The pseudo-code of the algorithm is provided in Algorithm \ref{algo1}.
+
+This algorithm has a worst case complexity bounded by $O(N 2^K LP(N))$, where $N$ is the number of nodes of the DNN, and $LP(N)$ is the (polynomial time) complexity of solving a linear program representing a DNN with $N$ nodes. This complexity is an upper bound, as e.g. Gurobi is fairly efficient and never need to consider all of the $2^K$ ReLU configurations to compute the bounds.
+
+
+
+
+
+\section{Paths and Open Nodes Chosen}
 
 In this subsection, we will introduce the method to choose open nodes for MILP model based on compensating pairs.
 
@@ -587,11 +611,6 @@ In this case, for a pair $P_1,P_2$ with values $V_1,V_2$ with the source node $a
 %6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
 %
 %7. Repeat 6 until choosing sufficiently many nodes.
-
-
-
-
-
 
 
 \subsection*{Case: Source nodes in different layers}
