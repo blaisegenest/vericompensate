@@ -205,17 +205,32 @@ ${0,1}$ are relaxed to be real in interval $[0,1]$, using otherwise the same enc
 Solving LP instances being Polynomial time, much more efficient solution could be found, but at the price of a lack of accuracy (e.g. with not as thight bounds). This is called the {\em LP abstraction}.
 
 As far as we know, no formal result states the relationship between the LP approximation and DeepPoly.
-We state here and prove later that the LP abstraction is strictly more accurate than the DeepPoly abstraction. It actually corresponds to consider in DeepPoly both linear functions lower bounding the ReLU function, $ReLU{y} \geq 0$ and $ReLU{y} \geq y$, while DeepPoly considers exactly one.
+We prove now that the LP abstraction is strictly more accurate than the DeepPoly abstraction, as it actually corresponds to considering in DeepPoly both linear functions lower bounding the ReLU function, $ReLU(y) \geq 0$ and $ReLU(y) \geq y$, while DeepPoly considers exactly one.
 
 \begin{proposition}
 	\label{LP}
- Given $y \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems 1) and 2) of constraints are equivalent:
- \vspace{-0.1cm}
+ Given $y \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems of constraints 
+ 1) for LP and 2) for DeepPoly with both lower bounds are equivalent:
+ \vspace{-0.3cm}
  \begin{align*}
 	 & 1) \quad \hat{y} \geq y \quad \wedge \quad \hat{y} \geq 0, \quad \wedge \quad \hat{y} \leq \beta \cdot a \quad \wedge \quad \hat{y} \leq y-\alpha \cdot (1-a), \, a \in [0,1] \\
 	 \text{and} \quad  & 2)  \quad \hat{y} \geq y \quad \wedge \quad \hat{y} \geq 0 \quad \wedge \quad \hat{y} \leq \beta \frac{y-\alpha}{\beta-\alpha}
 \end{align*} 
 \end{proposition}
+
+\begin{proof}
+Obviously, the 2 lower bound constraints are the same in 1) and 2).
+
+It remains to prove that the 2 upper bound contraints of 1) LP corresponds to the 2) DeepPoly linear upper bound. For that, we study the upper bound function in the variable $a \in  [0,1]$, with $y \in [\alpha,\beta]$ fixed. We have $\hat{y}$ in 1) upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, y - \alpha (1-a)))$, and this bound can be reached. 
+The function $min(\beta \cdot a, y - \alpha (1-a))$ reaches its maximum for 
+$\beta \cdot a = y - \alpha (1-a)$, that is 
+$(\beta - \alpha) a = y - \alpha$, i.e. 
+$$ a = \frac{y - \alpha}{\beta-\alpha}$$
+
+It thus gives an upper bound at 
+$\beta \cdot a = \beta \frac{y - \alpha}{\beta-\alpha}$, which is exactly the function used in DeepPoly.
+\qed
+\end{proof}
 
 
 \iffalse
@@ -247,19 +262,21 @@ We aim is to find an algorithm, to decide which nodes should be opened such that
 
 
 
-\section{Compensate, Diamond and Node Chosen}
+\section{Compensating pair of paths}
 
-In this section, we will explore the key factor for the loss of accuracy in our LP/MILP models: \emph{compensating pair}. And we will develop a process of open node chosen by the principle of \emph{Compensating Pairs}. 
+In this section, we explore the key factor for the loss of accuracy in value abstraction methodologies, as those we presented before (except for full MILP which is exact but too costly). 
+Namely, we uncover that \emph{compensating pair of paths} are the reason for the loss of precision.
 
 
-
-\subsection{Compensating pair}
 
 The basic mode of compensating pair is as follows:
 
 \vspace*{2ex}
 
+\begin{figure}
+\centering
 \begin{tikzpicture}
+	
 	\node[circle, draw= purple, thick, minimum width = 20,
 	minimum height = 20] (input1) {$a$};
 
@@ -287,6 +304,7 @@ The basic mode of compensating pair is as follows:
 	\draw[->,thick,draw= red] (hidden3) -- (output)node[midway, below] {$1$};
 	\draw[->,thick,draw= green] (hidden4) -- (output)node[midway, below] {$1$};
 \end{tikzpicture}
+\end{figure}
 
 \vspace*{2ex}
 
