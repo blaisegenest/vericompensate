@@ -175,7 +175,7 @@ For instance, $f_i \leq weight(x_i) \leq g_i$ with $f_5(x_3)=f_6(x_4)=0$ and
 $g_5(x_3) = \frac{x_3+2}{2}$,
 $g_6(x_4) = \frac{x_4+2}{2}$. 
 With that, we get 
-$x_7 \leq g_5(x_3) + 2 g_6(x_4) = \frac{x_3 + 2x_4 + 6}{2} = \frac{2x_1 - x_4 + 6}{2}\leq 4.5$.
+$x_7 \leq g_5(x_3) + 2 g_6(x_4) = \frac{x_3 + 2x_4 + 6}{2} = \frac{3x_1 - x_2 + 6}{2}\leq 5.5$.
 
 While there is an optimal linear function for the upper bound $g_i$ for ReLU nodes, there are two choices for the lower bound: $f_i(x_i) = 0$ or $x_i$.
 In the DeepPoly algorithm, the choice is made by considering the range of an unstable neuron $x_i=[\alpha,\beta]$ with $\alpha < 0 < \beta$. If $|\alpha|\geq |\beta|$ then $0$ is used, while if $|\beta|>|\alpha|$ then $x_i$ (the identity function) is used. Let us call 
@@ -205,7 +205,7 @@ ${0,1}$ are relaxed to be real in interval $[0,1]$, using otherwise the same enc
 Solving LP instances being Polynomial time, much more efficient solution could be found, but at the price of a lack of accuracy (e.g. with not as thight bounds). This is called the {\em LP abstraction}.
 
 As far as we know, no formal result states the relationship between the LP approximation and DeepPoly.
-We prove now that the LP abstraction is strictly more accurate than the DeepPoly abstraction, as it actually corresponds to considering in DeepPoly both linear functions lower bounding the ReLU function, $ReLU(y) \geq 0$ and $ReLU(y) \geq y$, while DeepPoly considers exactly one.
+We prove now that the LP abstraction is strictly more accurate tha3 the DeepPoly abstraction, as it actually corresponds to considering in DeepPoly both linear functions lower bounding the ReLU function, $ReLU(y) \geq 0$ and $ReLU(y) \geq y$, while DeepPoly considers exactly one.
 
 \begin{proposition}
 	\label{LP}
@@ -266,6 +266,25 @@ We aim is to find an algorithm, to decide which nodes should be opened such that
 
 In this section, we explore the key factor for the loss of accuracy in value abstraction methodologies, as those we presented before (except for full MILP which is exact but too costly). 
 Namely, we uncover that \emph{compensating pair of paths} are the reason for the loss of precision.
+
+Formally, a pair $(\pi,\pi')$ of paths is compensating if:
+\begin{itemize}
+ \item they have the same starting node $a$ (called {\em source} state) and ending node $b$ (called {\em target} state of $(\pi,\pi')$),
+ \item they are disjoints,
+ \item the weight $weight(\pi') < 0 < weight(\pi)$.
+\end{itemize}
+
+For instance, on Fig.~\ref{fig1}, the paths $\pi= x_2 x_3 x_7$ has weight $1$, while the
+path $\pi'= x_2 x_4 x_7$ has weight $-2$, hence $(\pi,\pi')$ is a compensating pair of paths.
+We call a path $\pi$ {\em compensating} if there exists a path $\pi'$ such that either $(\pi,\pi')$ or 
+$(\pi',\pi)$ is compensating.
+
+Compensating pair of paths will make precision of the target state reduce when using overabstraction of values. Here, $weight(x_7) \leq 4$ (the value is reached for $x_1=1$ and $x_2=-1$). However, Box computes an upper bound of $6$, and while DeepPoly recovers some of the dependency in $x_2$, it can only cancel out some of $x_2$ value due to the ReLU over-abstraction (a contribution of $\frac{-x_2+4}{2} \leq 2.5$ instead of the exact $-x_2 \leq 1.5$), and obtain a bound of $weight(x_7) \leq 5.5$ instead of $4$.
+
+Intuitively, the target state receives the weight from the source state from the different paths from the source to the target. As the weight of the path is opposite, some of this weight will cancel out,
+by an amount up to $2 min(|weight(\pi')|,|weight(\pi')|)$. This amount can however be reduced by the ReLU functions, because of clipping by the ReLU function. Assume that the inputs $x_1,x_2$ lies in $[-1,-0]$. Then the weight at $\hat{x_3}$ will be always 0, no matter the input, and there will be no compensation to 
+$weight(\pi')$.
+
 
 
 
