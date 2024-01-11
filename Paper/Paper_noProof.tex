@@ -150,11 +150,103 @@ In this section, we describe different value (over)-abstractions that are used b
 
 \subsection{Box and DeepPoly Abstraction}
 
-\begin{figure}[t!]
-	\centering
-		\includegraphics[scale=0.4]{example.png}
-	\caption{A DNN example from \cite{kneuron}, where every node is separated into its linear and its ReLU functions.}
-	\label{fig1}
+%\begin{figure}[t!]
+%	\centering
+%		\includegraphics[scale=0.4]{example.png}
+%	\caption{A DNN example from \cite{kneuron}, where every node is separated into its linear and its ReLU functions.}
+%	\label{fig1}
+%	\end{figure}
+	
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}
+			
+			\node[circle, draw= purple, thick, minimum width = 20,
+			minimum height = 20] (input1) {$x_1$};
+			
+			\node[circle, draw= purple, thick, minimum width = 20,
+			minimum height = 20] (input2) at ($(input1) + (0,-1.5)$) {$x_2$};
+			
+			
+			% Hidden layers
+			
+			\node (hidden10) at ($(input1) + (2.5,0.6)$) {$0$};
+			
+			\node (hidden20) at ($(input1) + (2.5,-1.5-0.6)$) {$0$};
+		
+			\node (hidden50) at ($(input1) + (7.5,0.6)$) {$0$};
+			
+			\node (hidden60) at ($(input1) + (7.5,-1.5-0.6)$) {$1.5$};
+			
+			
+			
+			
+			
+			\node[circle, draw= black, thick, minimum width = 20,
+			minimum height = 20] (hidden1) at ($(input1) + (2.5,0)$) {$x_3$};
+			\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$x_4$};
+			
+			\node[circle, draw= black, thick, minimum width = 20,
+			minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$x_5$};
+			\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$x_6$};
+			
+			
+			\node[circle, draw= blue, thick, minimum width = 20,
+			minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$x_7$};
+			\node[circle, draw= blue, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$x_8$};
+			
+			
+			
+			
+			% Output layer
+			\node[circle, draw= black, thick, minimum width = 20,
+			minimum height = 20] (output1) at ($(input1) + (10,0)$){$x_9$};
+			
+			\node[circle, draw= black, thick, minimum width = 20,
+			minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$x_{10}$};
+			
+			
+			% Connections
+			
+			\draw[->,thick] ($(input1) + (-1.5,0)$) -- (input1) node[midway, above] {$[-1,1]$};
+			
+			\draw[->,thick] ($(input1) + (-1.5,-1.5)$) -- (input2) node[midway, above] {$[-1,1]$};
+			
+			
+			
+			\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$1$};
+			\draw[->,thick] (input1) -- (hidden2)node[near start, above] {$1$};
+			
+			\draw[->,thick] (input2) -- (hidden1) node[near start, above] {$1$};
+			\draw[->,thick] (input2) -- (hidden2)node[near start, below] {$-1$};
+			
+			
+			
+			
+			
+			\draw[->,thick] (hidden1) -- (hidden3) node[midway, above] {$\max(x_1,0)$};
+			\draw[->,thick] (hidden2) -- (hidden4) node[midway, above] {$\max(x_2,0)$};
+			
+			
+			
+			
+			
+			\draw[->,thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
+			\draw[->,thick] (hidden3) -- (hidden6) node[near start, above] {$0$};
+			
+			\draw[->,thick] (hidden4) -- (hidden5)node[near start, above] {$2$};
+			\draw[->,thick] (hidden4) -- (hidden6)node[near start, below] {$1$};
+			
+			
+			
+			
+			\draw[->,thick] (hidden5) -- (output1) node[midway, above] {$\max(x_7,0)$};
+			\draw[->,thick] (hidden6) -- (output2) node[midway, above] {$\max(x_8,0)$};
+			
+			
+		\end{tikzpicture}
+		\caption{A DNN example from \cite{kneuron}, where every node is separated into its linear and its ReLU functions.}
+		\label{fig1}
 	\end{figure}
 	
 An efficient and prolific line of work concerning DNN verification has been to develop value abstraction of the network. The idea is to compute upper and lower bounds on the values of (some) neurons in the DNN when the inputs are in a given neighbourhood, in order to conclude on the robustness without needing to compute the values exactly for all inputs.
