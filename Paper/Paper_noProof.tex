@@ -695,6 +695,54 @@ The open node chosen is the key part of the whole framework but costs a lot of t
 %
 %Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
 
+\begin{algorithm}
+	\caption{The Frame work}
+	\KwData{Input Domain: $\mathcal{D}$}
+	\KwResult{Bounds of all nodes: $\mathcal{B}$}
+	
+	Constant $\mathcal{R}$  \tcp*{Stored precomputation data}
+	
+	Constant $\boldsymbol{W}, \boldsymbol{b}$ \tcp*{Weights and Bias of network}
+	
+	Constant Layers = $[0,1,2\cdots,L]$ \tcp*{lists of all layer}
+	
+	Constant NodesLayer = $[Nodes_0,Nodes_1,\cdots, Nodes_L]$ \tcp*{list of nodes in each layer}
+	
+	
+	Initialize $\mathcal{B}$ = \{\} \tcp*{To store upper and lower bounds of all nodes}
+	
+	\For{$l$ in Layers}{
+		\If{$l$ = 0}{
+			
+			$\mathcal{D}$, $\boldsymbol{W}, \boldsymbol{b}$ $\rightarrow$ $\mathcal{B}_0$ = \{$x$: $(UB(x),LB(x))$,$\cdots$\} 
+			\tcp*{Do linear transformation  from input to the first layer}
+			
+			Add \{$x$: $(UB(x),LB(x))$,$\cdots$\} to $\mathcal{B}$} 
+		
+		\Else{
+			
+			$l$, NodesLayer $\rightarrow$ $Nodes_l$ = $[x_0,x_1,\cdots]$
+			
+			\For{$x$ in $Nodes_l$}{
+				$x$, $\mathcal{B}$, $\mathcal{R}$  $\rightarrow$ $\mathcal{O}$ \tcp*{To get the open node list $\mathcal{O}$}
+				
+				$\mathcal{B}$, $\boldsymbol{W}, \boldsymbol{b}$, $\mathcal{O}$ $\rightarrow \mathcal{M}$  \tcp*{MILP model $\mathcal{M}$ for node $x$}
+				
+				\While{}{$\mathcal{M}$ $\rightarrow UB(x),LB(x)$ \tcp*{Optimization}}
+				
+				Add \{$x$: $(UB(x),LB(x))$\} to $\mathcal{B}$
+				
+				
+			}
+			
+		}
+		
+		
+	}
+	
+	\Return{$\mathcal{B}$}
+	
+\end{algorithm}
 
 \subsubsection*{Process for one node}
 
