@@ -518,6 +518,53 @@ Intuitively, our first proof shows that if there are no compensation, then there
 Using Theorem \ref{th2}, one could thus obtain accurate bounds by running MILP$_{X}$ inductively on every node layer by layer, obtaining accurate bounds $[\alpha,\beta]$ that can be used to compute the next layer accurate bound. In practice, such an algorithm would however be inefficient, as $X_n$ comprises most of the nodes from layer up to $k-1$ for $n$ on layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the the strenght of compensation that are meaningful, and consider that paths below this treshold are not compensating strongly enough to deserve an integer variable (there are cases where the MILP algorithm is exponential in the number of integer variables), calling $Z_n$ the resulting set of nodes on {\em strongly compensating} paths. In practice, one could take the $K$ nodes covering the strongest compensating pair of paths to obtain set $Z_n$, for $K$ reasonably small. 
 The pseudo-code of the algorithm is provided in Algorithm \ref{algo1}.
 
+\SetKwInput{KwInput}{Input}
+\SetKwInput{KwOutput}{Output}
+	
+\begin{algorithm}[t!]
+	\caption{}
+	\label{algo1}
+	\KwInput{Bounds $[\alpha_n,\beta_n]$ for input nodes $n$ at layer $0$}
+	
+	\KwOutput{Bounds $[\alpha_n,\beta_n]$ for every node $n$}
+		 	
+	 Run DeepPoly to obtain preliminary lower and upper bounds for all nodes.
+
+	 Precompute $\mathcal{R}$ to know the compensation strenght
+				
+	 \For{layer $k=1 \cdots \ell$}{
+	
+	 \If{$k$ = 0}{
+	
+	 $\mathcal{D}$, $\boldsymbol{W}, \boldsymbol{b}$ $\rightarrow$ $\mathcal{B}_0$ = \{$x$: $(UB(x),LB(x))$,$\cdots$\}
+	
+	 \tcp*{Do linear transformation  from input to the first layer}
+		
+	 Add \{$x$: $(UB(x),LB(x))$,$\cdots$\} to $\mathcal{B}$}
+	
+	 \Else{
+	
+	  $l$, NodesLayer $\rightarrow$ $Nodes_l$ = $[x_0,x_1,\cdots]$
+	
+	 \For{$x$ in $Nodes_l$}{
+	
+	 $x$, $\mathcal{B}$, $\mathcal{R}$  $\rightarrow$ $\mathcal{O}$ \tcp*{To get the open node list $\mathcal{O}$}
+	
+	 $\mathcal{B}$, $\boldsymbol{W}, \boldsymbol{b}$, $\mathcal{O}$ $\rightarrow \mathcal{M}$  \tcp*{MILP model $\mathcal{M}$ for node $x$}
+	
+	\While{}{$\mathcal{M}$ $\rightarrow UB(x),LB(x)$ \tcp*{Optimization}}
+	
+	Add \{$x$: $(UB(x),LB(x))$\} to $\mathcal{B}$
+	
+}
+}	
+}	
+	\Return{$\mathcal{B}$}	
+	\end{algorithm}	
+	
+	
+	
+
 This algorithm has a worst case complexity bounded by $O(N 2^K LP(N))$, where $N$ is the number of nodes of the DNN, and $LP(N)$ is the (polynomial time) complexity of solving a linear program representing a DNN with $N$ nodes. This complexity is an upper bound, as e.g. Gurobi is fairly efficient and never need to consider all of the $2^K$ ReLU configurations to compute the bounds.
 
 
