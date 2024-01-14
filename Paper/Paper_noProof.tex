@@ -28,6 +28,8 @@
 \newcommand{\vz}{\boldsymbol{z}}
 \newcommand{\vb}{\boldsymbol{b}}
 \newcommand{\val}{{\textrm{value}}}
+\newcommand{\MILP}{{\textrm{MILP}}}
+\newcommand{\LP}{{\textrm{LP}}}
 
 
 
@@ -58,7 +60,7 @@
 
 \begin{abstract}
   Deep Neural Networks (DNNs) verification is now a mature research field, with many methodologies and tools to verify formaly  that they are correct, with an annual competition to compare them, etc. Formally, the question is, given a DNN and a property to check, does the property hold over a set of inputs of the DNN. This allows e.g. to check local robustness around an input $I$, by checking that the i-th output neuron has the largest weight among all output neurons uniformly over a neighbourhood around $I$.
-  In the most recent years, the focus has been on combining several of these efficient techniques (branch and bound, multi neuron encoding, MILP encoding, ...) to optimize speed/accuracy trade-offs. While some relatively large DNNs (tens of thousands of neurons) can be checked very efficiently with modern tools, some DNNs are still challenging to address with efficient algorithms, even small ReLU DNNs with hundreds of neurons, showing the need for new methodologies.
+  In the most recent years, the focus has been on combining several of these efficient techniques (branch and bound, multi neuron encoding, MILP encoding, ...) to optimize speed/accuracy trade-offs. While some relatively large DNNs (tens of thousands of neurons) can be checked very efficiently with modern verifiers, some DNNs are still challenging to address with efficient algorithms, even small ReLU DNNs with hundreds of neurons, showing the need for new methodologies.
 
   In this paper, we analyze efficient algorithms to verify ReLU DNNs, based on abstractions (DeepPoly, Linear Programing, PRIMA, different version of Crown), and uncover the main reason for the loss of accuracy, namely {\em compensations}. Intuitively, a compensation happens when there are 2 paths between the same pair of neurons, one path with positive and one path with negative (product of) weights, which therefore (partly) compensate each other. It is however hard to compute exactly by how much is the compensation due to the ReLU activation functions. Based on this finding, we propose a novel methodology to obtain interesting trade-offs in terms of speed/accuracy, using many queries with few 'open' ReLU nodes (for which both linear modes are considered), rather than the usual few queries with potentially many 'open' ReLU nodes. These promising results open up many different applications of the concept of compensating paths in the field of verification of DNNs.
 \end{abstract}
@@ -162,7 +164,7 @@ In this section, we describe different value (over)-abstractions that are used b
 		\centering
 		\begin{tikzpicture}
 			
-			\node[circle, draw= purple, thick, minimum width = 20,
+			\node[circle, draw= black, thick, minimum width = 20,
 			minimum height = 20] (input1) {$x_1$};
 			
 			\node[circle, draw= purple, thick, minimum width = 20,
@@ -180,9 +182,6 @@ In this section, we describe different value (over)-abstractions that are used b
 			\node (hidden60) at ($(input1) + (7.5,-1.5-0.6)$) {$1.5$};
 			
 			
-			
-			
-			
 			\node[circle, draw= black, thick, minimum width = 20,
 			minimum height = 20] (hidden1) at ($(input1) + (2.5,0)$) {$x_3$};
 			\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$x_4$};
@@ -194,7 +193,7 @@ In this section, we describe different value (over)-abstractions that are used b
 			
 			\node[circle, draw= blue, thick, minimum width = 20,
 			minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$x_5$};
-			\node[circle, draw= blue, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$x_6$};
+			\node[circle, draw= black, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$x_6$};
 			
 			
 			
@@ -218,24 +217,24 @@ In this section, we describe different value (over)-abstractions that are used b
 			\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$1$};
 			\draw[->,thick] (input1) -- (hidden2)node[near start, above] {$1$};
 			
-			\draw[->,thick] (input2) -- (hidden1) node[near start, below] {$1$};
-			\draw[->,thick] (input2) -- (hidden2)node[near start, below] {$-1$};
+			\draw[->,color=green, thick] (input2) -- (hidden1) node[near start, below] {$1$};
+			\draw[->,color=red, thick] (input2) -- (hidden2)node[near start, below] {$-1$};
 			
 			
 			
 			
 			
-			\draw[->,thick] (hidden1) -- (hidden3) node[midway, above] {$\max(x_1,0)$};
-			\draw[->,thick] (hidden2) -- (hidden4) node[midway, above] {$\max(x_2,0)$};
+			\draw[->,color=green, thick] (hidden1) -- (hidden3) node[midway, above] {$\max(x_1,0)$};
+			\draw[->,color=red, thick] (hidden2) -- (hidden4) node[midway, above] {$\max(x_2,0)$};
 			
 			
 			
 			
 			
-			\draw[->,thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
+			\draw[->,color=green, thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
 			\draw[->,thick] (hidden3) -- (hidden6) node[near start, above] {$0$};
 			
-			\draw[->,thick] (hidden4) -- (hidden5)node[near start, below] {$2$};
+			\draw[->,color=red, thick] (hidden4) -- (hidden5)node[near start, below] {$2$};
 			\draw[->,thick] (hidden4) -- (hidden6)node[near start, below] {$1$};
 			
 			
@@ -272,7 +271,7 @@ $g_4(x_4) = \frac{x_4+2}{2}$.
 With that, we get 
 $x_5 \leq g_3(x_3) + 2 g_4(x_4) = \frac{x_3 + 2x_4 + 6}{2} = \frac{3x_1 - x_2 + 6}{2}\leq 5.5$.
 
-While there is an optimal linear function for the upper bound $g_i$ for ReLU nodes, there are two choices for the lower bound: $f_i(x_i) = 0$ or $f_i(x_i)=x_i$.
+While there is one optimal linear function for the upper bound $g_i(x_i)= \beta \frac{x_i-\alpha}{\beta-\alpha}$ for ReLU nodes, there are two choices for the lower bound: $f_i(x_i) = 0$ or $f_i(x_i)=x_i$.
 In the DeepPoly algorithm, the choice is made by considering the range of an unstable neuron 
 $x_i=[\alpha,\beta]$ with $\alpha < 0 < \beta$. 
 If $|\alpha|\geq |\beta|$ then $0$ is used, while if $|\beta|>|\alpha|$ then $x_i$ (the identity function) is used. Let us call $\overline{\mbox{DeepPoly}}$ the Deeppoly algorithm such that 
@@ -335,6 +334,7 @@ $\beta \cdot a = \beta \frac{y - \alpha}{\beta-\alpha}$, which is exactly the fu
 
 
 \section{Compensating pairs of paths}
+\label{Sec.comp}
 
 In this section, we explore the key factor for the loss of accuracy in value abstraction methodologies, as those we presented before (except for full MILP which is exact but too costly). 
 Namely, we uncover that \emph{compensating pair of paths} are the reason for the loss of precision.
@@ -512,6 +512,8 @@ Similarly, the proof of Theorem \ref{th2} can be found in Section \ref{sec.proof
 
 Intuitively, our first proof shows that if there are no compensation, then there are no correlations between nodes, and one can maximize/minimize independently the different input nodes in order to optimize any desired node.
 
+\input{proofs}
+
 
 \subsection{An efficient algorithm}
 
@@ -522,56 +524,413 @@ The pseudo-code of the algorithm is provided in Algorithm \ref{algo1}.
 \SetKwInput{KwOutput}{Output}
 	
 \begin{algorithm}[t!]
-	\caption{}
+	\caption{Compensate(K)}
 	\label{algo1}
-	\KwInput{Bounds $[\alpha_n,\beta_n]$ for input nodes $n$ at layer $0$}
+	\KwInput{Bounds $[\alpha_n,\beta_n]$ for input nodes $n$ at layer $0$ (input neighbourhood)}
 	
 	\KwOutput{Bounds $[\alpha_n,\beta_n]$ for every node $n$}
-		 	
-	 Run DeepPoly to obtain preliminary lower and upper bounds for all nodes.
-
-	 Precompute $\mathcal{R}$ to know the compensation strenght
-				
+	 
 	 \For{layer $k=1 \cdots \ell$}{
+		\For{neuron $n$ in layer $k$}{
 	
-	 \If{$k$ = 0}{
-	
-	 $\mathcal{D}$, $\boldsymbol{W}, \boldsymbol{b}$ $\rightarrow$ $\mathcal{B}_0$ = \{$x$: $(UB(x),LB(x))$,$\cdots$\}
-	
-	 \tcp*{Do linear transformation  from input to the first layer}
+	 		Compute $Z$ a set of $K$ nodes covering the compensating pairs of paths with target $n$
+			with heaviest compensation
 		
-	 Add \{$x$: $(UB(x),LB(x))$,$\cdots$\} to $\mathcal{B}$}
-	
-	 \Else{
-	
-	  $l$, NodesLayer $\rightarrow$ $Nodes_l$ = $[x_0,x_1,\cdots]$
-	
-	 \For{$x$ in $Nodes_l$}{
-	
-	 $x$, $\mathcal{B}$, $\mathcal{R}$  $\rightarrow$ $\mathcal{O}$ \tcp*{To get the open node list $\mathcal{O}$}
-	
-	 $\mathcal{B}$, $\boldsymbol{W}, \boldsymbol{b}$, $\mathcal{O}$ $\rightarrow \mathcal{M}$  \tcp*{MILP model $\mathcal{M}$ for node $x$}
-	
-	\While{}{$\mathcal{M}$ $\rightarrow UB(x),LB(x)$ \tcp*{Optimization}}
-	
-	Add \{$x$: $(UB(x),LB(x))$\} to $\mathcal{B}$
-	
-}
-}	
-}	
-	\Return{$\mathcal{B}$}	
-	\end{algorithm}	
+			Run MILP$_Z$ to obtain $[\alpha_n,\beta_n]$ from bounds of neurons in layers $< k$
+	 }
+	 }
+	 \end{algorithm}	
 	
 	
 	
 
-This algorithm has a worst case complexity bounded by $O(N 2^K LP(N))$, where $N$ is the number of nodes of the DNN, and $LP(N)$ is the (polynomial time) complexity of solving a linear program representing a DNN with $N$ nodes. This complexity is an upper bound, as e.g. Gurobi is fairly efficient and never need to consider all of the $2^K$ ReLU configurations to compute the bounds.
+This algorithm has a worst case complexity bounded by $O(N \MILP(N,K))$, 
+where $N$ is the number of nodes of the DNN, 
+and $\MILP(N,K)$ is the complexity of solving a MILP program with $K$ integer variables and $N$ linear variables.
+We have $\MILP(N,K) \leq 2^K \LP(N)$ where $\LP(N)$ is the Polynomial time to solve a Linear Program with $N$ variables.
+This complexity is an upper bound, as e.g. Gurobi is fairly efficient and never need to consider all of the $2^K$ ReLU configurations to compute the bounds.
+Notice that the for loop on neurons $n$ in layer $k$ at line 2 can be realized in parallel as we only need bounds from previous layers, not from the current layer $k$, 
+leading to a time complexity of $O(\sum_{i=1}^{\ell} \MILP(N_{i-1},K))$, with $\ell$ the number of layers and $N_i$ the number of neurons in layers $0, \ldots, i$.
+Hence, for $K$ small enough, Algorithm \ref{algo1} calls many times MILP (e.g. Gurobi)
+with a limited number of integer variables, which should be efficient enough, and yet be quite accurate as it can compute exactly (Theorem \ref{th2}) the highest compensating path, which we will verify in the experimental section.
 
 
 
 
 
-\section{Paths and Open Nodes Chosen}
+\iffalse
+\section{Verification Framework}
+
+
+
+%Our experiments are carried by different version codes, and the global process has been changed. 
+
+In this section, we will sketch the framework. 
+
+\subsection{Structure}
+
+\subsubsection*{Precomputation}
+
+The open node chosen is the key part of the whole framework but costs a lot of time. So some computation (those do not rely on certain image and bounds) is moved to the precomputation part.
+
+%The precomputation corresponds to the simplest case: source node fixed. We will compute and store a limited number of paths with highest (absolute) values before running any image. This does not rely on other parameters or results(bounds).
+%
+%Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
+
+
+
+\subsubsection*{Process for one image} An image is the basic unit in whole process. The process of one image is simple: compute the concrete bounds of nodes layer by layer, use the bounds of previous layer to build MILP models of current layer. In one layer, nodes runs in parallel.
+
+%Suppose we have reached a new layer $l_i$ and have upper and lower bounds of all nodes in previous layers. Then we will compute bounds of every node in $l_i$ in parallel using the data of bounds of previous nodes. The method is to build and optimize an MILP model.
+
+%Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
+
+
+
+
+%The open node chosen is the key part of the whole framework, and it will cost two much time without precomputation because we must do open node chosen for every node. 
+%
+%The precomputation corresponds to the simplest case: source node fixed. We will compute and store a limited number of paths with highest (absolute) values before running any image. This does not rely on other parameters or results(bounds).
+%
+%Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
+
+\begin{algorithm}
+	\caption{The Frame work}
+	\KwData{Input Domain: $\mathcal{D}$}
+	\KwResult{Bounds of all nodes: $\mathcal{B}$}
+	
+	Constant $\mathcal{R}$  \tcp*{Stored precomputation data}
+	
+	Constant $\boldsymbol{W}, \boldsymbol{b}$ \tcp*{Weights and Bias of network}
+	
+	Constant Layers = $[0,1,2\cdots,L]$ \tcp*{lists of all layer}
+	
+	Constant NodesLayer = $[Nodes_0,Nodes_1,\cdots, Nodes_L]$ \tcp*{list of nodes in each layer}
+	
+	
+	Initialize $\mathcal{B}$ = \{\} \tcp*{To store upper and lower bounds of all nodes}
+	
+	\For{$l$ in Layers}{
+		\If{$l$ = 0}{
+			
+			$\mathcal{D}$, $\boldsymbol{W}, \boldsymbol{b}$ $\rightarrow$ $\mathcal{B}_0$ = \{$x$: $(UB(x),LB(x))$,$\cdots$\} 
+			\tcp*{Do linear transformation  from input to the first layer}
+			
+			Add \{$x$: $(UB(x),LB(x))$,$\cdots$\} to $\mathcal{B}$} 
+		
+		\Else{
+			
+			$l$, NodesLayer $\rightarrow$ $Nodes_l$ = $[x_0,x_1,\cdots]$
+			
+			\For{$x$ in $Nodes_l$}{
+				$x$, $\mathcal{B}$, $\mathcal{R}$  $\rightarrow$ $\mathcal{O}$ \tcp*{To get the open node list $\mathcal{O}$}
+				
+				$\mathcal{B}$, $\boldsymbol{W}, \boldsymbol{b}$, $\mathcal{O}$ $\rightarrow \mathcal{M}$  \tcp*{MILP model $\mathcal{M}$ for node $x$}
+				
+				\While{}{$\mathcal{M}$ $\rightarrow UB(x),LB(x)$ \tcp*{Optimization}}
+				
+				Add \{$x$: $(UB(x),LB(x))$\} to $\mathcal{B}$
+				
+				
+			}
+			
+		}
+		
+		
+	}
+	
+	\Return{$\mathcal{B}$}
+	
+\end{algorithm}
+
+\subsubsection*{Process for one node}
+
+ The optimization of a model consists of loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
+
+
+
+\subsubsection*{Global Process}
+
+In the newest version, we do images by batches for 100 images each. For each batch, the running consists of three turns, very fast turn, fast turn and slow turn.
+
+In the very fast turn, it will run DeepPoly for all images to get a preliminary bounds for all nodes and verify the easiest images. Images verified and images with false predication will be deleted from the image list.
+
+Then sort all remain images by the size of uncertainty of DeepPoly from smaller to larger. The fast turn is to run the images from the smaller side to larger side until consecutive two images cannot be verified. All remain images and images tried but not verified will be put into the next list. And then run the list with parameters for slow turn.
+
+
+
+
+\subsection{Parameters}
+
+Parameters like open node parameter $O$ is important in the frame. Basically, all parameters will be reset after one image.
+
+\subsubsection*{Global parameters}
+
+
+
+
+\subsubsection*{Local parameters}
+
+$O$ and timeout parameters for loops will change frequently during the loops of one node. These change will not reset until the end of one layer or one image.
+
+
+
+\subsection{Other Setting}
+
+In our experiments, we have not used PGD-attack to exclude some images. In principle, there is no obstacle to use PGD-attack.
+\fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Experimental Evaluation}
+
+Our experimental evaluations have 3 goals:
+\begin{enumerate}
+  \item Evaluate experimentally how accurate is $\MILP_Z$ when using compensating strenght 
+ to choose the set $Z$ of ReLU nodes encoded exactly using an integer variable, compared with randomly chosing the set $Z$, to make sure the choice is relevant. Also compare different choices for $K$ the size of $Z$ and how to rank nodes from different layers,
+  \item Evaluate on benchmarks the percentage of certification that can be obtained
+ using the compensation idea, and compare with competing efficient tools,
+  \item Evaluate the runtime of compensate($K$).
+\end{enumerate}
+
+\subsection{Setting}
+All the benchmarks were run on an AMD 5975WX ($32$ cores$@3.6$GHz, 7nm, year 2022) with 256 GB of main memory and 2 NVIDIA RTX 3090 (year 2022). Gurobi 9.52 was used for solving MILP and LP problems. Our implementations for Compensate($K$) is entirely realized in Python $X.Y$, and therefore not particularly optimal.
+
+The DNN certification for local robustness were run, using DNNs trained for the MNIST image dataset as its the only standard DNNs (MLP $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$) benchmarked by \cite{crown} not using robust training, and they are the hardest DNNs to verify, despite their relatively limited size (600 to 1600 neurons in hidden layers). Indeed, today's efficient methods leave at least $14\%$ to $20\%$ of the images neither certified robust nor with an attack to robustness found, making them interesting DNNs to consider where to improve accuracy of efficient techniques. We also test on the larger MLP $6\times 500$, not previously tested in \cite{crown}. MNIST contains grayscale images of size $28 \times 28$ pixels ($752$ input neurons). For our evaluation, we evaluate on the standard first 1000 images of the dataset, to be directly comparable to experiments run in other papers, e.g. \cite{prima,crown}, except for MLP $5\times 500$ which is not reported in \cite{prima,crown} and takes a large amount of time, for which we only test on the first 200 images. Each data example is associated with a $\varepsilon>0$ for the $L^\infty$ norm, and a target label for verification. 
+
+
+\subsection{Chosing nodes based on Compensation strenght}
+
+The first group of experiments we run, tests the accuracy of chosing a set $Z$ of $K$ nodes using compensation strenght, compared with randomly chosing the same number $K$ of nodes, to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
+
+To mesure the accuracy, we measure the uncertainty of all nodes in a layer:
+the uncertainty of a node is the range between its computed lower and upper bound. 
+We then average the uncerainty among all the nodes of the layer.
+Formally, for a node $n$ with bounds $[\alpha,\beta]$, its uncertainty $unc(a) = \beta - \alpha$, and the average uncertainty of a layer $l$ is $\dfrac{\sum_{a\in l} unc(a)}{|l|}.$
+
+We experiment with the smallest network (MLP $6\times 100$), so that we can obtain exact bounds for the first few layers using a full MILP encoding of the DNN. We test over the $\vx=59$th image in the MNIST dataset, as it has a large number of unstable ReLU nodes in the first few layers ($61$ in the first layer and $94(?)$ in the second layer), so we can experiment with a larger choice of values for $K$.
+
+\subsubsection*{ReLU Node in the first hidden layer}
+
+We first experiment with the choice of nodes in the first hidden layer, and its consequences on the accuracy of nodes in the second layer.  Let $c$ be a node of the second layer.
+A compensating pair $(\pi,\pi')$ of paths with target $n$ is thus of the form a node $a b c$ and $a b' c$, with $a$ an input node and $b,b'$ on the first layer. The compensating strenght for $(b,b')$ is defined as 
+$comp(b,b')=\sum_a \val_{\vx}(a) \min(weight(abc),weight(ab'c))$. Indeed, 
+the pair $(a b c,a b' c)$ of path cannot compensate more than $\val_{\vx}(a) \min(weight(a,b,c),weight(a,b',c))$, and $b,b'$ would help compensated set set of pairs of paths $\{(a b c,a b' c) \mid a$ is in the first layer$\}$. After selecting the heaviest $(b_0,b_0')$, we can then compute $comp(b)= \sum_{b' \text{already selected}} comp(b,b')+comp(b',b)$ and select iteratively the heaviest $b$'s one by one till reaching the threshold. We do this for all node $c$ of the second layer.
+
+We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly. The range of uncertainty created by inacurate computations is up to $1.17=2.22-1.05$, $2.22$ being the accuracy provided by LP, and $1.05$ by an exact MILP encoding of all the unstable ReLU nodes. Selecting $30$ out of the $61$ unstable ReLU nodes, the uncertainty created by inacurracy is reduced by $80\%$, while a random choice of nodes only leads up to roughly halving this number. We can deduce that selecting nodes based on compensating strenght helps to select important ReLU nodes for the accuracy.
+
+\begin{table}[t!]
+	\centering
+	\begin{tabular}{|c||c|c|}
+	\hline
+	\text{Number $K$ of nodes in $Z$}  &  \text{Compensate strength} & \text{Random Choice}  \\ \hline
+	\hline
+	0  &  2.22 & 2.22  \\ \hline
+	10  &  1.84 & 2.03  \\ \hline
+	20  &  1.50 & 1.82  \\ \hline
+	30  &  1.28 & 1.62  \\ \hline
+	40  &  1.14 & 1.44  \\ \hline
+	50  &  1.06 & 1.23  \\ \hline
+	61 (max) & 1.05 &  1.05 \\ \hline
+\end{tabular}
+\caption{Average uncertainty of $\MILP_Z$ for nodes of the second layer, for a set $Z$ of $K$ ReLU nodes of the first layer with the heaviest compensation, vs $K$ random nodes of the first layer.}
+\label{tab:example0}
+\end{table}
+
+
+
+\subsubsection*{ReLU Node in the first and second hidden layer}
+
+We now turn to evaluating chosing ReLU nodes in two consecutive layers, focusing on the uncertainty of nodes in the second layers, wrt ReLU nodes in the first and second layer.
+The bounds for nodes of the second layers are computed exactly. 
+Let $d$ be a neuron of the third layer.
+We keep the previous evaluation for ranking nodes in the previous (second) layer. 
+Once the set $Z$ of selected nodes has sufficiently many nodes $c,c'$ in the second layer, adding $b,b'$ to $Z$ allows to take into account accurately the pairs of paths of the form $(a b c d, a b' c' d)$ for all $\{c,c'\} \in Z$. We thus define 
+$comp(b,b')=\sum_a \sum_{c,c' \in Z} \val_{\vx}(a) \min(weight(abcd),weight(ab'c'd))$ and the associated $comp(b)$, and select iteratively nodes $b$ (first layer) or $c$ (second layer) by selecting the heaviest $comp(b)$ or $comp(c)$.
+
+We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly from layers $1$ and $2$. 
+We compare choosing nodes in the second layer only with choosing nodes in both the first and second layer.
+Choosing ReLU nodes in the previous layer (layer 2) only is never a good choice. 
+When picking in both layer 1 and 2, choosing 50 out of 149(?) unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inacurate computations ($0.059$ vs $0.574$), while it only reduces the inacuracy by $65\%$ when choosing nodes randomly. Notice that this is direct inacuracy, applying this layer over layer will even further reduce inacuracy created by accumulation of inacuraccies.
+
+Notice that It is likely that selecting ReLU nodes up to 3 layers earlier (for nodes in layer $4+$) could further improve the accuracy, but the computational trade off is unclear and we thus didnot experiment. 
+
+\begin{table}[t!]	
+	\centering
+	\begin{tabular}{|c||c|c|c|}
+	\hline
+	\text{Number $K$}  &  \text{Compensate layer} 1+2 &  \text{Compensate layer} 2 & \text{Random layer } 1+2 \\ \hline
+	\hline
+	0  &  1.758 & 1.758 & 1.758  \\ \hline
+	10  &  1.677 & 1.677 & 1.695  \\ \hline
+	20  &  1.539 & 1.567 & 1.622  \\ \hline
+	30  &  1.431 & 1.489 & 1.542  \\ \hline
+	40  &  1.329 & 1.454 & 1.47  \\ \hline
+	50  &  1.243 & 1.432 & 1.39  \\ \hline
+	max  &  1.184 & 1.422 & 1.184  \\ \hline
+\end{tabular}
+\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for a set $Z$ of $K$ ReLU nodes of the (first and) second layer with the heaviest compensation, vs $K$ random nodes of the first and second layer.}
+\label{tab:example1}
+\end{table}
+
+\subsection{Comparison to efficient Verifiers}
+
+
+In terms of efficient verifiers we compare with, we report:
+\begin{itemize}
+	\item DeepPoly \cite{deeppoly}/ CROWN \cite{crown}. We report the runtime from our own implementation used in Compensate($K$). It shows that our purely Python implementation is not optimal ($10$-$100$ times slower than the implementation in $\alpha$-$\beta$-CROWN, ERAN and PRIMA). Our aim is indeed not to have the most optimized tool, but to evaluate the idea around compensation.
+	\item PRIMA, the 2022 version, with results reported in \cite{prima} and \cite{crown}, as it is the closest in practice with our algorithm, computing accurate bounds for all neurons (as we do), although with a different technique: they focus on explicit correlations between neurons, while we consider the correlations indirectly through a better network abstraction. They use GPU while we do not. When computing the whole correlated space, 
+	parallelization is difficult.
+	Notice that on these MLP networks, PRIMA resort to refined bounds on the first few layers (3 or 4) using exact MILP encoding of all the nodes (which is easily parallelized - 16 nodes considered in parallel in PRIMA). This is doable on the first few layers as the number of integer variable is limited (but stil consequent). By comparison, we run MILP on all the layers, but with a bounded number of integer variables to control the runtime and to scale to all the layers.
+	\item $\beta$-CROWN, with results as reported in \cite{crown}, as it is the most accurate of the efficient tool to date. Its main idea is to implement a very efficient Branch and Bound (BaB) verification tool, subsuming \cite{BaB} on such DNNs, and heavily using GPU implementation (while we do not). Performance of pure BaB on these hard DNNs is however impaired by the large number of branchs to consider. Similarly as PRIMA, $\beta$-CROWN resorts to refining the bounds of the first few layers using an exact MILP encoding, also parallelized with 16 nodes in parallel, before running their BaB tool. We also test with the latest version of $\alpha$-$\beta$-CROWN ($X.Y$)
+	and of Prima ($X.Y$) on the MLP $6 \times 500$ (results not reported in \cite{crown,prima}).
+
+
+
+	\item We do not report results from kPoly \cite{kpoly}, OptC2V \cite{optC2V}, 
+	SDPFO \cite{SDPFI} which do not present favorable trade offs compared with $\beta$-CROWN. Results can be found in \cite{crown} and are performed in the same conditions so can be compared.
+	\item Finally, we run several version of Compensate($K$). First, we have a fixed choice for $K$ ($K=60$ for fast and $K=200$ for slow), with a fall back to a lower $K$ ($K=50$ for fast and $K=60$ for slow) if the bounds found is too far from the solution found (MIPGap $>0.5$ in Gurobi). We run (our implementation of) DeepPoly first, then the fast version (fast), before running slow on the remaining Images (fast+slow).	
+	Further, we also experiment with an {\em adaptative} implementation, which lowers number $K$ adaptively between layers to adapt to the growing number $N$ of linear variables, which has an impact on the overall $\MILP(N,K)$ runtime. This is particularly useful for deeper network where $N$ is very different between the first and the last layer. Again, we run first an aggressive version of fast, before going to a more concervative slow version to treat the remaining images. All versions compute bounds for 20 neurons of the same layer in parallel, no GPU used.
+\end{itemize}
+
+
+In Table \ref{tab:example}, we report the accuracy and runtime of these different methods.
+DeepPoly/CROWN is by far the fastest, but also the most inacurate, certifying robustness for less than $30\%$ of the images, whereas there are at least $82\%$ of the images for which no attacked is found.
+This is because these DNNs, altough of reasonable size, are hard to verify (they are trained in a natural way, with high compensation strenght, see Section \ref{Sec.comp}).
+
+
+Compared with PRIMA (using refinement of the first few layers by exact MILP), the overall method is quite similar, looking at all the nodes one by one from the begining of the network till the end. Our method compare favorably, both in terms of time and accuracy: our fastest setting is always faster than PRIMA, sometimes by a large margin ($>3$ times faster on $8 \times 100$ while verifying $10\%$ more images), and also more accurate (except our fast adaptative method for $5 \times 200$ which is quite pointless on this shallow DNN - the fixed method is both faster and more accurate than PRIMA), sometimes by a large margin (by $14 \%$  for $5 \times 100$ while being $30\%$ faster). Further, unlike PRIMA, we do not resort to a GPU, and our purely Python implementation is not optimal. This is very promising for this idea of compensation, which indirectly treats dependencies between the variables, which PRIMA represents explicitly.
+
+
+
+\begin{table}[t!]
+	\centering
+	\begin{tabular}{|c||c|c|c||cc|cc||c|}
+		
+		\hline
+		\text{DNN}  & DeepPoly & PRIMA & $\beta$-CROWN &\multicolumn{2}{@{}c@{}|}{\text{ Comp (adapt.) }} & \multicolumn{2}{@{}c@{}|}{\text{ Comp (fixed) }} & Upper\\ 
+		 & / CROWN & (refined) & (refined BaB) & fast & slow & fast &slow & Bound\\
+		\hline \hline
+		
+		$5 \times100$\  &   $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & no & point & $65.3\%$ & $68.4\%$ &  $84.2 \%$ \\ 
+		$\epsilon = 0.026$ & 5s & 159s & 102s& & & 117s & 142s &  \\
+		\hline	
+		
+		$5 \times 200$ \  &  $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & $64.3\%$ & $74.7\%$ & $72\%$ & $76.8\%$ & 
+		$90.1 \%$\\ 
+		$\epsilon = 0.015$ & 11s & 224s & 86s & 163s & 285s & 206s & 279s  &\\ \hline \hline
+
+	
+		$8\times100$\  &   $29.2\%$ & $42.8\%$ & $62\%$ & $52.7\%$ & $59.7\%$ & $61.4\%$ & $\mathbf{65.8\%}$  & $82.0 \%$ \\ 
+		$\epsilon = 0.026$ & 8s & 301s & 103s & 92.3s & 179s & 170s & 346s & \\
+		\hline
+	
+
+		$8\times200$\  &   $25.9\%$ & $62.4\%$ & $73.5\%$ & $68.1\%$ & $\mathbf{79.1\%}$ & $72.6\%$ & too & $91.1 \%$ \\ 
+		$\epsilon = 0.015$ & 17s & 395s & 95s  & 297s & 535s & $480s$ & slow & \\ \hline
+		
+		%6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time & \\ 
+		%$\epsilon = 0.035$ & & & & & & & & & &\\ \hline
+	\end{tabular}
+	\caption{$\%$ of verified images and average runtime in seconds, over 1000 images. 
+	Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.}
+	\label{tab:example}
+	\vspace{-1cm}
+\end{table}
+
+
+Compare with $\beta$-CROWN (also using a refinement on the first few layers using exact MILP), 
+the picture is more balanced, because the fundamentals of both algorithms are different. BaB 
+focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. 
+Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence our algorithm will spend a lot of time on nodes which are not necessary for the verification. Therefore, our naive implementation is not as efficient as the highly optimized
+$\beta$-CROWN: our implementation is 2 to 5 times slower than $\beta$-CROWN, while we are not using GPU, unlike $\beta$-CROWN. Things are more interesting on the accuracy front: on shallower DNNs ($5 \times 100$ and $5 \times 100$ with 5 hidden layers), the refinement with MILP treats all but the 2 last layers, 
+leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accuate than using compensation: we are within $1.5\%$ of the accuracy. On deeper DNNs ($8 \times 100$ and $8 \times 100$ with 8 hidden layers), the refinement with MILP cannot treat the 4 last layers, and BaB has more ReLU to branch on. Therefore, Compensate($K$) is more accurate than $\beta$-CROWN, 
+closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
+and from $17.6\%$ to $12\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than Compensate($K$) (see next Section).
+ 
+
+More importantly, $\beta$-Crown, while efficient, often faces a (complexity) wall, when there number of branches becomes too extreme for BaB to work: either BaB succeds fast, or it will not suceed even with very long time out (the reason why Refined BaB is more accurate on these networks). We verify that on a larger DNN learnt in a natural way, namely MLP $6 \times 500$, see Table \ref{tab:example3}.
+We tested PureBaB with two time out, from the standard 30s to an extreme 2000s, to match the average run time of our adaptative implementation (fast mode). Only $2\%$ more of images could be ceritifed by extending the TO from 30s to 2000s, certifying $20\%$ less images than our prototype in the same time.
+Notice that the refined BaB mode of $\beta$-Crown (using MILP for the first few layers) failed to run on this DNN (NoImplementation error code), and we were unable to fix the problem, which is not really surprising as running exact MILP with so many integer variables is not likely to be efficient, as 
+confirmed while running PRIMA.
+
+
+
+% test
+
+
+\begin{table}[t!]
+	\centering
+	\begin{tabular}{|c||c|c|cc||c||c|}
+		
+		\hline
+		\text{DNN}  & DeepPoly & PRIMA &  \multicolumn{2}{@{}c@{}|}{\text{ $\beta$-CROWN (pureBaB)}} & 
+		Comp(adapt.) & Upper\\ 
+		 & / CROWN & (refined) & TO=30s & TO=1200s & fast & Bound\\
+		\hline \hline
+		
+		
+		$6\times500$\  &   $26\%$ & &  &  $44.5\%$  & $\mathbf{65\%}$ & $92\%$ \\ 
+
+		$\epsilon = 0.035$ & 34s & &  & 576s & 925s &\\ \hline
+	\end{tabular}
+	\caption{$\%$ of verified images and average runtime in seconds, over 200 images.}
+	\label{tab:example3}
+	\vspace{-0.8cm}
+\end{table}
+
+Last, we report the average runetime per number of nodes of both fast adaptive and of fast fixed compensation, for the different DNNs we considered. The time per node is not constant, but it is still controlled and does not show an exponential behavior (from 0.1s per node for the smallest DNN to 0.3s per node for the biggest DNN). This indicates that Compensate($K$) can be run for larger DNN. While the time to verify images will be longer, it won't hit a wall as BaB does on DNNs hard to verify.
+
+\begin{figure}[b!]
+\centering
+\includegraphics[scale=0.8]{Graph.png}
+\end{figure}
+
+
+\section{Limitations and Discussion}
+
+For DNNs easy to verify, $\beta$-CROWN and PRIMA are excellent solutions, both very fast and very accurate, usually matching or getting very close to the upper bound on the $\%$ of verified images. Compensation strenght is not required in these contexts, and likely not useful, reason why we did not considered it.
+
+We only considered DNNs with ReLU activation functions in this paper. The reason is that MILP, which is the basic block of Compensate($K$), and BaB (the basic block of $\beta$-Crown) can handle the ReLU activation function efficiently, and more complex activation functions are abstracted in other ways, which PRIMA handles (unlike $\beta$-CROWN). Still, the compensation paradigm is totally orthogonal to ReLU activation function. It is very likely that studying the compensation strengh would be useful in this other context. We leave that for future work. 
+
+While accuracy of compensate($K$) can be among the highest of the efficient verifiers, runtime, while never blowing-up, can be on the slow side, in particular for larger DNNs. There are many optimizations possible. The simplest is to run $\beta$-CROWN first in the pipeline, and only use Compensate($K$) for those images for which $\beta$-CROWN cannot conclude. Another simple way is to modify the refined BaB of 
+$\beta$-CROWN to run compensate($K$) on more layers than what exact MILP can be run, and finish the study using BaB. More involved would be to modify BaB to branch on unstable ReLU nodes guided by the compensation strenght, which we experimentally proved to be an efficient trade-off. 
+Last, an analysis of important nodes for the uncertain output nodes could be performed, allowing to compute much faster less accurate bounds for those nodes not important.
+
+On the correlation between neurons, which PRIMA encodes explicitely, our results tend to show that it is more efficient to use the compensation strenght. Still, considering ReLU nodes exactly tends to be very accurate locally, but less when the source of correlation is many layers away. Few important correlations a la PRIMA could be kept explicitly as linear constraints into the MILP encoding, helping to reduce the imprecision further.
+
+
+
+
+\section{Conclusion}
+
+In this paper, we presented the notion of compensating pairs of paths, with rationale why such a phenomenon creates inacuracies hard to handle when verifying DNNs. We proved that this phenomenon is actually explaining entierely the inacuracies, as in their absence, even very simple arithmetic algebra suffices to verify accurately DNNs. We verified that DNNs harder to verify indeed exhibits more paths with larger compensating strenght. 
+
+Based on this idea of compensating path, we proposed a novel efficient algorithm considering a subset $Z$ of the set of unstable ReLU nodes, that we proved to be fully accurate if all the compensating paths are covered. We experimentally tested that chosing $Z$ covering the paths with the strongest compensation result to very good accuracy, and runtime which can be favorable in some (but not all) cases. 
+This proves that compensating strength is a promising novel concept which should be further studied to 
+improve DNN verification. We finally proposed several ways to use the compensating strenght to optimize the tools even more than they are, and leave that as future work.
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\newpage
+
+\appendix
+
+\section{Ranking of Compensating Pairs}
 
 In this subsection, we will introduce the method to choose open nodes for MILP model based on compensating pairs.
 
@@ -706,242 +1065,6 @@ The pseudo-code is as follows ():
 	}
 \end{algorithm}
 
-
-\section{Verification Framework}
-
-
-
-%Our experiments are carried by different version codes, and the global process has been changed. 
-
-In this section, we will sketch the framework. 
-
-\subsection{Structure}
-
-\subsubsection*{Precomputation}
-
-The open node chosen is the key part of the whole framework but costs a lot of time. So some computation (those do not rely on certain image and bounds) is moved to the precomputation part.
-
-%The precomputation corresponds to the simplest case: source node fixed. We will compute and store a limited number of paths with highest (absolute) values before running any image. This does not rely on other parameters or results(bounds).
-%
-%Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
-
-
-
-\subsubsection*{Process for one image} An image is the basic unit in whole process. The process of one image is simple: compute the concrete bounds of nodes layer by layer, use the bounds of previous layer to build MILP models of current layer. In one layer, nodes runs in parallel.
-
-%Suppose we have reached a new layer $l_i$ and have upper and lower bounds of all nodes in previous layers. Then we will compute bounds of every node in $l_i$ in parallel using the data of bounds of previous nodes. The method is to build and optimize an MILP model.
-
-%Some parameters may be changed during layers. Among all parameters, two groups are the most important: numbers of open nodes and local timeout parameters. Here, \emph{local} is opposite to \emph{global}. We have global timeout parameters for images and the whole running. Local timeout are used in one layer, one node, one model, or one loop in the optimization for a model.
-
-
-
-
-%The open node chosen is the key part of the whole framework, and it will cost two much time without precomputation because we must do open node chosen for every node. 
-%
-%The precomputation corresponds to the simplest case: source node fixed. We will compute and store a limited number of paths with highest (absolute) values before running any image. This does not rely on other parameters or results(bounds).
-%
-%Before build an MILP model and when choosing open nodes list,  the program will read the reference data combining with the data of bounds to continue the computation of open nodes. This will use much less time.
-
-\begin{algorithm}
-	\caption{The Frame work}
-	\KwData{Input Domain: $\mathcal{D}$}
-	\KwResult{Bounds of all nodes: $\mathcal{B}$}
-	
-	Constant $\mathcal{R}$  \tcp*{Stored precomputation data}
-	
-	Constant $\boldsymbol{W}, \boldsymbol{b}$ \tcp*{Weights and Bias of network}
-	
-	Constant Layers = $[0,1,2\cdots,L]$ \tcp*{lists of all layer}
-	
-	Constant NodesLayer = $[Nodes_0,Nodes_1,\cdots, Nodes_L]$ \tcp*{list of nodes in each layer}
-	
-	
-	Initialize $\mathcal{B}$ = \{\} \tcp*{To store upper and lower bounds of all nodes}
-	
-	\For{$l$ in Layers}{
-		\If{$l$ = 0}{
-			
-			$\mathcal{D}$, $\boldsymbol{W}, \boldsymbol{b}$ $\rightarrow$ $\mathcal{B}_0$ = \{$x$: $(UB(x),LB(x))$,$\cdots$\} 
-			\tcp*{Do linear transformation  from input to the first layer}
-			
-			Add \{$x$: $(UB(x),LB(x))$,$\cdots$\} to $\mathcal{B}$} 
-		
-		\Else{
-			
-			$l$, NodesLayer $\rightarrow$ $Nodes_l$ = $[x_0,x_1,\cdots]$
-			
-			\For{$x$ in $Nodes_l$}{
-				$x$, $\mathcal{B}$, $\mathcal{R}$  $\rightarrow$ $\mathcal{O}$ \tcp*{To get the open node list $\mathcal{O}$}
-				
-				$\mathcal{B}$, $\boldsymbol{W}, \boldsymbol{b}$, $\mathcal{O}$ $\rightarrow \mathcal{M}$  \tcp*{MILP model $\mathcal{M}$ for node $x$}
-				
-				\While{}{$\mathcal{M}$ $\rightarrow UB(x),LB(x)$ \tcp*{Optimization}}
-				
-				Add \{$x$: $(UB(x),LB(x))$\} to $\mathcal{B}$
-				
-				
-			}
-			
-		}
-		
-		
-	}
-	
-	\Return{$\mathcal{B}$}
-	
-\end{algorithm}
-
-\subsubsection*{Process for one node}
-
- The optimization of a model consists of loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
-
-
-
-\subsubsection*{Global Process}
-
-In the newest version, we do images by batches for 100 images each. For each batch, the running consists of three turns, very fast turn, fast turn and slow turn.
-
-In the very fast turn, it will run DeepPoly for all images to get a preliminary bounds for all nodes and verify the easiest images. Images verified and images with false predication will be deleted from the image list.
-
-Then sort all remain images by the size of uncertainty of DeepPoly from smaller to larger. The fast turn is to run the images from the smaller side to larger side until consecutive two images cannot be verified. All remain images and images tried but not verified will be put into the next list. And then run the list with parameters for slow turn.
-
-
-
-
-\subsection{Parameters}
-
-Parameters like open node parameter $O$ is important in the frame. Basically, all parameters will be reset after one image.
-
-\subsubsection*{Global parameters}
-
-
-
-
-\subsubsection*{Local parameters}
-
-$O$ and timeout parameters for loops will change frequently during the loops of one node. These change will not reset until the end of one layer or one image.
-
-
-
-\subsection{Other Setting}
-
-In our experiments, we have not used PGD-attack to exclude some images. In principle, there is no obstacle to use PGD-attack.
-
-
-
-\section{Experimental Evaluation}
-
-The neural network certification benchmarks for fully connected networks were run on a 32 core
-GHz Intel with 256 GB of main memory. We use Gurobi 9.52 for solving MILP and LP problems
-
-
-We used MNIST image datasets for our experiments. MNIST contains grayscale images of size 28 × 28 pixels. For our evaluation, we chose the first
-1000 images from the test set of each dataset.
-
-Each data example is associated with an $L^\infty$ norm $\varepsilon$ and a target label
-for verification.
-
-\subsection{Experiments about Node Chosen}
-
-The first group of experiments is to test the direct effect of node chosen by compensating pair, comparing to random chosen. We use the average of uncertainty of all nodes in a layer to measure the effect of node chosen: for a node $a$, its uncertainty $UN(a) = UB(a)-LB(a)$, and the average uncertainty of a layer $l$ is $$UN(l) = \dfrac{\sum_{a\in l}UN(a)}{|l|}.$$
-
-The test neural network is MNIST fully-connected $6\times 100$, and the test image is the image 59 in the MNIST image dataset. 
-
-\subsubsection*{Node chosen in second hidden layer}
-
-The following table shows the average uncertainty of the second hidden layer when choosing different numbers of open nodes by random or by compensating pairs.
-
-\begin{table}
-	\centering
-	\begin{tabular}{c|c|c}
-
-	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
-	0  &  2.22 & 2.22  \\ \hline
-	10  &  1.84 & 2.03  \\ \hline
-	20  &  1.50 & 1.82  \\ \hline
-	30  &  1.28 & 1.62  \\ \hline
-	40  &  1.14 & 1.44  \\ \hline
-	50  &  1.06 & 1.23  \\ \hline
-\end{tabular}
-\caption{}
-\label{tab:example0}
-\end{table}
-
-
-
-\subsubsection*{Node chosen in the third hidden layer}
-
-The following table shows the average uncertainty of the third hidden layer when choosing different numbers of open nodes, by random or by compensating pairs.
-
-
-\begin{table}
-	\centering
-	\begin{tabular}{c|c|c}
-	
-	\text{Number of open nodes}  &  \text{Compensating} & \text{Random}  \\ \hline
-	0  &  1.758 & 1.758  \\ \hline
-	10  &  1.677 & 1.695  \\ \hline
-	20  &  1.539 & 1.622  \\ \hline
-	30  &  1.431 & 1.542  \\ \hline
-	40  &  1.329 & 1.47  \\ \hline
-	50  &  1.243 & 1.39  \\ \hline
-\end{tabular}
-\caption{}
-\label{tab:example1}
-\end{table}
-
-\section{Proofs}
-
-\input{proofs}
-
-\section{Experiments Results}
-
-
-
-
-
-
-\subsection{Comparison to Incomplete Verifiers}
-
-In Table 3, we compare against two representative incomplete
-verifiers on 4 MLP networks for MNIST under the same
-set of 1000 images. beta-Crown is the state-of-the-art verifier based on branch-and-bound. PRIMA is another strong and representative method based on multi-neuron linear relaxation.
-
-\begin{table}
-	\centering
-	\begin{tabular}{c|c|cc|cc|cc|cc}
-		
-		\text{Network}  & $\varepsilon$&  \multicolumn{2}{@{}c@{}|}{\text{Comp(fast)}} & \multicolumn{2}{@{}c@{}|}{\text{PRIMA}} &  \multicolumn{2}{@{}c@{}|}{\text{Comp(slow)}} & \multicolumn{2}{@{}c@{}|}{\text{beta-Crown}}  \\ 
-		
-		&  & \textrm{Ver}.\% & \textrm{Time}(s) & \textrm{Ver}.\% & \textrm{Time}(s) &\textrm{Ver}.\% & \textrm{Time}(s) & \textrm{Ver}.\% & \textrm{Time}(s) \\ \hline
-		
-		\textrm{MLP}\ 5$\times$100\  &   0.026& 1.758 & time & 51 & 159 &    68.4 & 142 & 69.9 & 102 \\ \hline
-		
-		\textrm{MLP}\ 8$\times$100\  &   0.026& 52.7 & 92.3 & 42.8 & 301 &    65.8 & 364 & 62 & 103 \\ \hline
-		
-		\textrm{MLP}\ 5$\times$200\  &   0.015& 1.758 & time & 69 & 224 &    76.8 & 279 & 77.4 & 86 \\ \hline
-		
-		\textrm{MLP}\ 8$\times$200\  &   0.015& 68.1 & 297 & 62.4 & 395 &    79.1 & 535 & 73.5 & 95 \\ \hline
-		
-		\textrm{MLP}\ 6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time \\ \hline
-	\end{tabular}
-	\caption{The data of verified accuracy (\%) and average time (s) of 1000 images evaluated on the PRIMA and on the beta-Crown are in CITE.}
-	\label{tab:example}
-\end{table}
-
-On all 4 networks, our fast version can exceed PRIMA both in accuracy and speed. On all 4 networks, our slow version can have a similar verified accuracy as beta-Crown.
-
-% test
-
-\section{Related Work}
-
-\section{Conclusion}
-
-\section*{Appendix: Proofs of No Diamond Theorem}
-
-
-\bibliographystyle{plain}
-\bibliography{references}
 
 
 \end{document}
