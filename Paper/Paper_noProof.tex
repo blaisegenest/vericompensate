@@ -487,7 +487,7 @@ This result has a first interesting application: explain why some DNNs are intri
 and one trained using DiffAI ("$5\times100$"). 
 We report in Table \ref{tab:compensation} the average compensation strength, i.e. 
 the average of $max_{\pi,\pi'} min(|weight(\pi')|,|weight(\pi')|)$
-over all source/target states in given layers. The average compensations strenght are much lower in the Robust DNN than in the Natural DNN, and indeed the Robust DNN is much simpler to verify than the Natural DNN (e.g. DeepPoly is more accurate and verifies more images).
+over all source/target states in given layers. The average compensations strength are much lower in the Robust DNN than in the Natural DNN, and indeed the Robust DNN is much simpler to verify than the Natural DNN (e.g. DeepPoly is more accurate and verifies more images).
 
 
 \subsection{MILP$_{X_n}$}
@@ -515,7 +515,7 @@ Intuitively, our first proof shows that if there are no compensation, then there
 
 \subsection{An efficient algorithm}
 
-Using Theorem \ref{th2}, one could thus obtain accurate bounds by running MILP$_{X}$ inductively on every node layer by layer, obtaining accurate bounds $[\alpha,\beta]$ that can be used to compute the next layer accurate bound. In practice, such an algorithm would however be inefficient, as $X_n$ comprises most of the nodes from layer up to $k-1$ for $n$ on layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the the strenght of compensation that are meaningful, and consider that paths below this treshold are not compensating strongly enough to deserve an integer variable (there are cases where the MILP algorithm is exponential in the number of integer variables), calling $Z_n$ the resulting set of nodes on {\em strongly compensating} paths. In practice, one could take the $K$ nodes covering the strongest compensating pair of paths to obtain set $Z_n$, for $K$ reasonably small. 
+Using Theorem \ref{th2}, one could thus obtain accurate bounds by running MILP$_{X}$ inductively on every node layer by layer, obtaining accurate bounds $[\alpha,\beta]$ that can be used to compute the next layer accurate bound. In practice, such an algorithm would however be inefficient, as $X_n$ comprises most of the nodes from layer up to $k-1$ for $n$ on layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the the strength of compensation that are meaningful, and consider that paths below this treshold are not compensating strongly enough to deserve an integer variable (there are cases where the MILP algorithm is exponential in the number of integer variables), calling $Z_n$ the resulting set of nodes on {\em strongly compensating} paths. In practice, one could take the $K$ nodes covering the strongest compensating pair of paths to obtain set $Z_n$, for $K$ reasonably small. 
 The pseudo-code of the algorithm is provided in Algorithm \ref{algo1}.
 
 \SetKwInput{KwInput}{Input}
@@ -695,7 +695,7 @@ In our experiments, we have not used PGD-attack to exclude some images. In princ
 
 Our experimental evaluations have 3 goals:
 \begin{enumerate}
-  \item Evaluate experimentally how accurate is $\MILP_Z$ when using compensating strenght 
+  \item Evaluate experimentally how accurate is $\MILP_Z$ when using compensating strength 
  to choose the set $Z$ of ReLU nodes encoded exactly using an integer variable, compared with randomly chosing the set $Z$, to make sure the choice is relevant. Also compare different choices for $K$ the size of $Z$ and how to rank nodes from different layers,
   \item Evaluate on benchmarks the percentage of certification that can be obtained
  using the compensation idea, and compare with competing efficient tools,
@@ -708,9 +708,9 @@ All the benchmarks were run on an AMD 5975WX ($32$ cores$@3.6$GHz, 7nm, year 202
 The DNN certification for local robustness were run, using DNNs trained for the MNIST image dataset as its the only standard DNNs (MLP $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$) benchmarked by \cite{crown} not using robust training, and they are the hardest DNNs to verify, despite their relatively limited size (600 to 1600 neurons in hidden layers). Indeed, today's efficient methods leave at least $14\%$ to $20\%$ of the images neither certified robust nor with an attack to robustness found, making them interesting DNNs to consider where to improve accuracy of efficient techniques. We also test on the larger MLP $6\times 500$, not previously tested in \cite{crown}. MNIST contains grayscale images of size $28 \times 28$ pixels ($752$ input neurons). For our evaluation, we evaluate on the standard first 1000 images of the dataset, to be directly comparable to experiments run in other papers, e.g. \cite{prima,crown}, except for MLP $5\times 500$ which is not reported in \cite{prima,crown} and takes a large amount of time, for which we only test on the first 200 images. Each data example is associated with a $\varepsilon>0$ for the $L^\infty$ norm, and a target label for verification. 
 
 
-\subsection{Chosing nodes based on Compensation strenght}
+\subsection{Chosing nodes based on Compensation strength}
 
-The first group of experiments we run, tests the accuracy of chosing a set $Z$ of $K$ nodes using compensation strenght, compared with randomly chosing the same number $K$ of nodes, to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
+The first group of experiments we run, tests the accuracy of chosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly chosing the same number $K$ of nodes, to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
 
 To mesure the accuracy, we measure the uncertainty of all nodes in a layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
@@ -722,11 +722,11 @@ We experiment with the smallest network (MLP $6\times 100$), so that we can obta
 \subsubsection*{ReLU Node in the first hidden layer}
 
 We first experiment with the choice of nodes in the first hidden layer, and its consequences on the accuracy of nodes in the second layer.  Let $c$ be a node of the second layer.
-A compensating pair $(\pi,\pi')$ of paths with target $n$ is thus of the form a node $a b c$ and $a b' c$, with $a$ an input node and $b,b'$ on the first layer. The compensating strenght for $(b,b')$ is defined as 
+A compensating pair $(\pi,\pi')$ of paths with target $n$ is thus of the form a node $a b c$ and $a b' c$, with $a$ an input node and $b,b'$ on the first layer. The compensating strength for $(b,b')$ is defined as 
 $comp(b,b')=\sum_a \val_{\vx}(a) \min(weight(abc),weight(ab'c))$. Indeed, 
 the pair $(a b c,a b' c)$ of path cannot compensate more than $\val_{\vx}(a) \min(weight(a,b,c),weight(a,b',c))$, and $b,b'$ would help compensated set set of pairs of paths $\{(a b c,a b' c) \mid a$ is in the first layer$\}$. After selecting the heaviest $(b_0,b_0')$, we can then compute $comp(b)= \sum_{b' \text{already selected}} comp(b,b')+comp(b',b)$ and select iteratively the heaviest $b$'s one by one till reaching the threshold. We do this for all node $c$ of the second layer.
 
-We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly. The range of uncertainty created by inacurate computations is up to $1.17=2.22-1.05$, $2.22$ being the accuracy provided by LP, and $1.05$ by an exact MILP encoding of all the unstable ReLU nodes. Selecting $30$ out of the $61$ unstable ReLU nodes, the uncertainty created by inacurracy is reduced by $80\%$, while a random choice of nodes only leads up to roughly halving this number. We can deduce that selecting nodes based on compensating strenght helps to select important ReLU nodes for the accuracy.
+We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly. The range of uncertainty created by inacurate computations is up to $1.17=2.22-1.05$, $2.22$ being the accuracy provided by LP, and $1.05$ by an exact MILP encoding of all the unstable ReLU nodes. Selecting $30$ out of the $61$ unstable ReLU nodes, the uncertainty created by inacurracy is reduced by $80\%$, while a random choice of nodes only leads up to roughly halving this number. We can deduce that selecting nodes based on compensating strength helps to select important ReLU nodes for the accuracy.
 
 \begin{table}[t!]
 	\centering
@@ -742,7 +742,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 	50  &  1.06 & 1.23  \\ \hline
 	61 (max) & 1.05 &  1.05 \\ \hline
 \end{tabular}
-\caption{Average uncertainty of $\MILP_Z$ for nodes of the second layer, for $Z$ with $K$ ReLU nodes of the first layer (compensating strenght vs random choice).}
+\caption{Average uncertainty of $\MILP_Z$ for nodes of the second layer, for $Z$ with $K$ ReLU nodes of the first layer (compensating strength vs random choice).}
 \label{tab:example0}
 \vspace{-0.8cm}
 \end{table}
@@ -779,7 +779,7 @@ Notice that it is likely that selecting ReLU nodes up to 3 layers earlier (for n
 	50  &  1.243 & 1.432 & 1.39  \\ \hline
 	116 &  1.184 & 1.422 & 1.184  \\ \hline
 \end{tabular}
-\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strenght vs random choice).}
+\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs random choice).}
 \label{tab:example1}
 \vspace{-0.8cm}
 \end{table}
@@ -806,8 +806,8 @@ In terms of efficient verifiers we compare with, we report:
 
 
 In Table \ref{tab:example}, we report the accuracy and runtime of these different methods.
-DeepPoly/CROWN is by far the fastest, but also the most inacurate, certifying robustness for less than $30\%$ of the images, whereas there are at least $82\%$ of the images for which no attacked is found.
-This is because these DNNs, altough of reasonable size, are hard to verify (they are trained in a natural way, with high compensation strenght, see Section \ref{Sec.comp}).
+DeepPoly/CROWN is by far the fastest, but also the most inacurate, certifying robustness for less than $30\%$ of the images, whereas there are at least $82\%$ of the images for which no attacked is found (attacks computed by \cite{attack} in $\beta$-CROWN).
+This is because these DNNs, altough of reasonable size, are hard to verify (they are trained in a natural way, with high compensation strength, see Section \ref{Sec.comp}).
 
 
 Compared with PRIMA (using refinement of the first few layers by exact MILP), the overall method is quite similar, looking at all the nodes one by one from the begining of the network till the end. Our method compare favorably, both in terms of time and accuracy: our fastest setting is always faster than PRIMA, sometimes by a large margin ($>3$ times faster on $8 \times 100$ while verifying $10\%$ more images), and also more accurate (except our fast adaptative method for $5 \times 200$ which is quite pointless on this shallow DNN - the fixed method is both faster and more accurate than PRIMA), sometimes by a large margin (by $14 \%$  for $5 \times 100$ while being $30\%$ faster). Further, unlike PRIMA, we do not resort to a GPU, and our purely Python implementation is not optimal. This is very promising for this idea of compensation, which indirectly treats dependencies between the variables, which PRIMA represents explicitly.
@@ -900,13 +900,13 @@ Last, we report the average runetime per number of nodes of both fast adaptive a
 
 \section{Limitations and Discussion}
 
-For DNNs easy to verify, $\beta$-CROWN and PRIMA are excellent solutions, both very fast and very accurate, usually matching or getting very close to the upper bound on the $\%$ of verified images. Compensation strenght is not required in these contexts, and likely not useful, reason why we did not considered it.
+For DNNs easy to verify, $\beta$-CROWN and PRIMA are excellent solutions, both very fast and very accurate, usually matching or getting very close to the upper bound on the $\%$ of verified images. Compensation strength is not required in these contexts, and likely not useful, reason why we did not considered it.
 
 We only considered DNNs with ReLU activation functions in this paper. The reason is that MILP, which is the basic block of Compensate($K$), and BaB (the basic block of $\beta$-Crown) can handle the ReLU activation function efficiently, and more complex activation functions are abstracted in other ways, which PRIMA handles (unlike $\beta$-CROWN). Still, the compensation paradigm is totally orthogonal to ReLU activation function. It is very likely that studying the compensation strengh would be useful in this other context. We leave that for future work. 
 
-While accuracy of compensate($K$) can be among the highest of the efficient verifiers, runtime, while never blowing-up, can be on the slow side, in particular for larger DNNs. There are many optimizations possible. The simplest is to run $\beta$-CROWN first in the pipeline, and only use Compensate($K$) for those images for which $\beta$-CROWN cannot conclude. Another simple way is to modify the refined BaB of $\beta$-CROWN to run compensate($K$) on more layers than what exact MILP can be run, and finish the study using BaB. More involved would be to modify BaB to branch on unstable ReLU nodes guided by the compensation strenght, which we experimentally proved to be an efficient trade-off. Also, an analysis of important nodes for the uncertain output nodes could be performed, allowing to compute much faster less accurate bounds for those nodes not important. Last, one could perform a Refinement Abstraction framework similar to \cite{atva}.
+While accuracy of compensate($K$) can be among the highest of the efficient verifiers, runtime, while never blowing-up, can be on the slow side, in particular for larger DNNs. There are many optimizations possible. The simplest is to run $\beta$-CROWN first in the pipeline, and only use Compensate($K$) for those images for which $\beta$-CROWN cannot conclude. Another simple way is to modify the refined BaB of $\beta$-CROWN to run compensate($K$) on more layers than what exact MILP can be run, and finish the study using BaB. More involved would be to modify BaB to branch on unstable ReLU nodes guided by the compensation strength, which we experimentally proved to be an efficient trade-off. Also, an analysis of important nodes for the uncertain output nodes could be performed, allowing to compute much faster less accurate bounds for those nodes not important. Last, one could perform a Refinement Abstraction framework similar to \cite{atva}, \cite{elboher}, or \cite{SRGR}.
 
-On the correlation between neurons, which PRIMA encodes explicitely, our results tend to show that it is more efficient to use the compensation strenght. Still, considering ReLU nodes exactly tends to be very accurate locally, but less when the source of correlation is many layers away. Few important correlations a la PRIMA could be kept explicitly as linear constraints into the MILP encoding, helping to reduce the imprecision further.
+On the correlation between neurons, which PRIMA encodes explicitely, our results tend to show that it is more efficient to use the compensation strength. Still, considering ReLU nodes exactly tends to be very accurate locally, but less when the source of correlation is many layers away. Few important correlations a la PRIMA could be kept explicitly as linear constraints into the MILP encoding, helping to reduce the imprecision further.
 
 
 
@@ -915,11 +915,11 @@ On the correlation between neurons, which PRIMA encodes explicitely, our results
 
 \section{Conclusion}
 
-In this paper, we presented the notion of compensating pairs of paths, with rationale why such a phenomenon creates inacuracies hard to handle when verifying DNNs. We proved that this phenomenon is actually explaining entierely the inacuracies, as in their absence, even very simple arithmetic algebra suffices to verify accurately DNNs. We verified that DNNs harder to verify indeed exhibits more paths with larger compensating strenght. 
+In this paper, we presented the notion of compensating pairs of paths, with rationale why such a phenomenon creates inacuracies hard to handle when verifying DNNs. We proved that this phenomenon is actually explaining entierely the inacuracies, as in their absence, even very simple arithmetic algebra suffices to verify accurately DNNs. We verified that DNNs harder to verify indeed exhibits more paths with larger compensating strength. 
 
 Based on this idea of compensating path, we proposed a novel efficient algorithm considering a subset $Z$ of the set of unstable ReLU nodes, that we proved to be fully accurate if all the compensating paths are covered. We experimentally tested that chosing $Z$ covering the paths with the strongest compensation result to very good accuracy, and runtime which can be favorable in some (but not all) cases. 
 This proves that compensating strength is a promising novel concept which should be further studied to 
-improve DNN verification. We finally proposed several ways to use the compensating strenght to optimize the tools even more than they are, and leave that as future work.
+improve DNN verification. We finally proposed several ways to use the compensating strength to optimize the tools even more than they are, and leave that as future work.
 
 \newpage
 
