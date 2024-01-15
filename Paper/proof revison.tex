@@ -222,174 +222,174 @@ The initialization is obvious as Box Abstraction/DeepPoly is always exact for th
 \end{proof}
 
 
-\section{Theorem 2}
+%\section{Theorem 2}
+%
+%We now show that if all intermediates nodes that are on compensating pairs are opened as MILP nodes, then MILP will be correct. First, we do the proof with 3 layers, assuming (without loss of generality) a unique output node $z$.
+%
+%\begin{theorem}
+%	\label{no_diamond_2}
+%	Using MILP method, if every nodes $b_j$ in any compensating path pair
+%	 $(\pi,\pi')$ is encoded as a binary/integer variable, then the upper and lower 
+%	 bounds computed by MILP are the exact max and min value of $z$.
+%\end{theorem}
+%
+%By symetry, we only show the max side. 
+%
+%
+%
+%\begin{definition}
+%	Let $K$ be the set of all input nodes $a_k$. 
+%	We define a decomposition $K=I\sqcup J$ as follows:  
+%	\begin{itemize}
+% \item $k \in I$  if
+% \begin{enumerate}
+%	 \item every path from $a_k$ to $z$ has weight $\geq 0$, or
+%	\item every path from $a_k$ to $z$ has weight $\leq 0$.
+% \end{enumerate}
+%That is, $a_k$ is not a source of a compensating pair.
+%	\item $k \in J$ if $k \notin I$, that is there exists two paths $\pi,\pi'$ from $a_k$, 
+%	one with positive and one with negative weight.
+%\end{itemize}
+%\end{definition} 
+%
+%
+%\begin{lemma} \label{lem:open_node}
+%	A node $b$ in the hidden layer will not be on a compensating pair iff one of the following two happens:
+%	\begin{enumerate}
+%	 \item $w_{b,z}=0$, or
+%	 \item For every input node $j\in J$, we have $w_{a_j,b}=0$.
+%	\end{enumerate}
+%	We denote $B_{pure}$ the set of such nodes $b$ such that at least one of the above holds.
+%\end{lemma}
+%
+%\begin{proof}
+%	First, we show that if either one of 1,2 happens, then $b_i$ will not be opened. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of compensating paths 	$(\pi,\pi')$ starting with $a$, with $k$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $w_{a_j,b}=0$ implies weight$(\pi)=0$.
+%	
+%	Second, we show that if neither 1 nor 2 hold, then $b$ will be on a compensating path.
+%	Because 2) does not hold, there is a $j \in J$ with $w_{a_j,b} \neq 0$, say $>0$.
+%	Because 1) does not hold, $w_{b,z} \neq 0$, say $>0$.
+%	Now, by definition of $J$, there is a pair of compensating paths $\pi,\pi'$ 
+%	from $a_j$ to $z$, say with $\pi'$ with weight $<0$.
+%	Then $((a_j,b,z), \pi')$ is also a compensating pair.
+%\end{proof}
+%
+%Consider the sign of nodes function from Definition \ref{sign_of_nodes}. Because now we allow compensating paths, we cannot define this function over all nodes.
+%
+%
+%\begin{definition}\label{sign_of_nodes_in_I}
+%	We define a partial sign function $S$ over nodes $n$ such that : 	
+%	\begin{enumerate} 
+%		 \item all paths from $n$ to $z$ have 0 weight, and then $S(n)=0$; 
+%		 \item all paths from $n$ to $z$ have non-negative weight, and at least one path has a positive weight, and then $S(n)=1$; 
+%		 \item all path from $n$ to $z$ has non-positive weight, and at least one path has a negative weight, and then $S(n)=-1$.
+%		 \item Otherwise $S(n)$ is undefined.
+%	\end{enumerate}
+%\end{definition}	
+%	
+%Notice that $S$ is defined on all nodes $a_i$ with $i \in I$ (it can also be defined trivially for all nodes $b$ as there is a unique path to $z$, and at $z$ also). Hence it is undefined only for nodes $a_j$ with $j \in J$.
+%
+%
+%We denote $a_S$ for any subset $S\subseteq K$ to refer the input vector $\langle a_k\rangle_{a_k\in S}$. We also denote $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}_K$ and $z=z(\boldsymbol{x}_K)=z(\boldsymbol{x}_I,\boldsymbol{x}_J)$.
+%Consider $\boldsymbol{x}_I^*$ the input vector such that for all $i \in I$, the value for $a_i$ gets its maximal value (if $S(a_i)=1$) or $a_i$ gets its minimal value (if $S(a_i)=-1$).
+%
+%\begin{lemma} \label{lem:reach_max}
+%	$max_a (weight_{a}(z)) = max_{\{a \mid \boldsymbol{x}_I=\boldsymbol{x}^*_I\}} (weight_{a}(z))$
+%	
+%	Further, for every intermediate node $b$ in the hidden layer, for any valuation $\boldsymbol{x}^0_J$, 
+%	we have $max_{\{a \mid \boldsymbol{x}_J=\boldsymbol{x}^0_J\}} (weight_{a}(b)) = max_{\{a \mid \boldsymbol{x}_J=\boldsymbol{x}^0_J,\boldsymbol{x}_I=\boldsymbol{x}_I^*\}} (weight_{a}(b))$.	
+%\end{lemma}
+%
+%\begin{proof}
+%	For the first statement, we use 
+%	$$max_{\boldsymbol{x}_K} (weight_{\boldsymbol{x}_K}(z)) = max_{\boldsymbol{x}_J} max_{\boldsymbol{x}_I} (weight_{\boldsymbol{x}_I,\boldsymbol{x}_J}(z))$$
+%	
+%	Now, for any fixed input $\boldsymbol{x}^0_J$, we can regard $weight_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z)$ as a DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ %and their propagation in hidden layers 
+%	as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Theorem \ref{th1} (make a more precise corollary) to get that $z(\cdot,\boldsymbol{x}^0_J)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done.
+%	
+%	The second statement is simpler because for each fixed partial input $\boldsymbol{x}^0_J$, 
+%	$$b= B^0 +\sum_{a_i\in I} w_{a_i, b} a_i,$$ where $B^0$ is a constant which is the sum of the term including bias and $\boldsymbol{x}^0_J$. Applying Lemma \ref{lemma1}, we obtain the statement.
+%\end{proof}
+%
+%\subsection{MILP abstraction}
+%
+%Consider now an MILP abstraction using the abstraction from \cite{MILP}, 
+%where each variable $\alpha_b$ for the ReLU from $b^-$ to $b^+$ is:
+%\begin{itemize}
+%	\item linear  (i.e. $\alpha_b \in [0,1]$) for $b \in B_{pure}$
+%	\item binary/integer (i.e. $\alpha_b \in \{0,1\}$) for $b \notin B_{pure}$
+%\end{itemize}
+%
+%
+%\begin{lemma}\label{lem:AppB=ReLU}
+%	Let $\mathrm{AppB}$ be the upper bound of lower bound approximation functions of LP for $\ReLU$ function with known upper and lower bound (numbers) $u,l$. Then when $x$ reaches the extremal values (maximum or minimum values, $u$ or $l$), then $\mathrm{AppB}(x)=\ReLU(x)$.
+%	
+%\end{lemma}
+%
+%\begin{proof}
+%	This is simply by definition of LP approximation functions.
+%\end{proof}
+%
+%Notice that there is only one layer of ReLUs, in the hidden layer.
+%Denote by $\mathrm{UB}$ the maximal bound on $z$ considering the MILP constraints above, with ReLUs being either linear or binary depending on whether $b \in B_{pure}$ or not.
+%
+%We want to show that $\mathrm{UB} = \max z$. As the MILP abstraction is a sound overapproximation, 
+%it suffices to show that $\mathrm{UB}\leq \max c$.
+%
+%For any $b_h\in B_{pure}$, we have $b_h=\sum_{a_i\in I}w_{b_ha_i}+B_h$ ($B_h$ is the bias). 
+%Denote by $B_O$ the set of nodes $b$ for which $\alpha_b$ is binary, i.e. 
+%$b \notin B_{pure}$. %For any subdomain $D \subseteq B_O$, 
+%Let $\boldsymbol{x}^0_J$ and $\boldsymbol{x}^0_I$ be fixed inputs, and consider the associated upper bound 
+%$\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}$. We have:
+%%We show that this upper bound does not exceed the maximal value of $z$: 
+%
+%\begin{align*}
+%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I} = B_z + \sum_{b\in B_O} w_{b,z}\ReLU(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
+%\end{align*} where $\mathrm{AppB}(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b))$ is the upper bound of 
+%the (LP) approximation of $weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ if $w_{b,z}>0$, and the lower bound
+%of its (LP) approximation if $w_{b,z}<0$. 
+%
+%By Lemma \ref{lem:reach_max}, for any fixed input $\boldsymbol{x}^0_J$, for all nodes $b$ in the hidden layer, if $S(b)=\mathrm{sign}(w_{zb})=1$, then 
+%$weight_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)$ will get its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$,
+%and if $S(b)=\mathrm{sign}(w_{zb})=-1$, then $weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ will get its minimal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$.
+%Notice that $\mathrm{ReLU}$ and $\mathrm{AppB}$ are both non decreasing functions, and thus:
+%
+%\begin{align*}
+%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I} \leq B_z + \sum_{b\in B_O} w_{b,z}\ReLU(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) +
+%	\sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)).
+%\end{align*} 
+%
+%Added FIX:
+%Consider $B_{pure}=B^1 \cup B^2$, with $b \in B^1$ iff
+%$w_{b,z} = 0$ and $b \in B^2$ iff $w_{b,z} \neq 0$.
+%Hence:
+%
+%$$\sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) = 
+%\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b))$$
+%
+%For $b \in B^2$, we have $w_{a_j,b}=0$ for all $j \in J$
+%by definition of $B_{pure}$ (Lemma 4.), hence
+%
+%$$\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) = 
+%\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I}(b))
+%=\sum_{b\in B^2} w_{b,z} \mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))
+%$$ as $\mathrm{AppB}(weight_{\boldsymbol{x}^*_I}(b))=\mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))$ since 
+%$weight_{\boldsymbol{x}^*_I}(b)$ is an extremal value (minimum or maximal) and 
+%$\mathrm{AppB}$ equals $\mathrm{ReLU}$ for extremal values.
+%
+%Hence we have: \begin{align*}
+%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}  \leq & B_z+\sum_{b}w_{zb}\ReLU(b(\boldsymbol{x}_I^*,\bar{a}_J))
+%	= \max_{\boldsymbol{x}_I} z(\boldsymbol{x}_I,\bar{a}_J) \\
+%	\leq & \max_{\boldsymbol{x}_J}\max_{\boldsymbol{x}_I} z(\boldsymbol{x}_I,\boldsymbol{x}_J) 	= \max_{\boldsymbol{x}_K} weight_{\boldsymbol{x}_K}(z)
+%\end{align*}
+%
+%Considering the maximal over all inputs $\boldsymbol{x}_J,\boldsymbol{x}_I$, we obtain 
+%
+%$$\mathrm{UB} = max_{\boldsymbol{x}_J,\boldsymbol{x}_I} \mathrm{UB}_{\boldsymbol{x}_J,\boldsymbol{x}_I} \leq \max_{\boldsymbol{x}_J,\boldsymbol{x}_I} weight_{\boldsymbol{x}_J,\boldsymbol{x}_I}(z)$$ And this us what we want to show.
 
-We now show that if all intermediates nodes that are on compensating pairs are opened as MILP nodes, then MILP will be correct. First, we do the proof with 3 layers, assuming (without loss of generality) a unique output node $z$.
 
-\begin{theorem}
-	\label{no_diamond_2}
-	Using MILP method, if every nodes $b_j$ in any compensating path pair
-	 $(\pi,\pi')$ is encoded as a binary/integer variable, then the upper and lower 
-	 bounds computed by MILP are the exact max and min value of $z$.
-\end{theorem}
+\section{Proof of Theorem 2}
 
-By symetry, we only show the max side. 
-
-
-
-\begin{definition}
-	Let $K$ be the set of all input nodes $a_k$. 
-	We define a decomposition $K=I\sqcup J$ as follows:  
-	\begin{itemize}
- \item $k \in I$  if
- \begin{enumerate}
-	 \item every path from $a_k$ to $z$ has weight $\geq 0$, or
-	\item every path from $a_k$ to $z$ has weight $\leq 0$.
- \end{enumerate}
-That is, $a_k$ is not a source of a compensating pair.
-	\item $k \in J$ if $k \notin I$, that is there exists two paths $\pi,\pi'$ from $a_k$, 
-	one with positive and one with negative weight.
-\end{itemize}
-\end{definition} 
-
-
-\begin{lemma} \label{lem:open_node}
-	A node $b$ in the hidden layer will not be on a compensating pair iff one of the following two happens:
-	\begin{enumerate}
-	 \item $w_{b,z}=0$, or
-	 \item For every input node $j\in J$, we have $w_{a_j,b}=0$.
-	\end{enumerate}
-	We denote $B_{pure}$ the set of such nodes $b$ such that at least one of the above holds.
-\end{lemma}
-
-\begin{proof}
-	First, we show that if either one of 1,2 happens, then $b_i$ will not be opened. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of compensating paths 	$(\pi,\pi')$ starting with $a$, with $k$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $w_{a_j,b}=0$ implies weight$(\pi)=0$.
-	
-	Second, we show that if neither 1 nor 2 hold, then $b$ will be on a compensating path.
-	Because 2) does not hold, there is a $j \in J$ with $w_{a_j,b} \neq 0$, say $>0$.
-	Because 1) does not hold, $w_{b,z} \neq 0$, say $>0$.
-	Now, by definition of $J$, there is a pair of compensating paths $\pi,\pi'$ 
-	from $a_j$ to $z$, say with $\pi'$ with weight $<0$.
-	Then $((a_j,b,z), \pi')$ is also a compensating pair.
-\end{proof}
-
-Consider the sign of nodes function from Definition \ref{sign_of_nodes}. Because now we allow compensating paths, we cannot define this function over all nodes.
-
-
-\begin{definition}\label{sign_of_nodes_in_I}
-	We define a partial sign function $S$ over nodes $n$ such that : 	
-	\begin{enumerate} 
-		 \item all paths from $n$ to $z$ have 0 weight, and then $S(n)=0$; 
-		 \item all paths from $n$ to $z$ have non-negative weight, and at least one path has a positive weight, and then $S(n)=1$; 
-		 \item all path from $n$ to $z$ has non-positive weight, and at least one path has a negative weight, and then $S(n)=-1$.
-		 \item Otherwise $S(n)$ is undefined.
-	\end{enumerate}
-\end{definition}	
-	
-Notice that $S$ is defined on all nodes $a_i$ with $i \in I$ (it can also be defined trivially for all nodes $b$ as there is a unique path to $z$, and at $z$ also). Hence it is undefined only for nodes $a_j$ with $j \in J$.
-
-
-We denote $a_S$ for any subset $S\subseteq K$ to refer the input vector $\langle a_k\rangle_{a_k\in S}$. We also denote $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}_K$ and $z=z(\boldsymbol{x}_K)=z(\boldsymbol{x}_I,\boldsymbol{x}_J)$.
-Consider $\boldsymbol{x}_I^*$ the input vector such that for all $i \in I$, the value for $a_i$ gets its maximal value (if $S(a_i)=1$) or $a_i$ gets its minimal value (if $S(a_i)=-1$).
-
-\begin{lemma} \label{lem:reach_max}
-	$max_a (weight_{a}(z)) = max_{\{a \mid \boldsymbol{x}_I=\boldsymbol{x}^*_I\}} (weight_{a}(z))$
-	
-	Further, for every intermediate node $b$ in the hidden layer, for any valuation $\boldsymbol{x}^0_J$, 
-	we have $max_{\{a \mid \boldsymbol{x}_J=\boldsymbol{x}^0_J\}} (weight_{a}(b)) = max_{\{a \mid \boldsymbol{x}_J=\boldsymbol{x}^0_J,\boldsymbol{x}_I=\boldsymbol{x}_I^*\}} (weight_{a}(b))$.	
-\end{lemma}
-
-\begin{proof}
-	For the first statement, we use 
-	$$max_{\boldsymbol{x}_K} (weight_{\boldsymbol{x}_K}(z)) = max_{\boldsymbol{x}_J} max_{\boldsymbol{x}_I} (weight_{\boldsymbol{x}_I,\boldsymbol{x}_J}(z))$$
-	
-	Now, for any fixed input $\boldsymbol{x}^0_J$, we can regard $weight_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z)$ as a DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ %and their propagation in hidden layers 
-	as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Theorem \ref{th1} (make a more precise corollary) to get that $z(\cdot,\boldsymbol{x}^0_J)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done.
-	
-	The second statement is simpler because for each fixed partial input $\boldsymbol{x}^0_J$, 
-	$$b= B^0 +\sum_{a_i\in I} w_{a_i, b} a_i,$$ where $B^0$ is a constant which is the sum of the term including bias and $\boldsymbol{x}^0_J$. Applying Lemma \ref{lemma1}, we obtain the statement.
-\end{proof}
-
-\subsection{MILP abstraction}
-
-Consider now an MILP abstraction using the abstraction from \cite{MILP}, 
-where each variable $\alpha_b$ for the ReLU from $b^-$ to $b^+$ is:
-\begin{itemize}
-	\item linear  (i.e. $\alpha_b \in [0,1]$) for $b \in B_{pure}$
-	\item binary/integer (i.e. $\alpha_b \in \{0,1\}$) for $b \notin B_{pure}$
-\end{itemize}
-
-
-\begin{lemma}\label{lem:AppB=ReLU}
-	Let $\mathrm{AppB}$ be the upper bound of lower bound approximation functions of LP for $\ReLU$ function with known upper and lower bound (numbers) $u,l$. Then when $x$ reaches the extremal values (maximum or minimum values, $u$ or $l$), then $\mathrm{AppB}(x)=\ReLU(x)$.
-	
-\end{lemma}
-
-\begin{proof}
-	This is simply by definition of LP approximation functions.
-\end{proof}
-
-Notice that there is only one layer of ReLUs, in the hidden layer.
-Denote by $\mathrm{UB}$ the maximal bound on $z$ considering the MILP constraints above, with ReLUs being either linear or binary depending on whether $b \in B_{pure}$ or not.
-
-We want to show that $\mathrm{UB} = \max z$. As the MILP abstraction is a sound overapproximation, 
-it suffices to show that $\mathrm{UB}\leq \max c$.
-
-For any $b_h\in B_{pure}$, we have $b_h=\sum_{a_i\in I}w_{b_ha_i}+B_h$ ($B_h$ is the bias). 
-Denote by $B_O$ the set of nodes $b$ for which $\alpha_b$ is binary, i.e. 
-$b \notin B_{pure}$. %For any subdomain $D \subseteq B_O$, 
-Let $\boldsymbol{x}^0_J$ and $\boldsymbol{x}^0_I$ be fixed inputs, and consider the associated upper bound 
-$\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}$. We have:
-%We show that this upper bound does not exceed the maximal value of $z$: 
-
-\begin{align*}
-	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I} = B_z + \sum_{b\in B_O} w_{b,z}\ReLU(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
-\end{align*} where $\mathrm{AppB}(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b))$ is the upper bound of 
-the (LP) approximation of $weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ if $w_{b,z}>0$, and the lower bound
-of its (LP) approximation if $w_{b,z}<0$. 
-
-By Lemma \ref{lem:reach_max}, for any fixed input $\boldsymbol{x}^0_J$, for all nodes $b$ in the hidden layer, if $S(b)=\mathrm{sign}(w_{zb})=1$, then 
-$weight_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)$ will get its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$,
-and if $S(b)=\mathrm{sign}(w_{zb})=-1$, then $weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ will get its minimal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$.
-Notice that $\mathrm{ReLU}$ and $\mathrm{AppB}$ are both non decreasing functions, and thus:
-
-\begin{align*}
-	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I} \leq B_z + \sum_{b\in B_O} w_{b,z}\ReLU(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) +
-	\sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)).
-\end{align*} 
-
-Added FIX:
-Consider $B_{pure}=B^1 \cup B^2$, with $b \in B^1$ iff
-$w_{b,z} = 0$ and $b \in B^2$ iff $w_{b,z} \neq 0$.
-Hence:
-
-$$\sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) = 
-\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b))$$
-
-For $b \in B^2$, we have $w_{a_j,b}=0$ for all $j \in J$
-by definition of $B_{pure}$ (Lemma 4.), hence
-
-$$\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) = 
-\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I}(b))
-=\sum_{b\in B^2} w_{b,z} \mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))
-$$ as $\mathrm{AppB}(weight_{\boldsymbol{x}^*_I}(b))=\mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))$ since 
-$weight_{\boldsymbol{x}^*_I}(b)$ is an extremal value (minimum or maximal) and 
-$\mathrm{AppB}$ equals $\mathrm{ReLU}$ for extremal values.
-
-Hence we have: \begin{align*}
-	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}  \leq & B_z+\sum_{b}w_{zb}\ReLU(b(\boldsymbol{x}_I^*,\bar{a}_J))
-	= \max_{\boldsymbol{x}_I} z(\boldsymbol{x}_I,\bar{a}_J) \\
-	\leq & \max_{\boldsymbol{x}_J}\max_{\boldsymbol{x}_I} z(\boldsymbol{x}_I,\boldsymbol{x}_J) 	= \max_{\boldsymbol{x}_K} weight_{\boldsymbol{x}_K}(z)
-\end{align*}
-
-Considering the maximal over all inputs $\boldsymbol{x}_J,\boldsymbol{x}_I$, we obtain 
-
-$$\mathrm{UB} = max_{\boldsymbol{x}_J,\boldsymbol{x}_I} \mathrm{UB}_{\boldsymbol{x}_J,\boldsymbol{x}_I} \leq \max_{\boldsymbol{x}_J,\boldsymbol{x}_I} weight_{\boldsymbol{x}_J,\boldsymbol{x}_I}(z)$$ And this us what we want to show.
-
-
-\section{Proof of Theorem 2, full version}
-
-In this section, we will try to prove the full version of theorem 2, that is 
+In this section, we will try to prove theorem 2, that is 
 
 \begin{theorem}
 	\label{no_diamond_3}
@@ -404,7 +404,6 @@ In this section, we will try to prove the full version of theorem 2, that is
 
 Before the proof of above theorem, we will try to weaker one, that is, consider not only compensating pairs, but also pairs that allows common nodes (the two paths in a compensating pairs cannot have a common nodes). We call such pair a weak compensating pair.
 
-We uses very similar definitions as in previous section.
 
 \begin{definition}
 	Let $K$ be the set of  all input nodes $a_k$. 
@@ -431,7 +430,7 @@ We uses very similar definitions as in previous section.
 	\end{enumerate}
 	We denote $B_{zero}$ the set of such nodes $b$ that case 1 holds, and denote $B_{pure}$ the of such nodes $b$ that case 2 holds but case 1 does not hold.
 	
-	We denote $B_O$ the set of all nodes $b$ that is in a compensating path.
+	We denote $B_O$ the set of all nodes $b$ in a compensating path.
 \end{lemma}
 
 \begin{proof}
@@ -445,9 +444,6 @@ We uses very similar definitions as in previous section.
 	Then $((a_j,b,z), \pi')$ is also a weak compensating pair.
 \end{proof}
 
-
-Consider the sign of nodes function from Definition \ref{sign_of_nodes}. Because now we allow compensating paths, we cannot define this function over all nodes.
-
 \begin{lemma}\label{lem:subnetwork}
 	$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only replies on nodes in $B_{pure}\cup I$ in previous layers. We call this sub-network $N_I$. In $N_I$, there is no compensating pair.
 \end{lemma}
@@ -460,8 +456,13 @@ Consider the sign of nodes function from Definition \ref{sign_of_nodes}. Because
 	2. if $b\in B_{O}$, then $w_{bc}=0$; otherwise there exists $<a_j,b,c>$ a path from $a_j\in J$ to $c$ with a nonzero value, a contradiction.
 	
 	3. if $b\in B_{zero}$, then $w_{bc}=0$; otherwise there exists $<b,c,z>$ a path from $b$ to $z$ the output node with a nonzero value, a contradiction.
-	
 \end{proof}
+
+
+
+Consider the sign of nodes function from Definition \ref{sign_of_nodes}. Because now we allow compensating paths, we cannot define this function over all nodes.
+
+
 
 
 \begin{definition}\label{sign_of_nodes_in_I_2}
@@ -483,11 +484,15 @@ Notice that $S$ is defined on all nodes $a_i \in I$ (it can also be defined triv
 \begin{proof}
 	Otherwise, suppose there exists two paths $P_1,P_2$ from $b$ to $z$ with (strictly) different signs. Then consider $\langle a_i,b\rangle+P_1$ and $\langle a_i,b\rangle+P_2$, they are two paths with weights with different signs. This is a contradiction since $a_i\in I$.
 \end{proof}
-Therefore, for any node $b$  that $S$ is undefined on $b$, it is only depending on the values on $J$.  
+Therefore, for any node $b$  that $S$ is undefined on $b$, it only depends on the values on $J$.  
 
 \begin{lemma}
-	If $c$ is in the next layer of $b$, $W_{bc}\neq 0$, and $S$ is defined on both $b$ and $c$. Then $W_{bc}S(c)=S(b)$.
+	If $c$ is in the next layer of $b$, $W_{bc}\neq 0$, and $S$ is defined on both $b$ and $c$, then $W_{bc}S(c)=S(b)$.
 \end{lemma}
+
+\begin{proof}
+	This is proved in the first section.
+\end{proof}
 
 \begin{lemma}\label{lem:subnetwork2}
 	The input set $J$ with nodes that only depending on $J$ forms a sub-network. This network contains all nodes that $S$ is not defined on them. We call this sub-network $N_J$.
@@ -499,7 +504,7 @@ Therefore, for any node $b$  that $S$ is undefined on $b$, it is only depending 
 
 By definition, we can easily see that, for any $b\in N_J$, either $b\in B_O$, or $b$ is a constant node.
 
-We denote $a_S$ for any subset $S\subseteq K$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We also denote $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}_K$ and $z=z(\boldsymbol{x}_K)=z(\boldsymbol{x}_I,\boldsymbol{x}_J)$. We can see that for a node $b$ that $S$ is not defined on it, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ becomes a constant.
+We denote $\boldsymbol{x}_S$ for any subset $S\subseteq K$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We also denote $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}_K$ and $z=z(\boldsymbol{x}_K)=z(\boldsymbol{x}_I,\boldsymbol{x}_J)$. We can see that for a node $b$ that $S$ is not defined on it, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ becomes a constant.
 
 We define $\boldsymbol{x}_I^*$ to be the input vector such that for all $a_i \in I$, the value $x_{a_i}$ for $a_i$ gets its maximal value (if $S(a_i)=1$ or $0$) or $a_i$ gets its minimal value (if $S(a_i)=-1$). Similarly, we define $\boldsymbol{x}_I^\#$ to be the input vector such that for all $a_i \in I$, the value $x_{a_i}$ for $a_i$ gets its maximal value (if $S(a_i)=-1$ or $0$) or $a_i$ gets its minimal value (if $S(a_i)=1$).
 
@@ -522,12 +527,6 @@ We define $\boldsymbol{x}_I^*$ to be the input vector such that for all $a_i \in
 	
 	Now, for any fixed input vector $\boldsymbol{x}^0_J$, we can regard $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z)$ as a DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ %and their propagation in hidden layers 
 	as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Theorem \ref{th1} to get that $z(\cdot,\boldsymbol{x}^0_J)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done.
-	
-	For the second part, for any $b$ that is at least 2 layers after $a$, we can regard $b$ as the output node and apply the same argument above.
-	
-	If $b$ is immediately after $a$, then the proof is the same as last part of Lemma \ref{lem:reach_max} last section.
-	
-
 \end{proof}
 
 
@@ -640,7 +639,7 @@ it suffices to show that $\mathrm{UB}\leq \max \Val(c)$ and $\mathrm{LB} \geq \m
 		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq constant + \sum_{b\in B_O\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)),
 	\end{align*}where $\B$ means one of $\UB$ or $\LB$ depending on the sign of $W_{bc}$. Now by induction hypothesis part 2, combining with $S(b)$ and both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions, we have:\begin{align*}
 	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq 
-	&constant + \sum_{b\in B_O\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge w_{b,c}\neq 0} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
+	&constant + \sum_{b\in B_O\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
 	= & \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c). 
 	\end{align*}  This is the first equal.
 	
