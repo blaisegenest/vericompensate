@@ -448,8 +448,8 @@ We uses very similar definitions as in previous section.
 
 Consider the sign of nodes function from Definition \ref{sign_of_nodes}. Because now we allow compensating paths, we cannot define this function over all nodes.
 
-\begin{lemma}\label{lem:subnetwrok}
-	$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only replies on nodes in $B_{pure}\cup I$ in previous layers.
+\begin{lemma}\label{lem:subnetwork}
+	$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only replies on nodes in $B_{pure}\cup I$ in previous layers. We call this sub-network $N_I$. In $N_I$, there is no compensating pair.
 \end{lemma}
 
 \begin{proof}
@@ -489,6 +489,15 @@ Therefore, for any node $b$  that $S$ is undefined on $b$, it is only depending 
 	If $c$ is in the next layer of $b$, $W_{bc}\neq 0$, and $S$ is defined on both $b$ and $c$. Then $W_{bc}S(c)=S(b)$.
 \end{lemma}
 
+\begin{lemma}\label{lem:subnetwork2}
+	The input set $J$ with nodes that only depending on $J$ forms a sub-network. This network contains all nodes that $S$ is not defined on them. We call this sub-network $N_J$.
+\end{lemma}
+
+\begin{proof}
+	This is because if there exists nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in above set but $b$ is not, then $b$ has a path with nonzero weight from a node $a_i$ but this means so does $c$, a contradiction. Therefore any $b$ such that $W_{bc}\neq 0$ is also in above set.
+\end{proof}
+
+By definition, we can easily see that, for any $b\in N_J$, either $b\in B_O$, or $b$ is a constant node.
 
 We denote $a_S$ for any subset $S\subseteq K$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We also denote $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}_K$ and $z=z(\boldsymbol{x}_K)=z(\boldsymbol{x}_I,\boldsymbol{x}_J)$. We can see that for a node $b$ that $S$ is not defined on it, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ becomes a constant.
 
@@ -531,9 +540,18 @@ where each variable $\alpha_b$ for the ReLU from $b$ to $\hat{b}$ is:
 	\item binary/integer (i.e. $\alpha_b \in \{0,1\}$) for $b \in B_{O}$
 \end{itemize}
 
-Now consider the MILP framework for all hidden and output nodes layer by layer (to compute their bounds, and use the bounds of previous layers to build the MILP models of current layer), with ReLUs being either linear or binary depending on whether $b \in B_{O}$ or not.
+Now consider the MILP framework for all hidden and output nodes layer by layer (to compute their bounds, and use the bounds of previous layers to build the MILP models of current layer), with ReLUs being either linear or binary depending on whether $b \in B_{O}$ or not. We call this standard framework.
 
 For a node $b$ in a hidden layer or the output layer, we denote by $\UB(b)$ the maximal bound on $b$ and $\LB(b)$ the minimal bound on $b$ considering the MILP constraints above.
+
+
+\begin{lemma}
+	In the standard framework, both $N_I$ and $N_J$ are accurate in the sense that for any $b$ in $N_I$ or $N_J$, $\UB(b)=\max\Val(b)$ and $\LB(b)=\min\Val(b)$.
+\end{lemma}
+
+\begin{proof}
+	For $N_I$, it is because of no compensating as proved in the first section. For $N_J$, it is because all nodes are either opened or constants.
+\end{proof}
 
 
 %\begin{definition} Assume $\boldsymbol{x}^0_I\oplus \boldsymbol{x}^0_J$ is a input vector, and $b$ is node in hidden layers or output layer.
@@ -581,49 +599,105 @@ For input vectors $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$, let $\UB_{\boldsymbol
 %\end{proof}
 
 
-We want to show that $\mathrm{UB}(z) = \max z$ and $\mathrm{LB}(z) = \min z$ for the unique output nodes and we will prove this for all $c$ such $w_{c,z}\neq 0$. As the MILP abstraction is a sound overapproximation, 
-it suffices to show that $\mathrm{UB}\leq \max c$ and $\mathrm{LB} \geq \min c$. We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemma:
+We want to show that $\mathrm{UB}(z) = \max \Val (z)$ and $\mathrm{LB}(z) = \min \Val(z)$ for the unique output nodes and we will prove this for all $c\notin B_{zero}$ . As the MILP abstraction is a sound overapproximation, 
+it suffices to show that $\mathrm{UB}\leq \max \Val(c)$ and $\mathrm{LB} \geq \min \Val(c)$. We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemmas:
+
 
 \begin{lemma}
 	For the $i$-th layer $l^i$ ($1$-th layer is the first hidden layer), for a node $c\in l^i$, if $c\notin B_{zero}$, then:
 	
-	 For any fixed $\boldsymbol{x}^0_J$, $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)=\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)= \Val(\boldsymbol{x}^*_I,\boldsymbol{x}^0_J)(c) = \max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$, where $\boldsymbol{x}^*_I$ is described in previous section. More important, when $\boldsymbol{x}_I=\boldsymbol{x}^*_I$, for all node $c$ in the same layer, the approximation of $c$ is a constant number rather than an interval, and it is equal to $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$ or $\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$.
+	\vspace*{1ex}
 	
-The similar is true for lower bound $\LB$.
+	1. for any fixed $\boldsymbol{x}^0_J$ and for $\boldsymbol{x}^*_I$, the value for $c$ in the MILP model is a fixed number, and naturally $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)=\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$. The same is true for $\boldsymbol{x}^\#_I$.
+	
+	\vspace*{1ex}
+	
+	2. for any fixed $\boldsymbol{x}^0_J$, if $S(c)=1$,  $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)=\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)= \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c) = \max_{\boldsymbol{x}_I} \Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)$. The similar for $S(c)=-1$, $\langle \LB,\min\rangle$, $x^\#_I$: we can change two of them at the same time.
+	
+	\vspace*{1ex}
+	
+	3. Therefore, $\UB(c)=\max\Val(c)$ and $\LB(c)=\min\Val(c)$.
+	
+	
 \end{lemma}
 
 \begin{proof}
+	We prove this lemma by induction on layers. For $l_1$, it is obvious. Suppose we have proved part 1,2,3 up to layer $l_i$, then for layer $l_{i+1}$, suppose $c$ is a node in this layer. 
 	
-	For $i= 1$, we have proved in previous section.
+(1)	First, if $S$ is undefined on $c$, then by previous discussion, $c$ is in a sub-network from $J$ with all nodes opened and if $\boldsymbol{x}_J=\boldsymbol{x}_J^0$ is fixed, then in the MILP model, the value for $c$ is also fixed. If $S(c)$ is defined, then consider all $b$ such that $W_{bc}\neq 0$. First, $b$ cannot in $B_{zero}$; so by induction hypothesis, the value of $b$ is fixed under $\boldsymbol{x}^*_I,\boldsymbol{x}^0_J$ in MILP model. 
 	
-	Suppose we have proved this lemma up to layer $i$, and we are going to prove it for $i+1$-th layer. Let $c\notin B_{zero}$ be a node on $i+1$-th layer.
 	
-	By definition, we have that for any input vector $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$:
 	
-	\begin{align*}
-		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
-	\end{align*} where $\mathrm{AppB}$ is the same as in previous section  whose definition is independent with $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$. $\B$ is one of $\UB,\LB$  that, if $w_{b,c}>0$, then $\B$ is $\UB$ and otherwise $\B$ is $\LB$.
+	If $b\in B_O$, the term is $W_{bc}\ReLU(b)$. We know then by induction hypothesis, the value for $b$ in MILP is a fixed value. Then the term $W_{bc}\ReLU(b)$ is also a fixed number.  
 	
-	We can simplify above equation to \begin{align*}
-			\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I}(b)).
-	\end{align*}
+	If $b\in B_{pure}$, the term is $W_{bc}\mathrm{AppB}(b)$ ($\mathrm{AppB}$ is the LP approximation domain of $\ReLU$) and either $b$ is a constant in the network and so is in the MILP model (trivial case), or $S(b)$ is defined. 
 	
-	By induction hypothesis, since both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions, we have that \begin{align*}
-		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq 
-		 &B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge w_{b,c}\neq 0} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
-		= & \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c) \\
-	\end{align*} The equal is because by induction hypothesis, when $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, the approximation is a constant and is equal to $\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$.
+	We know then by induction hypothesis part 1, 2 and 3,  we have the value of $b$ in the model is fixed (part 1), and it is equal to $\max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$ or $\min_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$ (by part 2, depending on $S(b)$). Since $b$ only depends on $I$, this value also equal to $\max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I)(c)$ or $\min_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I)(c)$, and therefor equal to $\UB(b)$ or $\LB(b)$. For either of them, $\mathrm{AppB}$ will be fixed value. Hence, in this case, the term $W_{bc}\mathrm{AppB}(b)$ is also a fixed number.
 	
-Now, since when $x$ reaches the max or min of $\mathrm{AppB}$'s domain, $\mathrm{AppB}(x)=\ReLU(x)$, and by induction hypothesis, for any $b\in B_{pure}\cap l_i$, $\mathrm{AppB}(B_{\boldsymbol{x}^*_I}(b))=\ReLU(B_{\boldsymbol{x}^*_I})$. Hence, by induction hypothesis, we will have \begin{align*}
-	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq & \ \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c) \\
-	= &B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge w_{b,c}\neq 0} w_{b,c} \mathrm{AppB}(B_{\boldsymbol{x}^*_I}(b))\\
-	= &B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))\\
-	= & \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c).
-\end{align*} This finishes the proof.
-	\end{proof}
+	Therefore, in the MILP model, $c$ is a sum of terms that are all fixed numbers. Hence $c$ is a fixed number.
+	
+	(2) If $S(c)=1$, then we have the following:	\begin{align*}
+		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq constant + \sum_{b\in B_O\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)),
+	\end{align*}where $\B$ means one of $\UB$ or $\LB$ depending on the sign of $W_{bc}$. Now by induction hypothesis part 2, combining with $S(b)$ and both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions, we have:\begin{align*}
+	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq 
+	&constant + \sum_{b\in B_O\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge w_{b,c}\neq 0} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
+	= & \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c). 
+	\end{align*}  This is the first equal.
+	
+	The second is simply because $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)\geq \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)\geq\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$.	The third equal is proved in last subsection, Lemma \ref{lem:reach_max_2}. $S(c)=-1$ is similar. So we have proved part 2.
+	
+	(3) Once we have part 2, then we have that for any fixed $\boldsymbol{x}^0_J$, $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)= \max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$. Therefore, $\max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \UB_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c)= \max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \Val(\boldsymbol{x}_I,\boldsymbol{x}_J)(c)$ and this is to say $\UB(c)=\max(c)$. This is what we want to show, and the same result holds for lower bound and minimal value. This is for part 3.
+	
+	
+	
+
+\end{proof}
 
 
-Now, we have that for any fixed $\boldsymbol{x}^0_J$, $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)= \max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$. Therefore, $\max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \UB_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c)= \max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \Val(\boldsymbol{x}_I,\boldsymbol{x}_J)(c)$ and this is to say $\UB(c)=\max(c)$. This is what we want to show, and the same result holds for lower bound and minimal value.
+
+%\begin{lemma}
+%	For the $i$-th layer $l^i$ ($1$-th layer is the first hidden layer), for a node $c\in l^i$, if $c\notin B_{zero}$ and $S(c)=1$, then:
+%	
+%	 1. if , then for any fixed $\boldsymbol{x}^0_J$, $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)=\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)= \Val(\boldsymbol{x}^*_I,\boldsymbol{x}^0_J)(c) = \max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$, where $\boldsymbol{x}^*_I$ is described in previous section. More important, when $\boldsymbol{x}_I=\boldsymbol{x}^*_I$, for all node $c$ in the same layer, the approximation of $c$ is a constant number rather than an interval, and it is equal to $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$ or $\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$.
+%	
+%The similar is true for lower bound $\LB$.
+%\end{lemma}
+
+
+
+%\vspace*{20ex}
+%\begin{proof}
+%	
+%	For $i= 1$, we have proved in previous section.
+%	
+%	Suppose we have proved this lemma up to layer $i$, and we are going to prove it for $i+1$-th layer. Let $c\notin B_{zero}$ be a node on $i+1$-th layer.
+%	
+%	By definition, we have that for any input vector $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$:
+%	
+%	\begin{align*}
+%		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
+%	\end{align*} where $\mathrm{AppB}$ is the same as in previous section  whose definition is independent with $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$. $\B$ is one of $\UB,\LB$  that, if $w_{b,c}>0$, then $\B$ is $\UB$ and otherwise $\B$ is $\LB$.
+%	
+%	We can simplify above equation to \begin{align*}
+%			\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I}(b)).
+%	\end{align*}
+%	
+%	By induction hypothesis, since both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions, we have that \begin{align*}
+%		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq 
+%		 &B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge w_{b,c}\neq 0} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
+%		= & \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c) \\
+%	\end{align*} The equal is because by induction hypothesis, when $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, the approximation is a constant and is equal to $\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$.
+%	
+%Now, since when $x$ reaches the max or min of $\mathrm{AppB}$'s domain, $\mathrm{AppB}(x)=\ReLU(x)$, and by induction hypothesis, for any $b\in B_{pure}\cap l_i$, $\mathrm{AppB}(B_{\boldsymbol{x}^*_I}(b))=\ReLU(B_{\boldsymbol{x}^*_I})$. Hence, by induction hypothesis, we will have \begin{align*}
+%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq & \ \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c) \\
+%	= &B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge w_{b,c}\neq 0} w_{b,c} \mathrm{AppB}(B_{\boldsymbol{x}^*_I}(b))\\
+%	= &B_c + \sum_{b\in B_O\cap l_i} w_{b,c}\ReLU(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))\\
+%	= & \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c).
+%\end{align*} This finishes the proof.
+%	\end{proof}
+%
+%
+%Now, we have that for any fixed $\boldsymbol{x}^0_J$, $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)= \max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$. Therefore, $\max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \UB_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c)= \max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \Val(\boldsymbol{x}_I,\boldsymbol{x}_J)(c)$ and this is to say $\UB(c)=\max(c)$. This is what we want to show, and the same result holds for lower bound and minimal value.
 
 
 
