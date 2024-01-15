@@ -58,7 +58,6 @@
   address   = {Cham},
   editor    = {Majumdar, Rupak and Kun{\v{c}}ak, Viktor},
   pages     = {97--117},
-  publisher = {Springer International Publishing},
   abstract  = {Deep neural networks have emerged as a widely used and effective means for tackling complex, real-world problems. However, a major obstacle in applying them to safety-critical systems is the great difficulty in providing formal guarantees about their behavior. We present a novel, scalable, and efficient technique for verifying properties of deep neural networks (or providing counter-examples). The technique is based on the simplex method, extended to handle the non-convex Rectified Linear Unit (ReLU) activation function, which is a crucial ingredient in many modern neural networks. The verification procedure tackles neural networks as a whole, without making any simplifying assumptions. We evaluated our technique on a prototype deep neural network implementation of the next-generation airborne collision avoidance system for unmanned aircraft (ACAS Xu). Results show that our technique can successfully prove properties of networks that are an order of magnitude larger than the largest networks verified using existing methods.},
   isbn      = {978-3-319-63387-9},
 }
@@ -707,14 +706,14 @@
   publisher = {Elsevier},
 }
 
-@Article{szegedy2013intriguing,
+@Article{szegedy,
   author  = {Szegedy, Christian and Zaremba, Wojciech and Sutskever, Ilya and Bruna, Joan and Erhan, Dumitru and Goodfellow, Ian and Fergus, Rob},
   journal = {2nd International Conference on Learning Representations, ICLR},
   title   = {Intriguing properties of neural networks},
   year    = {2014},
 }
 
-@Article{tjandraatmadja2020convex,
+@Article{optC2V,
   author  = {Tjandraatmadja, Christian and Anderson, Ross and Huchette, Joey and Ma, Will and Patel, Krunal Kishor and Vielma, Juan Pablo},
   journal = {Advances in Neural Information Processing Systems},
   title   = {The convex relaxation barrier, revisited: Tightened single-neuron relaxations for neural network verification},
@@ -782,4 +781,12 @@
   pages        = {5276--5285},
 }
 
-@Comment{jabref-meta: databaseType:bibtex;}
+@InProceedings{atva,
+  author       = {Mohammad Afzal and Ashutosh Gupta and S. Akshay},
+  booktitle    = {Automated Technology for Verification and Analysis (ATVA'23)},
+  title        = {{Using Counterexamples to Improve Robustness Verification in Neural Networks}},
+  year         = {2023},
+  pages        = {422-443},
+  series       = {LNCS 14215}
+}
+

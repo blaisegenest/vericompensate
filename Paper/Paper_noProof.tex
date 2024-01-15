@@ -861,7 +861,7 @@ and from $17.6\%$ to $12\%$ ($8 \times 200$). This is very promising for the com
  
 
 More importantly, $\beta$-Crown, while efficient, often faces a (complexity) wall, when there number of branches becomes too extreme for BaB to work: either BaB succeds fast, or it will not suceed even with very long time out (the reason why Refined BaB is more accurate on these networks). We verify that on a larger DNN learnt in a natural way, namely MLP $6 \times 500$, see Table \ref{tab:example3}.
-We tested PureBaB with two time out, from the standard 30s to an extreme 2000s, to match the average run time of our adaptative implementation (fast mode). Only $2\%$ more of images could be ceritifed by extending the TO from 30s to 2000s, certifying $20\%$ less images than our prototype in the same time.
+We tested PureBaB with two time out, from the standard 30s to an extreme 2000s, to match the average run time of our adaptative implementation (fast mode). Only $3.5\%$ more of images could be ceritifed by extending the TO from 30s to 2000s, certifying $20\%$ less images than our prototype in the same time.
 Notice that the refined BaB mode of $\beta$-Crown (using MILP for the first few layers) failed to run on this DNN (NoImplementation error code), and we were unable to fix the problem, which is not really surprising as running exact MILP with so many integer variables is not likely to be efficient, as 
 confirmed while running PRIMA.
 
@@ -881,9 +881,9 @@ confirmed while running PRIMA.
 		\hline \hline
 		
 		
-		$6\times500$\  &   $26\%$ & $35\%$ &  &  $44.5\%$  & $\mathbf{65\%}$ & $92\%$ \\ 
+		$6\times500$\  &   $26\%$ & $35\%$ & $41\%$ & $44.5\%$  & $\mathbf{65\%}$ & $92\%$ \\ 
 
-		$\epsilon = 0.035$ & 34s & 121s &  & 576s & 925s &\\ \hline
+		$\epsilon = 0.035$ & 34s & 121s & 18.4s & 576s & 925s &\\ \hline
 	\end{tabular}
 	\caption{$\%$ of verified images and average runtime in seconds, over 200 images.}
 	\label{tab:example3}
@@ -904,9 +904,7 @@ For DNNs easy to verify, $\beta$-CROWN and PRIMA are excellent solutions, both v
 
 We only considered DNNs with ReLU activation functions in this paper. The reason is that MILP, which is the basic block of Compensate($K$), and BaB (the basic block of $\beta$-Crown) can handle the ReLU activation function efficiently, and more complex activation functions are abstracted in other ways, which PRIMA handles (unlike $\beta$-CROWN). Still, the compensation paradigm is totally orthogonal to ReLU activation function. It is very likely that studying the compensation strengh would be useful in this other context. We leave that for future work. 
 
-While accuracy of compensate($K$) can be among the highest of the efficient verifiers, runtime, while never blowing-up, can be on the slow side, in particular for larger DNNs. There are many optimizations possible. The simplest is to run $\beta$-CROWN first in the pipeline, and only use Compensate($K$) for those images for which $\beta$-CROWN cannot conclude. Another simple way is to modify the refined BaB of 
-$\beta$-CROWN to run compensate($K$) on more layers than what exact MILP can be run, and finish the study using BaB. More involved would be to modify BaB to branch on unstable ReLU nodes guided by the compensation strenght, which we experimentally proved to be an efficient trade-off. 
-Last, an analysis of important nodes for the uncertain output nodes could be performed, allowing to compute much faster less accurate bounds for those nodes not important.
+While accuracy of compensate($K$) can be among the highest of the efficient verifiers, runtime, while never blowing-up, can be on the slow side, in particular for larger DNNs. There are many optimizations possible. The simplest is to run $\beta$-CROWN first in the pipeline, and only use Compensate($K$) for those images for which $\beta$-CROWN cannot conclude. Another simple way is to modify the refined BaB of $\beta$-CROWN to run compensate($K$) on more layers than what exact MILP can be run, and finish the study using BaB. More involved would be to modify BaB to branch on unstable ReLU nodes guided by the compensation strenght, which we experimentally proved to be an efficient trade-off. Also, an analysis of important nodes for the uncertain output nodes could be performed, allowing to compute much faster less accurate bounds for those nodes not important. Last, one could perform a Refinement Abstraction framework similar to \cite{atva}.
 
 On the correlation between neurons, which PRIMA encodes explicitely, our results tend to show that it is more efficient to use the compensation strenght. Still, considering ReLU nodes exactly tends to be very accurate locally, but less when the source of correlation is many layers away. Few important correlations a la PRIMA could be kept explicitly as linear constraints into the MILP encoding, helping to reduce the imprecision further.
 
