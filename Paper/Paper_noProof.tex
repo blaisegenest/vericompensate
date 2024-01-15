@@ -245,7 +245,7 @@ In this section, we describe different value (over)-abstractions that are used b
 			
 			
 		\end{tikzpicture}
-		\caption{A DNN example from \cite{kneuron}, where every node is separated into 2, $x$ after the weighted sum and $\hat{x}$ after the ReLU activation function.}
+		\caption{A DNN example from \cite{kpoly}, where every node is separated into 2, $x$ after the weighted sum and $\hat{x}$ after the ReLU activation function. The pair $(x_2 x_3 x_5,x_2 x_4 x_5)$ in green and red is compensating (weights of paths are $1,-2$).}
 		\label{fig1}
 	\end{figure}
 	
@@ -351,11 +351,9 @@ path $\pi'= x_2 x_4 x_5$ has weight $-2$, hence $(\pi,\pi')$ is a compensating p
 We call a path $\pi$ {\em compensating} if there exists a path $\pi'$ such that either $(\pi,\pi')$ or 
 $(\pi',\pi)$ is compensating.
 
-Compensating pair of paths will make precision of the target state reduce when using overabstraction of values. Here, $weight(x_5) \leq 4$ (the value is reached for $x_1=1$ and $x_2=-1$). However, Box computes an upper bound of $6$, and while DeepPoly recovers some of the dependency in $x_2$, it can only cancel out some of $x_2$ value due to the ReLU over-abstraction (a contribution of $\frac{-x_2+4}{2} \leq 2.5$ instead of the exact $-x_2 \leq 1.5$), and obtain a bound $weight(x_5) \leq 5.5$ instead of $4$.
+Compensating pair of paths will make precision of the target state reduce when using overabstraction of values. Here, $weight(x_5) \leq 4$ (the value is reached for $x_1=1$ and $x_2=-1$). However, Box computes an upper bound of $6$, and while DeepPoly recovers some of the dependency in $x_2$, it can only cancel out some of $x_2$ value due to the ReLU over-abstraction (contribution of $\frac{-x_2+4}{2} \leq 2.5$ instead of exact $-x_2 \leq 1.5$), obtaining a bound $weight(x_5) \leq 5.5$ instead of $4$.
 
-Intuitively, the target state receives the weight from the source state from the different paths from the source to the target. As the weights of the paths is of opposite sign, some of these weights will cancel out,
-by an amount up to $min(|weight(\pi')|,|weight(\pi')|)$. Further, no only do they cancel $min(|weight(\pi')|,|weight(\pi')|)$ out, but they also do not accumulate, in the same way as 
-$0= |1+(-1)| \leq |1|+|-1|=2$ from an inacurate analysis. The amount of compensation can however be reduced by the ReLU functions, because of clipping by the ReLU function. For instance, consider that the inputs $x_1,x_2$ lies in $[-1,-0]$. Then the weight at $\hat{x}_3$ will be always 0, no matter the input, and there will be no compensation to $weight(\pi')$.
+Intuitively, the target state receives the weight from the source state from the different paths from the source to the target. As the weights of the paths is of opposite sign, some of these weights will cancel out, by an amount up to $min(|weight(\pi')|,|weight(\pi')|)$. Further, no only do they cancel $min(|weight(\pi')|,|weight(\pi')|)$ out, but they also do not accumulate, in the same way as $0= |1+(-1)| \leq |1|+|-1|=2$ from an inacurate analysis. The amount of compensation can however be reduced by the ReLU functions, because of clipping by the ReLU function. For instance, consider that the inputs $x_1,x_2$ lies in $[-1,-0]$. Then the weight at $\hat{x}_3$ will be always 0, no matter the input, and there will be no compensation to $weight(\pi')$.
 
 
 
@@ -489,7 +487,7 @@ This result has a first interesting application: explain why some DNNs are intri
 and one trained using DiffAI ("$5\times100$"). 
 We report in Table \ref{tab:compensation} the average compensation strength, i.e. 
 the average of $max_{\pi,\pi'} min(|weight(\pi')|,|weight(\pi')|)$
-over all source/target states in given layers. The average compensations strenght are much lower in the Robust DNN than in the Natural DNN, and indeed the Robust DNN is much simpler to verify than the Natural DNN.
+over all source/target states in given layers. The average compensations strenght are much lower in the Robust DNN than in the Natural DNN, and indeed the Robust DNN is much simpler to verify than the Natural DNN (e.g. DeepPoly is more accurate and verifies more images).
 
 
 \subsection{MILP$_{X_n}$}
@@ -764,7 +762,7 @@ We compare choosing nodes in the second layer only with choosing nodes in both t
 Choosing ReLU nodes in the previous layer (layer 2) only is never a good choice. 
 When picking in both layer 1 and 2, choosing 50 out of 149(?) unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inacurate computations ($0.059$ vs $0.574$), while it only reduces the inacuracy by $65\%$ when choosing nodes randomly. Notice that this is direct inacuracy, applying this layer over layer will even further reduce inacuracy created by accumulation of inacuraccies.
 
-Notice that It is likely that selecting ReLU nodes up to 3 layers earlier (for nodes in layer $4+$) could further improve the accuracy, but the computational trade off is unclear and we thus didnot experiment. 
+Notice that it is likely that selecting ReLU nodes up to 3 layers earlier (for nodes in layer $4+$) could further improve the accuracy, but the computational trade off is unclear and we thus didnot experiment. 
 
 \begin{table}[t!]	
 	\centering
@@ -823,8 +821,8 @@ Compared with PRIMA (using refinement of the first few layers by exact MILP), th
 		 & / CROWN & (refined) & (refined BaB) & fast & slow & fast &slow & Bound\\
 		\hline \hline
 		
-		$5 \times100$\  &   $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & no & point & $65.3\%$ & $68.4\%$ &  $84.2 \%$ \\ 
-		$\epsilon = 0.026$ & 5s & 159s & 102s& & & 117s & 142s &  \\
+		$5 \times100$\  &   $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & $57.5\%$ & $66.1\%$ & $65.3\%$ & $68.4\%$ &  $84.2 \%$ \\ 
+		$\epsilon = 0.026$ & 5s & 159s & 102s& 75s & 140s & 117s & 142s &  \\
 		\hline	
 		
 		$5 \times 200$ \  &  $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & $64.3\%$ & $74.7\%$ & $72\%$ & $76.8\%$ & 
@@ -855,7 +853,7 @@ the picture is more balanced, because the fundamentals of both algorithms are di
 focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. 
 Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence our algorithm will spend a lot of time on nodes which are not necessary for the verification. Therefore, our naive implementation is not as efficient as the highly optimized
 $\beta$-CROWN: our implementation is 2 to 5 times slower than $\beta$-CROWN, while we are not using GPU, unlike $\beta$-CROWN. Things are more interesting on the accuracy front: on shallower DNNs ($5 \times 100$ and $5 \times 100$ with 5 hidden layers), the refinement with MILP treats all but the 2 last layers, 
-leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accuate than using compensation: we are within $1.5\%$ of the accuracy. On deeper DNNs ($8 \times 100$ and $8 \times 100$ with 8 hidden layers), the refinement with MILP cannot treat the 4 last layers, and BaB has more ReLU to branch on. Therefore, Compensate($K$) is more accurate than $\beta$-CROWN, 
+leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accuate than using compensation: we are within $1.6\%$ of the accuracy. On deeper DNNs ($8 \times 100$ and $8 \times 100$ with 8 hidden layers), the refinement with MILP cannot treat the 4 last layers, and BaB has more ReLU to branch on. Therefore, Compensate($K$) is more accurate than $\beta$-CROWN, 
 closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
 and from $17.6\%$ to $12\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than Compensate($K$) (see next Section).
  
