@@ -1,7 +1,11 @@
 	\section{Proof of Theorem \ref{th1}}	
 	
 	First, notice that if $\Val_{\vx}(b)$ is maximal (resp. minimal), 
-	then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal).
+	then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal). 
+	
+	For convenience, when we discuss about the maximal or minimal values for nodes $n$ in a network, we write $\max(n),\min(n)$ directly, instead of $\max(\Val(n))$, $\min(\Val(n))$ or $\max_{\vx}(\Val_{\vx}(n)),\min_{\vx}(\Val_{\vx}(n))$.
+	
+	
 	The following definition is the most important concept in this proof.
 	
 	\begin{definition}[Sign of Node]\label{sign_of_nodes}
@@ -52,7 +56,33 @@
 	Notice that for $S(n)=1$, $n_s$ gets maximal value whenever $n$ gets maximal value; 
 	while for $S(n)=-1$, $n_s$ gets maximal value whenever $n$ gets minimal value (and vice versa). For $S(n)=0$, $n_s=0$ and thus always reach his minimal and maximal.
 	
+	Using the concept of sign, now we introduce the key lemma for our theorem.
 	
+	\begin{lemma}\label{lem:key1}
+		
+		Let $\vx^{*}$ be the input vector that for every node $a_i$, if $S(a_i)=1$, then $x_{a_i}$ is the maximal value of $a_i$, and if $S(a_i)=-1$, then $x_{a_i}$ is the minimal value of $a_i$ ($S(a_i)=0$, then $x_{a_i}$ be an arbitrary fixed value in the input interval of $a_i$).
+		
+		Then the input $\vx^*$ maximize all nodes $n$ that $S(n)=1$ and minimize all nodes $n$ that $S(n)=1$.
+	\end{lemma}
+	
+	\begin{proof}
+		We prove this lemma by induction. For input layer, this is true by definition. Suppose this lemma is true up to layer $L_i$, we need to show this for layer $L_{i+1}$. Let $c$ be a node in layer $L_{i+1}$, then by definition, we have the following equation: \begin{align*}
+			c = \boldsymbol{bias}_c+\sum_{b\in L}W_{bc}\ReLU(b).
+		\end{align*}
+		
+		Therefore we have the following inequalities:\begin{align*}
+				\max(c)\leq\sum_{b \in L_i, W_{bc n}>0}W_{bc} \max(\hat{b}) + \sum_{b \in L_i, W_{bc}<0}W_{bc} \min(\hat{b}) + \boldsymbol{bisa}_c\\
+			\min(c)\geq\sum_{b \in L_i, W_{bc n}>0}W_{bc} \min(\hat{b}) + \sum_{b \in L_i, W_{bc}<0}W_{bc} \max(\hat{b}) + \boldsymbol{bisa}_c
+		\end{align*}
+		
+		
+		
+		
+		Now, if $S(c)=1$, we consider different case of $b$. If $S(b)=1$, then by Lemma \ref{lem:sign}, $W_{bc}>0$; if $S(b)=-1$, then $W{bc}<0$; if $S(b)=0$, then $W_{bc}=0$.
+		
+		Combining with 
+		
+	\end{proof}
 	
 	\begin{lemma}
 		\label{lemma2}
@@ -353,17 +383,17 @@
 				
 				
 				\begin{definition}
-					Let $K$ be the set of  all input nodes $a_k$. 
-					We define a decomposition $K=I\sqcup J$ as follows:  
+					We define a decomposition of the input nodes set to be $A_{pure}\sqcup A_{open}$ as follows:  
 					\begin{itemize}
-						\item $a_k \in I$  if
+						\item $a_k \in A_{pure}$  if
 						\begin{enumerate}
 							\item every path from $a_k$ to $z$ has weight $\geq 0$, or
-							\item every path from $a_k$ to $z$ has weight $\leq 0$.
+							\item every path from $a_k$ to $z$ has weight $\leq 0$. 
+						
 						\end{enumerate}
-						That is, $a_k$ is not a source of a weak compensating pair.
-						\item $a_k \in J$ if $a_k \notin I$, that is there exists two paths $\pi,\pi'$ from $k$, 
-						one with positive and one with negative weight.
+						That is, $a_k$ is not a source of a weak compensating pair. 	We write $A_{pure}$ by $I$ for short.
+						\item $a_k \in A_{open}$ if $a_k \notin A_{pure}$, that is there exists two paths $\pi,\pi'$ from $k$, 
+						one with positive and one with negative weight. 	We write $A_{open}$ by $J$ for short.
 					\end{itemize}
 				\end{definition} 
 				
