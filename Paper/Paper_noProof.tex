@@ -26,11 +26,18 @@
 \newcommand{\vy}{\boldsymbol{y}}
 \newcommand{\vW}{\boldsymbol{W}}
 \newcommand{\vz}{\boldsymbol{z}}
-\newcommand{\vb}{\boldsymbol{b}}
+\newcommand{\vb}{\boldsymbol{bias}}
 \newcommand{\val}{{\textrm{value}}}
 \newcommand{\Val}{{\textrm{value}}}
 \newcommand{\MILP}{{\textrm{MILP}}}
 \newcommand{\LP}{{\textrm{LP}}}
+
+\newcommand{\UB}{\mathrm{UB}}
+\newcommand{\LB}{\mathrm{LB}}
+\newcommand{\ub}{\mathrm{ub}}
+\newcommand{\lb}{\mathrm{lb}}
+\newcommand{\B}{\mathrm{B}}
+
 
 
 
@@ -88,14 +95,14 @@ $ReLU(x)=x$ for $x \geq 0$ and $f(x)=0$ for $x \leq 0$, which we extend componen
 % testtesttesttest
 An $\ell$-layer DNN is provided by $\ell$ weight matrices 
 $\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
-and $\ell$ bias vectors $\boldsymbol{b}^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
+and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
 We call $d_i$ the number of neurons of hidden layer $i \in \{1, \ldots, \ell-1\}$,
 $d_0$ the input dimension, and $d_\ell$ the output dimension.
 
 Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
 denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the weight vector $\boldsymbol{z}^i$ at layer $1 \leq i \leq \ell$ with
 \begin{align*}
-	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \boldsymbol{b}^i\\
+	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \vb^i\\
 	\hat{\boldsymbol{z}}^{i} &= ReLU({\boldsymbol{z}}^i).
 \end{align*} 
 
@@ -114,11 +121,11 @@ and the $i$-th hidden layer is a vector in $\mathbb{R}^{d_i}$,
 and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. 
 The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight 
 $\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, 
-the bias is a vector $\boldsymbol{b}^i$ in $\mathbb{R}^{d_i}$, and the activation function 
+the bias is a vector $\vb^i$ in $\mathbb{R}^{d_i}$, and the activation function 
 is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, 
 then the value of $i$-th layer is computed by: 
 \begin{align*}
-	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \boldsymbol{b}^i\\
+	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \vb^i\\
 	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)).
 \end{align*} The vector $\hat{\boldsymbol{z}}$ is called post-activation values, and $\boldsymbol{z}$ is called pre-activation values, and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
 \fi
@@ -325,7 +332,7 @@ $$ a = \frac{y - \alpha}{\beta-\alpha}$$
 
 It thus gives an upper bound at 
 $\beta \cdot a = \beta \frac{y - \alpha}{\beta-\alpha}$, which is exactly the function used in DeepPoly.
-\qed
+\hfill $\square$
 \end{proof}
 
 
@@ -482,7 +489,8 @@ If there is no compensating path in the DNN, then any method/approximation at le
 \end{theorem}
 
 
-The proof can be found in Section \ref{sec.proofs}. Notice that standard {\em DeepPoly} does not satisfies the following theorem (it does not necessarily refine {\em Box}), and therefore we are not sure PRIMA or $\beta$-CROWN who refine DeepPoly do, though it would be easy to fix by using $\overline{\text{DeepPoly}}$. Anyway, in practice, it is very unlikely to have a network without any compensating path, it is more of a theoretical results showin that compensation is the reason for inacuracy. 
+The sketch of proof can be found in Section \ref{sec.proofs}. 
+Notice that standard {\em DeepPoly} does not satisfies the following theorem (it does not necessarily refine {\em Box}), and therefore we are not sure PRIMA or $\beta$-CROWN who refine DeepPoly do, though it would be easy to fix by using $\overline{\text{DeepPoly}}$. Anyway, in practice, it is very unlikely to have a network without any compensating path, it is more of a theoretical results showin that compensation is the reason for inacuracy. 
 
 This result has a first interesting application: explain why some DNNs are intrinsically easier to verify than others. This is the case for DNNs trained adversarially to be robust, vs same architecture, but trained in a "natural" way \cite{deeppoly,prima,crown}. Indeed, compensating pairs is a purely structural property on the DNN learnt, rather than more semantical notions, such as the number of unstable ReLUs, which depends heavily upon the image considered and the algorithm used. We compare compensations with source and target separated by 1 ReLU layer, e.g. source in layer 0 and target in layer 2, for two Networks with 5 hidden layers of 100 nodes each from the ERAN GitHub repository, one trained naturally ("$6\times100$"), 
 and one trained using DiffAI ("$5\times100$"). 
@@ -503,15 +511,66 @@ Let $X_n$ be the set of neurons $x$ in layer up to $k-1$ such that there is a co
 	Let $n$ be any node of a DNN. Then for $[\alpha,\beta]$ the bounds computed by MILP$_{X_n}$ for neuron $n$, for all $\gamma \in [\alpha,\beta]$, there exists an input $\vy$ such that $\val_{\vy}(n)=\gamma$.
 \end{theorem}
 
-Similarly, the proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs}.
+The sketch of proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs}.
 
 
 \subsection{Sketch of Proofs}
 \label{sec.proofs}
 
-Intuitively, our first proof shows that if there are no compensation, then there are no correlations between nodes, and one can maximize/minimize independently the different input nodes in order to optimize any desired node.
+Intuitively, our first proof shows that if there are no compensation, then there are no correlations between nodes.
+Consider a target neuron $z$.
+In case there is no compensating path, we can assign a sign to each neuron $n$: 0
+if all paths from $n$ to $z$ has weight 0, $+1$ if all paths have positive weights, and 
+$-1$ if they have negative weights. Then we prove:
 
-\input{proofs}
+\begin{proposition}
+	\label{prop.sign}
+There exists two inputs $\vx^\star,\vx^\sharp$ such that:
+\begin{enumerate} 
+	\item ${\vx^\star}$ maximizes the value of all positive neurons and minimizes the value of all negative neurons.
+	\item ${\vx^\sharp}$ minimizes the value of all positive neurons and maximizes the value of all negative neurons.
+\end{enumerate}
+\end{proposition}
+
+Hence $\val_{\vx^\star}(z)=\beta$ and Hence $\val_{\vx^\sharp}(z)=\alpha$,
+for $[\alpha, \beta]$ the bounds computed by the Box abstraction. We conclude Theorem \ref{th1} by invocking continuity.
+
+\smallskip
+
+Concerning the Theorem \ref{th2}, consider an output node $z$.
+Let $[\alpha(z),\beta(z)]$ be the bound computed by $\MILP_{X_z}$.
+We will show the existence of $\vx^\sharp,\vx^\star$
+such that $\val_{\vx^\sharp}(z)=\alpha$ and $\val_{\vx^\star}(z)=\beta$,
+and we will get the proof of Theorem 2 by a continuity argument.
+For that, we partition the input neurons from layer $0$ into four groups:
+\begin{enumerate}
+	\item $A_{zero}$ is the set of input neurones from where all paths with target $z$ have weight $0$.
+	\item $A_{pos}$ is the set of input neurons from where all paths with target $z$ have weight $\geq 0$.
+	\item $A_{neg}$ is the set of input neurons from where all paths with target $z$ have weight $\leq 0$.
+	\item $A_{open}$ is the set of remaining input neurons.
+\end{enumerate}
+
+We define $A_{pure}=A_{pos} \cup A_{neg}$.
+We then partition the set of neurons in hidden layers: 
+\begin{enumerate}
+	\item $B_{zero}$ is the set of neurones from where all paths with target $z$ have weight $0$.
+	\item $B_{open}$ is the set of neurones reachable from $A_{open}$ and such that there is at least one path to $z$ with non zero weight.
+	\item $B_{pure}$ is the set of remaining neurons.
+\end{enumerate}
+
+Notice that the value of any node $n$ in $A_{pure}$ or $B_{pure}$ is entirely determined by 
+nodes in $A_{pure}$ or $B_{pure}$. 
+We can define the sign function for these neurons.
+Therefore, applying Prop. \ref{prop.sign}, we obtain 
+$\vx_{pure}^\star,\vx_{pure}^\sharp$ optimizing neurons in $A_{pure}$ or $B_{pure}$.
+Now, assume that $\MILP_{X_z}$ computes bounds $[\alpha,\beta]$ for $z$.
+We prove that there exists input 
+$\vx^\star$ extending $\vx_{pure}^\star$
+and input $\vx_{pure}^\sharp$ extending $\vx_{pure}^\sharp$
+from $A_{pure}$ to $A_{pure} \cup A_{open}$ such that 
+$\val_{\vx^\star}(z)=\beta$ and $\val_{\vx^\sharp}(z)=\alpha$.
+
+The formal proofs are in appendix.
 
 
 \subsection{An efficient algorithm}
@@ -600,7 +659,7 @@ The open node chosen is the key part of the whole framework but costs a lot of t
 	
 	Constant $\mathcal{R}$  \tcp*{Stored precomputation data}
 	
-	Constant $\boldsymbol{W}, \boldsymbol{b}$ \tcp*{Weights and Bias of network}
+	Constant $\boldsymbol{W}, \vb$ \tcp*{Weights and Bias of network}
 	
 	Constant Layers = $[0,1,2\cdots,L]$ \tcp*{lists of all layer}
 	
@@ -612,7 +671,7 @@ The open node chosen is the key part of the whole framework but costs a lot of t
 	\For{$l$ in Layers}{
 		\If{$l$ = 0}{
 			
-			$\mathcal{D}$, $\boldsymbol{W}, \boldsymbol{b}$ $\rightarrow$ $\mathcal{B}_0$ = \{$x$: $(UB(x),LB(x))$,$\cdots$\} 
+			$\mathcal{D}$, $\boldsymbol{W}, \vb$ $\rightarrow$ $\mathcal{B}_0$ = \{$x$: $(UB(x),LB(x))$,$\cdots$\} 
 			\tcp*{Do linear transformation  from input to the first layer}
 			
 			Add \{$x$: $(UB(x),LB(x))$,$\cdots$\} to $\mathcal{B}$} 
@@ -624,7 +683,7 @@ The open node chosen is the key part of the whole framework but costs a lot of t
 			\For{$x$ in $Nodes_l$}{
 				$x$, $\mathcal{B}$, $\mathcal{R}$  $\rightarrow$ $\mathcal{O}$ \tcp*{To get the open node list $\mathcal{O}$}
 				
-				$\mathcal{B}$, $\boldsymbol{W}, \boldsymbol{b}$, $\mathcal{O}$ $\rightarrow \mathcal{M}$  \tcp*{MILP model $\mathcal{M}$ for node $x$}
+				$\mathcal{B}$, $\boldsymbol{W}, \vb$, $\mathcal{O}$ $\rightarrow \mathcal{M}$  \tcp*{MILP model $\mathcal{M}$ for node $x$}
 				
 				\While{}{$\mathcal{M}$ $\rightarrow UB(x),LB(x)$ \tcp*{Optimization}}
 				
@@ -932,6 +991,16 @@ improve DNN verification. We finally proposed several ways to use the compensati
 
 \appendix
 
+\input{proofs}
+
+\end{document}
+
+
+
+
+
+
+
 \section{Ranking of Compensating Pairs}
 
 In this subsection, we will introduce the method to choose open nodes for MILP model based on compensating pairs.
@@ -989,8 +1058,6 @@ In this case, the process is very simple: enumerate all compensating pairs, and 
 %
 %7. Repeat 6 until choosing sufficiently many nodes.
 %
-
-
 
 
 
