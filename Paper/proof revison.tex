@@ -20,37 +20,52 @@
 \begin{document}
 
 
-v
+
+
+
+
+\section{Proof of Theorem 1}
+
+First of all, we recall some definitions.
+
+
+
+
 \begin{definition}
 	A pair of paths $(\pi,\pi')$
 	is called {\em compensating} if they start in the same neuron $a$ and 
-	ends in the same neuron $z$, and the product of weights over $\pi$ is strictly positive and the product of weights over $\pi'$ is strictly negative.
+	ends in the same neuron $z$, and the product of weights over $\pi$ is strictly positive and the product of weights over $\pi'$ is strictly negative, and two paths do not have any common nodes rather than the start node and the end node.
+	
+	We call the product of weights over a path the weight of that path.
 \end{definition}
 
-Intuitively, compensating paths will partially cancel out each other as they conribute the same weight $w(a)$ to the weight of the same neuron $w(z)$, but with opposite sign. 
-It is not simple to take this compensation into account because of ReLUs: the particular compensation will depend upon the weight of intermediate nodes seen along $\pi$ and $\pi'$, 
+Intuitively, compensating paths will partially cancel out each other as they contribute the same weight $w(a)$ to the weight of the same neuron $w(z)$, but with opposite sign. 
+It is not simple to take this compensation into account because of ReLU: the particular compensation will depend upon the weight of intermediate nodes seen along $\pi$ and $\pi'$, 
 as when one of this node gets negative input, it will clip it to 0.
 
 
 We assume all active functions are ReLU function.
 
 \begin{definition}
-
-	\begin{itemize}
-	 \item  We use $a_i$ to denote nodes in the input layer, use $b_j$ to denote nodes in the first hidden layer, etc and finally use $z_i$ to denote the output nodes.
-	For $L,L'$ consecutive layers, for $x \in L$ and $y \in L'$, we denote 
-	$w({x y})$ to denote the fixed weight from $x$ to $y$, while we use
-	$weight_Y(x)$ to denote the weights of node $x$ from initial configuration $Y$. 
-	We use $bias$ to denote bias weightt.
 	
-	\item We use $b^-$ to denote the node before ReLU and $b^+$ to denote the node after ReLU: $b^+ = \ReLU(b^-)$.
+	\begin{itemize}
+		\item  We use $a_i,a_j\cdots$ to denote nodes in the input layer, use $b,c,b_i,b_j,\cdots$ to denote nodes in hidden layers, etc and finally use $z,z_i,\cdots$ and sometimes $c$ (if only 1 hidden layer) to denote the output nodes. We also use $n,m$ to denote general nodes (input, hidden, or output).
+		
+		
+		\item For $L,L'$ consecutive layers, for $x \in L$ and $y \in L'$, we denote 
+		$W_{xy}$ to denote the fixed weight from $x$ to $y$. 
+		
+		\item  We use
+		$\Val_{\boldsymbol{x}}(z)$ to denote the weights of node $x$ from initial configuration vector $\boldsymbol{x}$. In the context, if we do not need to consider the input $\boldsymbol{x}$, we will omit it and write as $\Val(z)$.
+		We use $bias$ to denote bias.
+		
+		\item We use $b$ to denote the node before ReLU and $\hat{b}$ to denote the node after ReLU: $\hat{b} = \ReLU(b)$.
 	\end{itemize}
 	
-%	3. $\bar{f}$ is the upper bound approximation function of DeepPoly, and $\underline{f}$ is the lower bound approximation function.
+	%	3. $\bar{f}$ is the upper bound approximation function of DeepPoly, and $\underline{f}$ is the lower bound approximation function.
 \end{definition}
 
 
-\section{Theorem 1}
 
 
 
@@ -58,50 +73,50 @@ We assume all active functions are ReLU function.
 	\label{th1}
 	If for all $(x,y)$ there is no compensation paths $(\pi,\pi')$ 
 	in the network from $x$ to $y$, then the LP approximation is 
-	$100\%$ accurate (or deepoly with the abstraction $\underline{f}(x) = 0$ for the lower bound, never using the $\underline{f}(x) = x$ abstraction). 
+	$100\%$ accurate for approximation method as accurate as Interval Arithmetic (or DeepPoly with the abstraction $\underline{f}(x) = 0$ for the lower bound, never using the $\underline{f}(x) = x$ abstraction). 
 \end{theorem}
 
-\subsection*{Proof of Theorem \ref{th1}}
 
-First, notice that if $weight_Y(b^-)$ is maximal (resp. minimal), 
-then $weight_Y(b^+=\ReLU(b^-))$ also gets maximal (resp. minimal).
+
+First, notice that if $\Val_{\boldsymbol{x}}(b)$ is maximal (resp. minimal), 
+then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal).
 The following definition is the most important concept in this proof.
 
 \begin{definition}[Sign of Node]\label{sign_of_nodes}
-	We define a sign function $S$ on nodes $n$ such that: 	(1). $S(n)=0$ if all path from $n$ to $c$ has 0 weight; (2). $S(n)=1$ if all path from $n$ to $c$ has non-negative weight, and at least one path has a positive weight; (3). $S(n)=-1$ if all path from $n$ to $c$ has non-positive weight, and at least one path has a negative weight. 
-	In general, $S$ may not be defined on every node (e.g. if there is a negative and a positive path from $a$ to $c$). However, if there is no Diamond, $S$ is defined on all nodes: any node fulfills one of above cases (1),(2),(3).
+	We define a sign function $S$ on nodes $n$ such that: 	(1). $S(n)=0$ if all path from $n$ to $z$ has 0 weight; (2). $S(n)=1$ if all path from $n$ to $z$ has non-negative weight, and at least one path has a positive weight; (3). $S(n)=-1$ if all path from $n$ to $z$ has non-positive weight, and at least one path has a negative weight. 
+	In general, $S$ may not be defined on every node (e.g. if there is a negative and a positive path from $a$ to $c$). However, if there is no compensating pair, $S$ is defined on all nodes: any node fulfills one of above cases (1),(2),(3).
 
 
 	For instance, for an input node $a_i$ of any 3 layer DNN:
 	\begin{enumerate}
       \item  $S(a_i)=0$ if 
-	  for all $b_j, w(a_i b_j)\cdot w(b_j c) = 0$
+	  for all $b_j, W_{a_i b_j}\cdot W_{b_j c} = 0$
 	
 	
-	 \item  $S(a_i)=1$ if for all $b_j, w(a_i b_j)\cdot w(b_j c) \geq 0$ and there exists 
-	 $j, w(a_i b_j)\cdot w(b_j c) > 0$
+	 \item  $S(a_i)=1$ if for all $b_j, W_{a_i b_j}\cdot W_{b_j c} \geq 0$ and there exists 
+	 $j, W_{a_i b_j}\cdot W_{b_j c} > 0$
 	
-	\item $S(a_i)=-1$ if for all $b_j\ w(a_i b_j)\cdot w(b_j c) \leq 0$ and there exists 
-	$j, w(a_i b_j)\cdot w(b_j c) < 0$ 
+	\item $S(a_i)=-1$ if for all $b_j\ W_{a_i b_j}\cdot W_{b_j c} \leq 0$ and there exists 
+	$j, W_{a_i b_j}\cdot W_{b_j c} < 0$ 
 \end{enumerate}
 
-For $b_j$ in the hidden layer, we have $S(b_j)=1,-1,0$ if $w(b_j c)$ is positive, negative, or 0 respectively. Finally, for the output node $c$, we define $S(c)=1$.
+For $b_j$ in the hidden layer, we have $S(b_j)=1,-1,0$ if $W_{b_j c}$ is positive, negative, or 0 respectively. Finally, for the output node $z$, we define $S(z)=1$.
 \end{definition}
 
 
 \begin{lemma}[Sign]
 	\label{lemma1}
-Let $L,L'$  are consecutive layers be of a DNN without compensation. 
+Let $L,L'$  are consecutive layers be of a DNN without compensation, and $m\in L$ $n\in L'$. 
 Then if both 
 $w(m n) \neq 0$ and $S(n) \neq 0$, then 
-	$S(m)=S(n)\mathrm{Sign}(w(n m))$.
+	$S(m)=S(n)\mathrm{Sign}(W_{n m}))$.
 \end{lemma}
 
 \begin{proof}
-	If $S(n) \neq 0$, then there is a path $\pi$ from $n$ to the output node $c$ with a nonzero weight of the same sign as $S(n)$. 
+	If $S(n) \neq 0$, then there is a path $\pi$ from $n$ to the output node $z$ with a nonzero weight of the same sign as $S(n)$. 
 	
-	Hence there is a non zero path from $m$ to $c$: $(m n) \pi$, which is of sign 
-	$S(n)\mathrm{Sign}(w(mn))$. As there is no compensation, $S(m)=S(n)\mathrm{Sign}(w(mn))$.
+	Hence there is a non zero path from $m$ to $z$: $(m n) \pi$, which is of sign 
+	$S(n)\mathrm{Sign}(W_{n m})$. As there is no compensation, $S(m)=S(n)\mathrm{Sign}(W_{n m})$.
 \end{proof}
 
 
@@ -115,58 +130,60 @@ while for $S(n)=-1$, $n_s$ gets maximal value whenever $n$ gets minimal value (a
 	\label{lemma2}
 	Let $L,L'$ be consecutive layers of a compensation free DNN, and $n \in L'$. 
 	Then:
-		$$ \max(n^-_s)=\sum_{m \in L}w(m n) \max(m^+_s)+bias_n \text{ and }$$
-		$$\max(n^+_s)=ReLU(\sum_{m \in L}w(m n) max(m^+_s)+bias_n)$$
+		$$ \max(n_s)=\sum_{m \in L}W_{m n} \max(\hat{m}_s)+bias_n \text{ and }$$
+		$$\max(\hat{n}_s)=\ReLU(\sum_{m \in L}W_{m n} \max(\hat{m}_s)+bias_n)$$
 		
 	
 	
-	Similarly  for minimal value,	
-	$ \min(n^-_s)=\sum_{m \in L}w(m n)\min(m^+_s)+bias_n $ and
-	$ \min(n^+_s)=ReLU(\sum_{m \in L}w(m n)\min(m^+_s)+bias_n)$
+	Similarly for minimal value.
+	
+%	for minimal value,	
+%	$ \min(n)=\sum_{m \in L}W_{m n)\min(\)+bias_n $ and
+%	$ \min(\hat{n}_s)=ReLU(\sum_{m \in L}W_{m n)\min(\hat{m}s}+bias_n)$
 \end{lemma}
 
 \begin{proof}
-We choose $\bar{Y}$ maximizing each $a_s \in \{a,-a\}$ in the input layer $L=L_0$,
-	that is setting $a$ as $max(a)$ for $S(a)=1$ and $min(a)$ for $S(a)=-1$.
-At configuration $\bar{Y}$, every $a_s(\bar{Y}))=\max_Y {a_s(Y))}=max(a_s)$ is maximized.  
+We choose $\boldsymbol{x}^*$ maximizing each $a_s \in \{a,-a\}$ in the input layer $L=L_0$,
+	that is setting the value for node $a$ be $\max(a)$ for $S(a)=1$ and $\min(a)$ for $S(a)=-1$.
+At configuration $\boldsymbol{x}^*$, every $a_s(\boldsymbol{x}^*))=\max_{\boldsymbol{x}} {a_s(\boldsymbol{x}))}=\max(a_s)$ is maximized.  
 
 Consider any $b$ in the next layer $L_1$.
 Assume first that $S(b)=+1$.
-We have $weight(b_s)= weight(b) = \sum_{a \in L_0} w(a b) weight(a) + bias_b$.
-If every $w(a b) weight(a)$ is maximized in the same time, 
-then $weight(b_s)= weight(b)$ is also maximized. 
+We have $\Val(b_s)= \Val(b) = \sum_{a \in L_0} W_{ab} \Val(a) + bias_b$.
+If every $W_{ab} \Val(a)$ is maximized in the same time, 
+then $\Val(b_s)= \Val(b)$ is also maximized. 
 
 We claim that this is the case at 
-configuration $\bar{Y}$.
-Indeed, if $w(a b)=0$, any $weight(a)$ can be chosen to maximize 
-$w(a b) weight(a)$. If $w(a b)>0$ then $S(a) = +1$ by Lemma \ref{lemma1}, since
-$S(b)=+1$. We have $max(a_s) = max(a)$, maximizing $w(a b) weight(a)$.
-Finally, if $w(a b)<0$ then $S(a_s) = -1$, and we have 
-$max(a_s) = -min(a)$, maximizing $w(a b) weight(a)$.
+configuration $\boldsymbol{x}^*$.
+Indeed, if $W_{ab}=0$, any $\Val(a)$ can be chosen to maximize 
+$W_{ab}\Val(a)$. If $W_{ab}>0$ then $S(a) = +1$ by Lemma \ref{lemma1}, since
+$S(b)=+1$. We have $\max(a_s) = \max(a)$, maximizing $W_{ab}\Val(a)$.
+Finally, if $W_{a b}<0$ then $S(a_s) = -1$, and we have 
+$\max(a_s) = min(a)$, maximizing $W_{ab}\Val(a)$.
 
-Hence $b$ reaches is maximum in configuration $\bar{Y}$, and the value satisfies: 
-$$\max(b)=\sum_{m \in L}w(a b) \max(a_s)+bias_b$$
+Hence $b$ reaches is maximum in configuration $\boldsymbol{x}^*$, and the value satisfies: 
+$$\max(b)=\sum_{m \in L}W_{a b} \max(a_s)+bias_b$$
 
-The case $S(b)=-1$ is symetric:
+The case $S(b)=-1$ is symmetric:
 $\max(b_s)= -\min(b)$ is reached when minimizing $b$, which is also 
-satisfied at $\bar{Y}$.
-In both case, $weight(b_s)$ is maximized at $\bar{Y}$. Notice that $\bar{Y}$ does not depend upon $b$, so choosing $\bar{Y}$ uniformly maximize all $weight(b_s)$.
+satisfied at $\boldsymbol{x}^*$.
+In both case, $\Val(b_s)$ is maximized at $\boldsymbol{x}^*$. Notice that $\boldsymbol{x}^*$ does not depend upon $b$, so choosing $\boldsymbol{x}^*$ uniformly maximize all $\Val(b_s)$.
 
-This implies that $ReLU(b^-_s)$ is maximized at $\bar{Y}$, and its value is 
-$ReLU(\sum_{m \in L}w(a b) \max(a_s)+bias_b)$, again uniformly reached over all $b$ at configuration $\bar{Y}$.
+This implies that $\ReLU(b_s)$ is maximized at $\boldsymbol{x}^*$, and its value is 
+$\ReLU(\sum_{m \in L}W_{a }\max(a_s)+bias_b)$, again uniformly reached over all $b$ at configuration $\boldsymbol{x}^*$.
 
 We proceed by induction over every layer of the DNN till the output layer, proving that 
-$max(z_s)=max(z)$ is reached at configuration $\bar{Y}$.
+$\max(z_s)=\max(z)$ is reached at configuration $\boldsymbol{x}^*$.
 
-The case for $min(x_s)$ is similar, reached at configuration $\underline{Y}$.
+The case for $\min$ is similar, with another input vector $\boldsymbol{x}^\#$ instead of $\boldsymbol{x}^*$.
 \end{proof}
 
 As direct corollary of Lemma \ref{lemma2}, we obtain:
 
 \begin{corollary}
 	\label{cor1}
-	$$\max(n^-)=\sum_{m \in L, w(m n)>0}w(m n) \max(m^+) + \sum_{m \in L, w(m n)<0}w(m n) \min(m^+) + bias_n$$
-	$$\min(n^-)=\sum_{m \in L, w(m n)>0}w(m n) \min(m^+) + \sum_{m \in L, w(m n)<0}w(m n) \max(m^+) + bias_n$$
+	$$\max(n)=\sum_{m \in L, W_{m n}>0}W_{m n} \max(\hat{m}) + \sum_{m \in L, W_{m n}<0}W_{mn} \min(\hat{m}) + bias_n$$
+	$$\min(n)=\sum_{m \in L, W_{m n}>0}W_{m n} \min(\hat{m}) + \sum_{m \in L, W_{m n}<0}W_{mn} \max(\hat{m}) + bias_n$$
 \end{corollary}
 	
 
@@ -174,8 +191,11 @@ Notice that for all $x$, either $S(x)=+1$ and
 $(\min(x),\max(x))=(\min(x_s),\max(x_s))$, 
 or $S(x)=-1$ and $(\min(x),\max(x))=(-\max(x_s),-\min(x_s))$.
 In both case, these two bounds are found in Lemma \ref{lemma2},
-from configuration $\bar{Y}$ and $\underline{Y}$.
-We now show that DeepPoly will generate the same bounds 
+from configuration $\boldsymbol{x}^*$ and $\boldsymbol{x}^\#$.
+
+
+
+Once we have above corollary, things become very clear and simple. We now show that approximations like DeepPoly will generate the same bounds 
 $\underline{f}(x)=\min(x)$ and $\bar{f}(x)=\max(x)$.
 
 \paragraph{DeepPoly bounds}
@@ -198,25 +218,25 @@ The initialization is obvious as Box Abstraction/DeepPoly is always exact for th
 	First assume $S(n)=1$. The case $S(n)=-1$ is similar. 
 
 	The Box absraction computes its upper bound using:
-	$$\bar{f}(n^-)= \sum_{w(mn)>0} w(mn) \bar{f}(m^+) + \sum_{w(mn)<0} w(mn) \underline{f}(m^+) + bias_n$$
+	$$\bar{f}(n)= \sum_{W_{mn}>0} W_{mn} \bar{f}(\hat{m}) + \sum_{W_{mn}<0} W_{mn} \underline{f}(\hat{m}) + bias_n$$
 
 	By induction hypothesis, we have 
-	$\bar{f}(m^+)=max(m^+)$ and
-	$\underline{f}(m^+)=min(m^+)$, thus 
+	$\bar{f}(\hat{m})=\max(\hat{m})$ and
+	$\underline{f}(\hat{m})=\min(\hat{m})$, thus 
 	applying Corollary \ref{cor1}, we obtain
-	$\bar{f}(n^-)=max(n^-)$ and 
-	$\underline{f}(n^-)=min(n^-)$.
+	$\bar{f}(n)=\max(n)$ and 
+	$\underline{f}(n)=\min(n)$.
 
-	Now, if $\underline{f}(n^-)=min(n^-)<0$, 
-	then $\underline{f}(n^+)=min(n^+)=0$, 
+	Now, if $\underline{f}(n)=\min(n)<0$, 
+	then $\underline{f}(\hat{n})=\min(\hat{n})=0$, 
 	and otherwise 
-	$\underline{f}(n^+)=min(n^+)=\underline{f}(n^-)=min(n^-)$.
+	$\underline{f}(\hat{n})=\min(\hat{n})=\underline{f}(n)=\min(n)$.
 
 	Similarly, 
-	if $\bar{f}(n^-)=max(n^-)<0$, 
-	then $\bar{f}(n^+)=max(n^+)=0$, 
+	if $\bar{f}(n)=\max(n)<0$, 
+	then $\bar{f}(\hat{n})=\max(\hat{n})=0$, 
 	and otherwise 
-	$\bar{f}(n^+)=max(n^+)=\bar{f}(n^-)=bar(n^-)$.
+	$\bar{f}(\hat{n})=\max(\hat{n})=\bar{f}(n)=\max(n)$.
 	
 	Hence we have equality before and after ReLU in all cases.
 \end{proof}
