@@ -414,10 +414,10 @@ In this section, we will try to prove theorem 2, that is
 \begin{theorem}
 	\label{no_diamond_3}
 	
-	Suppose we have a DNN with $\ReLU$ as the unique activation functions. We consider compensating pairs in between any two nodes (i.d., the source node or target node can in hidden layers.)
+	Suppose we have a DNN with $\ReLU$ as the unique activation functions and with a unique output node $z$. We consider compensating pairs in between any two nodes (i.d., the source node or target node can in hidden layers.)
 	
 	Using MILP method, if every nodes $b$ in any compensating pair
-	$(\pi,\pi')$ is encoded as a binary/integer variable, then the upper and lower 
+	$(\pi,\pi')$ (except the start node and end node) is encoded as a binary/integer variable (opened), then the upper and lower 
 	bounds computed by MILP are the exact max and min value of $z$.
 \end{theorem}
 
@@ -443,7 +443,7 @@ Before the proof of above theorem, we will try to weaker one, that is, consider 
 
 
 \begin{lemma} \label{lem:open_node_2}
-	A node $b$ in the hidden layer will not be on a weak compensating pair iff one of the following two happens:
+	A node $b$ in the hidden layer will not be on a weak compensating pair if and only if one of the following two happens:
 	\begin{enumerate}
 		\item Any path from $b$ to the output node $z$ has a weight $0$, and we use $w_{b,z}=0$ to denote this case, or
 		\item For every input node $a_j\in J$, for any path from $a_j$ to $b$ has a weight of $0$. We use $w_{a_j,b}=0$ to denote this case.
@@ -454,7 +454,7 @@ Before the proof of above theorem, we will try to weaker one, that is, consider 
 \end{lemma}
 
 \begin{proof}
-	First, we show that if either one of case 1,2 happens, then $b$ will not be on a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $w_{a_j,b}=0$ implies weight$(\pi)=0$.
+	First, we show that if one of case 1, 2 happens, then $b$ will not be on a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $w_{a_j,b}=0$ implies weight$(\pi)=0$.
 	
 	Second, we show that if neither 1 nor 2 hold, then $b$ will be on a weak compensating path.
 	Because 2) does not hold, there is a $j \in J$ with $w_{a_j,b} \neq 0$, say $>0$.
@@ -507,7 +507,7 @@ Notice that $S$ is defined on all nodes $a_i \in I$ (it can also be defined triv
 Therefore, for any node $b$  that $S$ is undefined on $b$, it only depends on the values on $J$.  
 
 \begin{lemma}
-	If $c$ is in the next layer of $b$, $W_{bc}\neq 0$, and $S$ is defined on both $b$ and $c$, then $W_{bc}S(c)=S(b)$.
+	If $c$ is in the next layer of $b$, $W_{bc}\neq 0$, and $S$ is defined on both $b$ and $c$ and $S(c)\neq 0$, then $W_{bc}S(c)=S(b)$.
 \end{lemma}
 
 \begin{proof}
@@ -519,12 +519,12 @@ Therefore, for any node $b$  that $S$ is undefined on $b$, it only depends on th
 \end{lemma}
 
 \begin{proof}
-	This is because if there exists nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in above set but $b$ is not, then $b$ has a path with nonzero weight from a node $a_i$ but this means so does $c$, a contradiction. Therefore any $b$ such that $W_{bc}\neq 0$ is also in above set.
+	This is because if there exists nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in above set but $b$ is not, then $b$ has a path with nonzero weight from a node $a_i$ not in $J$ but this means so does $c$, a contradiction. Therefore any $b$ such that $W_{bc}\neq 0$ is also in above set.
 \end{proof}
 
-By definition, we can easily see that, for any $b\in N_J$, either $b\in B_O$, or $b$ is a constant node.
+By definition, for any $b\in N_J$, either $b\in B_O$, or $b$ is a constant node.
 
-We denote $\boldsymbol{x}_S$ for any subset $S\subseteq K$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We also denote $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}_K$ and $z=z(\boldsymbol{x}_K)=z(\boldsymbol{x}_I,\boldsymbol{x}_J)$. We can see that for a node $b$ that $S$ is not defined on it, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ becomes a constant.
+We denote $\boldsymbol{x}_S$ for any subset $S\subseteq K$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We also denote $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}_K$ and $\Val(z)=\Val_{\boldsymbol{x}_K}(z)=\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J} (z)$. We can see that for a node $b$ that $S$ is not defined on it, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ becomes a constant.
 
 We define $\boldsymbol{x}_I^*$ to be the input vector such that for all $a_i \in I$, the value $x_{a_i}$ for $a_i$ gets its maximal value (if $S(a_i)=1$ or $0$) or $a_i$ gets its minimal value (if $S(a_i)=-1$). Similarly, we define $\boldsymbol{x}_I^\#$ to be the input vector such that for all $a_i \in I$, the value $x_{a_i}$ for $a_i$ gets its maximal value (if $S(a_i)=-1$ or $0$) or $a_i$ gets its minimal value (if $S(a_i)=1$).
 
