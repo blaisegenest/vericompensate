@@ -761,12 +761,13 @@ Our experimental evaluations have 3 goals:
 The benchmarks were run on an AMD 5975WX ($32$ cores$@3.6$GHz, 7nm, year 2022) with 256 GB of main memory and 2 NVIDIA RTX 3090. Gurobi 9.52 was used for solving MILP and LP problems. Our implementations for Compensate($K$) is entirely realized in Python 
 $3.8.10$, and therefore not particularly optimal.
 
-The local robustness verification is performed on DNNs trained for the MNIST image dataset as its the only standard DNNs (MLP $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$) benchmarked by \cite{crown} not using robust training, and they are the hardest DNNs to verify, despite their relatively limited size (600 to 1600 neurons in hidden layers). Indeed, today's efficient methods leave at least $14\%$ to $20\%$ of the images neither certified robust nor with an attack to robustness found, making them interesting DNNs to consider where to improve accuracy of efficient techniques. We also test on the larger MLP $6\times 500$, not previously tested in \cite{crown}. MNIST contains grayscale images of size $28 \times 28$ pixels ($752$ input neurons). For our evaluation, we evaluate on the standard first 1000 images of the dataset, to be directly comparable to experiments run in other papers, e.g. \cite{prima,crown}, except for MLP $5\times 500$ which is not reported in \cite{prima,crown} and takes a large amount of time, for which we only test on the first 200 images. Each data example is associated with a $\varepsilon>0$ for the $L^\infty$ norm, and a target label for verification. 
+The local robustness verification is performed on DNNs trained for the MNIST image dataset as its the only standard DNNs (MLP $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$) benchmarked by \cite{crown} not using robust training, and they are the hardest DNNs to verify, despite their relatively limited size (600 to 1600 neurons in hidden layers). Indeed, today's efficient methods leave at least $14\%$ to $20\%$ of the images neither certified robust nor with an attack to robustness found, making them interesting DNNs to consider where to improve accuracy of efficient techniques. We also test on the larger MLP $6\times 500$, not previously tested in \cite{crown}. MNIST contains grayscale images of size $28 \times 28$ pixels ($752$ input neurons). For our evaluation, we evaluate on the standard first 1000 images of the dataset, to be directly comparable to experiments run in other papers, e.g. \cite{prima,crown}, except for MLP $5\times 500$ which is not reported in \cite{prima,crown} and takes a large amount of time, for which we only test on the first 200 images. Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
+%, and a target label for verification. 
 
 
-\subsection{Chosing nodes based on Compensation strength}
+\subsection{Choosing nodes based on Compensation strength}
 
-The first group of experiments we run, tests the accuracy of chosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly chosing the same number $K$ of nodes, to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
+The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes, to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
 
 To mesure the accuracy, we measure the uncertainty of all nodes in a layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
@@ -808,7 +809,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 
 \subsubsection*{ReLU Node in the first and second hidden layer}
 
-We now turn to evaluating chosing ReLU nodes in two consecutive layers, focusing on the uncertainty of nodes in the second layers, wrt ReLU nodes in the first and second layer.
+We now turn to evaluating choosing ReLU nodes in two consecutive layers, focusing on the uncertainty of nodes in the second layers, wrt ReLU nodes in the first and second layer.
 The bounds for nodes of the second layers are computed exactly. 
 Let $d$ be a neuron of the third layer.
 We keep the previous evaluation for ranking nodes in the previous (second) layer. 
