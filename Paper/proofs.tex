@@ -254,18 +254,18 @@
 			%\begin{lemma} \label{lem:open_node}
 			%	A node $b$ in the hidden layer will not be on a compensating pair iff one of the following two happens:
 			%	\begin{enumerate}
-				%	 \item $w_{b,z}=0$, or
-				%	 \item For every input node $j\in J$, we have $w_{a_j,b}=0$.
+				%	 \item $W_{b,z}=0$, or
+				%	 \item For every input node $j\in J$, we have $W_{a_j,b}=0$.
 				%	\end{enumerate}
 			%	We denote $B_{pure}$ the set of such nodes $b$ such that at least one of the above holds.
 			%\end{lemma}
 			%
 			%\begin{proof}
-			%	First, we show that if either one of 1,2 happens, then $b_i$ will not be opened. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of compensating paths 	$(\pi,\pi')$ starting with $a$, with $k$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $w_{a_j,b}=0$ implies weight$(\pi)=0$.
+			%	First, we show that if either one of 1,2 happens, then $b_i$ will not be opened. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of compensating paths 	$(\pi,\pi')$ starting with $a$, with $k$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $W_{a_j,b}=0$ implies weight$(\pi)=0$.
 			%	
 			%	Second, we show that if neither 1 nor 2 hold, then $b$ will be on a compensating path.
-			%	Because 2) does not hold, there is a $j \in J$ with $w_{a_j,b} \neq 0$, say $>0$.
-			%	Because 1) does not hold, $w_{b,z} \neq 0$, say $>0$.
+			%	Because 2) does not hold, there is a $j \in J$ with $W_{a_j,b} \neq 0$, say $>0$.
+			%	Because 1) does not hold, $W_{b,z} \neq 0$, say $>0$.
 			%	Now, by definition of $J$, there is a pair of compensating paths $\pi,\pi'$ 
 			%	from $a_j$ to $z$, say with $\pi'$ with weight $<0$.
 			%	Then $((a_j,b,z), \pi')$ is also a compensating pair.
@@ -305,7 +305,7 @@
 			%	as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Theorem \ref{th1} (make a more precise corollary) to get that $z(\cdot,\boldsymbol{x}^0_J)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done.
 			%	
 			%	The second statement is simpler because for each fixed partial input $\boldsymbol{x}^0_J$, 
-			%	$$b= B^0 +\sum_{a_i\in I} w_{a_i, b} a_i,$$ where $B^0$ is a constant which is the sum of the term including bias and $\boldsymbol{x}^0_J$. Applying Lemma \ref{lemma1}, we obtain the statement.
+			%	$$b= B^0 +\sum_{a_i\in I} W_{a_i, b} a_i,$$ where $B^0$ is a constant which is the sum of the term including bias and $\boldsymbol{x}^0_J$. Applying Lemma \ref{lemma1}, we obtain the statement.
 			%\end{proof}
 			%
 			%\subsection{MILP abstraction}
@@ -333,7 +333,7 @@
 			%We want to show that $\mathrm{UB} = \max z$. As the MILP abstraction is a sound overapproximation, 
 			%it suffices to show that $\mathrm{UB}\leq \max c$.
 			%
-			%For any $b_h\in B_{pure}$, we have $b_h=\sum_{a_i\in I}w_{b_ha_i}+B_h$ ($B_h$ is the bias). 
+			%For any $b_h\in B_{pure}$, we have $b_h=\sum_{a_i\in I}W_{b_ha_i}+B_h$ ($B_h$ is the bias). 
 			%Denote by $B_{open}$ the set of nodes $b$ for which $\alpha_b$ is binary, i.e. 
 			%$b \notin B_{pure}$. %For any subdomain $D \subseteq B_{open}$, 
 			%Let $\boldsymbol{x}^0_J$ and $\boldsymbol{x}^0_I$ be fixed inputs, and consider the associated upper bound 
@@ -341,41 +341,41 @@
 			%%We show that this upper bound does not exceed the maximal value of $z$: 
 			%
 			%\begin{align*}
-			%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I} = B_z + \sum_{b\in B_{open}} w_{b,z}\ReLU(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
+			%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I} = B_z + \sum_{b\in B_{open}} W_{b,z}\ReLU(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}} W_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
 			%\end{align*} where $\mathrm{AppB}(weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b))$ is the upper bound of 
-			%the (LP) approximation of $weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ if $w_{b,z}>0$, and the lower bound
-			%of its (LP) approximation if $w_{b,z}<0$. 
+			%the (LP) approximation of $weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ if $W_{b,z}>0$, and the lower bound
+			%of its (LP) approximation if $W_{b,z}<0$. 
 			%
-			%By Lemma \ref{lem:reach_max}, for any fixed input $\boldsymbol{x}^0_J$, for all nodes $b$ in the hidden layer, if $S(b)=\mathrm{sign}(w_{zb})=1$, then 
+			%By Lemma \ref{lem:reach_max}, for any fixed input $\boldsymbol{x}^0_J$, for all nodes $b$ in the hidden layer, if $S(b)=\mathrm{sign}(W_{zb})=1$, then 
 			%$weight_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)$ will get its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$,
-			%and if $S(b)=\mathrm{sign}(w_{zb})=-1$, then $weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ will get its minimal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$.
+			%and if $S(b)=\mathrm{sign}(W_{zb})=-1$, then $weight_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ will get its minimal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$.
 			%Notice that $\mathrm{ReLU}$ and $\mathrm{AppB}$ are both non decreasing functions, and thus:
 			%
 			%\begin{align*}
-			%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I} \leq B_z + \sum_{b\in B_{open}} w_{b,z}\ReLU(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) +
-			%	\sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)).
+			%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I} \leq B_z + \sum_{b\in B_{open}} W_{b,z}\ReLU(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) +
+			%	\sum_{b\in B_{pure}} W_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)).
 			%\end{align*} 
 			%
 			%Added FIX:
 			%Consider $B_{pure}=B^1 \cup B^2$, with $b \in B^1$ iff
-			%$w_{b,z} = 0$ and $b \in B^2$ iff $w_{b,z} \neq 0$.
+			%$W_{b,z} = 0$ and $b \in B^2$ iff $W_{b,z} \neq 0$.
 			%Hence:
 			%
-			%$$\sum_{b\in B_{pure}} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) = 
-			%\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b))$$
+			%$$\sum_{b\in B_{pure}} W_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) = 
+			%\sum_{b\in B^2} W_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b))$$
 			%
-			%For $b \in B^2$, we have $w_{a_j,b}=0$ for all $j \in J$
+			%For $b \in B^2$, we have $W_{a_j,b}=0$ for all $j \in J$
 			%by definition of $B_{pure}$ (Lemma 4.), hence
 			%
-			%$$\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) = 
-			%\sum_{b\in B^2} w_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I}(b))
-			%=\sum_{b\in B^2} w_{b,z} \mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))
+			%$$\sum_{b\in B^2} W_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) = 
+			%\sum_{b\in B^2} W_{b,z} \mathrm{AppB}(weight_{\boldsymbol{x}^*_I}(b))
+			%=\sum_{b\in B^2} W_{b,z} \mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))
 			%$$ as $\mathrm{AppB}(weight_{\boldsymbol{x}^*_I}(b))=\mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))$ since 
 			%$weight_{\boldsymbol{x}^*_I}(b)$ is an extremal value (minimum or maximal) and 
 			%$\mathrm{AppB}$ equals $\mathrm{ReLU}$ for extremal values.
 			%
 			%Hence we have: \begin{align*}
-				%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}  \leq & B_z+\sum_{b}w_{zb}\ReLU(b(\boldsymbol{x}_I^*,\bar{a}_J))
+				%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}  \leq & B_z+\sum_{b}W_{zb}\ReLU(b(\boldsymbol{x}_I^*,\bar{a}_J))
 				%	= \max_{\boldsymbol{x}_I} z(\boldsymbol{x}_I,\bar{a}_J) \\
 				%	\leq & \max_{\boldsymbol{x}_J}\max_{\boldsymbol{x}_I} z(\boldsymbol{x}_I,\boldsymbol{x}_J) 	= \max_{\boldsymbol{x}_K} weight_{\boldsymbol{x}_K}(z)
 				%\end{align*}
@@ -425,8 +425,8 @@
 				\begin{lemma} \label{lem:open_node_2}
 					A node $b$ in the hidden layer will not be on a weak compensating pair if and only if one of the following two happens:
 					\begin{enumerate}
-						\item Any path from $b$ to the output node $z$ has a weight $0$, and we use $w_{b,z}=0$ to denote this case, or
-						\item For every input node $a_j\in J$, every path from $a_j$ to $b$ has a weight of $0$. We use $w_{a_j,b}=0$ to denote this case.
+						\item Any path from $b$ to the output node $z$ has a weight $0$, and we use $W_{b,z}=0$ to denote this case, or
+						\item For every input node $a_j\in J$, every path from $a_j$ to $b$ has a weight of $0$. We use $W_{a_j,b}=0$ to denote this case.
 					\end{enumerate}
 				
 				\end{lemma}
@@ -434,11 +434,11 @@
 					We denote $B_{zero}$ the set of such nodes $b$ that case 1 holds, and denote $B_{pure}$ the of such nodes $b$ that case 2 holds but case 1 does not hold.	We denote $B_{open}$ the set of all nodes $b$ in a compensating path.
 				
 				\begin{proof}
-					First, we show that if one of case 1, 2 happens, then $b$ will not be on a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $w_{a_j,b}=0$ implies weight$(\pi)=0$.
+					First, we show that if one of case 1, 2 happens, then $b$ will not be on a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $W_{a_j,b}=0$ implies weight$(\pi)=0$.
 					
 					Second, we show that if neither 1 nor 2 hold, then $b$ will be on a weak compensating path.
-					Because 2) does not hold, there is a $j \in J$ with $w_{a_j,b} \neq 0$, say $>0$.
-					Because 1) does not hold, $w_{b,z} \neq 0$, say $>0$.
+					Because 2) does not hold, there is a $j \in J$ with $W_{a_j,b} \neq 0$, say $>0$.
+					Because 1) does not hold, $W_{b,z} \neq 0$, say $>0$.
 					Now, by definition of $J$, there is a pair of weak compensating paths $\pi,\pi'$ 
 					from $a_j$ to $z$, say with $\pi'$ with weight $<0$.
 					Then $((a_j,b,z), \pi')$ is also a weak compensating pair.
@@ -451,11 +451,11 @@
 				\begin{proof}
 					This is simply because for a node $c\in B_{pure}$ in a hidden layer or the output layer, for a node $b$ in one layer before, if $b\notin B_{pure}\cup I$, then:
 					
-					1. if $b\in J$, by definition, $w_{bc}=0$.
+					1. if $b\in J$, by definition, $W_{bc}=0$.
 					
-					2. if $b\in B_{open}$, then $w_{bc}=0$; otherwise there exists $<a_j,b,c>$ a path from $a_j\in J$ to $c$ with a nonzero value, a contradiction.
+					2. if $b\in B_{open}$, then $W_{bc}=0$; otherwise there exists $<a_j,b,c>$ a path from $a_j\in J$ to $c$ with a nonzero value, a contradiction.
 					
-					3. if $b\in B_{zero}$, then $w_{bc}=0$; otherwise there exists $<b,c,z>$ a path from $b$ to $z$ the output node with a nonzero value, a contradiction.
+					3. if $b\in B_{zero}$, then $W_{bc}=0$; otherwise there exists $<b,c,z>$ a path from $b$ to $z$ the output node with a nonzero value, a contradiction.
 				\end{proof}
 				
 				
@@ -580,20 +580,20 @@
 				%	We prove this lemma by induction. For the first hidden layer, this is trivial.
 				%	
 				%	Suppose for layer up to $l_i$, this lemma is true, we show it for layer $l_{i+1}$. For a node $c$ in layer $l^{i+1}$, we have that: \begin{align*}
-					%		\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c) \leq B_c + \sum_{b\in B_{open}\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b))\\
-					%		 + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b))\\
-					%		 +\sum_{b\in B_{zero}\cap l_{i}} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
+					%		\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c) \leq B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b))\\
+					%		 + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b))\\
+					%		 +\sum_{b\in B_{zero}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
 					%	\end{align*} Here, $\B$ means one of $\UB$ or $\LB$ depending on the weight/coefficient.
 				%	
 				%	
-				%	But since $c\in B_{pure}$, for any $b\in B_{open}$, we must have $w_{b,c}=0$. And similarly, for any $b\in B_{zero}$, $w_{bc}=0$. Therefore, we will have:
+				%	But since $c\in B_{pure}$, for any $b\in B_{open}$, we must have $W_{b,c}=0$. And similarly, for any $b\in B_{zero}$, $W_{bc}=0$. Therefore, we will have:
 				%	
 				%	\begin{align*}
-					%		\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c) \leq B_c + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
+					%		\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c) \leq B_c + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
 					%	\end{align*} By induction, for any $b\in B_{pure}\cap l^i$, it only depends on $\boldsymbol{x}^0_I$.  Therefore, we will have:
 				%	
 				%	\begin{align*}
-					%		\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c) = B_c + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{AppB}(B_{\boldsymbol{x}^0_I}(b)).
+					%		\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c) = B_c + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(B_{\boldsymbol{x}^0_I}(b)).
 					%	\end{align*} So, $UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c)$ only depends on $\boldsymbol{x}_I^0$.
 				%\end{proof}
 				
@@ -602,7 +602,7 @@
 				it suffices to show that $\mathrm{UB}\leq \max (c)$ and $\mathrm{LB} \geq \min (c)$. We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemmas:
 				
 				
-				\begin{lemma}
+				\begin{lemma} \label{lem:main}
 					For any node $c$ in a hidden layer or the output layer, if $c\notin B_{zero}$, then:		\begin{enumerate}
 						\item for any fixed $\boldsymbol{x}^0_J$, when  $\boldsymbol{x}_I=\boldsymbol{x}^*_I$, the value for $c$ in the MILP model is a fixed number, and naturally $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)=\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$. The same is true for $\boldsymbol{x}^\sharp_I$.
 						
@@ -634,22 +634,24 @@
 					
 					(2) If $S(c)=1$, then we have the following:	\begin{align*}
 						\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq constant + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)),
-					\end{align*}where $\B$ means one of $\UB$ or $\LB$ depending on the sign of $W_{bc}$. Now by induction hypothesis part 2, combining with $S(b)$ and both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions, we have:\begin{align*}
+					\end{align*}where $\B$ means one of $\UB$ or $\LB$ depending on the sign of $W_{bc}$: if $W_{bc}$ is positive, then $\UB$, otherwise $\LB$. Notice that all $b$ displayed are that $S(b)$ defined, because if $S(b)$ undefined, then for fixed $\vx_J$, value of $b$ is fixed and will be put into the constant.
+					
+					Now by induction hypothesis part 2, if $S(b)=1$, then $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)=\max_{\vx_I}\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$; and if $S(b)=-1$, $\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)=\min_{\vx_I}\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$. Moreover, since $S(c)=1$, $S(b)$ and $W_{bc}$ have the same sign. And both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions. Combining all these facts, we have:\begin{align*}
 						\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq 
 						&constant + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
 						= & \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c). 
 					\end{align*}  This is the first equal.
 					
-					The second is simply because $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)\geq \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)\geq\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$.	The third equal is proved in last subsection, Lemma \ref{lem:reach_max_2}. $S(c)=-1$ is similar. So we have proved part 2.
+					The second is simply because $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)\geq \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)\geq\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$.	The third equal is proved in last subsection, Lemma \ref{lem:reach_max_2}. The case $S(c)=-1$ is similar. This is for part 2.
 					
-					(3) Once we have part 2, then we have that for any fixed $\boldsymbol{x}^0_J$, $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)= \max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$. Therefore, $\max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \UB_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c)= \max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \Val(\boldsymbol{x}_I,\boldsymbol{x}_J)(c)$ and this is to say $\UB(c)=\max(c)$. This is what we want to show, and the same result holds for lower bound and minimal value. This is for part 3.
+					(3) Once we have part 2, we will have that for any fixed $\boldsymbol{x}^0_J$, $$\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)= \max_{\boldsymbol{x}_I} \Val_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c).$$ Therefore, $\max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \UB_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c)= \max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \Val_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c)$ and this is to say $\UB(c)=\max(c)$. This is what we want to show, and the same result holds for lower bound and minimal value. This is for part 3. \qed
 					
 					
 					
 					
 				\end{proof}
 				
-				
+				From Lemma \ref{lem:main}, we already have that for the unique output node $z$, $$\UB(z)=\max(z).$$ This finish the proof of Theorem \ref{th2}.
 				
 				%\begin{lemma}
 				%	For the $i$-th layer $l^i$ ($1$-th layer is the first hidden layer), for a node $c\in l^i$, if $c\notin B_{zero}$ and $S(c)=1$, then:
@@ -671,23 +673,23 @@
 				%	By definition, we have that for any input vector $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$:
 				%	
 				%	\begin{align*}
-					%		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_{open}\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
-					%	\end{align*} where $\mathrm{AppB}$ is the same as in previous section  whose definition is independent with $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$. $\B$ is one of $\UB,\LB$  that, if $w_{b,c}>0$, then $\B$ is $\UB$ and otherwise $\B$ is $\LB$.
+					%		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
+					%	\end{align*} where $\mathrm{AppB}$ is the same as in previous section  whose definition is independent with $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$. $\B$ is one of $\UB,\LB$  that, if $W_{b,c}>0$, then $\B$ is $\UB$ and otherwise $\B$ is $\LB$.
 				%	
 				%	We can simplify above equation to \begin{align*}
-					%			\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_{open}\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I}(b)).
+					%			\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I}(b)).
 					%	\end{align*}
 				%	
 				%	By induction hypothesis, since both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions, we have that \begin{align*}
 					%		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq 
-					%		 &B_c + \sum_{b\in B_{open}\cap l_i} w_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge w_{b,c}\neq 0} w_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
+					%		 &B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge W_{b,c}\neq 0} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
 					%		= & \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c) \\
 					%	\end{align*} The equal is because by induction hypothesis, when $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, the approximation is a constant and is equal to $\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$.
 				%	
 				%Now, since when $x$ reaches the max or min of $\mathrm{AppB}$'s domain, $\mathrm{AppB}(x)=\ReLU(x)$, and by induction hypothesis, for any $b\in B_{pure}\cap l_i$, $\mathrm{AppB}(B_{\boldsymbol{x}^*_I}(b))=\ReLU(B_{\boldsymbol{x}^*_I})$. Hence, by induction hypothesis, we will have \begin{align*}
 					%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq & \ \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c) \\
-					%	= &B_c + \sum_{b\in B_{open}\cap l_i} w_{b,c}\ReLU(B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge w_{b,c}\neq 0} w_{b,c} \mathrm{AppB}(B_{\boldsymbol{x}^*_I}(b))\\
-					%	= &B_c + \sum_{b\in B_{open}\cap l_i} w_{b,c}\ReLU(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} w_{b,c} \mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))\\
+					%	= &B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge W_{b,c}\neq 0} W_{b,c} \mathrm{AppB}(B_{\boldsymbol{x}^*_I}(b))\\
+					%	= &B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))\\
 					%	= & \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c).
 					%\end{align*} This finishes the proof.
 					%	\end{proof}
