@@ -160,15 +160,12 @@
 		
 		\begin{corollary}
 			\label{cor1}
-			$$\max(n)=\sum_{m \in L, W_{m n}>0}W_{m n} \max(\hat{m}) + \sum_{m \in L, W_{m n}<0}W_{mn} \min(\hat{m}) + bias_n$$
-			$$\min(n)=\sum_{m \in L, W_{m n}>0}W_{m n} \min(\hat{m}) + \sum_{m \in L, W_{m n}<0}W_{mn} \max(\hat{m}) + bias_n$$
+			$$\max(c)=\sum_{b \in L, W_{bc}>0}W_{bc} \max(\hat{b}) + \sum_{b \in L, W_{bc}<0}W_{bc} \min(\hat{b}) + \boldsymbol{bias}_c$$
+			$$\min(c)=\sum_{b \in L, W_{bc}>0}W_{bc} \min(\hat{b}) + \sum_{b \in L, W_{bc}<0}W_{bc} \max(\hat{b}) + \boldsymbol{bias}_c$$
 		\end{corollary}
 		
 		
-		Notice that for all $x$, either $S(x)=+1$ and 
-		$(\min(x),\max(x))=(\min(x_s),\max(x_s))$, 
-		or $S(x)=-1$ and $(\min(x),\max(x))=(-\max(x_s),-\min(x_s))$.
-		In both case, these two bounds are found in Lemma \ref{lemma2},
+		Notice that for all $x$, for both $S(c)=1$ or $S(c)=-1$, these two bounds are found in Lemma \ref{lemma2},
 		from configuration $\boldsymbol{x}^*$ and $\boldsymbol{x}^\sharp$.
 		
 		
@@ -176,9 +173,9 @@
 		Once we have above corollary, things become very clear and simple. We now show that approximations like DeepPoly will generate the same bounds 
 		$\underline{f}(x)=\min(x)$ and $\bar{f}(x)=\max(x)$.
 		
-		\paragraph{DeepPoly bounds}
+		\paragraph{Approximation Bounds}
 		
-		To prove that DeepPoly bounds are the same as the exact bounds computed above, 
+		To prove that Approximation Bounds are the same as the exact bounds computed above, 
 		we show that even the box abstraction (which is easier) would reach the exact bounds.
 		We proceed inductively, and prove the inductive step.
 		The initialization is obvious as Box Abstraction/DeepPoly is always exact for the initialization layer.
@@ -445,7 +442,7 @@
 				\end{proof}
 				
 				\begin{lemma}\label{lem:subnetwork}
-					$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only depends on nodes in $B_{pure}\cup I$ backward: if $c$ is in $B_{pure}\cup I$ but $b$ is not, then $W_{bc}=0$. We call this sub-network $N_I$. In $N_I$, there is no compensating pair.
+					$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only depends on nodes in $B_{pure}\cup I$ backward: if $c$ is in $B_{pure}\cup I$ but $b$ is not, then $W_{bc}=0$. We call this sub-network $D_I$. In $D_I$, there is no compensating pair.
 				\end{lemma}
 				
 				\begin{proof}
@@ -495,14 +492,14 @@
 				\end{proof}
 				
 				\begin{lemma}\label{lem:subnetwork2}
-					The input set $J$ with nodes that only depends on $J$ forms a sub-network. This network contains all nodes that $S$ is not defined on them. We call this sub-network $N_J$.
+					The input set $J$ with nodes that only depends on $J$ forms a sub-network. This network contains all nodes that $S$ is not defined on them. We call this sub-network $D_J$.
 				\end{lemma}
 				
 				\begin{proof}
 					This is because if there exists nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in above set but $b$ is not, then $b$ has a path with nonzero weight from a node $a_i$ not in $J$ but this means so does $c$, a contradiction. Therefore any $b$ such that $W_{bc}\neq 0$ is also in above set.
 				\end{proof}
 				
-				By definition, for any $b\in N_J$, either $b\in B_{open}$, or $b$ is a constant node: to it, any path from any input node must have zero weight.
+				By definition, for any $b\in D_J$, either $b\in B_{open}$, or $b$ is a constant node: to it, any path from any input node must have zero weight.
 				
 				We denote $\boldsymbol{x}_S$ for any subset $S$ of input nodes to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We also denote $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}$ and $\Val(z)=\Val_{\boldsymbol{x}}(z)=\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J} (z)$. For a node $b$ that $S$ is not defined on it, since $b$ only depends on $J$, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ will be fixed.
 				
@@ -526,7 +523,7 @@
 				
 					
 					For any fixed input vector $\boldsymbol{x}^0_J$, we can regard $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z)$ as a DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ %and their propagation in hidden layers 
-					as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Theorem \ref{th1} to get that $\Val_{x_I,\boldsymbol{x}^0_J}(z)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done.
+					as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Lemma \ref{lem:key1} to get that $\Val_{x_I,\boldsymbol{x}^0_J}(z)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done.
 				\end{proof}
 				
 				
@@ -545,11 +542,11 @@
 				
 				
 				\begin{lemma}
-					In the standard framework, both $N_I$ and $N_J$ are accurate in the sense that for any $b$ in $N_I$ or $N_J$, $\UB(b)=\max\Val(b)$ and $\LB(b)=\min\Val(b)$.
+					In the standard framework, both $D_I$ and $D_J$ are accurate in the sense that for any $b$ in $D_I$ or $D_J$, $\UB(b)=\max\Val(b)$ and $\LB(b)=\min\Val(b)$.
 				\end{lemma}
 				
 				\begin{proof}
-					For $N_I$, it is because of no compensating as proved in the first section. For $N_J$, it is because all nodes are either opened or constants.
+					For $D_I$, it is because of no compensating as proved in the first section. For $D_J$, it is because all nodes are either opened or constants.
 				\end{proof}
 				
 				
