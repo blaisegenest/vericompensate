@@ -453,7 +453,7 @@
 					
 					1. if $b\in J$, by definition, $w_{bc}=0$.
 					
-					2. if $b\in B_{O}$, then $w_{bc}=0$; otherwise there exists $<a_j,b,c>$ a path from $a_j\in J$ to $c$ with a nonzero value, a contradiction.
+					2. if $b\in B_{open}$, then $w_{bc}=0$; otherwise there exists $<a_j,b,c>$ a path from $a_j\in J$ to $c$ with a nonzero value, a contradiction.
 					
 					3. if $b\in B_{zero}$, then $w_{bc}=0$; otherwise there exists $<b,c,z>$ a path from $b$ to $z$ the output node with a nonzero value, a contradiction.
 				\end{proof}
@@ -512,36 +512,36 @@
 				
 				\begin{lemma} \label{lem:reach_max_2}
 					
-					Assume $b$ is the output node or a node in hidden layers that $S(b)=1$, then
-					$\max_{\boldsymbol{x}} (\Val_{\boldsymbol{x}}(b)) =\max_{\{\boldsymbol{x} \mid \boldsymbol{x}_I=\boldsymbol{x}^*_I\}} (\Val_{\boldsymbol{x}}(b))$.
+					Assume $b$ is the output node or a node in hidden layers that $S(b)=1$, then   for any valuation $\boldsymbol{x}^0_J$, 
+						we have: $$\max_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J=\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^*,\boldsymbol{x}^0_J}(b).$$
+
+				
 					
-					Further,  for any valuation $\boldsymbol{x}^0_J$, 
-					we have $$\max_{\{\boldsymbol{x} \mid \boldsymbol{x}_J=\boldsymbol{x}^0_J\}} (\Val_{\boldsymbol{x}}(b)) =  \Val_{\boldsymbol{x}^0_J,\boldsymbol{x}_I^*}(b).$$
+					
 					
 					If $S(b)=-1$, then the similar results hold, replacing $\boldsymbol{x}^*_I$ by $\boldsymbol{x}^\sharp_I$. 
 				\end{lemma}
 				
 				\begin{proof}
-					For the first statement, we use 
-					$$\max_{\boldsymbol{x}_K} (\Val_{\boldsymbol{x}_K}(z)) =\max_{\boldsymbol{x}_J} \max_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J}(z))$$
+				
 					
-					Now, for any fixed input vector $\boldsymbol{x}^0_J$, we can regard $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z)$ as a DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ %and their propagation in hidden layers 
-					as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Theorem \ref{th1} to get that $z(\cdot,\boldsymbol{x}^0_J)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done.
+					For any fixed input vector $\boldsymbol{x}^0_J$, we can regard $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z)$ as a DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ %and their propagation in hidden layers 
+					as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Theorem \ref{th1} to get that $\Val_{x_I,\boldsymbol{x}^0_J}(z)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done.
 				\end{proof}
 				
 				
 				\subsection{MILP abstraction}
 				
-				Consider now an MILP abstraction using the abstraction from \cite{MILP}, 
+				The standard MILP abstraction use the abstraction from \cite{MILP}, 
 				where each variable $\alpha_b$ for the ReLU from $b$ to $\hat{b}$ is:
 				\begin{itemize}
-					\item linear  (i.e. $\alpha_b \in [0,1]$) for $b \notin B_{O}$
-					\item binary/integer (i.e. $\alpha_b \in \{0,1\}$) for $b \in B_{O}$
+					\item linear  (i.e. $\alpha_b \in [0,1]$) for $b \notin B_{open}$
+					\item binary/integer (i.e. $\alpha_b \in \{0,1\}$) for $b \in B_{open}$
 				\end{itemize}
 				
-				Now consider the MILP framework for all hidden and output nodes layer by layer (to compute their bounds, and use the bounds of previous layers to build the MILP models of current layer), with ReLUs being either linear or binary depending on whether $b \in B_{O}$ or not. We call this standard framework.
+				Now consider the MILP framework for all hidden and output nodes layer by layer (to compute their bounds, and use the bounds of previous layers to build the MILP models of current layer), with ReLUs being either linear or binary depending on whether $b \in B_{open}$ or not. We call this standard framework.
 				
-				For a node $b$ in a hidden layer or the output layer, we denote by $\UB(b)$ the maximal bound on $b$ and $\LB(b)$ the minimal bound on $b$ considering the MILP constraints above.
+				For a node $b$ in a hidden layer or the output layer, we denote by $\UB(b)$ the upper bound on $b$ and $\LB(b)$ the lower bound on $b$ considering the MILP constraints above.
 				
 				
 				\begin{lemma}
@@ -598,40 +598,37 @@
 				%\end{proof}
 				
 				
-				We want to show that $\mathrm{UB}(z) = \max \Val (z)$ and $\mathrm{LB}(z) = \min \Val(z)$ for the unique output nodes and we will prove this for all $c\notin B_{zero}$ . As the MILP abstraction is a sound overapproximation, 
-				it suffices to show that $\mathrm{UB}\leq \max \Val(c)$ and $\mathrm{LB} \geq \min \Val(c)$. We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemmas:
+				We want to show that $\mathrm{UB}(z) = \max (z)$ and $\mathrm{LB}(z) = \min (z)$ for the unique output nodes, and we will prove this for all $c\notin B_{zero}$ . As the MILP abstraction is a sound over-approximation, 
+				it suffices to show that $\mathrm{UB}\leq \max (c)$ and $\mathrm{LB} \geq \min (c)$. We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemmas:
 				
 				
 				\begin{lemma}
-					For the $i$-th layer $l^i$ ($1$-th layer is the first hidden layer), for a node $c\in l^i$, if $c\notin B_{zero}$, then:
-					
-					\vspace*{1ex}
-					
-					1. for any fixed $\boldsymbol{x}^0_J$ and for $\boldsymbol{x}^*_I$, the value for $c$ in the MILP model is a fixed number, and naturally $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)=\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$. The same is true for $\boldsymbol{x}^\sharp_I$.
-					
-					\vspace*{1ex}
-					
-					2. for any fixed $\boldsymbol{x}^0_J$, if $S(c)=1$,  $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)=\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)= \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c) = \max_{\boldsymbol{x}_I} \Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)$. The similar for $S(c)=-1$, $\langle \LB,\min\rangle$, $x^\sharp_I$: we can change two of them at the same time.
-					
-					\vspace*{1ex}
-					
-					3. Therefore, $\UB(c)=\max\Val(c)$ and $\LB(c)=\min\Val(c)$.
+					For any node $c$ in a hidden layer or the output layer, if $c\notin B_{zero}$, then:		\begin{enumerate}
+						\item for any fixed $\boldsymbol{x}^0_J$, when  $\boldsymbol{x}_I=\boldsymbol{x}^*_I$, the value for $c$ in the MILP model is a fixed number, and naturally $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)=\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$. The same is true for $\boldsymbol{x}^\sharp_I$.
+						
+						\item for any fixed $\boldsymbol{x}^0_J$, if $S(c)=1$, then $$\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)=\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)= \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c) = \max_{\boldsymbol{x}_I} \Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c).$$ The similar for $S(c)=-1$, $\langle \LB,\min\rangle$, $x^\sharp_I$: we can change two of them at the same time.
+						
+						\item Therefore, $\UB(c)=\max(c)$ and $\LB(c)=\min(c)$.
+					\end{enumerate}
+	
 					
 					
 				\end{lemma}
 				
 				\begin{proof}
-					We prove this lemma by induction on layers. For $l_1$, it is obvious. Suppose we have proved part 1,2,3 up to layer $l_i$, then for layer $l_{i+1}$, suppose $c$ is a node in this layer. 
+					We prove this lemma by induction on layers. For first hidden layer $l_1$, it is obvious. Suppose we have proved part 1,2,3 up to layer $l_i$, then for layer $l_{i+1}$, suppose $c$ is a node in this layer. 
 					
-					(1)	First, if $S$ is undefined on $c$, then by previous discussion, $c$ is in a sub-network from $J$ with all nodes opened and if $\boldsymbol{x}_J=\boldsymbol{x}_J^0$ is fixed, then in the MILP model, the value for $c$ is also fixed. If $S(c)$ is defined, then consider all $b$ such that $W_{bc}\neq 0$. First, $b$ cannot in $B_{zero}$; so by induction hypothesis, the value of $b$ is fixed under $\boldsymbol{x}^*_I,\boldsymbol{x}^0_J$ in MILP model. 
+					(1)	If $S(c)$ is undefined, then by previous discussion, $c$ is in a sub-network from $J$ with all nodes opened; and if $\boldsymbol{x}_J=\boldsymbol{x}_J^0$ is fixed, then in the MILP model, the value for $c$ is also fixed. 
+					
+					If $S(c)$ is defined, then consider all $b$ such that $W_{bc}\neq 0$. First, $b$ cannot in $B_{zero}$; so by induction hypothesis, the value of $b$ is fixed under $\boldsymbol{x}^*_I,\boldsymbol{x}^0_J$ in MILP model. 
 					
 					
 					
 					If $b\in B_{open}$, the term is $W_{bc}\ReLU(b)$. We know then by induction hypothesis, the value for $b$ in MILP is a fixed value. Then the term $W_{bc}\ReLU(b)$ is also a fixed number.  
 					
-					If $b\in B_{pure}$, the term is $W_{bc}\mathrm{AppB}(b)$ ($\mathrm{AppB}$ is the LP approximation domain of $\ReLU$) and either $b$ is a constant in the network and so is in the MILP model (trivial case), or $S(b)$ is defined. 
+					If $b\in B_{pure}$, the term is $W_{bc}\mathrm{AppB}(b)$ ($\mathrm{AppB}$ is the LP approximation domain of $\ReLU$) and either $S(b)$ is undefined and $b$ is a constant in the network and so is in the MILP model (trivial case), or $S(b)$ is defined. 
 					
-					We know then by induction hypothesis part 1, 2 and 3,  we have the value of $b$ in the model is fixed (part 1), and it is equal to $\max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$ or $\min_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$ (by part 2, depending on $S(b)$). Since $b$ only depends on $I$, this value also equal to $\max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I)(c)$ or $\min_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I)(c)$, and therefor equal to $\UB(b)$ or $\LB(b)$. For either of them, $\mathrm{AppB}$ will be fixed value. Hence, in this case, the term $W_{bc}\mathrm{AppB}(b)$ is also a fixed number.
+					Then by induction hypothesis for all 1, 2 and 3 parts,  the value of $b$ in the model is fixed (part 1), and it is equal to $\max_{\boldsymbol{x}_I} \Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)$ or $\min_{\boldsymbol{x}_I} \Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)$ (by part 2, depending on $S(b)$). Since $b$ only depends on $I$, this value also equal to $\max_{\boldsymbol{x}_I} \Val_{\boldsymbol{x}_I}(c)$ or $\min_{\boldsymbol{x}_I} \Val_{\boldsymbol{x}_I}(c)$, and by induction hypothesis on part 3, equal to $\UB(b)$ or $\LB(b)$. For either of them, $\mathrm{AppB}(b)$ will be fixed value. Hence, in this case, the term $W_{bc}\mathrm{AppB}(b)$ is also a fixed number.
 					
 					Therefore, in the MILP model, $c$ is a sum of terms that are all fixed numbers. Hence $c$ is a fixed number.
 					
