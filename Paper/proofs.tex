@@ -183,9 +183,9 @@
 		\begin{lemma}
 			Let $L,L'$ be two consecutive layers.
 			Assume for all node $m$ of $L$ that the lower and upper bounds for $m$ used by box abstraction equals to the exact lower and upper bounds of $m$ (as expressed above), i.e.
-			$\bar{f}(m)=max(m)$ and $\underline{f}(m)=min(m)$.
+			$\bar{f}(m)=\max(m)$ and $\underline{f}(m)=\min(m)$.
 			
-			Then Box abstraction computes the exact lower and upper bounds for every node $n$ of layer $L'$, ie $\bar{f}(n)=max(n)$ and $\underline{f}(n)=min(n)$.
+			Then Box abstraction computes the exact lower and upper bounds for every node $n$ of layer $L'$, ie $\bar{f}(n)=\max(n)$ and $\underline{f}(n)=\min(n)$.
 		\end{lemma}
 		
 		\begin{proof}
@@ -386,7 +386,7 @@
 				
 				In this section, we will prove theorem \ref{th2}. We will prove that theorem by proving the following theorem:
 				
-				\begin{theorem}
+				\begin{theorem} \label{thm:2}
 				
 					
 					Suppose $\mathcal{N}$ is a DNN with $\ReLU$ as the unique activation functions and with a unique output node $z$.
@@ -648,7 +648,7 @@
 					
 				\end{proof}
 				
-				From Lemma \ref{lem:main}, we already have that for the unique output node $z$, $$\UB(z)=\max(z).$$ This finish the proof of Theorem \ref{th2}.
+				From Lemma \ref{lem:main}, we already have that for the unique output node $z$, $$\UB(z)=\max(z).$$ This finish the proof of Theorem \ref{thm:2} and hence Theorem \ref{th2}.
 				
 				%\begin{lemma}
 				%	For the $i$-th layer $l^i$ ($1$-th layer is the first hidden layer), for a node $c\in l^i$, if $c\notin B_{zero}$ and $S(c)=1$, then:
