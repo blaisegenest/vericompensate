@@ -259,7 +259,7 @@ In this section, we describe different value (over)-abstractions that are used b
 	
 An efficient and prolific line of work concerning DNN verification has been to develop value abstraction of the network. The idea is to compute upper and lower bounds on the values of (some) neurons in the DNN when the inputs are in a given neighbourhood, in order to conclude on the robustness without needing to compute the values exactly for all inputs.
 
-First, remark that weighted sums is a linear function, so it is easy to represent it explicitly. The only problematic part to represent accurately is the ReLU function. While it is fairly simple piecewise linear function with 2 modes ($x<0$ and $x \geq 0$), it is not linear. Considering its iterated impact along the different layers of a ReLU DNN is much more complex that it seems. First, let us remark that it is easy to represent exactly $ReLU(x)$
+First, remark that weighted sums is a linear function, so it is easy to represent it explicitly. The only problematic part to represent accurately is the ReLU function. While it is fairly simple piecewise linear function with 2 modes ($x<0$ and $x \geq 0$), it is not linear. Considering its iterated impact along the different layers of a ReLU DNN is much more complex that it seems. First, let us remark that it is easy to represent exactly $\ReLU(x)$
 in case $x$ is known to be entirely positive and in the case where it is entirely negative
 (such a neuron $x$ is called stable), as in both case there is only one known linear mode involved. Hence, the sole problem remains how to treat unstable neurons.
 
