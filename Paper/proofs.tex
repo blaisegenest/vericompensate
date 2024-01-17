@@ -1,5 +1,8 @@
 	\section{Proof of Theorem \ref{th1}}	
 	
+	Before the proof of two theorems, we will prove a weaker version, that is, consider not only compensating pairs, but also pairs that allows common nodes (the two paths in a compensating pairs cannot have a common nodes). We may call such pair a weak compensating pair.
+	
+	
 	First, notice that if $\Val_{\vx}(b)$ is maximal (resp. minimal), 
 	then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal). 
 	
@@ -102,7 +105,7 @@
 			&\geq\max(c)
 		\end{align*}  Hence $\max(c)=\Val_{\vx^*}(c)$. 
 		
-		Similarly, we can prove if $S(c)=-1$, $\min(c)=\Val_{\vx^*}(c)$. And similarly, we can prove this for $x^\sharp$. This is the induction step. 
+		Similarly, we can prove if $S(c)=-1$, $\min(c)=\Val_{\vx^*}(c)$. And similarly, we can prove this for $x^\sharp$. This is the induction step. \qed
 	\end{proof}
 	
 %	\begin{lemma}
@@ -213,8 +216,22 @@
 			and otherwise 
 			$\bar{f}(\hat{n})=\max(\hat{n})=\bar{f}(n)=\max(n)$.
 			
-			Hence we have equality before and after ReLU in all cases.
+			Hence we have equality before and after ReLU in all cases. \qed
 		\end{proof}
+		
+		
+		
+		\subsubsection*{From weak to normal}
+		
+		\begin{lemma}
+			If a DNN has no compensating pair, then it also does not have weak compensating pair.
+		\end{lemma}
+		
+		\begin{proof}
+			If it has a weak compensating pair of two path, $P_1,P_2$, then there exists a segment in two paths starting from the same node and end with the same node, but the weight along two segment have different signs. And this will also be a compensating pair. \qed
+		\end{proof}
+		
+		This finishes the proof for compensating pair rather than weak version.
 		
 		
 		%\section{Theorem 2}
@@ -399,7 +416,7 @@
 				
 				\subsection{Preparation}
 				
-				Before the proof of above theorem, we will prove a weaker version, that is, consider not only compensating pairs, but also pairs that allows common nodes (the two paths in a compensating pairs cannot have a common nodes). We call such pair a weak compensating pair.
+				
 				
 				
 				\begin{definition}
@@ -438,7 +455,7 @@
 					Because 1) does not hold, $W_{b,z} \neq 0$, say $>0$.
 					Now, by definition of $J$, there is a pair of weak compensating paths $\pi,\pi'$ 
 					from $a_j$ to $z$, say with $\pi'$ with weight $<0$.
-					Then $((a_j,b,z), \pi')$ is also a weak compensating pair.
+					Then $((a_j,b,z), \pi')$ is also a weak compensating pair. \qed
 				\end{proof}
 				
 				\begin{lemma}\label{lem:subnetwork}
@@ -452,7 +469,7 @@
 					
 					2. if $b\in B_{open}$, then $W_{bc}=0$; otherwise there exists $<a_j,b,c>$ a path from $a_j\in J$ to $c$ with a nonzero value, a contradiction.
 					
-					3. if $b\in B_{zero}$, then $W_{bc}=0$; otherwise there exists $<b,c,z>$ a path from $b$ to $z$ the output node with a nonzero value, a contradiction.
+					3. if $b\in B_{zero}$, then $W_{bc}=0$; otherwise there exists $<b,c,z>$ a path from $b$ to $z$ the output node with a nonzero value, a contradiction. \qed
 				\end{proof}
 				
 				
@@ -479,7 +496,7 @@
 				\end{lemma}
 				
 				\begin{proof}
-					Otherwise, suppose there exists two paths $P_1,P_2$ from $b$ to $z$ with (strictly) different signs. Then consider $\langle a_i,b\rangle+P_1$ and $\langle a_i,b\rangle+P_2$, they are two paths with weights with different signs. This is a contradiction since $a_i\in I$.
+					Otherwise, suppose there exists two paths $P_1,P_2$ from $b$ to $z$ with (strictly) different signs. Then consider $\langle a_i,b\rangle+P_1$ and $\langle a_i,b\rangle+P_2$, they are two paths with weights with different signs. This is a contradiction since $a_i\in I$. \qed
 				\end{proof}
 				Therefore, for any node $b$  that $S$ is undefined on $b$, it only depends on input nodes in $J$.  
 				
@@ -488,7 +505,7 @@
 				\end{lemma}
 				
 				\begin{proof}
-					This is proved in the first section.
+					This is proved in the first section. \qed
 				\end{proof}
 				
 				\begin{lemma}\label{lem:subnetwork2}
@@ -496,7 +513,7 @@
 				\end{lemma}
 				
 				\begin{proof}
-					This is because if there exists nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in above set but $b$ is not, then $b$ has a path with nonzero weight from a node $a_i$ not in $J$ but this means so does $c$, a contradiction. Therefore any $b$ such that $W_{bc}\neq 0$ is also in above set.
+					This is because if there exists nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in above set but $b$ is not, then $b$ has a path with nonzero weight from a node $a_i$ not in $J$ but this means so does $c$, a contradiction. Therefore any $b$ such that $W_{bc}\neq 0$ is also in above set. \qed
 				\end{proof}
 				
 				By definition, for any $b\in D_J$, either $b\in B_{open}$, or $b$ is a constant node: to it, any path from any input node must have zero weight.
@@ -523,7 +540,7 @@
 				
 					
 					For any fixed input vector $\boldsymbol{x}^0_J$, we can regard $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z)$ as a DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ %and their propagation in hidden layers 
-					as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Lemma \ref{lem:key1} to get that $\Val_{x_I,\boldsymbol{x}^0_J}(z)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done.
+					as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Lemma \ref{lem:key1} to get that $\Val_{x_I,\boldsymbol{x}^0_J}(z)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done. \qed
 				\end{proof}
 				
 				
@@ -546,7 +563,7 @@
 				\end{lemma}
 				
 				\begin{proof}
-					For $D_I$, it is because of no compensating as proved in the first section. For $D_J$, it is because all nodes are either opened or constants.
+					For $D_I$, it is because of no compensating as proved in the first section. For $D_J$, it is because all nodes are either opened or constants. \qed
 				\end{proof}
 				
 				
@@ -566,7 +583,7 @@
 				\end{lemma}
 				
 				\begin{proof}
-					This is by the definition of MILP formulation and $\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}, \LB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}$.
+					This is by the definition of MILP formulation and $\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}, \LB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}$. \qed
 				\end{proof}
 				
 				%\begin{lemma}\label{lem:pure_node}
@@ -645,7 +662,7 @@
 					
 					
 					
-					
+					\qed
 				\end{proof}
 				
 				From Lemma \ref{lem:main}, we already have that for the unique output node $z$, $$\UB(z)=\max(z).$$ This finish the proof of Theorem \ref{thm:2} and hence Theorem \ref{th2}.
