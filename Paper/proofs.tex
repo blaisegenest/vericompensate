@@ -459,7 +459,7 @@
 				\end{proof}
 				
 				\begin{lemma}\label{lem:subnetwork}
-					$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only depends on nodes in $B_{pure}\cup I$ backward: if $c$ is in $B_{pure}\cup I$ but $b$ is not, then $W_{bc}=0$. We call this sub-network $D_I$. In $D_I$, there is no compensating pair.
+					$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only depends on nodes in $B_{pure}\cup I$ backward: if $b$ is connected to $c$ and $c$ is in $B_{pure}\cup I$ but $b$ is not, then $W_{bc}=0$. We call this sub-network $D_I$. In $D_I$, there is no compensating pair.
 				\end{lemma}
 				
 				\begin{proof}
@@ -474,7 +474,7 @@
 				
 				
 				
-				Recall the sign of nodes function from Definition \ref{sign_of_nodes}. Because now we allow compensating paths, we cannot define this function over all nodes.
+				Recall the sign function of nodes from Definition \ref{sign_of_nodes}. Because now we allow compensating paths, the sign function is no longer total (no longer defined on all nodes).
 				
 				
 				
@@ -489,7 +489,7 @@
 					\end{enumerate}
 				\end{definition}	
 				
-				Notice that $S$ is defined on all nodes $a_i \in I$ (it can also be defined trivially for all nodes $b$ as there is a unique path to $z$, and at $z$ also). For the domain of $S$, we introduce the following lemma:
+				Notice that $S$ is defined on all nodes $a_i \in I$. For the domain of $S$, we introduce the following lemma:
 				
 				\begin{lemma}\label{lem:sign}
 					For a node $b$, if there exists at least one path from a node $a_i\in I$ with nonzero weight, then  $S$ is defined on $b$.
