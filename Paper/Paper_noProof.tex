@@ -919,9 +919,9 @@ and from $17.6\%$ to $12\%$ ($8 \times 200$). This is very promising for the com
  
 
 More importantly, $\beta$-Crown, while efficient, can face a (complexity) wall, when the number of branches becomes too extreme for BaB to work: either BaB succeds fast, or it will not suceed even with very long time out (the reason why {\em refined} BaB is more accurate on these networks). We verify that on a larger DNN learnt in a natural way, namely MLP $6 \times 500$, see Table \ref{tab:example3}.
-We tested PureBaB with two time out, from the standard 30s to an extreme 2000s, to match the average run time of our adaptative implementation (fast mode). Only $3.5\%$ more of images could be ceritifed by extending the TO from 30s to 2000s, certifying $20\%$ less images than our prototype in the same time.
+We tested PureBaB with two time out, from the standard 30s to an extreme 2000s, to match the average run time of our adaptative implementation (fast mode). Only $3.5\%$ more images could be ceritifed by extending the TO from 30s to 2000s, certifying $20\%$ less images than our prototype in the same time.
 Notice that the refined BaB mode of $\beta$-Crown (using MILP for the first few layers) failed to run on this DNN (NoImplementation error code), and we were unable to fix the problem, which is not really surprising as running exact MILP with so many integer variables is not likely to be efficient, as 
-confirmed while running PRIMA.
+confirmed while running refined PRIMA.
 
 
 
