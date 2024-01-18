@@ -401,14 +401,14 @@
 				
 				\section{Proof of Theorem \ref{th2}}
 				
-				In this section, we will prove theorem \ref{th2}. We will prove that theorem by proving the following theorem:
+				In this section, we will prove theorem \ref{th2}. We will prove it by proving the following theorem:
 				
 				\begin{theorem} \label{thm:2}
 				
 					
 					Suppose $\mathcal{N}$ is a DNN with $\ReLU$ as the unique activation functions and with a unique output node $z$.
 					
-					Using MILP method, if every nodes $b$ in any compensating pair
+					Using MILP, if every nodes $b$ in any compensating pair
 					$(\pi,\pi')$ (except the start node and end node) is encoded as a binary/integer variable (opened), then the upper and lower 
 					bounds computed by MILP are the exact maximal and minimal value of $z$.
 				\end{theorem}
@@ -437,7 +437,7 @@
 				
 				
 				\begin{lemma} \label{lem:open_node_2}
-					A node $b$ in the hidden layer will not be on a weak compensating pair if and only if one of the following two happens:
+					A node $b$ in the hidden layer will not be in a weak compensating path if and only if one of the following two happens:
 					\begin{enumerate}
 						\item Any path from $b$ to the output node $z$ has a weight $0$, and we use $W_{b,z}=0$ to denote this case, or
 						\item For every input node $a_j\in J$, every path from $a_j$ to $b$ has a weight of $0$. We use $W_{a_j,b}=0$ to denote this case.
