@@ -847,18 +847,15 @@ Notice that it is likely that selecting ReLU nodes up to 3 layers earlier (for n
 
 In terms of efficient verifiers we compare with, we report:
 \begin{itemize}
-	\item DeepPoly \cite{deeppoly}/ CROWN \cite{crown}. We report the runtime from our own implementation used in Compensate($K$). It shows that our purely Python implementation is not optimal ($10$-$100$ times slower than the implementation in $\alpha$-$\beta$-CROWN, ERAN and PRIMA). Our aim is indeed not to have the most optimized tool, but to evaluate the idea around compensation.
-	\item PRIMA, the 2022 version, with results reported in \cite{prima} and \cite{crown}, as it is the closest in practice with our algorithm, computing accurate bounds for all neurons (as we do), although with a different technique: they focus on explicit correlations between neurons, while we consider the correlations indirectly through a better network abstraction. They use GPU while we do not. When computing the whole correlated space, 
+	\item DeepPoly \cite{deeppoly}/ CROWN \cite{crown}. We report the runtime from our own implementation used in Compensate($K$). It shows that our purely Python implementation is not optimal ($10$-$100$ times slower than the implementation in ($\alpha$)($\beta$)CROWN, ERAN and PRIMA). Our aim is indeed not to have the most optimized tool, but to evaluate the accuracy of Compensation.
+	\item PRIMA, with results reported in \cite{prima} and \cite{crown}, as it is the closest in practice with our algorithm, computing accurate bounds for all neurons (as we do), although with a different technique: they focus on explicit correlations between neurons, while we consider the correlations indirectly through a better network abstraction. They use GPU while we do not. When computing the whole correlated space, 
 	parallelization is difficult.
 	Notice that on these MLP networks, PRIMA resort to refined bounds on the first few layers (3 or 4) using exact MILP encoding of all the nodes (which is easily parallelized - 16 nodes considered in parallel in PRIMA). This is doable on the first few layers as the number of integer variable is not too large. By comparison, we run MILP on all the layers, but with a bounded number of integer variables to control the runtime and to scale to all the layers.
-	\item $\beta$-CROWN, with results as reported in \cite{crown}, as it is the most accurate of the efficient tool to date. Its main idea is to implement a very efficient Branch and Bound (BaB) verification tool, subsuming \cite{BaB} on such DNNs, and heavily using GPU implementation (while we do not). Performance of pure BaB on these hard DNNs is however impaired by the large number of branchs to consider. Similarly as PRIMA, $\beta$-CROWN resorts to refining the bounds of the first few layers using an exact MILP encoding, also parallelized with 16 nodes in parallel, before running their BaB tool. We also test with the latest versions of $\alpha$-$\beta$-CROWN (October 2023)
-	and of PRIMA (2022) on the MLP $6 \times 500$ (results not reported in \cite{crown,prima}).
-
-
-
+	\item ($\alpha$)$\beta$-CROWN, with results as reported in \cite{crown}, as it is the most accurate of the efficient tool to date. Its main idea is to implement a very efficient Branch and Bound (BaB) verification tool, subsuming \cite{BaB}, and heavily using GPU implementation (while we do not). Performance of pure BaB on these hard DNNs is however impaired by the large number of branchs to consider. Similarly as PRIMA, $\beta$-CROWN resorts to refining the bounds of the first few layers using an exact MILP encoding, also computing 16 nodes in parallel, before running their BaB tool. 
+	\item We also experimented with the latest versions of $\alpha$-$\beta$-CROWN (October 2023) and PRIMA (2022) on MLP $6 \times 500$ (results not reported in \cite{crown,prima}).
 	\item We do not report results from kPoly \cite{kpoly}, OptC2V \cite{optC2V}, 
 	SDPFO \cite{SDPFI} which do not present favorable trade offs compared with $\beta$-CROWN. Results can be found in \cite{crown} and are performed in the same conditions so can be compared.
-	\item Finally, we run several version of Compensate($K$). First, we have a fixed choice for $K$ ($K=60$ for fast and $K=200$ for slow), with a fall back to a lower $K$ ($K=50$ for fast and $K=60$ for slow) if the bounds found is too far from the solution found (MIPGap $>0.5$ in Gurobi). We run (our implementation of) DeepPoly first, then the fast version, before running slow on the remaining Images.
+	\item Finally, we run several version of Compensate($K$) ({\color{blue} Comp} in Table \ref{tab:example}). First, we have a fixed choice for $K$ ($K=60$ for fast and $K=200$ for slow), with a fall back to a lower $K$ ($K=50$ for fast and $K=60$ for slow) if the bounds found is too far from the solution found (MIPGap $>0.5$ in Gurobi). We run (our implementation of) DeepPoly first, then the fast version, before running slow on the remaining images.
 	Further, we also experiment with an {\em adaptative} implementation, which lowers number $K$ adaptively between layers to adapt to the growing number $N$ of linear variables, which has an impact on the overall $\MILP(N,K)$ runtime. This is particularly useful for deeper network where $N$ is very different between the first and the last layer. Again, we run first an aggressive version of fast, before going to a more conservative slow version to treat the remaining images. All versions compute bounds for 20 neurons of the same layer in parallel, no GPU used.
 \end{itemize}
 
@@ -877,26 +874,27 @@ Compared with PRIMA (using refinement of the first few layers by exact MILP), th
 	\begin{tabular}{|c||c|c|c||cc|cc||c|}
 		
 		\hline
-		\text{DNN}  & DeepPoly & PRIMA & $\beta$-CROWN &\multicolumn{2}{@{}c@{}|}{\text{ Comp (adapt.) }} & \multicolumn{2}{@{}c@{}|}{\text{ Comp (fixed) }} & Upper\\ 
-		 & / CROWN & (refined) & (refined BaB) & fast & slow & fast &slow & Bound\\
+		\text{DNN}  & DeepPoly & PRIMA & $\beta$-CROWN &\multicolumn{2}{@{}c@{}|}{\color{blue}\text{ Comp (adapt.) }} & \multicolumn{2}{@{}c@{}|}{\color{blue} \text{ Comp (fixed) }} & Upper\\ 
+		 & / CROWN & (refined) & (refined BaB) & {\color{blue}fast} & {\color{blue}slow} & {\color{blue}fast} &{\color{blue}slow} & Bound\\
 		\hline \hline
 		
-		$5 \times100$\  &   $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & $57.5\%$ & $66.1\%$ & $65.3\%$ & $68.4\%$ &  $84.2 \%$ \\ 
-		$\epsilon = 0.026$ & 5s & 159s & 102s& 75s & 140s & 117s & 142s &  \\
+		$5 \times100$\  &   $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & {\color{blue}$57.5\%$} & {\color{blue}$66.1\%$} & {\color{blue}$65.3\%$} & {\color{blue}$68.4\%$} &  $84.2 \%$ \\ 
+		$\epsilon = 0.026$ & 5s & 159s & 102s& {\color{blue}75s} & {\color{blue}140s} & {\color{blue}117s} & {\color{blue}142s} &  \\
 		\hline	
 		
-		$5 \times 200$ \  &  $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & $64.3\%$ & $74.7\%$ & $72\%$ & $76.8\%$ & 
+		$5 \times 200$ \  &  $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & {\color{blue}$64.3\%$} & {\color{blue}$74.7\%$} & {\color{blue}$72\%$} & {\color{blue}$76.8\%$} & 
 		$90.1 \%$\\ 
-		$\epsilon = 0.015$ & 11s & 224s & 86s & 163s & 285s & 206s & 279s  &\\ \hline \hline
+		$\epsilon = 0.015$ & 11s & 224s & 86s & {\color{blue}163s} & {\color{blue}285s} & {\color{blue}206s} & {\color{blue}279s}  &\\ \hline \hline
 
 	
-		$8\times100$\  &   $29.2\%$ & $42.8\%$ & $62\%$ & $52.7\%$ & $59.7\%$ & $61.4\%$ & $\mathbf{65.8\%}$  & $82.0 \%$ \\ 
-		$\epsilon = 0.026$ & 8s & 301s & 103s & 92.3s & 179s & 170s & 346s & \\
+		$8\times100$\  &   $29.2\%$ & $42.8\%$ & $62\%$ & {\color{blue}$52.7\%$} & {\color{blue}$59.7\%$} & {\color{blue}$61.4\%$} & {\color{blue}$\mathbf{65.8\%}$}  & $82.0 \%$ \\ 
+		$\epsilon = 0.026$ & 8s & 301s & 103s & {\color{blue}92.3s} & {\color{blue}179s} & {\color{blue}170s} & {\color{blue}346s} & \\
 		\hline
 	
 
-		$8\times200$\  &   $25.9\%$ & $62.4\%$ & $73.5\%$ & $68.1\%$ & $\mathbf{79.1\%}$ & $72.6\%$ & too & $91.1 \%$ \\ 
-		$\epsilon = 0.015$ & 17s & 395s & 95s  & 297s & 535s & $480s$ & slow & \\ \hline
+		$8\times200$\  &   $25.9\%$ & $62.4\%$ & $73.5\%$ & {\color{blue}$68.1\%$} & 
+		{\color{blue}$\mathbf{79.1\%}$} & {\color{blue}$72.6\%$} & {\color{blue}too} & $91.1 \%$ \\ 
+		$\epsilon = 0.015$ & 17s & 395s & 95s  & {\color{blue}297s} & {\color{blue}535s} & {\color{blue}$480s$} & {\color{blue}slow} & \\ \hline
 		
 		%6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time & \\ 
 		%$\epsilon = 0.035$ & & & & & & & & & &\\ \hline
@@ -908,7 +906,7 @@ Compared with PRIMA (using refinement of the first few layers by exact MILP), th
 \end{table}
 
 
-Compare with $\beta$-CROWN (also using a refinement on the first few layers using exact MILP), 
+Compared with $\beta$-CROWN (also using a refinement on the first few layers using exact MILP), 
 the picture is more balanced, because the fundamentals of both algorithms are different. BaB 
 focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. 
 Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence our algorithm will spend a lot of time on nodes which are not necessary for the verification. Therefore, our naive implementation is not as efficient as the highly optimized
@@ -918,10 +916,11 @@ closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
 and from $17.6\%$ to $12\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than Compensate($K$) (see next Section).
  
 
-More importantly, $\beta$-Crown, while efficient, can face a (complexity) wall, when the number of branches becomes too extreme for BaB to work: either BaB succeds fast, or it will not suceed even with very long time out (the reason why {\em refined} BaB is more accurate on these networks). We verify that on a larger DNN learnt in a natural way, namely MLP $6 \times 500$, see Table \ref{tab:example3}.
-We tested PureBaB with two time out, from the standard 30s to an extreme 2000s, to match the average run time of our adaptative implementation (fast mode). Only $3.5\%$ more of images could be ceritifed by extending the TO from 30s to 2000s, certifying $20\%$ less images than our prototype in the same time.
-Notice that the refined BaB mode of $\beta$-Crown (using MILP for the first few layers) failed to run on this DNN (NoImplementation error code), and we were unable to fix the problem, which is not really surprising as running exact MILP with so many integer variables is not likely to be efficient, as 
-confirmed while running PRIMA.
+\newpage
+
+Importantly, ($\alpha$)$\beta$-Crown, while efficient, can face a (complexity) wall, when the number of branches becomes too extreme for BaB to work: either BaB succeds fast, or it will not suceed even with very long time out (the reason why {\em refined} BaB is more accurate on these networks). We verify that in Table \ref{tab:example3}, on a larger DNN learnt in a natural way, namely MLP $6 \times 500$,.
+We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s, to match the average runtime of our adaptative implementation (fast mode). Only $3.5\%$ more images could be ceritifed by extending the TO from 30s to 2000s, certifying $20\%$ less images than our prototype in the same time.
+Notice that the refined BaB mode of $\alpha$-$\beta$-Crown (first few layers using MILP) failed to run on this DNN (error code: NoImplementation), and we were unable to fix the problem, which is not really surprising as running exact MILP with so many integer variables is not likely to be efficient, as confirmed while running PRIMA (refined).
 
 
 
@@ -933,15 +932,12 @@ confirmed while running PRIMA.
 	\begin{tabular}{|c||c|c|cc||c||c|}
 		
 		\hline
-		\text{DNN}  & DeepPoly & PRIMA &  \multicolumn{2}{@{}c@{}|}{\text{ $\beta$-CROWN (pureBaB)}} & 
-		Comp(adapt.) & Upper\\ 
-		 & / CROWN & (refined) & TO=30s & TO=1200s & fast & Bound\\
+		\text{DNN}  & DeepPoly & PRIMA &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (pureBaB) \,}} & 
+		{\color{blue}Comp (adapt.)} & Upper\\ 
+		 & / CROWN & (refined) & TO=30s & TO=2000s & {\color{blue}fast} & Bound\\
 		\hline \hline
-		
-		
-		$6\times500$\  &   $26\%$ & $32.5\%$ & $41\%$ & $44.5\%$  & $\mathbf{65\%}$ & $92\%$ \\ 
-
-		$\epsilon = 0.035$ & 34s & 119s & 18.4s & 576s & 925s &\\ \hline
+		$6\times500$\  &   $26\%$ & $32.5\%$ & $41\%$ & $44.5\%$  & {\color{blue}$\mathbf{65\%}$} & $92\%$ \\ 
+		$\epsilon = 0.035$ & 34s & 119s & 18.4s & 954s & {\color{blue}925s} &\\ \hline
 	\end{tabular}
 	\caption{$\%$ of verified images and average runtime in seconds, over 200 images.}
 	\label{tab:example3}
@@ -956,12 +952,13 @@ confirmed while running PRIMA.
 \end{figure}
 \vspace{-0.4cm}
 
-Last, we report the average runetime per number of nodes of both fast adaptive and fast fixed compensation, for the different DNNs considered. The time per node is not constant, but it is still controlled and does not show an exponential blow-up, from 0.1s per node for the smallest DNN to 0.3s per node for the biggest DNN. This indicates that Compensate($K$) can be run on larger DNN without hitting the same complexity wall as for BaB.
+Last, we display the average runtime per number of nodes of both fast adaptive and fast fixed compensation, for the different DNNs considered. The time per node is not constant, but it is still controlled and does not show an exponential blow-up, from 0.1s per node for the smallest DNN to 0.3s per node for the biggest DNN. This indicates that Compensate($K$) can be run on larger DNNs without hitting the same complexity wall as BaB.
 
 
 \section{Limitations and Discussion}
+\label{Discussion}
 
-For DNNs easy to verify, $\beta$-CROWN and PRIMA are excellent solutions, both very fast and very accurate, usually matching or getting very close to the upper bound on the $\%$ of verified images. Compensation strength is not required in these contexts, and likely not useful, reason why we did not consider it.
+For DNNs easy to verify, $\beta$-CROWN and PRIMA are excellent solutions, both very fast and very accurate, usually matching or getting very close to the upper bound on the $\%$ of verified images \cite{crown}. Compensation strength is not required in these contexts, and likely not useful, reason why we did not consider it.
 
 We only considered DNNs with ReLU activation functions in this paper. The reason is that MILP, which is the basic block of Compensate($K$), and BaB (the basic block of $\beta$-Crown) can handle the ReLU activation function efficiently, and more complex activation functions are abstracted in other ways, which PRIMA handles (unlike $\beta$-CROWN). Still, the compensation paradigm is totally orthogonal to ReLU activation function. It is very likely that studying the compensation strength would be useful in this  context as well. We leave that for future work. 
 
