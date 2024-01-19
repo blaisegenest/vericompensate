@@ -902,7 +902,7 @@ Compared with PRIMA (using refinement of the first few layers by exact MILP), th
 	\caption{$\%$ of verified images and average runtime in seconds, over 1000 images. 
 	Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.}
 	\label{tab:example}
-	\vspace{-1cm}
+	\vspace{-0.8cm}
 \end{table}
 
 
@@ -958,7 +958,7 @@ Last, we display the average runtime per number of nodes of both fast adaptive a
 \section{Limitations and Discussion}
 \label{Discussion}
 
-For DNNs easy to verify, $\alpha$-$\beta$-CROWN and PRIMA are excellent solutions, both very fast and very accurate, usually matching or getting very close to the upper bound on the $\%$ of verified images \cite{crown}. Compensation strength is not required in these contexts, and likely not useful, reason why we did not consider it.
+For DNNs robustly trained, $\alpha$-$\beta$-CROWN and PRIMA are excellent solutions, both very fast and very accurate, usually matching or getting very close \cite{crown} to the upper bound on the $\%$ of verified images \cite{attack}. Compensation strength is not required in these contexts, reason why we did not consider it.
 
 We only considered DNNs with ReLU activation functions in this paper. The reason is that MILP, which is the basic block of Compensate($K$) (and BaB for $\beta$-Crown) can handle the ReLU activation function efficiently. Other activation functions are abstracted in more complex ways, e.g. by PRIMA (unlike $\beta$-CROWN). Still, the compensation paradigm is  orthogonal to the activation function. We believe that studying the compensation strength would be useful with other activation functions as well. We leave that for future work. 
 
