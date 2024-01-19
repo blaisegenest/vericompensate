@@ -750,14 +750,14 @@ Our experimental evaluations have 3 goals:
   \item Evaluate experimentally how the choice of the set $Z$ impacts the accuracy of $\MILP_Z$, and compare different choices for $K$ the size of $Z$,
   \item Evaluate on benchmarks the percentage of certification that can be obtained
  using the compensation idea, and compare with competing efficient tools,
-  \item Evaluate the runtime of compensate($K$).
+  \item Evaluate how the runtime of compensate($K$) scale with the size of DNNs.
 \end{enumerate}
 
 \subsection{Setting}
 The benchmarks were run on an AMD 5975WX ($32$ cores$@3.6$GHz, 7nm, year 2022) with 256 GB of main memory and 2 NVIDIA RTX 3090. Gurobi 9.52 was used for solving MILP and LP problems. Our implementations for Compensate($K$) is entirely realized in Python 
 $3.8.10$, and therefore not particularly optimal.
 
-The local robustness verification is performed on DNNs trained for the MNIST image dataset as its the only standard DNNs (MLP $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$) benchmarked by \cite{crown} not using robust training, and they are the hardest DNNs to verify, despite their relatively limited size (600 to 1600 neurons in hidden layers). Indeed, today's efficient methods leave at least $14\%$ to $20\%$ of the images neither certified robust nor with an attack to robustness found, making them interesting DNNs to consider where to improve accuracy of efficient techniques. We also test on the larger MLP $6\times 500$, not previously tested in \cite{crown}. MNIST contains grayscale images of size $28 \times 28$ pixels ($752$ input neurons). For our evaluation, we evaluate on the standard first 1000 images of the dataset, to be directly comparable to experiments run in other papers, e.g. \cite{prima,crown}, except for MLP $5\times 500$ which is not reported in \cite{prima,crown} and takes a large amount of time, for which we only test on the first 200 images. Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
+The local robustness verification is performed on DNNs trained for the MNIST image dataset as its the only DNNs naturally trained ("MLP" (fully connected Multi Level Perceptron) $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$) benchmarked by \cite{crown} not using robust training, and they are the hardest DNNs to verify, despite their relatively limited size (600 to 1600 neurons in hidden layers). Indeed, today's efficient methods leave between $12\%$ to $20\%$ of the images neither certified robust \cite{crown} nor with an attack to robustness found \cite{attack}, making them interesting DNNs to consider when improving accuracy. MNIST contains grayscale images of size $28 \times 28$ pixels ($752$ input neurons). For our evaluation, we evaluate on the standard first 1000 images of the dataset, to be directly comparable to experiments run in other papers, e.g. \cite{prima,crown}. We also experimented on (MLP) $6\times 500$ (results not reported in \cite{prima,crown}), checking the first 200 images of the dataset, as it takes a long time to run. Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
 %, and a target label for verification. 
 
 
@@ -770,7 +770,8 @@ the uncertainty of a node is the range between its computed lower and upper boun
 We then average the uncertainty among all the nodes of the layer.
 Formally, for a node $n$ with bounds $[\alpha,\beta]$, its uncertainty $unc(a) = \beta - \alpha$, and the average uncertainty of a layer $l$ is $\dfrac{\sum_{a\in l} unc(a)}{|l|}.$
 
-We experiment with the smallest network (MLP $6\times 100$), so that we can obtain exact bounds for the first few layers using a full MILP encoding of the DNN. We test over the $\vx=59$th image in the MNIST dataset, as it has a large number of unstable ReLU nodes in the first few layers ($61$ in the first and $55$ in the second layer), so we can experiment with a larger choice of values) for $K$.
+We experiment with the smallest network (MLP $5\times 100$ in \cite{crown}, 
+$5 \times 100$ in \cite{prima}, and abusively called $6 \times 100$ in \cite{deeppoly}), so that we can obtain exact bounds for the first few layers using a full MILP encoding of the DNN. We test over the $\vx=59$th image in the MNIST dataset, as it has a large number of unstable ReLU nodes in the first few layers ($61$ in the first and $55$ in the second layer), so we can experiment with a larger choice of values) for $K$.
 
 \subsubsection*{ReLU Node in the first hidden layer}
 
@@ -791,17 +792,19 @@ We experiment with the smallest network (MLP $6\times 100$), so that we can obta
 \end{tabular}
 \caption{Average uncertainty of $\MILP_Z$ for nodes of the second layer, for $Z$ with $K$ ReLU nodes of the first layer (compensating strength vs random choice).}
 \label{tab:example0}
-\vspace{-0.8cm}
+%\vspace{-0.8cm}
 \end{table}
 
 
 We first experiment with the choice of nodes in the first hidden layer, and its consequences on the accuracy of nodes in the second layer.  Let $c$ be a node of the second layer.
-A compensating pair $(\pi,\pi')$ of paths with target $c$ is thus of the form a node $a b c$ and $a b' c$, with $a$ an input node and $b,b'$ on the first layer. The compensating strength for $(b,b')$ is defined as $comp(b,b')=\sum_a \val_{\vx}(a) \min(weight(abc),weight(ab'c))$. Indeed, the pair $(a b c,a b' c)$ of path cannot compensate more than $\val_{\vx}(a) \min(weight(a,b,c),weight(a,b',c))$, and $b,b'$ would help compensated set set of pairs of paths $\{(a b c,a b' c) \mid a$ is in the first layer$\}$. After selecting the heaviest $(b_0,b_0')$, we can then compute $comp(b)= \sum_{b' \text{already selected}} comp(b,b')+comp(b',b)$ and select iteratively the heaviest $b$'s one by one till reaching the threshold. 
+A compensating pair $(\pi,\pi')$ of paths with target $c$ is thus of the form a node $a b c$ and $a b' c$, with $a$ an input node and $b,b'$ on the first layer. The compensating strength for $(b,b')$ is defined as $comp(b,b')=\sum_a \val_{\vx}(a) \min(weight(abc),weight(ab'c))$. Indeed, the pair $(a b c,a b' c)$ of path cannot compensate more than $\val_{\vx}(a) \min(weight(a,b,c),$\newline $weight(a,b',c))$, and $b,b'$ would help compensated the set of pairs of paths $\{(a b c,a b' c) \mid a$ is in the first layer$\}$. After selecting the heaviest $(b_0,b_0')$, we can then compute $comp(b)= \sum_{b' \text{already selected}} comp(b,b')+comp(b',b)$ and select iteratively the heaviest $b$'s one by one till reaching the threshold. 
 %We do this for all node $c$ of the second layer.
 
 We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly. The range of uncertainty created by inacurate computations is up to $1.17=2.22-1.05$, $2.22$ being the accuracy provided by LP, and $1.05$ by an exact MILP encoding of all the unstable ReLU nodes. Selecting $30$ out of the $61$ unstable ReLU nodes, the uncertainty created by inacurracy is reduced by $80\%$, while a random choice of nodes only leads up to roughly halving this number. We can deduce that selecting nodes based on compensating strength helps to select important ReLU nodes for the accuracy.
 
 
+
+\newpage 
 
 \subsubsection*{ReLU Node in the first and second hidden layer}
 
@@ -809,15 +812,17 @@ We now turn to evaluating choosing ReLU nodes in two consecutive layers, focusin
 The bounds for nodes of the second layers are computed exactly. 
 Let $d$ be a neuron of the third layer.
 We keep the previous evaluation for ranking nodes in the previous (second) layer. 
-Once the set $Z$ of selected nodes has sufficiently many nodes $c,c'$ in the second layer, adding $b,b'$ to $Z$ allows to take into account accurately the pairs of paths of the form $(a b c d, a b' c' d)$ for all $\{c,c'\} \in Z$. We thus define 
-$comp(b,b')=\sum_a \sum_{c,c' \in Z} \val_{\vx}(a) \min(weight(abcd),weight(ab'c'd))$ and the associated $comp(b)$, and select iteratively nodes $b$ (first layer) or $c$ (second layer) by selecting the heaviest $comp(b)$ or $comp(c)$.
+Once the set $Z$ of selected nodes has sufficiently many nodes $c,c'$ in the second layer, adding $b,b'$ from the first layer to $Z$ allows to take into account accurately the pairs of paths of the form $(a b c d, a b' c' d)$ for all $\{c,c'\} \in Z$. We thus define:
+\vspace{-0.2cm}
+$$comp(b,b')=\sum_a \sum_{c,c' \in Z} \val_{\vx}(a) \min( weight(abcd),weight(ab'c'd))$$ 
+\vspace{-0.2cm}
+
+and the associated $comp(b)$, and select iteratively nodes $b$ (first layer) or $c$ (second layer) by selecting the heaviest $comp(b)$ or $comp(c)$.
 
 We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly from layers $1$ and $2$. 
 We compare choosing nodes in the second layer only with choosing nodes in both the first and second layer.
-Choosing ReLU nodes in the previous layer (layer $2$) only is never a good choice. 
-When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the inaccuracy by $65\%$ when choosing nodes randomly. Notice that this is direct inaccuracy, applying this layer after layer will even further reduce inaccuracy created by accumulation of inaccuracies.
-
-Notice that it is likely that selecting ReLU nodes up to 3 layers earlier (for nodes in layer $4+$) could further improve the accuracy, but the computational trade off is unclear and we thus did not experiment. 
+Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
+also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the inaccuracy by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. Last, it is likely that selecting ReLU nodes in 1,2,3 layers earlier (for nodes in layer $4+$) could further improve the accuracy, but the computational trade-off to evaluate the compensating strenght of such paths is unclear and we thus did not experiment. 
 
 \begin{table}[t!]	
 	\centering
@@ -835,7 +840,7 @@ Notice that it is likely that selecting ReLU nodes up to 3 layers earlier (for n
 \end{tabular}
 \caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs random choice).}
 \label{tab:example1}
-\vspace{-0.8cm}
+%\vspace{-0.8cm}
 \end{table}
 
 \subsection{Comparison to efficient Verifiers}
