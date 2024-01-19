@@ -501,11 +501,11 @@
 				Therefore, for any node $b$  that $S$ is undefined on $b$, it only depends on input nodes in $J$.  
 				
 				\begin{lemma}
-					If $c$ is in the next layer of $b$, $W_{bc}\neq 0$, and $S$ is defined on both $b$ and $c$ and $S(c)\neq 0$, then $W_{bc}S(c)=S(b)$.
+					If $c$ is in the next layer after $b$, $S(c)\neq 0, S(b)$ are both defined, and $W_{bc}\neq 0$, then $W_{bc}S(c)=S(b)$.
 				\end{lemma}
 				
 				\begin{proof}
-					This is proved in the first section. \qed
+					This is proved in the first section of appendix. \qed
 				\end{proof}
 				
 				\begin{lemma}\label{lem:subnetwork2}
@@ -516,7 +516,7 @@
 					This is because if there exists nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in above set but $b$ is not, then $b$ has a path with nonzero weight from a node $a_i$ not in $J$ but this means so does $c$, a contradiction. Therefore any $b$ such that $W_{bc}\neq 0$ is also in above set. \qed
 				\end{proof}
 				
-				By definition, for any $b\in D_J$, either $b\in B_{open}$, or $b$ is a constant node: to it, any path from any input node must have zero weight.
+				By definition, for any $b\in D_J$, either $b\in B_{open}$, or $b$ is a constant node:  any path from any input node must have zero weight to it.
 				
 				We denote $\boldsymbol{x}_S$ for any subset $S$ of input nodes to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We also denote $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}$ and $\Val(z)=\Val_{\boldsymbol{x}}(z)=\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J} (z)$. For a node $b$ that $S$ is not defined on it, since $b$ only depends on $J$, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ will be fixed.
 				
@@ -533,7 +533,7 @@
 					
 					
 					
-					If $S(b)=-1$, then the similar results hold, replacing $\boldsymbol{x}^*_I$ by $\boldsymbol{x}^\sharp_I$. 
+					If $S(b)=-1$, then the similar results hold, replacing $\boldsymbol{x}^*_I$ by $\boldsymbol{x}^\sharp_I$, or replacing $\max$ by $\min$. 
 				\end{lemma}
 				
 				\begin{proof}
