@@ -497,10 +497,11 @@ over all source/target states in given layers. The average compensations strengt
 
 \subsection{MILP$_{X_n}$}
 
-While Theorem \ref{th1} is interesting to understand that compensation is a key notion for accurate verification of DNNs, it is of little use to analyze DNNs with compensations, which are actually those that are most interesting to tackle, as current efficient algorithms are not accurate enough.
+While Theorem \ref{th1} is interesting to understand that compensation is a key notion for accurate verification of DNNs, it cannot be used directly to analyze DNNs with compensations, which are actually those that are most interesting to tackle.
 Intuitively, when there are compensating paths, it seems necessary to consider exactly the (unstable) ReLU nodes that are seen along these paths. 
-Consider a neuron $n$ in layer $k$ for which we want to have accurate bounds $[\alpha,\beta]$.
-Let $X_n$ be the set of neurons $x$ in layer up to $k-1$ such that there is a compensating path with target $n$ passing by $x$ (but not as its source or target). Let $Y_n$ be the complement of this set $X_n$ of neurons in the first $k-1$ layers. A quite efficient way to consider exactly this set $X$ of neurons is to use MILP$_{X_n}$, the relaxation of the MILP encoding where all the nodes in $Y_n$ are linearly relaxed (thus with $|X_n|$ binary variable, one per neuron in $X_n$), and including exact bounds for every neurons $n'$ in the first $k-1$ layers. We state now that the bounds $[\alpha,\beta]$ on neuron $n$ computed by such MILP$_{X_n}$ are accurate.
+Consider a neuron $n$ in layer $k$ for which we want to have accurate bounds 
+$[\alpha,\beta]$.
+Let $X_n$ be the set of neurons $x$ in layer up to $k-1$ such that there is a compensating path with target $n$ passing by $x$ (but not as its source or target). Let $Y_n$ be the complement of this set $X_n$ of neurons in the first $k-1$ layers. We denote by MILP$_{X_n}$ the relaxation of the MILP encoding where all the nodes in $Y_n$ are linearly relaxed (thus with $|X_n|$ binary variable, one per neuron in $X_n$), and including exact bounds for every neurons $n'$ in the first $k-1$ layers. We state now that the bounds $[\alpha,\beta]$ on neuron $n$ computed by such MILP$_{X_n}$ are accurate.
 
 \begin{theorem}
 	\label{th2} 
@@ -567,8 +568,7 @@ The formal proofs are in appendix.
 
 \subsection{An efficient algorithm}
 
-Using Theorem \ref{th2}, one could thus obtain accurate bounds by running MILP$_{X}$ inductively on every node layer by layer, obtaining accurate bounds $[\alpha,\beta]$ that can be used to compute the next layer accurate bound. In practice, such an algorithm would however be inefficient, as $X_n$ comprises most of the nodes from layer up to $k-1$ for $n$ on layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the the strength of compensation that are meaningful, and consider that paths below this threshold are not compensating strongly enough to deserve an integer variable (there are cases where the MILP algorithm is exponential in the number of integer variables), calling $Z_n$ the resulting set of nodes on {\em strongly compensating} paths. In practice, one could take the $K$ nodes covering the strongest compensating pair of paths to obtain set $Z_n$, for $K$ reasonably small. 
-The pseudo-code of the algorithm is provided in Algorithm \ref{algo1}.
+Using Theorem \ref{th2}, one could thus obtain accurate bounds by running MILP$_{X}$ inductively on every node layer by layer, obtaining accurate bounds $[\alpha,\beta]$ that can be used to compute the next layer accurate bound. In practice, such an algorithm would however be inefficient, as $X_n$ comprises most of the nodes from layer up to $k-1$ for $n$ on layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the the strength of compensation that are meaningful, and consider that paths below this threshold are not compensating strongly enough to deserve an integer variable, calling $Z_n$ the resulting set of nodes on {\em strongly compensating} paths. In practice, one could take the $K$ nodes covering the strongest compensating pair of paths to obtain set $Z_n$, for $K$ reasonably small. The pseudo-code of the algorithm is provided in Algorithm \ref{algo1}.
 
 \SetKwInput{KwInput}{Input}
 \SetKwInput{KwOutput}{Output}
