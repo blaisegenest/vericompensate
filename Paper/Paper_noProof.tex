@@ -808,8 +808,8 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 
 \subsubsection*{ReLU Node in the first and second hidden layer}
 
-We now turn to evaluating choosing ReLU nodes in two consecutive layers, focusing on the uncertainty of nodes in the second layers, wrt ReLU nodes in the first and second layer.
-The bounds for nodes of the second layers are computed exactly. 
+We now turn to evaluating choosing ReLU nodes in two consecutive layers, focusing on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer.
+The bounds for nodes of the first two layers are computed exactly. 
 Let $d$ be a neuron of the third layer.
 We keep the previous evaluation for ranking nodes in the previous (second) layer. 
 Once the set $Z$ of selected nodes has sufficiently many nodes $c,c'$ in the second layer, adding $b,b'$ from the first layer to $Z$ allows to take into account accurately the pairs of paths of the form $(a b c d, a b' c' d)$ for all $\{c,c'\} \in Z$. We thus define:
