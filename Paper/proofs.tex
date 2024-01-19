@@ -448,11 +448,11 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			We denote $B_{zero}$ the set of such nodes $b$ that case 1 holds, and denote $B_{pure}$ the of such nodes $b$ that case 2 holds but case 1 does not hold.	We denote $B_{open}$ the set of all nodes $b$ in a compensating path.
 			
 			\begin{proof}
-				First, we show that if one of case 1, 2 happens, then $b$ will not be on a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $W_{a_j,b}=0$ implies weight$(\pi)=0$.
+				First, we show that if one of case 1, 2 happens, then $b$ will not be on a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $weight({a_j,b})=0$ implies weight$(\pi)=0$.
 				
 				Second, we show that if neither 1 nor 2 hold, then $b$ will be on a weak compensating path.
-				Because 2) does not hold, there is a $j \in J$ with $W_{a_j,b} \neq 0$, say $>0$.
-				Because 1) does not hold, $W_{b,z} \neq 0$, say $>0$.
+				Because 2) does not hold, there is a $j \in J$ with $weight({a_j,b}) \neq 0$, say $>0$.
+				Because 1) does not hold, $weight({b,z}) \neq 0$, say $>0$.
 				Now, by definition of $J$, there is a pair of weak compensating paths $\pi,\pi'$ 
 				from $a_j$ to $z$, say with $\pi'$ with weight $<0$.
 				Then $((a_j,b,z), \pi')$ is also a weak compensating pair. \qed
@@ -647,12 +647,12 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 				Therefore, in the MILP model, $c$ is a sum of terms that are all fixed numbers. Hence $c$ is a fixed number.
 				
 				(2) If $S(c)=1$, then we have the following:	\begin{align*}
-					\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq constant + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)),
+					\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq constant + \sum_{b\in B_{open}\cap l_i} W_{bc}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{bc} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)),
 				\end{align*}where $\B$ means one of $\UB$ or $\LB$ depending on the sign of $W_{bc}$: if $W_{bc}$ is positive, then $\UB$, otherwise $\LB$. Notice that all $b$ displayed are that $S(b)$ defined, because if $S(b)$ undefined, then for fixed $\vx_J$, value of $b$ is fixed and will be put into the constant.
 				
 				Now by induction hypothesis part 2, if $S(b)=1$, then $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)=\max_{\vx_I}\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$; and if $S(b)=-1$, $\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)=\min_{\vx_I}\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$. Moreover, since $S(c)=1$, $S(b)$ and $W_{bc}$ have the same sign. And both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions. Combining all these facts, we have:\begin{align*}
 					\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq 
-					&constant + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
+					&constant + \sum_{b\in B_{open}\cap l_i} W_{bc}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{bc} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
 					= & \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c). 
 				\end{align*}  This is the first equal.
 				
