@@ -501,11 +501,11 @@
 				Therefore, for any node $b$  that $S$ is undefined on $b$, it only depends on input nodes in $J$.  
 				
 				\begin{lemma}
-					If $c$ is in the next layer of $b$, $W_{bc}\neq 0$, and $S$ is defined on both $b$ and $c$ and $S(c)\neq 0$, then $W_{bc}S(c)=S(b)$.
+					If $c$ is in the next layer after $b$, $S(c)\neq 0, S(b)$ are both defined, and $W_{bc}\neq 0$, then $W_{bc}S(c)=S(b)$.
 				\end{lemma}
 				
 				\begin{proof}
-					This is proved in the first section. \qed
+					This is proved in the first section of appendix. \qed
 				\end{proof}
 				
 				\begin{lemma}\label{lem:subnetwork2}
@@ -533,7 +533,7 @@
 					
 					
 					
-					If $S(b)=-1$, then the similar results hold, replacing $\boldsymbol{x}^*_I$ by $\boldsymbol{x}^\sharp_I$. 
+					If $S(b)=-1$, then the similar results hold, replacing $\boldsymbol{x}^*_I$ by $\boldsymbol{x}^\sharp_I$, or replacing $\max$ by $\min$. 
 				\end{lemma}
 				
 				\begin{proof}
