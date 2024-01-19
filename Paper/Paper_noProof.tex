@@ -85,7 +85,7 @@ In this paper, we will use lower case latin $a$ for scalars, bold for vectors $\
 capitalized bold for matrices $\boldsymbol{W}$, similar to notations in \cite{prima,crown}.
 To simplify the notations, we restrict the presentation to feed-forward, 
 fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
-$ReLU(x)=x$ for $x \geq 0$ and $f(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
+$ReLU(x)=x$ for $x \geq 0$ and $ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
 
 %In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
 
@@ -100,7 +100,7 @@ We call $d_i$ the number of neurons of hidden layer $i \in \{1, \ldots, \ell-1\}
 $d_0$ the input dimension, and $d_\ell$ the output dimension.
 
 Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
-denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the weight vector $\boldsymbol{z}^i$ at layer $1 \leq i \leq \ell$ with
+denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vector $\boldsymbol{z}^i$ at layer $1 \leq i \leq \ell$ with
 \begin{align*}
 	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \vb^i\\
 	\hat{\boldsymbol{z}}^{i} &= ReLU({\boldsymbol{z}}^i).
@@ -109,10 +109,8 @@ denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively th
 The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
 $\boldsymbol{z}$ is called pre-activation values, 
 and $\boldsymbol{z}^{i}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
-For $\boldsymbol{x}=\vz^0$ the vector of input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, neurons are also called \emph{nodes}, and when we refer to a specific neuron, we use $a,b,c,d$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the weight of neuron $a$ when the the input is $\boldsymbol{x}$. A path $\pi$ will be a sequence 
-$\pi=(a_i)_{k \leq  i \leq k'}$ of neurons in consecutive layers, and the weight $w(\pi)=W_{a_k,a_{k+1}} \times \cdots \times  W_{a_{k'-1},a_{k'}}$.
-
-
+For $\boldsymbol{x}=\vz^0$ the vector of input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, neurons are also called \emph{nodes}, and when we refer to a specific neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$. A path $\pi$ is a sequence $\pi=(a_i)_{k \leq  i \leq k'}$ of neurons in consecutive layers, and the weight of $\pi$ is 
+$weight(\pi)=W_{a_k,a_{k+1}} \times \cdots \times  W_{a_{k'-1},a_{k'}}$.
 
 
 
@@ -157,7 +155,7 @@ In this paper, we consider $L^{\infty}$ norm the max value of distance of each d
 
 \section{Value Abstraction for DNN verification}
 
-In this section, we describe different value (over)-abstractions that are used by efficient algorithms to certify the networks. Although the analysis can be approximated, the over-abstraction ensures that all behavior in the original network are possible in the overabstraction, and thus if the over abstraction is safe, then so will be the original network.
+In this section, we describe different value (over-)abstractions that are used by efficient algorithms to certify the networks. Over-abstractions ensure that all values in the original network are possible in the over-abstraction, and thus if we prove safety in the over-abstraction, then we will have a proof of safety for the original image.
 
 \subsection{Box and DeepPoly Abstraction}
 
