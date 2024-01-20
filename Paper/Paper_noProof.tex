@@ -947,7 +947,7 @@ We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s,
 \end{figure}
 \vspace{-0.4cm}
 
-Last, we display the average runtime per number of nodes of both fast adaptive and fast fixed compensation, for the different DNNs considered. The time per node is not constant, but it is still controlled and does not show an exponential blow-up, from 0.1s per node for the smallest DNN to 0.3s per node for the biggest DNN. This indicates that Compensate($K$) can be run on larger DNNs without hitting the same complexity wall as pure BaB.
+Last, we display the average runtime per number of nodes of both fast adaptive and fast fixed compensation, for the different DNNs considered. The runtime per node is not constant (due to $\LP(N,K)$), but it is still controlled and does not show an exponential blow-up, from 0.1s per node for the smallest DNN to 0.3s per node for the biggest DNN. This indicates that Compensate($K$) can be run on larger DNNs without hitting the same complexity wall as pure BaB.
 
 
 \section{Limitations and Discussion}
