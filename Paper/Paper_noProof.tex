@@ -972,14 +972,13 @@ On the correlation between neurons, which PRIMA encodes explicitly, our results 
 
 
 
-
+\vspace{-0.2cm}
 \section{Conclusion}
+\vspace{-0.2cm}
 
-In this paper, we presented the notion of compensating pairs of paths, with rationale why such a phenomenon creates inaccuracies hard to handle when verifying DNNs. We proved that this phenomenon is actually explaining entirely the inaccuracies, as in their absence, even very simple arithmetic algebra suffices to verify accurately DNNs. We verified that DNNs harder to verify indeed exhibits more paths with larger compensating strength. 
+In this paper, we introduced the notion of {\em compensating pairs of paths}, with rationale why such a phenomenon creates inaccuracies hard to handle when verifying DNNs. We proved that this phenomenon is actually explaining entirely the inaccuracies, as in their absence, even very simple Box abstraction (interval arithmetic) suffices to verify accurately DNNs. We verified experimentally that DNNs learnt in a natural way, harder to verify than robustly trained DNNs, indeed exhibits paths with larger compensating strength. 
 
-Based on this idea of compensating path, we proposed a novel efficient algorithm considering a subset $Z$ of the set of unstable ReLU nodes, that we proved to be fully accurate if all the compensating paths are covered. We experimentally tested that choosing $Z$ covering the paths with the strongest compensation result to very good accuracy, and runtime which can be favourable in some (but not all) cases. 
-This proves that compensating strength is a promising novel concept which should be further studied to 
-improve DNN verification. We finally proposed several ways to use the compensating strength to optimize the tools even more than they are, and leave that as future work.
+Based on this idea of compensating pairs of paths, we proposed abstraction $\MILP_{Z}$ considering a subset $Z$ of the set of unstable ReLU nodes, that we proved to be fully accurate if {\em all} the compensating paths are covered by $Z$. Last, we experimentally showed that choosing $Z$ covering {\em few} paths with the strongest compensations, results in very good accuracy, and runtime which can be favourable in some (but not all) cases. This proves that compensating strength is a promising novel concept which should be further studied to improve DNN verification. We finally proposed several ways to use the compensating strength to optimize current tools in different directions, and leave that as future work.
 
 \newpage
 
