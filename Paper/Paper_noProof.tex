@@ -474,7 +474,7 @@ If there is no compensating path in the DNN, then any method/approximation at le
 	2 / 4  &  0.0267 & 0.00785 & 3.40x \\ \hline
 	3 / 5  &  0.0253 & 0.00804  & 3.18x \\ \hline
 \end{tabular}
-\caption{Comparison of the average compensation strength over all the pairs of nodes of layer source/target between a Network Naturally trained and a Network Robustly trained with the same architecture and the same training set.}
+\caption{Comparison of the average compensation strength over all the pairs of nodes of layer source/target between a DNN naturally-trained and a DNN robustly-trained using DiffAI \cite{DiffAI} with the same architecture and training set.}
 \label{tab:compensation}
 \end{table}
 
@@ -489,10 +489,10 @@ The sketch of proof can be found in Section \ref{sec.proofs}.
 Notice that standard DeepPoly does not satisfies Theorem \ref{th1} (it does not necessarily refine Box), and therefore we are not sure PRIMA or $\beta$-CROWN that refine DeepPoly satisfies Theorem \ref{th1}, though it would be easy to fix by using $\overline{\text{DeepPoly}}$. Anyway, in practice, it is very unlikely to have a network without any compensating path, it is more of a theoretical results show in that compensation is the reason for inaccuracy.
 
 This result has a first interesting application: explain why some DNNs are intrinsically easier to verify than others. This is the case for DNNs trained adversarially to be robust, vs same architecture, but trained in a "natural" way \cite{deeppoly,prima,crown}. Indeed, compensating pairs is a purely structural property on the DNN learnt, rather than more semantical notions, such as the number of unstable ReLUs, which depends heavily upon the image considered and the algorithm used. We compare compensations with source and target separated by 1 ReLU layer, e.g. source in layer 0 and target in layer 2, for two Networks with 5 hidden layers of 100 nodes each from the ERAN GitHub repository, one trained naturally ("$6\times100$"), 
-and one trained using DiffAI ("$5\times100$"). 
+and one trained using DiffAI \cite{DiffAI} ("$5\times100$"). 
 We report in Table \ref{tab:compensation} the average compensation strength, i.e. 
 the average of $max_{\pi,\pi'} min(|weight(\pi')|,|weight(\pi')|)$
-over all source/target states in given layers. The average compensations strength are much lower in the Robust DNN than in the Natural DNN, and indeed the Robust DNN is much simpler to verify than the Natural DNN (e.g. DeepPoly is more accurate and verifies more images).
+over all source/target states in given layers. The average compensations strength are much lower in the Robust DNN than in the natural DNN, and indeed the Robust DNN is much simpler to verify than the natural DNN (e.g. DeepPoly is more accurate and verifies more images).
 
 
 \subsection{MILP$_{X_n}$}
@@ -763,7 +763,7 @@ The local robustness verification is performed on DNNs trained for the MNIST ima
 
 \subsection{Choosing nodes based on Compensation strength}
 
-The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes, to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
+The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes (similar to MIPplanet \cite{MIPplanet}),  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
 
 To measure the accuracy, we measure the uncertainty of all nodes in a layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
@@ -855,7 +855,7 @@ In terms of efficient verifiers we compare with, we report:
 	\item ($\alpha$)$\beta$-CROWN, with results as reported in \cite{crown}, as it is the most accurate of the efficient tool to date. Its main idea is to implement a very efficient Branch and Bound (BaB) verification tool, subsuming \cite{BaB}, and heavily using GPU implementation (while we do not). Performance of pure BaB on these hard DNNs is however impaired by the large number of branchs to consider. Similarly as PRIMA, $\beta$-CROWN resorts to refining the bounds of the first few layers using an exact MILP encoding, also computing 16 nodes in parallel, before running their BaB tool. 
 	\item We also experimented with the latest versions of $\alpha$-$\beta$-CROWN (October 2023) and PRIMA (2022) on MLP $6 \times 500$ (results not reported in \cite{crown,prima}).
 	\item We do not report results from kPoly \cite{kpoly}, OptC2V \cite{optC2V}, 
-	SDPFO \cite{SDPFI} which do not present favorable trade offs compared with $\beta$-CROWN. Results can be found in \cite{crown} and are performed in the same conditions so can be compared.
+	SDPFO \cite{SDPFI}, MIPplanet \cite{MIPplanet} which do not present favorable trade offs compared with $\beta$-CROWN. Results can be found in \cite{crown} and are performed in the same conditions so can be compared.
 	\item Finally, we run several version of Compensate($K$) ({\color{blue} Comp} in Table \ref{tab:example}). First, we have a fixed choice for $K$ ($K=60$ for fast and $K=200$ for slow), with a fall back to a lower $K$ ($K=50$ for fast and $K=60$ for slow) if the bounds found is too far from the solution found (MIPGap $>0.5$ in Gurobi). We run (our implementation of) DeepPoly first, then the fast version, before running slow on the remaining images.
 	Further, we also experiment with an {\em adaptative} implementation, which lowers number $K$ adaptively between layers to adapt to the growing number $N$ of linear variables, which has an impact on the overall $\MILP(N,K)$ runtime. This is particularly useful for deeper network where $N$ is very different between the first and the last layer. Again, we run first an aggressive version of fast, before going to a more conservative slow version to treat the remaining images. All versions compute bounds for 20 neurons of the same layer in parallel, no GPU used.
 \end{itemize}
