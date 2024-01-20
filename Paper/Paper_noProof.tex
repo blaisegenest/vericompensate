@@ -320,14 +320,14 @@ We prove now that the LP abstraction is strictly more accurate than the DeepPoly
 \begin{proof}
 Obviously, the 2 lower bound constraints are the same in 1) and 2).
 
-It remains to prove that the 2 upper bound constraints of 1) LP corresponds to the 2) DeepPoly linear upper bound. For that, we study the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ in 1) is uppered bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. 
+It remains to prove that the 2 upper bound constraints of 1) LP corresponds to the 2) DeepPoly linear upper bound. For that, we study the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ in 1) is upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. 
 The function $min(\beta \cdot a, x - \alpha (1-a))$ reaches its maximum for 
 $\beta \cdot a = x - \alpha (1-a)$, that is 
 $(\beta - \alpha) a = x - \alpha$, i.e. 
 $$ a = \frac{x - \alpha}{\beta-\alpha}$$
 
 It thus gives an upper bound at 
-$\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$, which is exactly the function used in DeepPoly.
+$\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$, which is exactly the upper-bound function used in DeepPoly.
 \hfill $\square$
 \end{proof}
 
@@ -748,8 +748,8 @@ In our experiments, we have not used PGD-attack to exclude some images. In princ
 Our experimental evaluations have 3 goals:
 \begin{enumerate}
   \item Evaluate experimentally how the choice of the set $Z$ impacts the accuracy of $\MILP_Z$, and compare different choices for $K$ the size of $Z$,
-  \item Evaluate on benchmarks the percentage of certification that can be obtained
- using the compensation idea, and compare with competing efficient tools,
+  \item Evaluate on benchmarks the percentage of images that can be verified
+ using compensating strength, and compare with other value abstraction verifiers,
   \item Evaluate how the runtime of compensate($K$) scale with the size of DNNs.
 \end{enumerate}
 
@@ -822,7 +822,7 @@ and the associated $comp(b)$, and select iteratively nodes $b$ (first layer) or 
 We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly from layers $1$ and $2$. 
 We compare choosing nodes in the second layer only with choosing nodes in both the first and second layer.
 Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
-also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the inaccuracy by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. Last, it is likely that selecting ReLU nodes in 1,2,3 layers earlier (for nodes in layer $4+$) could further improve the accuracy, but the computational trade-off to evaluate the compensating strenght of such paths is unclear and we thus did not experiment. 
+also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the inaccuracy by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. Last, it is likely that selecting ReLU nodes in 1,2,3 layers earlier (for nodes in layer $4+$) could further improve the accuracy, but the computational trade-off to evaluate the compensating strength of such paths is unclear and we thus did not experiment. 
 
 \begin{table}[t!]	
 	\centering
@@ -843,7 +843,7 @@ also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosi
 %\vspace{-0.8cm}
 \end{table}
 
-\subsection{Comparison to efficient Verifiers}
+\subsection{Comparison with value-abstraction Verifiers}
 
 
 In terms of efficient verifiers we compare with, we report:
@@ -852,7 +852,7 @@ In terms of efficient verifiers we compare with, we report:
 	\item PRIMA, with results reported in \cite{prima} and \cite{crown}, as it is the closest in practice with our algorithm, computing accurate bounds for all neurons (as we do), although with a different technique: they focus on explicit correlations between neurons, while we consider the correlations indirectly through a better network abstraction. They use GPU while we do not. When computing the whole correlated space, 
 	parallelization is difficult.
 	Notice that on these MLP networks, PRIMA resort to refined bounds on the first few layers (3 or 4) using exact MILP encoding of all the nodes (which is easily parallelized - 16 nodes considered in parallel in PRIMA). This is doable on the first few layers as the number of integer variable is not too large. By comparison, we run MILP on all the layers, but with a bounded number of integer variables to control the runtime and to scale to all the layers.
-	\item ($\alpha$)$\beta$-CROWN, with results as reported in \cite{crown}, as it is the most accurate of the efficient tool to date. Its main idea is to implement a very efficient Branch and Bound (BaB) verification tool, subsuming \cite{BaB}, and heavily using GPU implementation (while we do not). Performance of pure BaB on these hard DNNs is however impaired by the large number of branchs to consider. Similarly as PRIMA, $\beta$-CROWN resorts to refining the bounds of the first few layers using an exact MILP encoding, also computing 16 nodes in parallel, before running their BaB tool. 
+	\item ($\alpha$)$\beta$-CROWN, with results as reported in \cite{crown}, as it is the most accurate of the efficient tool to date. Its main idea is to implement a very efficient Branch and Bound (BaB) verification tool, subsuming BaBSR \cite{BaB}, and heavily using GPU implementation (while we do not). Performance of pure BaB on these hard DNNs is however impaired by the large number of branchs to consider. Similarly as PRIMA, $\beta$-CROWN resorts to refining the bounds of the first few layers using an exact MILP encoding, also computing 16 nodes in parallel, before running their BaB tool. 
 	\item We also experimented with the latest versions of $\alpha$-$\beta$-CROWN (October 2023) and PRIMA (2022) on MLP $6 \times 500$ (results not reported in \cite{crown,prima}).
 	\item We do not report results from kPoly \cite{kpoly}, OptC2V \cite{optC2V}, 
 	SDPFO \cite{SDPFI}, MIPplanet \cite{MIPplanet} which do not present favorable trade offs compared with $\beta$-CROWN. Results can be found in \cite{crown} and are performed in the same conditions so can be compared.
