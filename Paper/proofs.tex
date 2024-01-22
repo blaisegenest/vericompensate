@@ -664,6 +664,29 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			
 			From Lemma \ref{lem:main}, we already have that for the unique output node $z$, $$\UB(z)=\max(z).$$ This finish the proof of Theorem \ref{thm:2} and hence Theorem \ref{th2}.
 			
+			
+			\subsubsection*{From weak to compensating}
+			
+			Now, we show Theorem \ref{thm:2} can prove Theorem \ref{th2}. Suppose $a$ is a node in a weak compensating path $P$, and $P,P'$ is a compensating pair.
+			
+			Cut $P,P'$ into segments $P_0,P_1,\cdots$, and $P'_0,P'_1,\cdots$ at each common node; hence each $P_i,P_i'$ have not common nodes, or are the same. Now, for node $a$, there are there cases:
+			\begin{itemize}
+				\item $a$ is a common nodes.
+				
+				\item  $a$ is a in path $P_i$ such that weights of $P_i,P_i'$ have the same sign.
+				
+				\item  $a$ is a in path $P_i$ such that weights of $P_i,P_i'$ have the different sign.
+			\end{itemize}
+			
+			In the last case, $a$ is in a compensating path (the difference is that this path is not from the input to output), and will be open. So we focus on the first and second case.
+			
+			For the second case, if we replace $P'$ with $P''=P'_0,\cdots,P'_{i-1},P_{i},P'_{i+1},\cdots$, then $P,P''$ is a weak compensating pair that $a$ is a common nodes. So we only need to consider case 1.
+			
+			Therefore, choose a path $Q$ from input to output with nonzero weight that disjoint from $P,P''$. Now, since weights of $P,P''$ have different signs, and $a$ is in both paths, whatever the weight of $Q$ is, $Q$ and one of  $P$ or $P''$ can form a compensating pair (not weak compensating pair anymore, because $Q$ is disjoint with $P,P''$), and $a$ is in a path. This means $a$ will be open.
+			
+			Combining all discussion above, if $a$ is in a weak compensating path from input to output, then it is in a compensating path from one layer to another layer. Therefore, Theorem \ref{thm:2} implies Theorem \ref{th2}. This is what we want to show.
+			
+ 			
 			%\begin{lemma}
 			%	For the $i$-th layer $l^i$ ($1$-th layer is the first hidden layer), for a node $c\in l^i$, if $c\notin B_{zero}$ and $S(c)=1$, then:
 			%	
