@@ -323,8 +323,7 @@ It remains to prove that the 2 upper bound constraints of 1) LP corresponds to t
 The function $min(\beta \cdot a, x - \alpha (1-a))$ reaches its maximum for 
 $\beta \cdot a = x - \alpha (1-a)$, that is 
 $(\beta - \alpha) a = x - \alpha$, i.e. 
-$$ a = \frac{x - \alpha}{\beta-\alpha}$$
-
+$ a = \frac{x - \alpha}{\beta-\alpha}$.
 It thus gives an upper bound at 
 $\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$, which is exactly the upper-bound function used in DeepPoly.
 \hfill $\square$
@@ -762,7 +761,7 @@ The local robustness verification is performed on DNNs trained for the MNIST ima
 
 \subsection{Choosing nodes based on Compensation strength}
 
-The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes (similar to MIPplanet \cite{MIPplanet}),  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
+The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes,  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
 
 To measure the accuracy, we measure the uncertainty of all nodes in a layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 

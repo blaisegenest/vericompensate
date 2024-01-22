@@ -32,7 +32,9 @@ This paper does not focus on producing the most efficient tool, and we did not s
 
 \smallskip
 
-\noindent {\bf Comparison with related work:} Here, we will compare with several (but not all) main verification tools for DNNs, to better explain our methodology and how it differs with the existing SOTA. Compared with the exact encoding of a DNN using MILP \cite{MILP}, our algorithm can be seen as a way to help the MILP tool by telling it to not spend time to branch on ReLU nodes which have low impact on the particular node we are treating, at the cost of a small inaccuracy. If the ReLU nodes to abstract are chosen accurately, the result should be more accurate than early stopping the MILP algorithm using all the nodes.
+\noindent {\bf Comparison with related work:} we compare with several (but not all) main verification tools for DNNs, to better explain our methodology and how it differs with the existing SOTA. Compared with the exact encoding of a DNN using MILP \cite{MILP}, 
+we select a restricted number of ReLU nodes based on compensating strength to scale to larger DNNs while maintaining good accuracy. Further, compared to MIPplanet \cite{MIPplanet} which 
+uses a different selection of ReLU nodes, we compute bounds for all neurons iteratively, reducing drastically the number of ReLU nodes represented exactly for a given neuron (ReLU nodes which were considered for neurons in previous layers are not represented exactly for that neuron, while MIPplanet would need to represent all those ReLU nodes exactly), using many fast computations, more efficient than one large computation.
 
 Compared with the linear relaxation of the MILP encoding \cite{MILP}, our algorithm is strictly more accurate by design, but it will also be slower.
 
