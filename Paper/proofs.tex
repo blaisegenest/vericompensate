@@ -375,30 +375,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 				This is by the definition of MILP formulation and $\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}, \LB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}$. \qed
 			\end{proof}
 			
-			%\begin{lemma}\label{lem:pure_node}
-			%	For a node $c\in B_{pure}$, $\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}$ (and $\LB$ the same) only depends on $\boldsymbol{x}^0_I$.
-			%\end{lemma}
-			%
-			%\begin{proof}
-			%	We prove this lemma by induction. For the first hidden layer, this is trivial.
-			%	
-			%	Suppose for layer up to $l_i$, this lemma is true, we show it for layer $l_{i+1}$. For a node $c$ in layer $l^{i+1}$, we have that: \begin{align*}
-				%		\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c) \leq B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b))\\
-				%		 + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b))\\
-				%		 +\sum_{b\in B_{zero}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
-				%	\end{align*} Here, $\B$ means one of $\UB$ or $\LB$ depending on the weight/coefficient.
-			%	
-			%	
-			%	But since $c\in B_{pure}$, for any $b\in B_{open}$, we must have $W_{b,c}=0$. And similarly, for any $b\in B_{zero}$, $W_{bc}=0$. Therefore, we will have:
-			%	
-			%	\begin{align*}
-				%		\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c) \leq B_c + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
-				%	\end{align*} By induction, for any $b\in B_{pure}\cap l^i$, it only depends on $\boldsymbol{x}^0_I$.  Therefore, we will have:
-			%	
-			%	\begin{align*}
-				%		\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c) = B_c + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(B_{\boldsymbol{x}^0_I}(b)).
-				%	\end{align*} So, $UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(c)$ only depends on $\boldsymbol{x}_I^0$.
-			%\end{proof}
+	
 			
 			
 			We want to show that $\mathrm{UB}(z) = \max (z)$ and $\mathrm{LB}(z) = \min (z)$ for the unique output nodes. In fact, we will prove this for all $c\notin B_{zero}$ . As the MILP abstraction is a sound over-approximation, 
@@ -456,9 +433,9 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			
 			\subsubsection*{From weak to compensating}
 			
-			Now, we show that Theorem \ref{thm:2} can prove Theorem \ref{th2}. Suppose $a$ is a node in a weak compensating path $P$, and $P,P'$ is a compensating pair.
+			Now, we show that Theorem \ref{thm:2} can prove Theorem \ref{th2}. Suppose $a$ is a node in a weak compensating path $P$, and $P,P'$ form this weak compensating pair.
 			
-			Cut $P,P'$ into segments $P_0,P_1,\cdots$, and $P'_0,P'_1,\cdots$ at each common node; hence each $P_i,P_i'$ have not common nodes, or are the same. Now, for node $a$, there are there cases:
+			Cut $P,P'$ into segments $P_0,P_1,\cdots$, and $P'_0,P'_1,\cdots$ at each common node; hence each $P_i,P_i'$ either have not common nodes (except the start and end nodes), or are the same. Now, for node $a$, there are three cases:
 			\begin{itemize}
 				\item $a$ is a common nodes.
 				
@@ -467,71 +444,13 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 				\item  $a$ is a in path $P_i$ such that weights of $P_i,P_i'$ have the different sign.
 			\end{itemize}
 			
-			In the last case, $a$ is in a compensating path (the difference is that this path is not from the input to output), and will be open. So we focus on the first and second case.
+			In the last case, $a$ is in a compensating path (the difference is that this path is not from the input to output), and will be opened. So we focus on the first and second case.
 			
 			For the second case, if we replace $P'$ with $P''=P'_0,\cdots,P'_{i-1},P_{i},P'_{i+1},\cdots$, then $P,P''$ is a weak compensating pair that $a$ is a common nodes. So we only need to consider case 1.
 			
-			Therefore, choose a path $Q$ from input to output with nonzero weight that disjoint from $P,P''$. Now, since weights of $P,P''$ have different signs, and $a$ is in both paths, whatever the weight of $Q$ is, $Q$ and one of  $P$ or $P''$ can form a compensating pair (not weak compensating pair anymore, because $Q$ is disjoint with $P,P''$), and $a$ is in a path. This means $a$ will be open.
+			Therefore, choose a path $Q$ from input to output with nonzero weight and disjoint from $P,P''$. Now, since weights of $P,P''$ have different signs, and $a$ is in both paths, whatever the weight of $Q$ is, $Q$ and one of  $P$ or $P''$ can form a compensating pair (not weak compensating pair anymore, because $Q$ is disjoint with $P,P''$), and $a$ is in a path. This means $a$ will be opened.
 			
 			Combining all discussion above, if $a$ is in a weak compensating path from input to output, then it is in a compensating path from one layer to another layer. Therefore, Theorem \ref{thm:2} implies Theorem \ref{th2}. This is what we want to show.
 			
  			
-			%\begin{lemma}
-			%	For the $i$-th layer $l^i$ ($1$-th layer is the first hidden layer), for a node $c\in l^i$, if $c\notin B_{zero}$ and $S(c)=1$, then:
-			%	
-			%	 1. if , then for any fixed $\boldsymbol{x}^0_J$, $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)=\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)= \Val(\boldsymbol{x}^*_I,\boldsymbol{x}^0_J)(c) = \max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$, where $\boldsymbol{x}^*_I$ is described in previous section. More important, when $\boldsymbol{x}_I=\boldsymbol{x}^*_I$, for all node $c$ in the same layer, the approximation of $c$ is a constant number rather than an interval, and it is equal to $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$ or $\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$.
-			%	
-			%The similar is true for lower bound $\LB$.
-			%\end{lemma}
-			
-			
-			
-			%\vspace*{20ex}
-			%\begin{proof}
-			%	
-			%	For $i= 1$, we have proved in previous section.
-			%	
-			%	Suppose we have proved this lemma up to layer $i$, and we are going to prove it for $i+1$-th layer. Let $c\notin B_{zero}$ be a node on $i+1$-th layer.
-			%	
-			%	By definition, we have that for any input vector $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$:
-			%	
-			%	\begin{align*}
-				%		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)).
-				%	\end{align*} where $\mathrm{AppB}$ is the same as in previous section  whose definition is independent with $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$. $\B$ is one of $\UB,\LB$  that, if $W_{b,c}>0$, then $\B$ is $\UB$ and otherwise $\B$ is $\LB$.
-			%	
-			%	We can simplify above equation to \begin{align*}
-				%			\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I}(b)).
-				%	\end{align*}
-			%	
-			%	By induction hypothesis, since both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions, we have that \begin{align*}
-				%		\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq 
-				%		 &B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge W_{b,c}\neq 0} W_{b,c} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
-				%		= & \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c) \\
-				%	\end{align*} The equal is because by induction hypothesis, when $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, the approximation is a constant and is equal to $\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$.
-			%	
-			%Now, since when $x$ reaches the max or min of $\mathrm{AppB}$'s domain, $\mathrm{AppB}(x)=\ReLU(x)$, and by induction hypothesis, for any $b\in B_{pure}\cap l_i$, $\mathrm{AppB}(B_{\boldsymbol{x}^*_I}(b))=\ReLU(B_{\boldsymbol{x}^*_I})$. Hence, by induction hypothesis, we will have \begin{align*}
-				%	\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq & \ \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c) \\
-				%	= &B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}\wedge W_{b,c}\neq 0} W_{b,c} \mathrm{AppB}(B_{\boldsymbol{x}^*_I}(b))\\
-				%	= &B_c + \sum_{b\in B_{open}\cap l_i} W_{b,c}\ReLU(weight_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{b,c} \mathrm{ReLU}(weight_{\boldsymbol{x}^*_I}(b))\\
-				%	= & \Val_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c).
-				%\end{align*} This finishes the proof.
-				%	\end{proof}
-			%
-			%
-			%Now, we have that for any fixed $\boldsymbol{x}^0_J$, $\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)= \max_{\boldsymbol{x}_I} \Val(\boldsymbol{x}_I,\boldsymbol{x}^0_J)(c)$. Therefore, $\max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \UB_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c)= \max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \Val(\boldsymbol{x}_I,\boldsymbol{x}_J)(c)$ and this is to say $\UB(c)=\max(c)$. This is what we want to show, and the same result holds for lower bound and minimal value.
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+		
