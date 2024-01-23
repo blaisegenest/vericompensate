@@ -401,8 +401,8 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			%\end{proof}
 			
 			
-			We want to show that $\mathrm{UB}(z) = \max (z)$ and $\mathrm{LB}(z) = \min (z)$ for the unique output nodes, and we will prove this for all $c\notin B_{zero}$ . As the MILP abstraction is a sound over-approximation, 
-			it suffices to show that $\mathrm{UB}\leq \max (c)$ and $\mathrm{LB} \geq \min (c)$. We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemmas:
+			We want to show that $\mathrm{UB}(z) = \max (z)$ and $\mathrm{LB}(z) = \min (z)$ for the unique output nodes. In fact, we will prove this for all $c\notin B_{zero}$ . As the MILP abstraction is a sound over-approximation, 
+			it suffices to show that $\mathrm{UB}(c)\leq \max (c)$ and $\mathrm{LB}(c) \geq \min (c)$. We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemmas:
 			
 			
 			\begin{lemma} \label{lem:main}
