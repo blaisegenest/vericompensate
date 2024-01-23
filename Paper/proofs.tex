@@ -175,11 +175,11 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 	\subsubsection*{From weak to normal}
 	
 	\begin{lemma}
-		If a DNN has no compensating pair, then it also does not have weak compensating pair.
+		If a DNN has no compensating pair, then it also does not have weak compensating pair from an input node to the output node.
 	\end{lemma}
 	
 	\begin{proof}
-		If it has a weak compensating pair of two path, $P_1,P_2$, then there exists a segment in two paths starting from the same node and end with the same node, but the weight along two segment have different signs. And this will also be a compensating pair. \qed
+		If it has a weak compensating pair of two paths, $P_1,P_2$, then there exists a segment in two paths starting from the same node and end with the same node, but the weight along two segment have different signs. And this will also be a compensating pair. \qed
 	\end{proof}
 	
 	This finishes the proof for compensating pair rather than weak version.
@@ -190,14 +190,14 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			
 			\section{Proof of Theorem \ref{th2}}
 			
-			In this section, we will prove theorem \ref{th2}. We will prove it by proving the following theorem:
+			In this section, we will prove theorem \ref{th2}. We will prove it by proving the following weak theorem:
 			
 			\begin{theorem} \label{thm:2}
 				
 				
-				Suppose $\mathcal{N}$ is a DNN with $\ReLU$ as the unique activation functions and with a unique output node $z$.
+				Suppose $\mathcal{D}$ is a DNN with $\ReLU$ as the unique activation functions and with a unique output node $z$.
 				
-				Using MILP, if every nodes $b$ in any compensating pair
+				Using MILP, if every nodes $b$ in any weak compensating pair
 				$(\pi,\pi')$ (except the start node and end node) is encoded as a binary/integer variable (opened), then the upper and lower 
 				bounds computed by MILP are the exact maximal and minimal value of $z$.
 			\end{theorem}
@@ -218,7 +218,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 						
 					\end{enumerate}
 					That is, $a_k$ is not a source of a weak compensating pair. 	We write $A_{pure}$ by $I$ for short.
-					\item $a_k \in A_{open}$ if $a_k \notin A_{pure}$, that is there exists two paths $\pi,\pi'$ from $k$, 
+					\item $a_k \in A_{open}$ if $a_k \notin A_{pure}$, that is there exists two paths $\pi,\pi'$ from $a_k$, 
 					one with positive and one with negative weight. 	We write $A_{open}$ by $J$ for short.
 				\end{itemize}
 			\end{definition} 
@@ -226,7 +226,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			
 			
 			\begin{lemma} \label{lem:open_node_2}
-				A node $b$ in the hidden layer will not be in a weak compensating path if and only if one of the following two happens:
+				A node $b$ in a hidden layer will not be in a weak compensating path if and only if one of the following happens:
 				\begin{enumerate}
 					\item Any path from $b$ to the output node $z$ has a weight $0$, and we use $weight({bz})=0$ to denote this case, or
 					\item For every input node $a_j\in J$, every path from $a_j$ to $b$ has a weight of $0$. We use $weight({a_jb})=0$ to denote this case.
@@ -234,7 +234,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 				
 			\end{lemma}
 			
-			We denote $B_{zero}$ the set of such nodes $b$ that case 1 holds, and denote $B_{pure}$ the of such nodes $b$ that case 2 holds but case 1 does not hold.	We denote $B_{open}$ the set of all nodes $b$ in a compensating path.
+			We denote $B_{zero}$ the set of such nodes $b$ that case 1 holds, and denote $B_{pure}$ the of such nodes $b$ that case 2 holds but case 1 does not hold.	We denote $B_{open}$ the set of all nodes $b$ in a weak compensating path.
 			
 			\begin{proof}
 				First, we show that if one of case 1, 2 happens, then $b$ will not be on a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $weight({a_j,b})=0$ implies weight$(\pi)=0$.
@@ -248,7 +248,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			\end{proof}
 			
 			\begin{lemma}\label{lem:subnetwork}
-				$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only depends on nodes in $B_{pure}\cup I$ backward: if $b$ is connected to $c$ and $c$ is in $B_{pure}\cup I$ but $b$ is not, then $W_{bc}=0$. We call this sub-network $D_I$. In $D_I$, there is no compensating pair.
+				$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only depends on nodes in $B_{pure}\cup I$ backward. That is to say, if $b$ is connected to $c$ and $c$ is in $B_{pure}\cup I$ but $b$ is not, then $W_{bc}=0$. We call this sub-network $D_I$. In $D_I$, there is no compensating pair.
 			\end{lemma}
 			
 			\begin{proof}
@@ -263,7 +263,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			
 			
 			
-			Recall the sign function of nodes from Definition \ref{sign_of_nodes}. Because now we allow compensating paths, the sign function is no longer total (no longer defined on all nodes).
+			Recall the sign function of nodes from Definition \ref{sign_of_nodes}. Because now we allow weak compensating paths, the sign function is no longer defined on all nodes.
 			
 			
 			
@@ -290,7 +290,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			Therefore, for any node $b$  that $S$ is undefined on $b$, it only depends on input nodes in $J$.  
 			
 			\begin{lemma}
-				If $c$ is in the next layer after $b$, $S(c)\neq 0, S(b)$ are both defined, and $W_{bc}\neq 0$, then $W_{bc}S(c)=S(b)$.
+				If $c$ is in the next layer after $b$, $S(c)\neq 0, S(b)$ are both defined, and $W_{bc}\neq 0$, then $Sign(W_{bc})S(c)=S(b)$.
 			\end{lemma}
 			
 			\begin{proof}
