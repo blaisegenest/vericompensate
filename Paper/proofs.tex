@@ -1,27 +1,32 @@
-	\section{Proof of Theorem \ref{th1}}	
-
-Before the proof of two theorems, we will prove a weaker version, that is, consider not only compensating pairs, but also pairs that allows common nodes (the two paths in a compensating pairs cannot have a common nodes). We may call such pair a weak compensating pair.
-
+\section*{Appendix}
+As a first step to prove Theorems \ref{th1},\ref{th2}, 
+we will relax the compensating pairs notion to allows pairs of paths having nodes in common.
+Such a pair is called a {\em weak compensating pair}.
+We will then in a second step prove Theorems \ref{th1},\ref{th2} for the full definition of compensating pairs of paths.
 
 First, notice that if $\Val_{\vx}(b)$ is maximal (resp. minimal), 
 then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal). 
-
-For convenience, when we discuss about the maximal or minimal values for nodes $n$ in a network without risk of confusing, we will write $\max(n),\min(n)$ directly, which means $\max(\Val(n))$, $\min(\Val(n))$ or $\max_{\vx}(\Val_{\vx}(n)),\min_{\vx}(\Val_{\vx}(n))$.
+For convenience, when we discuss about the maximal or minimal values for nodes $n$ in a network without risk of confusing, 
+we will write $\max(n)$ to denote $\max(\Val_{\vx}(n))$, and $\min(n)$ to denote $\min(\Val_{\vx}(n))$.
 
 
 The following definition is the most important concept in this proof.
 
 \begin{definition}[Sign of Node]\label{sign_of_nodes}
-	We define the partial sign function $S$ on neurons $n$: 	
+	We define the partial sign function $S$ on node $n$: 	
 	\begin{enumerate}
-		\item $S(n)=0$ if all path from $n$ to $z$ have 0 weight; 
+		\item $S(n)=0$ if all path from $n$ to $z$ have weight $0$; 
 		\item $S(n)=1$ if all path from $n$ to $z$ have non-negative weight, and at least one path has a positive weight; 
 		\item $S(n)=-1$ if all path from $n$ to $z$ have non-positive weight, and at least one path has a negative weight. 
 	\end{enumerate}
 \end{definition}
 
-In general, $S$ may not be defined on every node (e.g. if there is a negative and a positive path from $a$ to $c$). However, if there is no compensating pair, $S$ is defined on all nodes: any node fulfills one of above cases (1),(2),(3).
-For instance, for an input node $a_i$ of any 3 layer DNN:
+In general, $S$ may not be defined on every node 
+(e.g. if there is a negative and a positive path from $a$ to $c$). 
+However, if there is no compensating pair of paths, 
+$S$ is defined on all nodes: any node fulfills one of above cases (1),(2),(3).
+
+For instance for any 3 layer DNN: for an input node $a_i$:
 \begin{enumerate}
 	\item  $S(a_i)=0$ if 
 	for all $b_j, W_{a_i b_j}\cdot W_{b_j c} = 0$
@@ -36,6 +41,14 @@ For instance, for an input node $a_i$ of any 3 layer DNN:
 
 For $b_j$ in the hidden layer, we have $S(b_j)=1,-1,0$ if $W_{b_j c}$ is positive, negative, or 0 respectively. Finally, for the output node $z$, we define $S(z)=1$.
 
+
+
+
+
+\section{Proof of Theorem \ref{th1}}	
+
+
+Assume that there is a no (weakly) compensating pair of paths.
 
 
 \begin{lemma}[Sign]
