@@ -6,7 +6,7 @@ Before the proof of two theorems, we will prove a weaker version, that is, consi
 First, notice that if $\Val_{\vx}(b)$ is maximal (resp. minimal), 
 then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal). 
 
-For convenience, when we discuss about the maximal or minimal values for nodes $n$ in a network, we write $\max(n),\min(n)$ directly, instead of $\max(\Val(n))$, $\min(\Val(n))$ or $\max_{\vx}(\Val_{\vx}(n)),\min_{\vx}(\Val_{\vx}(n))$.
+For convenience, when we discuss about the maximal or minimal values for nodes $n$ in a network without risk of confusing, we will write $\max(n),\min(n)$ directly, which means $\max(\Val(n))$, $\min(\Val(n))$ or $\max_{\vx}(\Val_{\vx}(n)),\min_{\vx}(\Val_{\vx}(n))$.
 
 
 The following definition is the most important concept in this proof.
@@ -348,7 +348,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			
 			
 			\begin{lemma}
-				In the standard framework, both $D_I$ and $D_J$ are accurate in the sense that for any $b$ in $D_I$ or $D_J$, $\UB(b)=\max\Val(b)$ and $\LB(b)=\min\Val(b)$.
+				In the standard $MILP$ framework, both $D_I$ and $D_J$ are accurate in the sense that for any $b$ in $D_I$ or $D_J$, $\UB(b)=\max(b)$ and $\LB(b)=\min(b)$.
 			\end{lemma}
 			
 			\begin{proof}
