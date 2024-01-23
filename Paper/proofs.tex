@@ -419,7 +419,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			\end{lemma}
 			
 			\begin{proof}
-				We prove this lemma by induction on layers. For first hidden layer $l_1$, it is obvious. Suppose we have proved part 1,2,3 up to layer $l_i$, then for layer $l_{i+1}$, suppose $c$ is a node in this layer. 
+				We prove this lemma by induction on layers. For first hidden layer $L_1$, it is obvious. Suppose we have proved part 1,2,3 up to layer $L_i$, then for layer $L_{i+1}$, suppose $c$ is a node in this layer. 
 				
 				(1)	If $S(c)$ is undefined, then by previous discussion, $c$ is in a sub-network from $J$ with all nodes opened; and if $\boldsymbol{x}_J=\boldsymbol{x}_J^0$ is fixed, then in the MILP model, the value for $c$ is also fixed. 
 				
@@ -451,7 +451,7 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 
 			\end{proof}
 			
-			From Lemma \ref{lem:main}, we already have that for the unique output node $z$, $$\UB(z)=\max(z).$$ This finish the proof of Theorem \ref{thm:2} and hence Theorem \ref{th2}.
+			From Lemma \ref{lem:main}, we already have that for the unique output node $z$, $$\UB(z)=\max(z).$$ This finish the proof of Theorem \ref{thm:2}.
 			
 			
 			\subsubsection*{From weak to compensating}
