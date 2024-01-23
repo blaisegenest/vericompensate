@@ -237,14 +237,14 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 			We denote $B_{zero}$ the set of such nodes $b$ that case 1 holds, and denote $B_{pure}$ the of such nodes $b$ that case 2 holds but case 1 does not hold.	We denote $B_{open}$ the set of all nodes $b$ in a weak compensating path.
 			
 			\begin{proof}
-				First, we show that if one of case 1, 2 happens, then $b$ will not be on a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. A contradiction as 2) $weight({a_j,b})=0$ implies weight$(\pi)=0$.
+				First, we show that if one of case 1, 2 happens, then $b$ will not be in a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. This is a contradiction as 2) $weight({a_j,b})=0$ implies weight$(\pi)=0$.
 				
-				Second, we show that if neither 1 nor 2 hold, then $b$ will be on a weak compensating path.
-				Because 2) does not hold, there is a $j \in J$ with $weight({a_j,b}) \neq 0$, say $>0$.
+				Second, we show that if neither 1 nor 2 hold, then $b$ will be in a weak compensating path.
+				Because 2) does not hold, there exists $j \in J$ with $weight({a_j,b}) \neq 0$, say $>0$.
 				Because 1) does not hold, $weight({b,z}) \neq 0$, say $>0$.
 				Now, by definition of $J$, there is a pair of weak compensating paths $\pi,\pi'$ 
 				from $a_j$ to $z$, say with $\pi'$ with weight $<0$.
-				Then $((a_j,b,z), \pi')$ is also a weak compensating pair. \qed
+				Then two paths $(a_j,b,z)$ and $\pi'$ also form a weak compensating pair. \qed
 			\end{proof}
 			
 			\begin{lemma}\label{lem:subnetwork}
