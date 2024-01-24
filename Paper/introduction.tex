@@ -19,8 +19,15 @@ In this paper, we present three main contributions addressing the challenges of 
 
 \item Our second contribution, delineated in Theorem \ref{th2}, introduces a refined encoding strategy. By exclusively employing binary variables for ReLU nodes within compensating path pairs and linear relaxations for others, we achieve precise bounds for the majority of algorithms under consideration. This selective binary variable application significantly reduces the computational complexity, yielding faster-solving encodings. However, this approach is not without its limitations, as the prevalence of compensating paths in practical scenarios renders the precise MILP encoding computationally intensive.
 
-\item Addressing the practicality concerns, our third contribution introduces Algorithm \ref{algo1}, a pragmatic solution leveraging our theoretical insights. By ranking ReLU nodes based on their contribution to inaccuracies, we differentiate their treatment in the MILP model. This strategy involves representing the most influential nodes with binary variables while applying linear relaxation to the others, striking a balance between computational efficiency and accuracy. Overall, the worst case complexity of algorithm \ref{algo1} is lower than $O(N 2^K LP(N))$, where $N$ is the number of nodes of the DNN, $K$ the number of ReLU nodes selected as binary variable, and $LP(N)$ is the (polynomial time) complexity of solving a linear program representing a DNN with $N$ nodes. This complexity is an upper bound, as e.g. Gurobi is fairly efficient and never need to consider all of the $2^K$ ReLU configurations to compute the bounds. Keeping $K$ reasonably low thus provides an efficient algorithm. 
-By design, it will never run into a complexity wall (unlike the full MILP encoding), although it can take a while on large networks because of the linear factor $N$ in the number of nodes. An additional interesting point is that it is extremely easy to parallelize, as all the nodes in the same layer can be run in parallel. We verify experimentally that the algorithm offers interesting trade-offs, by testing on local robustness for DNNs trained "naturally" (and thus difficult to verify).
+\item Addressing practical concerns, our third contribution introduces Algorithm \ref{algo1}, a pragmatic solution that leverages our theoretical insights. This approach ranks ReLU nodes based on their contribution to inaccuracies and differentiates their treatment in the MILP model. The strategy involves using binary variables to represent the most influential nodes, while applying linear relaxation to the rest, thereby striking a balance between computational efficiency and accuracy. Notably, Algorithm \ref{algo1} is exceptionally amenable to parallelization, as all nodes within the same layer can be processed simultaneously. Furthermore, our comprehensive empirical evaluation indicates that Algorithm \ref{algo1} provides favorable trade-offs between accuracy and completeness compared to existing methods.
+
+%We verify experimentally that the algorithm offers interesting trade-offs, by testing on local robustness for DNNs trained "naturally" (and thus difficult to verify).
+
+%KSM: I think this is a distraction in intro, so I suggest moving to later part
+% Overall, the worst case complexity of algorithm \ref{algo1} is lower than $O(N 2^K LP(N))$, where $N$ is the number of nodes of the DNN, $K$ the number of ReLU nodes selected as binary variable, and $LP(N)$ is the (polynomial time) complexity of solving a linear program representing a DNN with $N$ nodes. This complexity is an upper bound, as e.g. Gurobi is fairly efficient and never need to consider all of the $2^K$ ReLU configurations to compute the bounds. Keeping $K$ reasonably low thus provides an efficient algorithm. 
+%By design, it will never run into a complexity wall (unlike the full MILP encoding), although it can take a while on large networks because of the linear factor $N$ in the number of nodes.
+
+ 
 
 
 \end{enumerate}
@@ -62,7 +69,7 @@ By design, it will never run into a complexity wall (unlike the full MILP encodi
 %By design, it will never run into a complexity wall (unlike the full MILP encoding), although it can take a while on large networks because of the linear factor $N$ in the number of nodes. An additional interesting point is that it is extremely easy to parallelize, as all the nodes in the same layer can be run in parallel. We verify experimentally that the algorithm offers interesting trade-offs, by testing on local robustness for DNNs trained "naturally" (and thus difficult to verify).
 
 
-%I suggest we move this to experimental evaluation
+%KSM: I suggest we move this to experimental evaluation
 %This paper does not focus on producing the most efficient tool, and we did not spend engineering efforts to optimize it. The focus is instead on the novel notion of compensation, the associated methodology and its evaluation. For instance, our implementation is fully in Python, with uncompetitive runtime for our DeepPoly implementation ($\approx 100$ slower than in CROWN). Still, evaluation of the methodology versus even the most efficient tools reveals a lot of potential for the notion of compensation, opening up several opportunities for applying it in different contexts of DNN verification (see Section \ref{Discussion}). 
 
 \smallskip
