@@ -5,14 +5,15 @@ Such a pair is called a {\em weak compensating pair}.
 We will then in a second step prove Theorems \ref{th1},\ref{th2} for the full definition of compensating pairs of paths.
 
 Let $\cal B$ be a neighbourhood of an input.
-First, notice that if $\Val_{\vx}(b)$ is maximal (resp. minimal), 
-then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal). 
 For convenience,
 when the neighbourhood $\cal B$ is clear, 
 we will write $\max(n)$ to denote $\max_{\vx \in \cal B}(\Val_{\vx}(n))$, and $\min(n)$ to denote $\min_{\vx \in \cal B}(\Val_{\vx}(n))$.
+Notice that if $\Val_{\vx}(b)$ is maximal (resp. minimal), 
+then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal). 
 
 
-The following definition is the most important concept in this proof.
+We fix a target node $z$.
+We now define the partial sign function $S^z$, denoted $S$ when $z$ is clear from the context:
 
 \begin{definition}
 	\label{sign_of_nodes}
@@ -27,7 +28,7 @@ The following definition is the most important concept in this proof.
 In general, $S$ may not be defined on every node 
 (e.g. if there is a negative and a positive path from $a$ to $c$). 
 However, if there is no compensating pair of paths, 
-$S$ is defined on all nodes: any node fulfills one of above cases (1),(2),(3).
+$S$ is defined on all nodes: any node fulfills one of the above cases (1),(2),(3).
 
 For instance for any 3 layer DNN: for an input node $a_i$:
 \begin{enumerate}
@@ -95,99 +96,104 @@ We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$:
 	
 \end{definition}
 
-\begin{lemma}\label{lem:key1}\label{lemma2}
+\begin{lemma}
+	\label{lem:key1}
+	\label{lemma2}
 For all $n$ with $S(n)=1$, we have $\val_{\vx^*}(n) = \max(n)$
 and $\val_{\vx^{\sharp}}(n) = \min(n)$.
 For all $n$ with $S(n)=-1$, we have $\val_{\vx^*}(n) = \min(n)$
-and $\val_{\vx^{\sharp}}(n) = \max(n)$.
+and $\val_{\vx^{\sharp}}(n) = \max(n)$. Further, for $L,L'$ two consecutive layers and $n$ on layer $L'$:
+$$\max(n)=\sum_{m \in L, W_{mn}>0}W_{mn} \max(\hat{m}) + \sum_{m \in L, W_{mn}<0}W_{mn} \min(\hat{m}) + bias_n$$
+$$\min(n)=\sum_{m \in L, W_{mn}>0}W_{mn} \min(\hat{m}) + \sum_{m \in L, W_{mn}<0}W_{mn} \max(\hat{m}) + bias_n$$
+
 \end{lemma}
 
 \begin{proof}
-	We prove this lemma by induction on layers. For input layer, this is true by definition. Suppose this lemma is true up to layer $L_i$, we need to show this for layer $L_{i+1}$. Let $c$ be a node in layer $L_{i+1}$, then by definition, we have the following equation: \begin{align*}
-		c = \boldsymbol{bias}_c+\sum_{b\in L}W_{bc}\ReLU(b).
+	We prove this lemma by induction on layers. For input layer, this is true by definition. Suppose this lemma is true up to layer $L_i$, we need to show this for layer $L_{i+1}$. Let $n$ be a node in layer $L_{i+1}$, then by definition, we have the following equation: \begin{align*}
+		\val_{\vx}(n) = \sum_{m\in L}W_{m n}\val_{\vx}(\hat{m})) + bias_n.
 	\end{align*}
 	
-	Therefore we have the following inequalities:\begin{align*}
-		\max(c)\leq\sum_{b \in L_i, W_{bc }>0}W_{bc} \max(\hat{b}) + \sum_{b \in L_i, W_{bc}<0}W_{bc} \min(\hat{b}) + \boldsymbol{bias}_c\\
-		\min(c)\geq\sum_{b \in L_i, W_{bc}>0}W_{bc} \min(\hat{b}) + \sum_{b \in L_i, W_{bc}<0}W_{bc} \max(\hat{b}) + \boldsymbol{bias}_c
+	By induction hypothesis, when input vector is $\vx^{*}$, for every $m$, if $S(m)=1$, then $\Val_{\vx^*}(\hat{m})=\max(\hat{m})$ and if $S(\hat{m})=-1$, then $\Val_{\vx^*}(\hat{m})=\min(\hat{m})$. Assume that $S(n)=1$. By applying Lemma \ref{lemma1} and the induction hypothesis:
+	\begin{align*}
+		\val_{\vx^*}(n) = \sum_{m \in L_i, W_{mn}>0}W_{mn} \max(\hat{m}) + \sum_{m \in L_i, W_{mn}<0}W_{mn} \min(\hat{m}) + bias_n\\
 	\end{align*}
 	
+
+
+	Further, we have the following inequality:
+	\begin{align*}
+		\max(n)\leq & \sum_{m \in L_i, W_{mn }>0}W_{mn} \max(\hat{m}) + \sum_{m \in L_i, W_{mn}<0}W_{mn} \min(\hat{m}) + bias_n\\
+		\leq & \val_{\vx^*}(n)
+	\end{align*}
 	
+	%If $S(m)=1$, then by Lemma \ref{lemma1}, $W_{mn}>0$; if $S(m)=-1$, then $W_{mn}<0$; if $S(m)=0$, then $W_{mn}=0$.
 	
+	By definition of $\max$, we have $\val_{\vx^*}(n) \leq \max(n)$.
+	Combining the 2 formulas, we obtain $\max(n)=\Val_{\vx^*}(n)$. 
 	
-	Now, if $S(c)=1$, we consider different case of $b$. If $S(b)=1$, then by Lemma \ref{lem:sign}, $W_{bc}>0$; if $S(b)=-1$, then $W_{bc}<0$; if $S(b)=0$, then $W_{bc}=0$.
-	
-	By induction hypothesis, when input vector is $\vx^{*}$, for every $b$, if $S(b)=1$, then $\Val_{\vx}(b)=\max(b)$ and if $S(b)=-1$, then $\Val_{\vx}(b)=\min(b)$.
-	
-	So combining formulas and above two facts, we will have that when the input vector is $\vx^*$, \begin{align*}
-		\max(c)&\geq\Val_{\vx^*}(c) \\
-		&= \sum_{b \in L_i, W_{bc}>0}W_{bc} \max(\hat{b}) + \sum_{b \in L_i, W_{bc}<0}W_{bc} \min(\hat{b}) + \boldsymbol{bisa}_c\\
-		&\geq\max(c)
-	\end{align*}  Hence $\max(c)=\Val_{\vx^*}(c)$. 
-	
-	Similarly, we can prove if $S(c)=-1$, $\min(c)=\Val_{\vx^*}(c)$. And similarly, we can prove this for $x^\sharp$. This is the induction step. \qed
+	We prove similarly that $\min(n)=\Val_{\vx^\sharp}(n)$,
+	and the case $S(n)=-1$. This concludes the induction. \qed
 \end{proof}
 
+\iffalse
 	As direct corollary of Lemma \ref{lem:key1}, we obtain:
 	
 	\begin{corollary}
 		\label{cor1}
-		$$\max(c)=\sum_{b \in L, W_{bc}>0}W_{bc} \max(\hat{b}) + \sum_{b \in L, W_{bc}<0}W_{bc} \min(\hat{b}) + \boldsymbol{bias}_c$$
-		$$\min(c)=\sum_{b \in L, W_{bc}>0}W_{bc} \min(\hat{b}) + \sum_{b \in L, W_{bc}<0}W_{bc} \max(\hat{b}) + \boldsymbol{bias}_c$$
+		$$\max(c)=\sum_{b \in L, W_{bc}>0}W_{bc} \max(\hat{b}) + \sum_{b \in L, W_{bc}<0}W_{bc} \min(\hat{b}) + bias_c$$
+		$$\min(c)=\sum_{b \in L, W_{bc}>0}W_{bc} \min(\hat{b}) + \sum_{b \in L, W_{bc}<0}W_{bc} \max(\hat{b}) + bias_c$$
 	\end{corollary}
 	
+\fi
 	
 	%Notice that for all $x$, for either $S(c)=1$ or $S(c)=-1$, these two bounds are found in Lemma \ref{lemma2},
 	%from configuration $\boldsymbol{x}^*$ and $\boldsymbol{x}^\sharp$.
 	
 	
 	
-	Once we have above corollary, things become very clear and simple. We now show that approximations like DeepPoly will generate the same bounds 
-	$\underline{f}(x)=\min(x)$ and $\bar{f}(x)=\max(x)$.
 	
-	\paragraph{Approximation Bounds}
 	
-	To prove that Approximation Bounds are the same as the exact bounds computed above, 
-	we show that even the box abstraction (which is easier) would reach the exact bounds.
-	We proceed inductively, and prove the inductive step.
-	The initialization is obvious as Box Abstraction/DeepPoly is always exact for the initialization layer.
+	\subsubsection*{Bounds generated by Value Abstraction}
+
+	\smallskip
 	
-	\begin{lemma}
-		Let $L,L'$ be two consecutive layers.
-		Assume for all node $m$ of $L$ that the lower and upper bounds for $m$ used by box abstraction equals to the exact lower and upper bounds of $m$ (as expressed above), i.e.
-		$\bar{f}(m)=\max(m)$ and $\underline{f}(m)=\min(m)$.
-		
-		Then Box abstraction computes the exact lower and upper bounds for every node $n$ of layer $L'$, ie $\bar{f}(n)=\max(n)$ and $\underline{f}(n)=\min(n)$.
-	\end{lemma}
+	Let $[\alpha_n,\beta_n]$ be the bounds generated by the Box abstraction.
+	We show that these bounds are exact when there is no (weak) compensating pairs of paths, i.e. for all node $n$ of the DNN, we have $\alpha_n=\min(n)$ and $\beta_n=\max(n)$.
+
+\begin{proof}
+	 We show that inductively. The initialization is obvious as Box Abstraction is always exact for the first layer.
+
+	Let $n$ be node of the DNN. We set the target $z=n$ and consider the sign function $S^z=S^n=S$ corresponding to that node. By definition, $S(n)=1$. 
 	
-	\begin{proof}
-		Suppose $n$ is a node in $L'$ such that $S(n)\neq 0$ (otherwise, it is trivial). 
-		First assume $S(n)=1$. The case $S(n)=-1$ is similar. 
+	The Box abstraction computes its upper bound using:
+	$$\beta_n= \sum_{W_{mn}>0} W_{mn} \beta_{\hat{m}} + \sum_{W_{mn}<0} W_{mn} \alpha_{\hat{m}} + bias_n$$
+
+	By induction hypothesis, we have 
+		$\beta_{\hat{m}}=\max(\hat{m})$ and
+		$\alpha_{\hat{m}}=\min(\hat{m})$, thus 
+		applying the second part of Lemma \ref{lem:key1}, we obtain
+		$\beta_n=\max(n)$.
 		
-		The Box absraction computes its upper bound using:
-		$$\bar{f}(n)= \sum_{W_{mn}>0} W_{mn} \bar{f}(\hat{m}) + \sum_{W_{mn}<0} W_{mn} \underline{f}(\hat{m}) + bias_n$$
+		Similarly, we obtain $\alpha_n=\min(n)$.
 		
-		By induction hypothesis, we have 
-		$\bar{f}(\hat{m})=\max(\hat{m})$ and
-		$\underline{f}(\hat{m})=\min(\hat{m})$, thus 
-		applying Corollary \ref{cor1}, we obtain
-		$\bar{f}(n)=\max(n)$ and 
-		$\underline{f}(n)=\min(n)$.
-		
-		Now, if $\underline{f}(n)=\min(n)<0$, 
-		then $\underline{f}(\hat{n})=\min(\hat{n})=0$, 
+		Consider now $\alpha_{\hat{n}},\beta_{\hat{n}}$.
+		If $\alpha \leq 0$ then $\alpha_{\hat{n}}=0=\max(\hat{n})$.
+		Otherwise, $\alpha_{\hat{n}}=\alpha_n=\max(\hat{n})$.
+		In both case it is exact.
+
+		Similarly, if $\beta_n=\max(n)<0$, 
+		then $\beta_{\hat{n}}=\max(\hat{n})=0$, 
 		and otherwise 
-		$\underline{f}(\hat{n})=\min(\hat{n})=\underline{f}(n)=\min(n)$.
+		$\beta_{\hat{n}}=\max(\hat{n})=\beta_n=\max(n)$.
 		
-		Similarly, 
-		if $\bar{f}(n)=\max(n)<0$, 
-		then $\bar{f}(\hat{n})=\max(\hat{n})=0$, 
-		and otherwise 
-		$\bar{f}(\hat{n})=\max(\hat{n})=\bar{f}(n)=\max(n)$.
-		
-		Hence we have equality before and after ReLU in all cases. \qed
-	\end{proof}
+		Hence we have equality pre and post activation function. \qed
+
+			\end{proof}
 	
+
+
+This shows the statement of Theorem 1 with the weaker statement that there is no weak compensating pairs of paths.
+
 	
 	
 	\subsubsection*{From weak to normal}
@@ -197,54 +203,75 @@ and $\val_{\vx^{\sharp}}(n) = \max(n)$.
 	\end{lemma}
 	
 	\begin{proof}
-		If it has a weak compensating pair of two paths, $P_1,P_2$, then there exists a segment in two paths starting from the same node and end with the same node, but the weight along two segment have different signs. And this will also be a compensating pair. \qed
+		By contradiction, if there is a weak compensating pair of two paths, $\rho_1,\rho_2$, 
+		then consider the common nodes by increasing layer $n_1 \cdots n_k$ in $\rho_1,\rho_2$ (including the initial and final nodes).
+		Assume that there is no compensating pair.
+		It means that all the segment of $\rho_1,\rho_2$ from $n_i$ to $n_{i+1}$ have the same sign (they have no nodes in common but the initial and final nodes).
+		Hence $\rho_1$ and $\rho_2$ have the same sign, a contradiction with $\rho_1,\rho_2$ being a weakly compensating pair.  \qed
 	\end{proof}
 	
-	This finishes the proof for compensating pair rather than weak version.
+	This finishes the proof of Theorem \ref{th1}.
 	
 	
 
+
+
+
+
+
+
+
+
+
+
+
+	\newpage
+
+	
+
+
+
+
+
 			
+\section{Proof of Theorem \ref{th2}}
 			
-			\section{Proof of Theorem \ref{th2}}
-			
-			In this section, we will prove theorem \ref{th2}. We will prove it by proving the following weak theorem:
+			In this section, we will prove theorem \ref{th2}. We first prove the following weaker theorem:
 			
 			\begin{theorem} \label{thm:2}
 				
 				
-				Suppose $\mathcal{D}$ is a DNN with $\ReLU$ as the unique activation functions and with a unique output node $z$.
-				
-				Using MILP, if every nodes $b$ in any weak compensating pair
-				$(\pi,\pi')$ (except the start node and end node) is encoded as a binary/integer variable (opened), then the upper and lower 
-				bounds computed by MILP are the exact maximal and minimal value of $z$.
+				Suppose $\mathcal{D}$ is a DNN with $\ReLU$ as the unique activation functions and with a unique output node $z$. 
+				Let $X$ be the set of nodes $n$ such that there is a weak compensating path 
+				passing by $n$ (except its source and target nodes).
+				Then $\MILP_X$ computes the exact bounds $[\alpha,\beta]$ for $z$,
+				i.e. $\alpha=\min(z)$ and $\beta=\max(z)$.
 			\end{theorem}
 			
 			
 			\subsection{Preparation}
 			
-			
-			
-			
 			\begin{definition}
-				We define a decomposition of the input nodes set $A_{pure}\sqcup A_{open}$ as follows:  
+				We define a partition of the set $A$ of input nodes as $A_{zero} \sqcup A_{pure}\sqcup A_{open}$, with:  
 				\begin{itemize}
-					\item $a_k \in A_{pure}$  if either
+					\item $A_{zero}= \{a \mid \forall \text{ path $\rho$ from $a$ to } z, weight(\pi)=0\}$.
+	
+					\item $a_k \in A_{pure}$  if $a \notin A_{zero}$ and either
 					\begin{enumerate}
 						\item every path from $a_k$ to $z$ has weight $\geq 0$, or
 						\item every path from $a_k$ to $z$ has weight $\leq 0$. 
 						
 					\end{enumerate}
-					That is, $a_k$ is not a source of a weak compensating pair. 	We write $A_{pure}$ by $I$ for short.
-					\item $a_k \in A_{open}$ if $a_k \notin A_{pure}$, that is there exists two paths $\pi,\pi'$ from $a_k$, 
-					one with positive and one with negative weight. 	We write $A_{open}$ by $J$ for short.
+					That is, $a_k$ is not a source of a weak compensating pair. We denote 
+					$A_{pure}$ by $I$ for short.
+					\item $a_k \in A_{open}$ iff $a_k \notin A_{pure} \sqcup A_{zero}$, that is there exists two paths $\rho,\rho'$ from $a_k$, one with positive and one with negative weight. 	We denote $A_{open}$ by $J$ for short.
 				\end{itemize}
 			\end{definition} 
 			
 			
 			
 			\begin{lemma} \label{lem:open_node_2}
-				A node $b$ in a hidden layer will not be in a weak compensating path if and only if one of the following happens:
+				A node $b$ in a hidden layer will not be on a weak compensating path if and only if one of the following happens:
 				\begin{enumerate}
 					\item Any path from $b$ to the output node $z$ has a weight $0$, and we use $weight({bz})=0$ to denote this case, or
 					\item For every input node $a_j\in J$, every path from $a_j$ to $b$ has a weight of $0$. We use $weight({a_jb})=0$ to denote this case.
@@ -252,7 +279,8 @@ and $\val_{\vx^{\sharp}}(n) = \max(n)$.
 				
 			\end{lemma}
 			
-			We denote $B_{zero}$ the set of such nodes $b$ that case 1 holds, and denote $B_{pure}$ the of such nodes $b$ that case 2 holds but case 1 does not hold.	We denote $B_{open}$ the set of all nodes $b$ in a weak compensating path.
+			We denote $B_{zero}$ the set of nodes $b$ that case 1 holds, and denote $B_{pure}$ the set of nodes $b$ such that case 2 holds but case 1 does not hold.
+			We denote $B_{open}$ the set of all nodes $b$ in a weak compensating path (remaining cases).
 			
 			\begin{proof}
 				First, we show that if one of case 1, 2 happens, then $b$ will not be in a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. This is a contradiction as 2) $weight({a_j,b})=0$ implies weight$(\pi)=0$.
@@ -266,8 +294,14 @@ and $\val_{\vx^{\sharp}}(n) = \max(n)$.
 			\end{proof}
 			
 			\begin{lemma}\label{lem:subnetwork}
-				$B_{pure}$ and $I$ can form a sub-network: every node in $B_{pure}\cup I$ only depends on nodes in $B_{pure}\cup I$ backward. That is to say, if $b$ is connected to $c$ and $c$ is in $B_{pure}\cup I$ but $b$ is not, then $W_{bc}=0$. We call this sub-network $D_I$. In $D_I$, there is no compensating pair.
+				$B_{pure}$ and $I$ form a sub-network, that is, 
+				for $n \in B_{pure}$, for every path $\rho$ from $m$ to $n$
+				either $m \in B_{pure}\cup I$ or $weight(\rho)=0$.
 			\end{lemma}
+
+			We call $D_I$ the subnetwork  made of nodes in $B_{pure}\cup I$.
+			In $D_I$, there is no weakly compensating pair.
+
 			
 			\begin{proof}
 				This is simply because for a node $c\in B_{pure}$ in a hidden layer or the output layer, for a node $b$ in one layer before, if $b\notin B_{pure}\cup I$, then:
@@ -281,49 +315,42 @@ and $\val_{\vx^{\sharp}}(n) = \max(n)$.
 			
 			
 			
-			Recall the sign function of nodes from Definition \ref{sign_of_nodes}. Because now we allow weak compensating paths, the sign function is no longer defined on all nodes.
-			
-			
-			
-			
-			\begin{definition}\label{sign_of_nodes_in_I_2}
-				We define a partial sign function $S$ over nodes $n$ such that : 	
-				\begin{enumerate} 
-					\item if all paths from $n$ to $z$ have 0 weight, then $S(n)=0$; 
-					\item if all paths from $n$ to $z$ have non-negative weight, and at least one path has a positive weight, then $S(n)=1$; 
-					\item if all path from $n$ to $z$ has non-positive weight, and at least one path has a negative weight, then $S(n)=-1$.
-					\item Otherwise $S(n)$ is undefined.
-				\end{enumerate}
-			\end{definition}	
-			
-			Notice that $S$ is defined on all nodes $a_i \in I$. For the domain of $S$, we introduce the following lemma:
+			Recall the sign function of nodes from Definition \ref{sign_of_nodes}. Because weak compensating paths are allowed, the sign function is no longer defined on all nodes. $S$ is defined on all nodes $a_i \in I$. 
+			Further, we have:
 			
 			\begin{lemma}\label{lem:sign}
-				For a node $b$, if there exists at least one path from a node $a_i\in I$ with nonzero weight, then  $S$ is defined on $b$.
+				For a node $n$, if there exists at least one path from a node $a_i\in I$ to $n$ with nonzero weight, then $S$ is defined on $n$.
 			\end{lemma}
 			
 			\begin{proof}
-				Otherwise, suppose there exists two paths $P_1,P_2$ from $b$ to $z$ with (strictly) different signs. Then consider $\langle a_i,b\rangle+P_1$ and $\langle a_i,b\rangle+P_2$, they are two paths with weights with different signs. This is a contradiction since $a_i\in I$. \qed
+				By contradiction, suppose that there exists two paths $\rho_1,\rho_2$ from $n$ to $z$ with (strictly) different signs. The pair $\langle a_i,n\rangle \cdot \rho_1$ and $\langle a_i,n\rangle \cdot \rho_2$ is compensating, a contradiction with $a_i\in I$. \qed
 			\end{proof}
-			Therefore, for any node $b$  that $S$ is undefined on $b$, it only depends on input nodes in $J$.  
+
+
+			Hence for any node $m$ such that $S$ is undefined on $m$, value of $m$ can only depends upon input nodes in $J$.
 			
+			\iffalse
 			\begin{lemma}
-				If $c$ is in the next layer after $b$, $S(c)\neq 0, S(b)$ are both defined, and $W_{bc}\neq 0$, then $Sign(W_{bc})S(c)=S(b)$.
+				If $n$ is in the layer after $m$, then $S(n), S(m)$ are both defined
+				with $S(n) \neq 0$ and $W_{mn}\neq 0$, then $sign(W_{mn})S(n)=S(m)$.
 			\end{lemma}
 			
 			\begin{proof}
 				This is proved in the first section of appendix. \qed
 			\end{proof}
+
+			\fi
 			
 			\begin{lemma}\label{lem:subnetwork2}
-				The input set $J$ with nodes that only depends on $J$ forms a sub-network. This network contains all nodes that $S$ is not defined on them. We call this sub-network $D_J$.
+				The input set $J \cup B_{open}$ forms a sub-network, denoted $D_J$. 
+				$S$ is undefined on all nodes of $D_J$.
 			\end{lemma}
 			
 			\begin{proof}
 				This is because if there exists nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in above set but $b$ is not, then $b$ has a path with nonzero weight from a node $a_i$ not in $J$ but this means so does $c$, a contradiction. Therefore any $b$ such that $W_{bc}\neq 0$ is also in above set. \qed
 			\end{proof}
 			
-			By definition, for any $b\in D_J$, either $b\in B_{open}$, or $b$ is a constant node:  any path from any input node must have zero weight to it.
+			By definition, for any $b\in D_J$, either $b\in B_{open}$, or $b$ is a constant node: any path from any input node must have zero weight to it.
 			
 			We denote $\boldsymbol{x}_S$ for any subset $S$ of input nodes to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We also use $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}$ and $\Val(z)=\Val_{\boldsymbol{x}}(z)=\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J} (z)$. For a node $b$ that $S$ is not defined on it, $b$ only depends on $J$; so, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ will be fixed.
 			

@@ -537,17 +537,17 @@ Let $[\alpha(z),\beta(z)]$ be the bound computed by $\MILP_{X_z}$.
 %For that, 
 We partition the input neurons from layer $0$ into:
 \begin{enumerate}
-	\item $A_{zero}= \{a \mid \forall \text{ path $\pi$ from $n$ to } z, weight(\pi)=0\}$.
-	\item $A_{pos}= \{a \mid \forall \text{ path $\pi$ from $n$ to } z, weight(\pi)\geq0\}$.
-	\item  $A_{neg}= \{a \mid \forall \text{ path $\pi$ from $n$ to } z, weight(\pi)\leq0\}$.
+	\item $A_{zero}= \{a \mid \forall \text{ path $\rho$ from $a$ to } z, weight(\rho)=0\}$.
+	\item $A_{pos}= \{a \mid \forall \text{ path $\rho$ from $a$ to } z, weight(\rho)\geq0\}$.
+	\item  $A_{neg}= \{a \mid \forall \text{ path $\rho$ from $a$ to } z, weight(\rho)\leq0\}$.
 	Let $A_{pure}=A_{pos} \cup A_{neg}$.
 	\item $A_{open}$ is the set of remaining input neurons.
 \end{enumerate}
 
 We then partition the set of neurons in hidden layers: 
 \begin{enumerate}
-	\item $B_{zero}= \{n \mid \forall \text{ path $\pi$ from $n$ to } z, weight(\pi)=0\}$.
-	\item $B_{open}$ is the set of neurones reachable from $A_{open}$ and such that there is at least one path to $z$ with non zero weight.
+	\item $B_{zero}= \{n \mid \forall \text{ path $\rho$ from $n$ to } z, weight(\rho)=0\}$.
+	\item $B_{open}$ is the set of neurones reachable with $>0$ weight from $A_{open}$ and such that there is at least one path to $z$ with non zero weight.
 	\item $B_{pure}$ is the set of remaining neurons.
 \end{enumerate}
 
@@ -894,8 +894,8 @@ Compared with PRIMA (using refinement of the first few layers by exact MILP), th
 		
 		
 		$8\times200$\  &   $25.9\%$ & $62.4\%$ & $73.5\%$ & {\color{blue}$68.1\%$} & 
-		{\color{blue}$79.1\%$} & {\color{blue}$72.6\%$} & {\color{blue}$\mathbf{80.2\%}$} & $91.1 \%$ \\ 
-		$\epsilon = 0.015$ & 17s & 395s & 95s  & {\color{blue}297s} & {\color{blue}535s} & {\color{blue}$480s$} & {\color{blue}612s$^\star$} & \\ \hline
+		{\color{blue}$79.1\%$} & {\color{blue}$72.6\%$} & {\color{blue}$\mathbf{80.7\%}$} & $91.1 \%$ \\ 
+		$\epsilon = 0.015$ & 17s & 395s & 95s  & {\color{blue}297s} & {\color{blue}535s} & {\color{blue}$480s$} & {\color{blue}697s$^\star$} & \\ \hline
 		
 		%6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time & \\ 
 		%$\epsilon = 0.035$ & & & & & & & & & &\\ \hline
@@ -912,7 +912,7 @@ Compared with $\beta$-CROWN (also using a refinement on the first few layers usi
 $6.5$ times slower than $\beta$-CROWN. Notice Compensate($K$) it is not using GPUs. 
 Concerning accuracy: on shallower DNNs ($5 \times 100$ and $5 \times 200$ with $5$ hidden layers), refined BaB uses MILP on all but the last $2$ layers, leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accurate than using the slow fixed setting of Compensate($K$), with a small difference of less than $1.5\%$. On deeper DNNs ($8 \times 100$ and $8 \times 200$ with $8$ hidden layers), the full MILP used in refined BaB cannot treat the last $4$ layers, and BaB has more ReLU nodes to branch on: 
 the most accurate setting (slow fixed) of Compensate($K$) is more accurate than $\beta$-CROWN, closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
-and from $17.6\%$ to $10.9\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than in Compensate($K$) (see Section \ref{Discussion}).
+and from $17.6\%$ to $10.4\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than in Compensate($K$) (see Section \ref{Discussion}).
 
 
 \newpage
