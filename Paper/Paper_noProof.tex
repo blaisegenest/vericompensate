@@ -324,8 +324,7 @@ It remains to prove that the 2 upper bound constraints of 1) LP corresponds to t
 The function $min(\beta \cdot a, x - \alpha (1-a))$ reaches its maximum for 
 $\beta \cdot a = x - \alpha (1-a)$, that is 
 $(\beta - \alpha) a = x - \alpha$, i.e. 
-$$ a = \frac{x - \alpha}{\beta-\alpha}$$
-
+$ a = \frac{x - \alpha}{\beta-\alpha}$.
 It thus gives an upper bound at 
 $\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$, which is exactly the upper-bound function used in DeepPoly.
 \hfill $\square$
@@ -763,7 +762,7 @@ The local robustness verification is performed on DNNs trained for the MNIST ima
 
 \subsection{Choosing nodes based on Compensation strength}
 
-The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes (similar to MIPplanet \cite{MIPplanet}),  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
+The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes,  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
 
 To measure the accuracy, we measure the uncertainty of all nodes in a layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
@@ -821,7 +820,8 @@ and the associated $comp(b)$, and select iteratively nodes $b$ (first layer) or 
 We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly from layers $1$ and $2$. 
 We compare choosing nodes in the second layer only with choosing nodes in both the first and second layer.
 Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
-also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. Last, it is likely that selecting ReLU nodes in 1,2,3 layers earlier (for nodes in layer $4+$) could further improve the accuracy, but the computational trade-off to evaluate the compensating strength of such paths is unclear and we thus did not experiment. 
+also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. 
+Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier because the trade-off of accuracy vs evaluating the compensating strength of such paths is unclear.
 
 \begin{table}[t!]	
 	\centering
@@ -894,23 +894,25 @@ Compared with PRIMA (using refinement of the first few layers by exact MILP), th
 	
 
 		$8\times200$\  &   $25.9\%$ & $62.4\%$ & $73.5\%$ & {\color{blue}$68.1\%$} & 
-		{\color{blue}$\mathbf{79.1\%}$} & {\color{blue}$72.6\%$} & {\color{blue}too} & $91.1 \%$ \\ 
-		$\epsilon = 0.015$ & 17s & 395s & 95s  & {\color{blue}297s} & {\color{blue}535s} & {\color{blue}$480s$} & {\color{blue}slow} & \\ \hline
+		{\color{blue}$79.1\%$} & {\color{blue}$72.6\%$} & {\color{blue}$\mathbf{80.2\%}$} & $91.1 \%$ \\ 
+		$\epsilon = 0.015$ & 17s & 395s & 95s  & {\color{blue}297s} & {\color{blue}535s} & {\color{blue}$480s$} & {\color{blue}612s$^\star$} & \\ \hline
 		
 		%6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time & \\ 
 		%$\epsilon = 0.035$ & & & & & & & & & &\\ \hline
 	\end{tabular}
 	\caption{$\%$ of verified images and average runtime in seconds, over 1000 images. 
-	Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.}
+	Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.
+	\newline $^\star$ For $8 \times 200$, slow fixed results are obtained after running slow adaptative.}
 	\label{tab:example}
 	\vspace{-1cm}
 \end{table}
 
 
-Compared with $\beta$-CROWN (also using a refinement on the first few layers using exact MILP), the picture is more balanced, because the fundamentals of both algorithms are different. BaB focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence Compensate($K$) will spend a lot of time on nodes which are not necessary for the verification. Therefore, our naive implementation is not as efficient as the highly optimized $\beta$-CROWN: our slow setting is $2$ to $5$ times slower than $\beta$-CROWN. Notice that it is also not using GPUs. 
-Concerning accuracy: on shallower DNNs ($5 \times 100$ and $5 \times 200$ with $5$ hidden layers), BAB-refined uses MILP on all but the last $2$ layers, leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accurate than using the slow fixed setting, with a small difference of less than $1.5\%$. On deeper DNNs ($8 \times 100$ and $8 \times 200$ with $8$ hidden layers), the full MILP used in BAB-refined cannot treat the last $4$ layers, and BaB has more ReLU nodes to branch on: 
-the most accurate setting of Compensate($K$) is more accurate than $\beta$-CROWN, closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
-and from $17.6\%$ to $12\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than in Compensate($K$) (see Section \ref{Discussion}).
+Compared with $\beta$-CROWN (also using a refinement on the first few layers using exact MILP), the picture is more balanced, because the fundamentals of both algorithms are different. BaB focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence Compensate($K$) will spend a lot of time on nodes which are not necessary for the verification. Therefore, our naive implementation is not as efficient as the highly optimized $\beta$-CROWN: our slow setting is $1.4$ to 
+$6.5$ times slower than $\beta$-CROWN. Notice Compensate($K$) it is not using GPUs. 
+Concerning accuracy: on shallower DNNs ($5 \times 100$ and $5 \times 200$ with $5$ hidden layers), refined BaB uses MILP on all but the last $2$ layers, leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accurate than using the slow fixed setting of Compensate($K$), with a small difference of less than $1.5\%$. On deeper DNNs ($8 \times 100$ and $8 \times 200$ with $8$ hidden layers), the full MILP used in refined BaB cannot treat the last $4$ layers, and BaB has more ReLU nodes to branch on: 
+the most accurate setting (slow fixed) of Compensate($K$) is more accurate than $\beta$-CROWN, closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
+and from $17.6\%$ to $10.9\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than in Compensate($K$) (see Section \ref{Discussion}).
  
 
 \newpage

@@ -1,27 +1,35 @@
-	\section{Proof of Theorem \ref{th1}}	
+\section*{Appendix}
+As a first step to prove Theorems \ref{th1},\ref{th2}, 
+we will relax the compensating pairs notion to allows pairs of paths having nodes in common.
+Such a pair is called a {\em weak compensating pair}.
+We will then in a second step prove Theorems \ref{th1},\ref{th2} for the full definition of compensating pairs of paths.
 
-Before the proof of two theorems, we will prove a weaker version, that is, consider not only compensating pairs, but also pairs that allows common nodes (the two paths in a compensating pairs cannot have a common nodes). We may call such pair a weak compensating pair.
-
-
+Let $\cal B$ be a neighbourhood of an input.
 First, notice that if $\Val_{\vx}(b)$ is maximal (resp. minimal), 
 then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal). 
-
-For convenience, when we discuss about the maximal or minimal values for nodes $n$ in a network without risk of confusing, we will write $\max(n),\min(n)$ directly, which means $\max(\Val(n))$, $\min(\Val(n))$ or $\max_{\vx}(\Val_{\vx}(n)),\min_{\vx}(\Val_{\vx}(n))$.
+For convenience,
+when the neighbourhood $\cal B$ is clear, 
+we will write $\max(n)$ to denote $\max_{\vx \in \cal B}(\Val_{\vx}(n))$, and $\min(n)$ to denote $\min_{\vx \in \cal B}(\Val_{\vx}(n))$.
 
 
 The following definition is the most important concept in this proof.
 
-\begin{definition}[Sign of Node]\label{sign_of_nodes}
-	We define the partial sign function $S$ on neurons $n$: 	
+\begin{definition}
+	\label{sign_of_nodes}
+	We define the partial sign function $S$ on node $n$: 	
 	\begin{enumerate}
-		\item $S(n)=0$ if all path from $n$ to $z$ have 0 weight; 
+		\item $S(n)=0$ if all path from $n$ to $z$ have weight $0$; 
 		\item $S(n)=1$ if all path from $n$ to $z$ have non-negative weight, and at least one path has a positive weight; 
 		\item $S(n)=-1$ if all path from $n$ to $z$ have non-positive weight, and at least one path has a negative weight. 
 	\end{enumerate}
 \end{definition}
 
-In general, $S$ may not be defined on every node (e.g. if there is a negative and a positive path from $a$ to $c$). However, if there is no compensating pair, $S$ is defined on all nodes: any node fulfills one of above cases (1),(2),(3).
-For instance, for an input node $a_i$ of any 3 layer DNN:
+In general, $S$ may not be defined on every node 
+(e.g. if there is a negative and a positive path from $a$ to $c$). 
+However, if there is no compensating pair of paths, 
+$S$ is defined on all nodes: any node fulfills one of above cases (1),(2),(3).
+
+For instance for any 3 layer DNN: for an input node $a_i$:
 \begin{enumerate}
 	\item  $S(a_i)=0$ if 
 	for all $b_j, W_{a_i b_j}\cdot W_{b_j c} = 0$
@@ -38,17 +46,23 @@ For $b_j$ in the hidden layer, we have $S(b_j)=1,-1,0$ if $W_{b_j c}$ is positiv
 
 
 
-\begin{lemma}[Sign]
+
+
+\section{Proof of Theorem \ref{th1}}	
+
+
+Assume that there is a no (weakly) compensating pair of paths.
+
+
+\begin{lemma}
 	\label{lemma1}
 	Let $L,L'$ be consecutive layers of a DNN without compensation, 
-	and $m\in L$ $n\in L'$. If
-	$W_{nm} \neq 0$ and $S(n) \neq 0$, then 
+	$m\in L$ and $n\in L'$. If $W_{m n} \neq 0$ and $S(n) \neq 0$, then 
 	$S(m)=S(n)\mathrm{Sign}(W_{n m})$.
 \end{lemma}
 
 \begin{proof}
 	If $S(n) \neq 0$, then there is a path $\pi$ from $n$ to the output node $z$ with a nonzero weight of the same sign as $S(n)$. 
-	
 	So there is a non zero path from $m$ to $z$: $(m n) \pi$, whose sign is 
 	$S(n)\mathrm{Sign}(W_{n m})$. As there is no compensation, $S(m)=S(n)\mathrm{Sign}(W_{n m})$.
 	\hfill $\square$
@@ -59,14 +73,22 @@ For $b_j$ in the hidden layer, we have $S(b_j)=1,-1,0$ if $W_{b_j c}$ is positiv
 %Notice that for $S(n)=1$, $n_s$ gets maximal value whenever $n$ gets maximal value; 
 %while for $S(n)=-1$, $n_s$ gets maximal value whenever $n$ gets minimal value (and vice versa). For $S(n)=0$, $n_s=0$ and thus always reach his minimal and maximal.
 
-Using the concept of sign, now we introduce the key lemma for our theorem.
+Using the concept of sign, now we introduce the key lemma for Theorem \ref{th1}.
 
-\begin{definition}[Star and Sharp]
-	
+\begin{definition}
+We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$: 
 	\begin{itemize}
-		\item $\vx^{*}$ is a input vector that for every node $a_i$, if $S(a_i)=1$, then $x_{a_i}$ is the maximal value of $a_i$, and if $S(a_i)=-1$, then $x_{a_i}$ is the minimal value of $a_i$ (if $S(a_i)=0$, then $x_{a_i}$ be an arbitrary fixed value in the input interval of $a_i$).
+		\item $\vx^{*}$ is the input vector defined in the following way:
+		\begin {itemize}
+		 \item $x^*_{a_i}=\max(a_i)$ if $S(a_i)\in \{0,1\}$, and
+          \item $x^*_{a_i}=\min(a_i)$ otherwise, that is when $S(a_i)=-1$.
+	\end{itemize}
 		
-		\item  $\vx^{\sharp}$ is a input vector that for every node $a_i$, if $S(a_i)=-1$, then $x_{a_i}$ is the maximal value of $a_i$, and if $S(a_i)=1$, then $x_{a_i}$ is the minimal value of $a_i$ (if $S(a_i)=0$, then $x_{a_i}$ be an arbitrary fixed value in the input interval of $a_i$).
+		\item $\vx^{\sharp}$ is the input vector defined in the following way:
+		\begin{itemize}
+			\item $x^{\sharp}_{a_i}=\min(a_i)$ if $S(a_i)\in \{0,1\}$, and
+			\item $x^{\sharp}_{a_i}=\max(a_i)$ otherwise, that is when $S(a_i)=-1$.
+		\end{itemize}
 	\end{itemize}
 	
 	
@@ -74,12 +96,10 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 \end{definition}
 
 \begin{lemma}\label{lem:key1}\label{lemma2}
-	
-	
-	
-	The input $\vx^*$ maximize all nodes $n$ that $S(n)=1$ and minimize all nodes $n$ that $S(n)=-1$.
-	
-	Similarly, the input $\vx^\sharp$ maximize all nodes $n$ that $S(n)=-1$ and minimize all nodes $n$ that $S(n)=1$.
+For all $n$ with $S(n)=1$, we have $\val_{\vx^*}(n) = \max(n)$
+and $\val_{\vx^{\sharp}}(n) = \min(n)$.
+For all $n$ with $S(n)=-1$, we have $\val_{\vx^*}(n) = \min(n)$
+and $\val_{\vx^{\sharp}}(n) = \max(n)$.
 \end{lemma}
 
 \begin{proof}
@@ -88,8 +108,8 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 	\end{align*}
 	
 	Therefore we have the following inequalities:\begin{align*}
-		\max(c)\leq\sum_{b \in L_i, W_{bc }>0}W_{bc} \max(\hat{b}) + \sum_{b \in L_i, W_{bc}<0}W_{bc} \min(\hat{b}) + \boldsymbol{bisa}_c\\
-		\min(c)\geq\sum_{b \in L_i, W_{bc}>0}W_{bc} \min(\hat{b}) + \sum_{b \in L_i, W_{bc}<0}W_{bc} \max(\hat{b}) + \boldsymbol{bisa}_c
+		\max(c)\leq\sum_{b \in L_i, W_{bc }>0}W_{bc} \max(\hat{b}) + \sum_{b \in L_i, W_{bc}<0}W_{bc} \min(\hat{b}) + \boldsymbol{bias}_c\\
+		\min(c)\geq\sum_{b \in L_i, W_{bc}>0}W_{bc} \min(\hat{b}) + \sum_{b \in L_i, W_{bc}<0}W_{bc} \max(\hat{b}) + \boldsymbol{bias}_c
 	\end{align*}
 	
 	
@@ -108,8 +128,6 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 	Similarly, we can prove if $S(c)=-1$, $\min(c)=\Val_{\vx^*}(c)$. And similarly, we can prove this for $x^\sharp$. This is the induction step. \qed
 \end{proof}
 
-
-	
 	As direct corollary of Lemma \ref{lem:key1}, we obtain:
 	
 	\begin{corollary}
@@ -119,8 +137,8 @@ Using the concept of sign, now we introduce the key lemma for our theorem.
 	\end{corollary}
 	
 	
-	Notice that for all $x$, for either $S(c)=1$ or $S(c)=-1$, these two bounds are found in Lemma \ref{lemma2},
-	from configuration $\boldsymbol{x}^*$ and $\boldsymbol{x}^\sharp$.
+	%Notice that for all $x$, for either $S(c)=1$ or $S(c)=-1$, these two bounds are found in Lemma \ref{lemma2},
+	%from configuration $\boldsymbol{x}^*$ and $\boldsymbol{x}^\sharp$.
 	
 	
 	
