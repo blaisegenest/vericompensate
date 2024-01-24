@@ -14,6 +14,7 @@
 \usepackage{array}
 \usepackage{epstopdf}
 \usepackage{placeins}
+\usepackage{pgfplots}
 \usepackage{url}
 \usepackage{tikz}
 \usepackage{calc}
@@ -943,7 +944,37 @@ We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s,
 \vspace{-0.4cm}
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=0.7]{Graph.png}
+\begin{tikzpicture}
+	\begin{axis}[width=12cm,height=6cm,
+		xlabel={},
+		ylabel={},
+		title={runtime (second per node)},
+		legend pos=north west, 
+	ymin=0,
+		xtick={1,2,3,4,5}, 
+		xticklabels={$5\times 100$, $8\times 100$, $5\times 200$, $8\times 200$, $6\times 500$},
+		]
+		
+
+		\addplot[mark=square, blue] coordinates {
+			(1, 0.15)
+			(2, 0.115)
+			(3, 0.163)
+			(4, 0.1856)
+			(5, 0.308)
+		};
+		\addlegendentry{fast fixed}
+		
+		\addplot[mark=triangle, red] coordinates {
+			(1, 0.234)
+			(2, 0.206)
+			(3, 0.2125)
+			(4, 0.3)
+		};
+		\addlegendentry{fast adaptative}
+		
+	\end{axis}
+\end{tikzpicture}
 \end{figure}
 \vspace{-0.4cm}
 
