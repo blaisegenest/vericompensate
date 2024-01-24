@@ -958,6 +958,15 @@ We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s,
 		]
 		
 		
+		\addplot[mark=triangle, blue] coordinates {
+			(1, 0.234)
+			(2, 0.2125)
+			(3, 0.206)
+			(4, 0.3)
+		};
+		\addlegendentry{fast fixed}
+		
+
 		\addplot[mark=square, red] coordinates {
 			(1, 0.15)
 			(2, 0.115)
@@ -967,13 +976,6 @@ We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s,
 		};
 		\addlegendentry{fast adaptative}
 		
-		\addplot[mark=triangle, blue] coordinates {
-			(1, 0.234)
-			(2, 0.2125)
-			(3, 0.206)
-			(4, 0.3)
-		};
-		\addlegendentry{fast fixed}
 		
 	\end{axis}
 \end{tikzpicture}
