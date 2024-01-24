@@ -14,6 +14,7 @@
 \usepackage{array}
 \usepackage{epstopdf}
 \usepackage{placeins}
+\usepackage{pgfplots}
 \usepackage{url}
 \usepackage{tikz}
 \usepackage{calc}
@@ -63,197 +64,197 @@
 \date{}
 
 \begin{document}
-
-\maketitle
-
-\begin{abstract}
-	Deep Neural Networks (DNNs) verification is now a mature research field, with many methodologies and tools to verify formally that they are correct, with an annual competition to compare them, etc. Formally, the question is, given a DNN and a property to check, does the property hold over a set of inputs of the DNN. This allows e.g. to check local robustness around an input $\vx$, by checking that the i-th output neuron has the largest weight among all output neurons uniformly over a neighbourhood around $\vx$. In the most recent years, the focus has been on combining several of these efficient techniques (branch and bound, multi neuron encoding, MILP encoding, ...) to optimize speed/accuracy trade-offs. While some relatively large DNNs (tens of thousands of neurons) can be checked very efficiently with modern verifiers, some DNNs are still challenging to address with efficient algorithms, even small ReLU DNNs with hundreds of neurons, showing the need for new methodologies.
-  
-	In this paper, we analyse efficient algorithms to verify ReLU DNNs, based on abstractions (DeepPoly, Linear Programming, PRIMA, different version of Crown), and uncover the main reason for the loss of accuracy, namely {\em compensations}. Intuitively, a compensation happens when there are 2 paths between the same pair of neurons, one path with positive and one path with negative (product of) weights, which therefore (partly) compensate each other. It is however hard to compute exactly by how much is the compensation due to the ReLU activation functions. Based on this finding, we propose a novel methodology to obtain interesting trade-offs in terms of speed/accuracy, using many queries with few 'open' ReLU nodes (for which both linear modes are considered), rather than the usual few queries with potentially many 'open' ReLU nodes. These promising results open up many different applications of the concept of compensating paths in the field of verification of DNNs.  
-\end{abstract}
-
-
-\section{Introduction}
-
-\input{introduction}
-
-
-\section{Background}
-
-In this paper, we will use lower case latin $a$ for scalars, bold for vectors $\boldsymbol{z}$, 
-capitalized bold for matrices $\boldsymbol{W}$, similar to notations in \cite{prima,crown}.
-To simplify the notations, we restrict the presentation to feed-forward, 
-fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
-$ReLU(x)=x$ for $x \geq 0$ and $ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
-
-%In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
-
-%\subsection{Neural Network and Verification}
-
-
-% testtesttesttest
-An $\ell$-layer DNN is provided by $\ell$ weight matrices 
-$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
-and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
-We call $d_i$ the number of neurons of hidden layer $i \in \{1, \ldots, \ell-1\}$,
-$d_0$ the input dimension, and $d_\ell$ the output dimension.
-
-Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
-denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
-\begin{align*}
-	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i\\
-	\hat{\boldsymbol{z}}^{i} &= ReLU({\boldsymbol{z}}^i).
-\end{align*} 
-
-The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
-$\boldsymbol{z}$ is called pre-activation values, 
-and $\boldsymbol{z}^{i}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
-For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, pre- and post-activation neurons are called \emph{nodes}, and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$. A path $\pi$ is a sequence $\pi=(a_i)_{k \leq  i \leq k'}$ of neurons in consecutive layers, and the weight of $\pi$ is 
-$weight(\pi)=W_{a_k,a_{k+1}} \times \cdots \times  W_{a_{k'-1},a_{k'}}$.
-
-
-
-\iffalse
-and the $i$-th hidden layer is a vector in $\mathbb{R}^{d_i}$, 
-and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. 
-The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight 
-$\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, 
-the bias is a vector $\vb^i$ in $\mathbb{R}^{d_i}$, and the activation function 
-is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, 
-then the value of $i$-th layer is computed by: 
-\begin{align*}
-	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \vb^i\\
-	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)).
-\end{align*} The vector $\hat{\boldsymbol{z}}$ is called post-activation values, and $\boldsymbol{z}$ is called pre-activation values, and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
-\fi
-
-\medskip
-
-Concerning the verification problem, we focus for simplicity on the usual local robustness question. Local robustness asks to determine whether the output of a neural network will be affected under small perturbations to the input. 
-Formally, for an input $\vx$ perturbed by $\varepsilon >0$ under distance $d$, then the DNN is locally $\varepsilon$-robust in $\vx$ whenever:
-\begin{align*}
-	\forall \boldsymbol{x'} \text{ s.t. } d(\vx,\vx')\leq \varepsilon, \text{ we have }  
-	argmax_i (f(\boldsymbol{x'})[i]) = argmax_i(f(\boldsymbol{x})[i])
-\end{align*} 
-
-\iffalse
-In some cases, the output is a vector but the aim to get the label of dimension with the minimal value. In this case, the problem can be written as:\begin{align*}
-\forall \boldsymbol{x} \in\mathcal{D} \  \min f(\boldsymbol{x}) = \min f(\boldsymbol{x}_0)
-\end{align*}
-
-If so, the question of verification can turn to the following optimization question: \begin{align*}
-	\min f(\boldsymbol{x}) \ s.t. {\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ b^i\\
-	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)), \boldsymbol{x}\in\mathcal{D}.
-\end{align*}
-
-In this paper, we only consider $\ReLU$ function as the activation function: $\sigma(a)=\ReLU(a)=\max(0,a)$. 
-
-In this paper, we consider $L^{\infty}$ norm the max value of distance of each dimension, that is $d(\vx,\boldsymbol{x}_0)=\max |\boldsymbol{x}(n)-\boldsymbol{x}_0(n)|$. 
-\fi
-
-
-\section{Value Abstraction for DNN verification}
-
-In this section, we describe different value (over-)abstractions on $\vz$ that are used by efficient algorithms to certify robustness around an input $\vx$. Over-abstractions of values include all values for $\vz$ in the neighbourhood of $\vx$, and thus a certificate for safety in the over-abstraction is a proof of safety for the original input $\vx$.
-
-\subsection{The Box and DeepPoly Abstractions}
-
-%\begin{figure}[t!]
-%	\centering
-%		\includegraphics[scale=0.4]{example.png}
-%	\caption{A DNN example from \cite{kneuron}, where every node is separated into its linear and its ReLU functions.}
-%	\label{fig1}
-%	\end{figure}
 	
-	\begin{figure}[t!]
-		\centering
-		\begin{tikzpicture}
-			
-			\node[circle, draw= black, thick, minimum width = 20,
-			minimum height = 20] (input1) {$n_1$};
-			
-			\node[circle, draw= purple, thick, minimum width = 20,
-			minimum height = 20] (input2) at ($(input1) + (0,-1.5)$) {$n_2$};
-			
-			
-			% Hidden layers
-			
-			\node (hidden10) at ($(input1) + (2.5,0.6)$) {$0$};
-			
-			\node (hidden20) at ($(input1) + (2.5,-1.5-0.6)$) {$0$};
+	\maketitle
+	
+	\begin{abstract}
+		Deep Neural Networks (DNNs) verification is now a mature research field, with many methodologies and tools to verify formally that they are correct, with an annual competition to compare them, etc. Formally, the question is, given a DNN and a property to check, does the property hold over a set of inputs of the DNN. This allows e.g. to check local robustness around an input $\vx$, by checking that the i-th output neuron has the largest weight among all output neurons uniformly over a neighbourhood around $\vx$. In the most recent years, the focus has been on combining several of these efficient techniques (branch and bound, multi neuron encoding, MILP encoding, ...) to optimize speed/accuracy trade-offs. While some relatively large DNNs (tens of thousands of neurons) can be checked very efficiently with modern verifiers, some DNNs are still challenging to address with efficient algorithms, even small ReLU DNNs with hundreds of neurons, showing the need for new methodologies.
 		
-			\node (hidden50) at ($(input1) + (7.5,0.6)$) {$0$};
-			
-			\node (hidden60) at ($(input1) + (7.5,-1.5-0.6)$) {$1.5$};
-			
-			
-			\node[circle, draw= black, thick, minimum width = 20,
-			minimum height = 20] (hidden1) at ($(input1) + (2.5,0)$) {$n_3$};
-			\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$n_4$};
-			
-			\node[circle, draw= black, thick, minimum width = 20,
-			minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$\hat{n}_3$};
-			\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$\hat{n}_4$};
-			
-			
-			\node[circle, draw= blue, thick, minimum width = 20,
-			minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$n_5$};
-			\node[circle, draw= black, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$n_6$};
-			
-			
-			
-			
-			% Output layer
-			\node[circle, draw= black, thick, minimum width = 20,
-			minimum height = 20] (output1) at ($(input1) + (10,0)$){$\hat{n}_5$};
-			
-			\node[circle, draw= black, thick, minimum width = 20,
-			minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$\hat{n}_{6}$};
-			
-			
-			% Connections
-			
-			\draw[->,thick] ($(input1) + (-1.5,0)$) -- (input1) node[midway, above] {$[-1,1]$};
-			
-			\draw[->,thick] ($(input1) + (-1.5,-1.5)$) -- (input2) node[midway, above] {$[-1,1]$};
-			
-			
-			
-			\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$1$};
-			\draw[->,thick] (input1) -- (hidden2)node[near start, above] {$1$};
-			
-			\draw[->,color=green, thick] (input2) -- (hidden1) node[near start, below] {$1$};
-			\draw[->,color=red, thick] (input2) -- (hidden2)node[near start, below] {$-1$};
-			
-			
-			
-			
-			
-			\draw[->,color=green, thick] (hidden1) -- (hidden3) node[midway, above] {$\max(n_1,0)$};
-			\draw[->,color=red, thick] (hidden2) -- (hidden4) node[midway, above] {$\max(n_2,0)$};
-			
-			
-			
-			
-			
-			\draw[->,color=green, thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
-			\draw[->,thick] (hidden3) -- (hidden6) node[near start, above] {$0$};
-			
-			\draw[->,color=red, thick] (hidden4) -- (hidden5)node[near start, below] {$2$};
-			\draw[->,thick] (hidden4) -- (hidden6)node[near start, below] {$1$};
-			
-			
-			
-			
-			\draw[->,thick] (hidden5) -- (output1) node[midway, above] {$\max(n_5,0)$};
-			\draw[->,thick] (hidden6) -- (output2) node[midway, above] {$\max(n_6,0)$};
-			
-			
-		\end{tikzpicture}
-		\caption{A DNN example from \cite{kpoly}: every neuron is separated into 2 nodes, $n$ pre- and $\hat{n}$ post-ReLU activation function. The pair $(n_2 n_3 n_5,n_2 n_4 n_5)$ in green and red is compensating (weights of paths are $1,-2$).}
-		\label{fig1}
-	\end{figure}
+		In this paper, we analyse efficient algorithms to verify ReLU DNNs, based on abstractions (DeepPoly, Linear Programming, PRIMA, different version of Crown), and uncover the main reason for the loss of accuracy, namely {\em compensations}. Intuitively, a compensation happens when there are 2 paths between the same pair of neurons, one path with positive and one path with negative (product of) weights, which therefore (partly) compensate each other. It is however hard to compute exactly by how much is the compensation due to the ReLU activation functions. Based on this finding, we propose a novel methodology to obtain interesting trade-offs in terms of speed/accuracy, using many queries with few 'open' ReLU nodes (for which both linear modes are considered), rather than the usual few queries with potentially many 'open' ReLU nodes. These promising results open up many different applications of the concept of compensating paths in the field of verification of DNNs.  
+	\end{abstract}
 	
+	
+	\section{Introduction}
+	
+	\input{introduction}
+	
+	
+	\section{Background}
+	
+	In this paper, we will use lower case latin $a$ for scalars, bold for vectors $\boldsymbol{z}$, 
+	capitalized bold for matrices $\boldsymbol{W}$, similar to notations in \cite{prima,crown}.
+	To simplify the notations, we restrict the presentation to feed-forward, 
+	fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
+	$ReLU(x)=x$ for $x \geq 0$ and $ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
+	
+	%In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
+	
+	%\subsection{Neural Network and Verification}
+	
+	
+	% testtesttesttest
+	An $\ell$-layer DNN is provided by $\ell$ weight matrices 
+	$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
+	and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
+	We call $d_i$ the number of neurons of hidden layer $i \in \{1, \ldots, \ell-1\}$,
+	$d_0$ the input dimension, and $d_\ell$ the output dimension.
+	
+	Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
+	denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
+	\begin{align*}
+		{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i\\
+		\hat{\boldsymbol{z}}^{i} &= ReLU({\boldsymbol{z}}^i).
+	\end{align*} 
+	
+	The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
+	$\boldsymbol{z}$ is called pre-activation values, 
+	and $\boldsymbol{z}^{i}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
+	For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, pre- and post-activation neurons are called \emph{nodes}, and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$. A path $\pi$ is a sequence $\pi=(a_i)_{k \leq  i \leq k'}$ of neurons in consecutive layers, and the weight of $\pi$ is 
+	$weight(\pi)=W_{a_k,a_{k+1}} \times \cdots \times  W_{a_{k'-1},a_{k'}}$.
+	
+	
+	
+	\iffalse
+	and the $i$-th hidden layer is a vector in $\mathbb{R}^{d_i}$, 
+	and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. 
+	The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight 
+	$\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, 
+	the bias is a vector $\vb^i$ in $\mathbb{R}^{d_i}$, and the activation function 
+	is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, 
+	then the value of $i$-th layer is computed by: 
+	\begin{align*}
+		{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \vb^i\\
+		\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)).
+	\end{align*} The vector $\hat{\boldsymbol{z}}$ is called post-activation values, and $\boldsymbol{z}$ is called pre-activation values, and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
+	\fi
+	
+	\medskip
+	
+	Concerning the verification problem, we focus for simplicity on the usual local robustness question. Local robustness asks to determine whether the output of a neural network will be affected under small perturbations to the input. 
+	Formally, for an input $\vx$ perturbed by $\varepsilon >0$ under distance $d$, then the DNN is locally $\varepsilon$-robust in $\vx$ whenever:
+	\begin{align*}
+		\forall \boldsymbol{x'} \text{ s.t. } d(\vx,\vx')\leq \varepsilon, \text{ we have }  
+		argmax_i (f(\boldsymbol{x'})[i]) = argmax_i(f(\boldsymbol{x})[i])
+	\end{align*} 
+	
+	\iffalse
+	In some cases, the output is a vector but the aim to get the label of dimension with the minimal value. In this case, the problem can be written as:\begin{align*}
+		\forall \boldsymbol{x} \in\mathcal{D} \  \min f(\boldsymbol{x}) = \min f(\boldsymbol{x}_0)
+	\end{align*}
+	
+	If so, the question of verification can turn to the following optimization question: \begin{align*}
+		\min f(\boldsymbol{x}) \ s.t. {\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ b^i\\
+		\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)), \boldsymbol{x}\in\mathcal{D}.
+	\end{align*}
+	
+	In this paper, we only consider $\ReLU$ function as the activation function: $\sigma(a)=\ReLU(a)=\max(0,a)$. 
+	
+	In this paper, we consider $L^{\infty}$ norm the max value of distance of each dimension, that is $d(\vx,\boldsymbol{x}_0)=\max |\boldsymbol{x}(n)-\boldsymbol{x}_0(n)|$. 
+	\fi
+	
+	
+	\section{Value Abstraction for DNN verification}
+	
+	In this section, we describe different value (over-)abstractions on $\vz$ that are used by efficient algorithms to certify robustness around an input $\vx$. Over-abstractions of values include all values for $\vz$ in the neighbourhood of $\vx$, and thus a certificate for safety in the over-abstraction is a proof of safety for the original input $\vx$.
+	
+	\subsection{The Box and DeepPoly Abstractions}
+	
+	%\begin{figure}[t!]
+	%	\centering
+	%		\includegraphics[scale=0.4]{example.png}
+	%	\caption{A DNN example from \cite{kneuron}, where every node is separated into its linear and its ReLU functions.}
+	%	\label{fig1}
+	%	\end{figure}
+
+\begin{figure}[t!]
+	\centering
+	\begin{tikzpicture}
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (input1) {$n_1$};
+		
+		\node[circle, draw= purple, thick, minimum width = 20,
+		minimum height = 20] (input2) at ($(input1) + (0,-1.5)$) {$n_2$};
+		
+		
+		% Hidden layers
+		
+		\node (hidden10) at ($(input1) + (2.5,0.6)$) {$0$};
+		
+		\node (hidden20) at ($(input1) + (2.5,-1.5-0.6)$) {$0$};
+		
+		\node (hidden50) at ($(input1) + (7.5,0.6)$) {$0$};
+		
+		\node (hidden60) at ($(input1) + (7.5,-1.5-0.6)$) {$1.5$};
+		
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (hidden1) at ($(input1) + (2.5,0)$) {$n_3$};
+		\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$n_4$};
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$\hat{n}_3$};
+		\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$\hat{n}_4$};
+		
+		
+		\node[circle, draw= blue, thick, minimum width = 20,
+		minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$n_5$};
+		\node[circle, draw= black, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$n_6$};
+		
+		
+		
+		
+		% Output layer
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (output1) at ($(input1) + (10,0)$){$\hat{n}_5$};
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$\hat{n}_{6}$};
+		
+		
+		% Connections
+		
+		\draw[->,thick] ($(input1) + (-1.5,0)$) -- (input1) node[midway, above] {$[-1,1]$};
+		
+		\draw[->,thick] ($(input1) + (-1.5,-1.5)$) -- (input2) node[midway, above] {$[-1,1]$};
+		
+		
+		
+		\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$1$};
+		\draw[->,thick] (input1) -- (hidden2)node[near start, above] {$1$};
+		
+		\draw[->,color=green, thick] (input2) -- (hidden1) node[near start, below] {$1$};
+		\draw[->,color=red, thick] (input2) -- (hidden2)node[near start, below] {$-1$};
+		
+		
+		
+		
+		
+		\draw[->,color=green, thick] (hidden1) -- (hidden3) node[midway, above] {$\max(n_1,0)$};
+		\draw[->,color=red, thick] (hidden2) -- (hidden4) node[midway, above] {$\max(n_2,0)$};
+		
+		
+		
+		
+		
+		\draw[->,color=green, thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
+		\draw[->,thick] (hidden3) -- (hidden6) node[near start, above] {$0$};
+		
+		\draw[->,color=red, thick] (hidden4) -- (hidden5)node[near start, below] {$2$};
+		\draw[->,thick] (hidden4) -- (hidden6)node[near start, below] {$1$};
+		
+		
+		
+		
+		\draw[->,thick] (hidden5) -- (output1) node[midway, above] {$\max(n_5,0)$};
+		\draw[->,thick] (hidden6) -- (output2) node[midway, above] {$\max(n_6,0)$};
+		
+		
+	\end{tikzpicture}
+	\caption{A DNN example from \cite{kpoly}: every neuron is separated into 2 nodes, $n$ pre- and $\hat{n}$ post-ReLU activation function. The pair $(n_2 n_3 n_5,n_2 n_4 n_5)$ in green and red is compensating (weights of paths are $1,-2$).}
+	\label{fig1}
+\end{figure}
+
 The idea to perform value abstraction is to compute upper and lower bounds on the values of (some) neurons in the DNN when the inputs are in a given neighbourhood, in order to conclude on the robustness without needing to compute the values exactly for all inputs (in the neighbourhood).
 
 First, remark that weighted sums is a linear function, so it is easy to represent it explicitly. The only problematic part to represent accurately is the ReLU function. While it is fairly simple piecewise linear function with 2 modes ($x<0$ and $x \geq 0$), it is not linear. Considering its iterated impact along the different layers of a ReLU DNN is much more complex than it seems. First, let us remark that it is easy to represent exactly $\ReLU(x)$ in case $x$ is {\em stable}, that is, either it is known to be entirely positive, order
@@ -307,27 +308,26 @@ We prove now that the LP abstraction is strictly more accurate than the DeepPoly
 
 \begin{proposition}
 	\label{LP}
- Given $x \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems of constraints 
- 1) for LP and 2) for DeepPoly with both lower bounds are equivalent:
- \vspace{-0.3cm}
- \begin{align*}
-	 & 1) \quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, a \in [0,1] \\
-	 \text{and} \quad  & 2)  \quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0 \quad \wedge \quad \hat{x} \leq \beta \frac{x-\alpha}{\beta-\alpha}
-\end{align*} 
+	Given $x \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems of constraints 
+	1) for LP and 2) for DeepPoly with both lower bounds are equivalent:
+	\vspace{-0.3cm}
+	\begin{align*}
+		& 1) \quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, a \in [0,1] \\
+		\text{and} \quad  & 2)  \quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0 \quad \wedge \quad \hat{x} \leq \beta \frac{x-\alpha}{\beta-\alpha}
+	\end{align*} 
 \end{proposition}
 
 \begin{proof}
-Obviously, the 2 lower bound constraints are the same in 1) and 2).
-
-It remains to prove that the 2 upper bound constraints of 1) LP corresponds to the 2) DeepPoly linear upper bound. For that, we study the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ in 1) is upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. 
-The function $min(\beta \cdot a, x - \alpha (1-a))$ reaches its maximum for 
-$\beta \cdot a = x - \alpha (1-a)$, that is 
-$(\beta - \alpha) a = x - \alpha$, i.e. 
-$$ a = \frac{x - \alpha}{\beta-\alpha}$$
-
-It thus gives an upper bound at 
-$\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$, which is exactly the upper-bound function used in DeepPoly.
-\hfill $\square$
+	Obviously, the 2 lower bound constraints are the same in 1) and 2).
+	
+	It remains to prove that the 2 upper bound constraints of 1) LP corresponds to the 2) DeepPoly linear upper bound. For that, we study the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ in 1) is upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. 
+	The function $min(\beta \cdot a, x - \alpha (1-a))$ reaches its maximum for 
+	$\beta \cdot a = x - \alpha (1-a)$, that is 
+	$(\beta - \alpha) a = x - \alpha$, i.e. 
+	$ a = \frac{x - \alpha}{\beta-\alpha}$.
+	It thus gives an upper bound at 
+	$\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$, which is exactly the upper-bound function used in DeepPoly.
+	\hfill $\square$
 \end{proof}
 
 
@@ -343,9 +343,9 @@ In this section, we explore the key factor for the loss of accuracy in value abs
 not efficient). 
 Namely, we uncover that \emph{compensating pair of paths} are the reason for the loss of precision. A pair $(\pi,\pi')$ of paths is {\em compensating} if:
 \begin{itemize}
- \item they have the same starting node $a$ (called {\em source} state) and ending node $b$ (called {\em target} state of $(\pi,\pi')$),
- \item they are disjoints (the only common nodes are the source and the target),
- \item the weights satisfy $weight(\pi') < 0 < weight(\pi)$.
+	\item they have the same starting node $a$ (called {\em source} state) and ending node $b$ (called {\em target} state of $(\pi,\pi')$),
+	\item they are disjoints (the only common nodes are the source and the target),
+	\item the weights satisfy $weight(\pi') < 0 < weight(\pi)$.
 \end{itemize}
 
 For instance, on Fig.~\ref{fig1}, the paths $\pi= n_2 n_3 n_5$ has weight $1$, while the
@@ -365,36 +365,36 @@ Further, that also avoid accumulating the error, in the same way as $0= |1+(-1)|
 \vspace*{2ex}
 
 \begin{figure}
-\centering
-\begin{tikzpicture}
-	
-	\node[circle, draw= purple, thick, minimum width = 20,
-	minimum height = 20] (input1) {$a$};
-
-	
-	% Hidden layers
-	\node[circle, draw= blue, thick, minimum width = 20,
-	minimum height = 20] (hidden1) at ($(input1) + (2,1)$) {$b$};
-	\node[circle, draw= blue, thick] (hidden2) at ($(input1) + (2,-1)$) {$b'$};
-	
-	\node[circle, draw= blue, thick, minimum width = 20,
-	minimum height = 20] (hidden3) at ($(input1) + (4,1)$){$c$};
-	\node[circle, draw= blue, thick] (hidden4) at ($(input1) + (4,-1)$) {$c'$};
-	
-	% Output layer
-	\node[circle, draw= blue, thick, minimum width = 20,
-	minimum height = 20] (output) at ($(input1) + (6,0)$){$d$};
-	
-	% Connections
-	\draw[->,thick,draw= red] (input1) -- (hidden1) node[midway, below] {$1$};
-	\draw[->,thick,draw= green] (input1) -- (hidden2)node[midway, below] {$-1$};
-	
-	\draw[->,thick,draw= red] (hidden1) -- (hidden3) node[midway, below] {$\ReLU$};
-	\draw[->,thick,draw= green] (hidden2) -- (hidden4) node[midway, below] {$\ReLU$};
-	
-	\draw[->,thick,draw= red] (hidden3) -- (output)node[midway, below] {$1$};
-	\draw[->,thick,draw= green] (hidden4) -- (output)node[midway, below] {$1$};
-\end{tikzpicture}
+	\centering
+	\begin{tikzpicture}
+		
+		\node[circle, draw= purple, thick, minimum width = 20,
+		minimum height = 20] (input1) {$a$};
+		
+		
+		% Hidden layers
+		\node[circle, draw= blue, thick, minimum width = 20,
+		minimum height = 20] (hidden1) at ($(input1) + (2,1)$) {$b$};
+		\node[circle, draw= blue, thick] (hidden2) at ($(input1) + (2,-1)$) {$b'$};
+		
+		\node[circle, draw= blue, thick, minimum width = 20,
+		minimum height = 20] (hidden3) at ($(input1) + (4,1)$){$c$};
+		\node[circle, draw= blue, thick] (hidden4) at ($(input1) + (4,-1)$) {$c'$};
+		
+		% Output layer
+		\node[circle, draw= blue, thick, minimum width = 20,
+		minimum height = 20] (output) at ($(input1) + (6,0)$){$d$};
+		
+		% Connections
+		\draw[->,thick,draw= red] (input1) -- (hidden1) node[midway, below] {$1$};
+		\draw[->,thick,draw= green] (input1) -- (hidden2)node[midway, below] {$-1$};
+		
+		\draw[->,thick,draw= red] (hidden1) -- (hidden3) node[midway, below] {$\ReLU$};
+		\draw[->,thick,draw= green] (hidden2) -- (hidden4) node[midway, below] {$\ReLU$};
+		
+		\draw[->,thick,draw= red] (hidden3) -- (output)node[midway, below] {$1$};
+		\draw[->,thick,draw= green] (hidden4) -- (output)node[midway, below] {$1$};
+	\end{tikzpicture}
 \end{figure}
 
 \vspace*{2ex}
@@ -466,15 +466,15 @@ If there is no compensating path in the DNN, then any method/approximation at le
 \begin{table}[b!]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
-	\hline
+		\hline
 		\text{Source/Target Layers}  &  \text{Natural DNN} & \text{Robust DNN} & \text{Ratio Natural vs Robust} \\ \hline \hline
-	0 / 2 & 0.0304 & 0.00220  & 13.8x\\ \hline
-	1 / 3  & 0.0313 & 0.00875 & 3.58x \\ \hline
-	2 / 4  &  0.0267 & 0.00785 & 3.40x \\ \hline
-	3 / 5  &  0.0253 & 0.00804  & 3.18x \\ \hline
-\end{tabular}
-\caption{Comparison of the average compensation strength over all the pairs of nodes of layer source/target between a DNN naturally-trained and a DNN robustly-trained using DiffAI \cite{DiffAI} with the same architecture and training set.}
-\label{tab:compensation}
+		0 / 2 & 0.0304 & 0.00220  & 13.8x\\ \hline
+		1 / 3  & 0.0313 & 0.00875 & 3.58x \\ \hline
+		2 / 4  &  0.0267 & 0.00785 & 3.40x \\ \hline
+		3 / 5  &  0.0253 & 0.00804  & 3.18x \\ \hline
+	\end{tabular}
+	\caption{Comparison of the average compensation strength over all the pairs of nodes of layer source/target between a DNN naturally-trained and a DNN robustly-trained using DiffAI \cite{DiffAI} with the same architecture and training set.}
+	\label{tab:compensation}
 \end{table}
 
 
@@ -521,7 +521,7 @@ $-1$ if they have negative weights. Then we prove:
 
 \begin{proposition}
 	\label{prop.sign}
-There exist two inputs $\vx^\star,\vx^\sharp$ such that ${\vx^\star}$ maximizes the value of all positive neurons and minimizes the value of all negative neurons, and  ${\vx^\sharp}$ minimizes the value of all positive neurons and maximizes the value of all negative neurons.
+	There exist two inputs $\vx^\star,\vx^\sharp$ such that ${\vx^\star}$ maximizes the value of all positive neurons and minimizes the value of all negative neurons, and  ${\vx^\sharp}$ minimizes the value of all positive neurons and maximizes the value of all negative neurons.
 \end{proposition}
 
 Hence $\val_{\vx^\star}(z)=\beta$ and $\val_{\vx^\sharp}(z)=\alpha$,
@@ -571,27 +571,27 @@ Using Theorem \ref{th2}, one could thus obtain accurate bounds by running MILP$_
 
 \SetKwInput{KwInput}{Input}
 \SetKwInput{KwOutput}{Output}
-	
+
 \begin{algorithm}[b!]
 	\caption{Compensate(K)}
 	\label{algo1}
 	\KwInput{Bounds $[\alpha_n,\beta_n]$ for input nodes $n$ at layer $0$ (input neighbourhood)}
 	
 	\KwOutput{Bounds $[\alpha_n,\beta_n]$ for every node $n$}
-	 
-	 \For{layer $k=1 \cdots \ell$}{
+	
+	\For{layer $k=1 \cdots \ell$}{
 		\For{neuron $n$ in layer $k$}{
-	
-	 		Compute $Z$ a set of $K$ nodes covering the compensating pairs of paths with target $n$
+			
+			Compute $Z$ a set of $K$ nodes covering the compensating pairs of paths with target $n$
 			with heaviest compensation
-		
+			
 			Run MILP$_Z$ to obtain $[\alpha_n,\beta_n]$ from bounds of neurons in layers $< k$
-	 }
-	 }
-	 \end{algorithm}	
-	
-	
-	
+		}
+	}
+\end{algorithm}	
+
+
+
 
 This algorithm has a worst case complexity bounded by $O(N \MILP(N,K))$, 
 where $N$ is the number of nodes of the DNN, 
@@ -694,7 +694,7 @@ The open node chosen is the key part of the whole framework but costs a lot of t
 
 \subsubsection*{Process for one node}
 
- The optimization of a model consists of loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
+The optimization of a model consists of loops. For each loop, the model will do optimization by a timeout and observe the result. If it gets improvement, then continue the loop until the optimize bounds or the longer timeout. Otherwise it will give up optimization and store the best bounds obtained so far.  
 
 
 
@@ -746,10 +746,10 @@ In our experiments, we have not used PGD-attack to exclude some images. In princ
 
 Our experimental evaluations have 3 goals:
 \begin{enumerate}
-  \item Evaluate experimentally how the choice of the set $Z$ impacts the accuracy of $\MILP_Z$, and compare different choices for $K$ the size of $Z$,
-  \item Evaluate on benchmarks the percentage of images that can be verified
- using compensating strength, and compare with other value abstraction verifiers,
-  \item Evaluate how the runtime of compensate($K$) scale with the size of DNNs.
+	\item Evaluate experimentally how the choice of the set $Z$ impacts the accuracy of $\MILP_Z$, and compare different choices for $K$ the size of $Z$,
+	\item Evaluate on benchmarks the percentage of images that can be verified
+	using compensating strength, and compare with other value abstraction verifiers,
+	\item Evaluate how the runtime of compensate($K$) scale with the size of DNNs.
 \end{enumerate}
 
 \subsection{Setting}
@@ -762,7 +762,7 @@ The local robustness verification is performed on DNNs trained for the MNIST ima
 
 \subsection{Choosing nodes based on Compensation strength}
 
-The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes (similar to MIPplanet \cite{MIPplanet}),  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
+The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes,  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
 
 To measure the accuracy, we measure the uncertainty of all nodes in a layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
@@ -778,20 +778,20 @@ called $5 \times 100$ in \cite{prima}, and abusively $6 \times 100$ in \cite{dee
 \begin{table}[b!]
 	\centering
 	\begin{tabular}{|c||c|c|}
-	\hline
-	\text{Number $K$ of nodes in $Z$}  &  \text{Compensate strength} & \text{Random Choice}  \\ \hline
-	\hline
-	0  &  2.22 & 2.22  \\ \hline
-	10  &  1.84 & 2.03  \\ \hline
-	20  &  1.50 & 1.82  \\ \hline
-	30  &  1.28 & 1.62  \\ \hline
-	40  &  1.14 & 1.44  \\ \hline
-	50  &  1.06 & 1.23  \\ \hline
-	61 (max) & 1.05 &  1.05 \\ \hline
-\end{tabular}
-\caption{Average uncertainty of $\MILP_Z$ for nodes of the second layer, for $Z$ with $K$ ReLU nodes of the first layer (compensating strength vs random choice).}
-\label{tab:example0}
-%\vspace{-0.8cm}
+		\hline
+		\text{Number $K$ of nodes in $Z$}  &  \text{Compensate strength} & \text{Random Choice}  \\ \hline
+		\hline
+		0  &  2.22 & 2.22  \\ \hline
+		10  &  1.84 & 2.03  \\ \hline
+		20  &  1.50 & 1.82  \\ \hline
+		30  &  1.28 & 1.62  \\ \hline
+		40  &  1.14 & 1.44  \\ \hline
+		50  &  1.06 & 1.23  \\ \hline
+		61 (max) & 1.05 &  1.05 \\ \hline
+	\end{tabular}
+	\caption{Average uncertainty of $\MILP_Z$ for nodes of the second layer, for $Z$ with $K$ ReLU nodes of the first layer (compensating strength vs random choice).}
+	\label{tab:example0}
+	%\vspace{-0.8cm}
 \end{table}
 
 
@@ -820,25 +820,26 @@ and the associated $comp(b)$, and select iteratively nodes $b$ (first layer) or 
 We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly from layers $1$ and $2$. 
 We compare choosing nodes in the second layer only with choosing nodes in both the first and second layer.
 Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
-also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. Last, it is likely that selecting ReLU nodes in 1,2,3 layers earlier (for nodes in layer $4+$) could further improve the accuracy, but the computational trade-off to evaluate the compensating strength of such paths is unclear and we thus did not experiment. 
+also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. 
+Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier because the trade-off of accuracy vs evaluating the compensating strength of such paths is unclear.
 
 \begin{table}[t!]	
 	\centering
 	\begin{tabular}{|c||c|c|c|}
-	\hline
-	\text{Number $K$}  &  \text{Compensate layer} 1+2 &  \text{Compensate layer} 2 & \text{Random layer } 1+2 \\ \hline
-	\hline
-	0  &  1.758 & 1.758 & 1.758  \\ \hline
-	10  &  1.677 & 1.677 & 1.695  \\ \hline
-	20  &  1.539 & 1.567 & 1.622  \\ \hline
-	30  &  1.431 & 1.489 & 1.542  \\ \hline
-	40  &  1.329 & 1.454 & 1.47  \\ \hline
-	50  &  1.243 & 1.432 & 1.39  \\ \hline
-	116 (max) &  1.184 & 1.422 & 1.184  \\ \hline
-\end{tabular}
-\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs random choice).}
-\label{tab:example1}
-\vspace{-0.8cm}
+		\hline
+		\text{Number $K$}  &  \text{Compensate layer} 1+2 &  \text{Compensate layer} 2 & \text{Random layer } 1+2 \\ \hline
+		\hline
+		0  &  1.758 & 1.758 & 1.758  \\ \hline
+		10  &  1.677 & 1.677 & 1.695  \\ \hline
+		20  &  1.539 & 1.567 & 1.622  \\ \hline
+		30  &  1.431 & 1.489 & 1.542  \\ \hline
+		40  &  1.329 & 1.454 & 1.47  \\ \hline
+		50  &  1.243 & 1.432 & 1.39  \\ \hline
+		116 (max) &  1.184 & 1.422 & 1.184  \\ \hline
+	\end{tabular}
+	\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs random choice).}
+	\label{tab:example1}
+	\vspace{-0.8cm}
 \end{table}
 
 \subsection{Comparison with value-abstraction Verifiers}
@@ -875,7 +876,7 @@ Compared with PRIMA (using refinement of the first few layers by exact MILP), th
 		
 		\hline
 		\text{DNN}  & DeepPoly & PRIMA & $\beta$-CROWN &\multicolumn{2}{@{}c@{}|}{\color{blue}\text{ Comp (adapt.) }} & \multicolumn{2}{@{}c@{}|}{\color{blue} \text{ Comp (fixed) }} & Upper\\ 
-		 & / CROWN & (refined) & (refined BaB) & {\color{blue}fast} & {\color{blue}slow} & {\color{blue}fast} &{\color{blue}slow} & Bound\\
+		& / CROWN & (refined) & (refined BaB) & {\color{blue}fast} & {\color{blue}slow} & {\color{blue}fast} &{\color{blue}slow} & Bound\\
 		\hline \hline
 		
 		$5 \times100$\  &   $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & {\color{blue}$57.5\%$} & {\color{blue}$66.1\%$} & {\color{blue}$65.3\%$} & {\color{blue}$68.4\%$} &  $84.2 \%$ \\ 
@@ -885,32 +886,34 @@ Compared with PRIMA (using refinement of the first few layers by exact MILP), th
 		$5 \times 200$ \  &  $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & {\color{blue}$64.3\%$} & {\color{blue}$74.7\%$} & {\color{blue}$72\%$} & {\color{blue}$76.8\%$} & 
 		$90.1 \%$\\ 
 		$\epsilon = 0.015$ & 11s & 224s & 86s & {\color{blue}163s} & {\color{blue}285s} & {\color{blue}206s} & {\color{blue}279s}  &\\ \hline \hline
-
-	
+		
+		
 		$8\times100$\  &   $29.2\%$ & $42.8\%$ & $62\%$ & {\color{blue}$52.7\%$} & {\color{blue}$59.7\%$} & {\color{blue}$61.4\%$} & {\color{blue}$\mathbf{65.8\%}$}  & $82.0 \%$ \\ 
 		$\epsilon = 0.026$ & 8s & 301s & 103s & {\color{blue}92.3s} & {\color{blue}179s} & {\color{blue}170s} & {\color{blue}346s} & \\
 		\hline
-	
-
+		
+		
 		$8\times200$\  &   $25.9\%$ & $62.4\%$ & $73.5\%$ & {\color{blue}$68.1\%$} & 
-		{\color{blue}$\mathbf{79.1\%}$} & {\color{blue}$72.6\%$} & {\color{blue}too} & $91.1 \%$ \\ 
-		$\epsilon = 0.015$ & 17s & 395s & 95s  & {\color{blue}297s} & {\color{blue}535s} & {\color{blue}$480s$} & {\color{blue}slow} & \\ \hline
+		{\color{blue}$79.1\%$} & {\color{blue}$72.6\%$} & {\color{blue}$\mathbf{80.2\%}$} & $91.1 \%$ \\ 
+		$\epsilon = 0.015$ & 17s & 395s & 95s  & {\color{blue}297s} & {\color{blue}535s} & {\color{blue}$480s$} & {\color{blue}612s$^\star$} & \\ \hline
 		
 		%6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time & \\ 
 		%$\epsilon = 0.035$ & & & & & & & & & &\\ \hline
 	\end{tabular}
 	\caption{$\%$ of verified images and average runtime in seconds, over 1000 images. 
-	Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.}
+		Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.
+		\newline $^\star$ For $8 \times 200$, slow fixed results are obtained after running slow adaptative.}
 	\label{tab:example}
 	\vspace{-1cm}
 \end{table}
 
 
-Compared with $\beta$-CROWN (also using a refinement on the first few layers using exact MILP), the picture is more balanced, because the fundamentals of both algorithms are different. BaB focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence Compensate($K$) will spend a lot of time on nodes which are not necessary for the verification. Therefore, our naive implementation is not as efficient as the highly optimized $\beta$-CROWN: our slow setting is $2$ to $5$ times slower than $\beta$-CROWN. Notice that it is also not using GPUs. 
-Concerning accuracy: on shallower DNNs ($5 \times 100$ and $5 \times 200$ with $5$ hidden layers), BAB-refined uses MILP on all but the last $2$ layers, leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accurate than using the slow fixed setting, with a small difference of less than $1.5\%$. On deeper DNNs ($8 \times 100$ and $8 \times 200$ with $8$ hidden layers), the full MILP used in BAB-refined cannot treat the last $4$ layers, and BaB has more ReLU nodes to branch on: 
-the most accurate setting of Compensate($K$) is more accurate than $\beta$-CROWN, closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
-and from $17.6\%$ to $12\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than in Compensate($K$) (see Section \ref{Discussion}).
- 
+Compared with $\beta$-CROWN (also using a refinement on the first few layers using exact MILP), the picture is more balanced, because the fundamentals of both algorithms are different. BaB focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence Compensate($K$) will spend a lot of time on nodes which are not necessary for the verification. Therefore, our naive implementation is not as efficient as the highly optimized $\beta$-CROWN: our slow setting is $1.4$ to 
+$6.5$ times slower than $\beta$-CROWN. Notice Compensate($K$) it is not using GPUs. 
+Concerning accuracy: on shallower DNNs ($5 \times 100$ and $5 \times 200$ with $5$ hidden layers), refined BaB uses MILP on all but the last $2$ layers, leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accurate than using the slow fixed setting of Compensate($K$), with a small difference of less than $1.5\%$. On deeper DNNs ($8 \times 100$ and $8 \times 200$ with $8$ hidden layers), the full MILP used in refined BaB cannot treat the last $4$ layers, and BaB has more ReLU nodes to branch on: 
+the most accurate setting (slow fixed) of Compensate($K$) is more accurate than $\beta$-CROWN, closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
+and from $17.6\%$ to $10.9\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than in Compensate($K$) (see Section \ref{Discussion}).
+
 
 \newpage
 
@@ -929,7 +932,7 @@ We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s,
 		\hline
 		\text{DNN}  & DeepPoly & PRIMA &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (pureBaB) \,}} & 
 		{\color{blue}Comp (adapt.)} & Upper\\ 
-		 & / CROWN & (refined) & TO=30s & TO=2000s & {\color{blue}fast} & Bound\\
+		& / CROWN & (refined) & TO=30s & TO=2000s & {\color{blue}fast} & Bound\\
 		\hline \hline
 		$6\times500$\  &   $26\%$ & $32.5\%$ & $41\%$ & $44.5\%$  & {\color{blue}$\mathbf{65\%}$} & $92\%$ \\ 
 		$\epsilon = 0.035$ & 34s & 119s & 18.4s & 954s & {\color{blue}925s} &\\ \hline
@@ -942,8 +945,38 @@ We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s,
 
 \vspace{-0.4cm}
 \begin{figure}[h!]
-\centering
-\includegraphics[scale=0.7]{Graph.png}
+	\centering
+\begin{tikzpicture}
+	\begin{axis}[width=12cm,height=6cm,
+		xlabel={},
+		ylabel={},
+		title={runtime (seconds per node)},
+		legend pos=north west,
+		ymin=0,
+		xtick={1,2,3,4,5}, 
+		xticklabels={$5\times 100$, $8\times 100$, $5\times 200$, $8\times 200$, $6\times 500$},
+		]
+		
+		
+		\addplot[mark=square, red] coordinates {
+			(1, 0.15)
+			(2, 0.115)
+			(3, 0.163)
+			(4, 0.1856)
+			(5, 0.308)
+		};
+		\addlegendentry{fast adaptative}
+		
+		\addplot[mark=triangle, blue] coordinates {
+			(1, 0.234)
+			(2, 0.2125)
+			(3, 0.206)
+			(4, 0.3)
+		};
+		\addlegendentry{fast fixed}
+		
+	\end{axis}
+\end{tikzpicture}
 \end{figure}
 \vspace{-0.4cm}
 
@@ -1099,29 +1132,29 @@ In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 w
 The pseudo-code is as follows ():
 
 \begin{algorithm}
-	\caption{Process for length 3 + length 4}
-	\KwData{Sorted lists of length 3 + length 4}
-	\KwResult{Open node list}
+\caption{Process for length 3 + length 4}
+\KwData{Sorted lists of length 3 + length 4}
+\KwResult{Open node list}
+
+Let $N = 0$ be the number of Chosen length 4 pair.
+
+\While{len(Open node) $<O$}{
+	Pick the first element $P_3$ in the list of length 3\;
 	
-	Let $N = 0$ be the number of Chosen length 4 pair.
+	Let $V_3$ be the value of $P_3$\;
 	
-	\While{len(Open node) $<O$}{
-		Pick the first element $P_3$ in the list of length 3\;
-		
-		Let $V_3$ be the value of $P_3$\;
-		
-		Pick the first element $P_4$ in the list of length 4\;
-		
-		Let $V_4$ be the value of $P_4$\;
-		
-		\If{$V_3 > V_4 \cdot N$}{
-			Add nodes in $P_3$ into Open list\;
-			Number of Chosen lentgh pair $N$ += 1\; 
-		}
-		\Else{
-			Add nodes in $P_4$ into Open list\;
-		}
+	Pick the first element $P_4$ in the list of length 4\;
+	
+	Let $V_4$ be the value of $P_4$\;
+	
+	\If{$V_3 > V_4 \cdot N$}{
+		Add nodes in $P_3$ into Open list\;
+		Number of Chosen lentgh pair $N$ += 1\; 
 	}
+	\Else{
+		Add nodes in $P_4$ into Open list\;
+	}
+}
 \end{algorithm}
 
 
