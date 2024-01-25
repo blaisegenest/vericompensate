@@ -39,6 +39,8 @@
 \newcommand{\lb}{\mathrm{lb}}
 \newcommand{\B}{\mathrm{B}}
 
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+
 
 
 
@@ -992,15 +994,15 @@ Last, we display the average runtime per number of nodes of both fast adaptive a
 	\begin{tabular}{|c|c|cc||cc||c|}
 		\hline
 		\text{DNN}  & DeepPoly &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (refinedBaB) \,}} & 
-		\multicolumn{2}{@{}c@{}|}{\text{ \color{blue}Comp (slow) \,}}
+		\multicolumn{2}{@{}c@{}|}{\text{ \color{blue}\CMP slow \,}}
 		& Upper\\ 
 		& / CROWN & TO=300s & TO=3000s & {\color{blue}adapt} & {\color{blue}fixed} & Bound\\
 		\hline \hline
-		$8\times200$\  &   $25\%$? & $72\%$? & $79\%$ & {\color{blue}$75.5\%$?}  & {\color{blue}$\mathbf{77\%}$} & $89\%$? \\ 
+		$8\times200$\  &   $25\%$? & $72\%$? & $\mathbf{79\%}$ & {\color{blue}$75.5\%$}  & {\color{blue}$77\%$} & $91\%$ \\ 
 		$\epsilon = 0.015$ & 17s & 95s? & 442s & {\color{blue}391s} & {\color{blue}562s} &\\ \hline
 	\end{tabular}
 	\caption{WIP! $\%$ of verified images over 200 images. To see how refined BAB scale with TimeOut.}
-	\label{tab:example3}
+	\label{tab:example4}
 \end{table}
 
 

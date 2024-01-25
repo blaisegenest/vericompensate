@@ -24,13 +24,15 @@ Our three main contributions address the challenges of inaccuracies in neural ne
 \item {\color{red} Our second main contribution, delineated in Theorem \ref{th2}, answers this question, showing that this abstraction is fully accurate, in that the bounds computed in such a way for neuron $z$ correspond exactly to the mininmal and maximal values reachable by inputs of the DNN. Again, the prevalence of compensating paths in actual DNNs renders this algorithm computationally intensive because the number of binary variables is still too high.}
 
 \item Our third main contribution addresses this practical concern, introducing 
-Algorithm \ref{algo1}, a pragmatic solution that leverages our theoretical insights. This approach ranks ReLU nodes based on {\color{red} 
+\CMP (Algorithm \ref{algo1}), a pragmatic solution that leverages our theoretical insights. This approach ranks ReLU nodes based on {\color{red} 
 the weights of the compensating paths they belong to,
 and differentiates their treatment in the MILP model (binary for heavy, linear for light). 
 %Notably, Algorithm \ref{algo1} is exceptionally amenable to parallelization, as all nodes within the same layer can be processed simultaneously. Furthermore, 
-Our comprehensive empirical evaluation indicates that Algorithm \ref{algo1} provides favorable trade-offs between accuracy and completeness compared to existing methods, lowering the number of 
-undecided inputs from $17.6\%$ ($\beta$-Crown \cite{crown}) to $10.4\%$ 
-on DNN $8 \times 200$ (Table \ref{tab:example}), even verifying more than $20\%$ more images than $\alpha,\beta$-CROWN \cite{xu2020fast} (or PRIMA \cite{prima}) on the larger $6 \times 500$ DNN (Table \ref{tab:example3}).}
+Our comprehensive empirical evaluation indicates that \CMP provides favorable trade-offs between accuracy and completeness compared to existing methods, 
+%lowering the number of 
+%undecided inputs from $17.6\%$ ($\beta$-Crown \cite{crown}) to $10.4\%$ 
+%on DNN $8 \times 200$ (Table \ref{tab:example}), even 
+verifying more than $20\%$ more images than $\alpha,\beta$-CROWN \cite{xu2020fast} (or PRIMA \cite{prima}) on the larger $6 \times 500$ DNN (Table \ref{tab:example3}).}
 
 %We verify experimentally that the algorithm offers interesting trade-offs, by testing on local robustness for DNNs trained "naturally" (and thus difficult to verify).
 
@@ -86,9 +88,11 @@ on DNN $8 \times 200$ (Table \ref{tab:example}), even verifying more than $20\%$
 
 \section{Comparison with Related Works} 
 
-We compare with several (but not all) main verification tools for DNNs, to better explain our methodology and how it differs with the existing SOTA. Compared with the exact encoding of a DNN using MILP \cite{MILP}, 
+We compare CMP with several (but not all) main verification tools for DNNs, to better explain our methodology and how it differs with the existing SOTA. Compared with the exact encoding of a DNN using MILP \cite{MILP}, 
 we select a restricted number of ReLU nodes based on compensating strength to scale to larger DNNs while maintaining good accuracy. Further, compared to MIPplanet \cite{MIPplanet} which 
-uses a different selection of ReLU nodes, we compute bounds for all neurons iteratively, reducing drastically the number of ReLU nodes represented exactly for a given neuron (ReLU nodes which were considered for neurons in previous layers are not represented exactly for that neuron, while MIPplanet would need to represent all those ReLU nodes exactly), using many fast computations, more efficient than one large computation.
+uses a different selection of ReLU nodes, we compute bounds for all neurons iteratively, reducing drastically the number of ReLU nodes represented exactly for a given neuron,
+%(ReLU nodes which were considered for neurons in previous layers are not represented exactly for that neuron, while MIPplanet would need to represent all those ReLU nodes exactly), 
+using many fast computations, more efficient than one large computation.
 
 Compared with the linear relaxation of the MILP encoding \cite{MILP}, our algorithm is strictly more accurate by design, but it will also be slower.
 
@@ -96,12 +100,14 @@ Compared with ERAN-Deeppoly \cite{deeppoly}, which compute bounds on the value i
 abstract the weight of every node using two functions, one upper function and one lower function. While the upper function is fixed, there are 2 choices for the lower bound.
 We prove in Proposition  \ref{LP} that the LP relaxation corresponds exactly to the intersection of both choices. It is thus more accurate than DeepPoly, but also not as efficient. Therefore, our algorithm will also be (much) more accurate than DeepPoly, but also not as efficient.
 
-Concerning PRIMA \cite{prima}, the idea is to keep explicitly dependencies between neurons, computing bounds layer by layer (as we do). This allows to keep very efficiently dependencies from potentially many layers beforehand. We take care of dependencies between neurons in a different way, as compensation is the reason why there are dependencies between neurons. 
-Our method is more accurate locally, but we will tend to lose precision for dependencies created many layers ago. Experimental results tend to show that most of the dependencies are local, in the few last layers (because ReLU nodes will likely clip those that happened many layers ago). Also, the dependencies between nodes limit the parallelism, unlike in our method, which explains why we obtain both faster and more accurate results than PRIMA.
+Concerning PRIMA \cite{prima}, the idea is to keep explicitly dependencies between neurons, computing bounds layer by layer (as we do). This allows to maintain dependencies from potentially many layers beforehand. We take care of dependencies between neurons in a different way, as compensation is the reason why there are dependencies between neurons. 
+Our method is more accurate locally, but we will tend to lose precision for dependencies created several layers ago. Most of the dependencies are local, in the few last layers (because ReLU nodes will likely clip those that happened many layers ago). Also, the dependencies between nodes limit the parallelism, unlike in our method, which explains why we obtain both faster and more accurate results than PRIMA.
 
-For comparison, $\alpha$-$\beta$ CROWN \cite{crown} (and other Branch and Bound algorithms, such as BaBSR \cite{BaB}) will run few instances of branch and bound (one per output neuron), in worst case considering all the possible ReLU configurations (although the branch and bound algorithm avoids most of the possibilities). On simple networks, such as those trained robust, this is particularly efficient because branch and bound can find very efficiently the bounds focusing on the actual question, considering the important branches, while our algorithm will be less efficient as it has to consider each node one by one from the start. However, branch and bound faces a complexity wall when the network is hard to verify, such as the DNNs trained naturally, as there are too many branches to consider.
+$\alpha,\beta$ CROWN \cite{crown} (and other Branch and Bound algorithms, such as BaBSR \cite{BaB}) will run few instances of branch and bound (one per output neuron), in worst case considering all the possible ReLU configurations (although the branch and bound algorithm avoids most of the possibilities). On simple networks, such as those trained robust, branch and bound is  particularly efficient as it consider the important branches for the actual property to verify, while our algorithm is less efficient as it has to consider each node one by one from the start, including nodes whose bounds are not important. However, branch and bound faces a complexity wall when the network is hard to verify, such as the DNNs trained naturally, as there are too many branches to consider (Table \ref{tab:example3}).
 
-On such complex DNNs, PRIMA and $\alpha$-$\beta$ CROWN resort to a "refined" path, where the bounds {\em on the first few layers} are refined \cite{MILP2} using an exact MILP encoding. In our algorithm, we do not use an exact encoding but a partial one with the most important ReLU nodes obtained by considering the compensation strength. As it is more efficient, this can be pushed to all layers. This would be infeasible without the selection based on the compensation. The refined version of $\alpha$-$\beta$ CROWN is particularly accurate on small DNNs. As the depth grows, the more work is left to BaB and our algorithm is more accurate, lowering the gap of verified images to the upper bound \cite{attack} down from 
-$20\%$ to $16.2\%$ and from $17.6\%$ to $10.9\%$ (depth 8, Table \ref{tab:example}). On larger naturally learnt DNNs (3000 neurons), BaB only verifies $18.5\%$ more images than DeepPoly (PRIMA only $6.5\%$), while our algorithm verifies $39\%$ more images than DeepPoly (Table \ref{tab:example3}).
+On such complex DNNs, PRIMA and $\alpha,\beta$ CROWN resort to a "refined" path, where the bounds {\em on the first few layers} are refined \cite{MILP2} using an exact MILP encoding. In our algorithm, we do not use an exact encoding but a partial one with the most important ReLU nodes obtained by considering the compensation strength. As it is more efficient, this can be pushed to all layers. This would be infeasible without the selection based on the compensation. The refined version of $\alpha$-$\beta$ CROWN is particularly accurate on small DNNs. As the depth grows, the more work is left to BaB and our algorithm is more accurate, 
+%lowering the gap of verified images to the upper bound \cite{attack} down from 
+%$20\%$ to $16.2\%$ and from $17.6\%$ to $10.9\%$ (depth 8, Table \ref{tab:example}). 
+On larger naturally learnt DNNs (3000 neurons), BaB only verifies $18.5\%$ more images than DeepPoly (PRIMA only $6.5\%$), while our algorithm verifies $39\%$ more images than DeepPoly (Table \ref{tab:example3}).
 
 Finally, algorithms abstracting the network (e.g. Reluplex / Marabou \cite{Reluplex,katz2019marabou}) are very different from algorithms abstracting the values (PRIMA, ($\alpha$)($\beta$)-CROWN)\cite{prima,crown}$\ldots$ These algorithms have been developed to be complete, so they are much slower but also more accurate than what we propose.
