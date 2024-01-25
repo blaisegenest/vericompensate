@@ -39,8 +39,10 @@
 \newcommand{\lb}{\mathrm{lb}}
 \newcommand{\B}{\mathrm{B}}
 
+\newcommand{\CMP}{{\textrm{CMP}}\ }
 
 
+\newcommand{\toolname}{\ensuremath{\mathsf{Comp}}
 
 
 
@@ -744,21 +746,21 @@ In our experiments, we have not used PGD-attack to exclude some images. In princ
 
 \section{Experimental Evaluation}
 
-Our experimental evaluations have 3 goals:
+
+We implemented a prototype of {\toolname} in Python 3.8.  We conducted our evaluation on an AMD 5975WX  ($32$ cores$@3.6$GHz, 7nm, year 2022) with 256 GB of main memory and 2 NVIDIA RTX 3090. Gurobi 9.52 was used for solving MILP and LP problems. 
+
+The local robustness verification is performed on DNNs trained for the MNIST image dataset as its the only DNNs naturally trained ("MLP" (fully connected Multi Level Perceptron) $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$) benchmarked by \cite{crown} not using robust training, and they are the hardest DNNs to verify, despite their relatively limited size (600 to 1600 neurons in hidden layers). Indeed, today's efficient methods leave between $12\%$ to $20\%$ of the images neither certified robust \cite{crown} nor with an attack to robustness found \cite{attack}, making them interesting DNNs to consider when improving accuracy. MNIST contains grayscale images of size $28 \times 28$ pixels ($752$ input neurons). For our evaluation, we evaluate on the standard first 1000 images of the dataset, to be directly comparable to experiments run in other papers, e.g. \cite{prima,crown}. We also experimented on (MLP) $6\times 500$ (results not reported in \cite{prima,crown}), checking the first 200 images of the dataset, as it takes a long time to run. Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
+%, and a target label for verification. 
+
+
+
+
 \begin{enumerate}
 	\item Evaluate experimentally how the choice of the set $Z$ impacts the accuracy of $\MILP_Z$, and compare different choices for $K$ the size of $Z$,
 	\item Evaluate on benchmarks the percentage of images that can be verified
 	using compensating strength, and compare with other value abstraction verifiers,
 	\item Evaluate how the runtime of compensate($K$) scale with the size of DNNs.
 \end{enumerate}
-
-\paragraph{Setting}
-The benchmarks were run on an AMD 5975WX ($32$ cores$@3.6$GHz, 7nm, year 2022) with 256 GB of main memory and 2 NVIDIA RTX 3090. Gurobi 9.52 was used for solving MILP and LP problems. Our implementations for Compensate($K$) is entirely realized in Python 
-$3.8.10$, and therefore not particularly optimal.
-
-The local robustness verification is performed on DNNs trained for the MNIST image dataset as its the only DNNs naturally trained ("MLP" (fully connected Multi Level Perceptron) $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$) benchmarked by \cite{crown} not using robust training, and they are the hardest DNNs to verify, despite their relatively limited size (600 to 1600 neurons in hidden layers). Indeed, today's efficient methods leave between $12\%$ to $20\%$ of the images neither certified robust \cite{crown} nor with an attack to robustness found \cite{attack}, making them interesting DNNs to consider when improving accuracy. MNIST contains grayscale images of size $28 \times 28$ pixels ($752$ input neurons). For our evaluation, we evaluate on the standard first 1000 images of the dataset, to be directly comparable to experiments run in other papers, e.g. \cite{prima,crown}. We also experimented on (MLP) $6\times 500$ (results not reported in \cite{prima,crown}), checking the first 200 images of the dataset, as it takes a long time to run. Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
-%, and a target label for verification. 
-
 
 \subsection{Choosing nodes based on Compensation strength}
 
@@ -938,12 +940,11 @@ We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s,
 	\end{tabular}
 	\caption{$\%$ of verified images and average runtime in seconds, over 200 images.}
 	\label{tab:example3}
-	\vspace{-1cm}
+
 \end{table}
 
 
 
-\vspace{-0.4cm}
 \begin{figure}[h!]
 	\centering
 \begin{tikzpicture}
@@ -981,7 +982,6 @@ We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s,
 \caption{runtime (seconds per node)}
 \label{fig2}
 \end{figure}
-\vspace{-0.4cm}
 
 Last, we display the average runtime per number of nodes of both fast adaptive and fast fixed compensation, for the different DNNs considered. The runtime per node is not constant (due to $\LP(N,K)$), but it is still controlled and does not show an exponential blow-up, from 0.1s per node for the smallest DNN to 0.3s per node for the biggest DNN. This indicates that Compensate($K$) can be run on larger DNNs without hitting the same complexity wall as pure BaB.
 
@@ -992,15 +992,15 @@ Last, we display the average runtime per number of nodes of both fast adaptive a
 	\begin{tabular}{|c|c|cc||cc||c|}
 		\hline
 		\text{DNN}  & DeepPoly &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (refinedBaB) \,}} & 
-		\multicolumn{2}{@{}c@{}|}{\text{ \color{blue}Comp (slow) \,}}
+		\multicolumn{2}{@{}c@{}|}{\text{ \color{blue}\CMP slow \,}}
 		& Upper\\ 
 		& / CROWN & TO=300s & TO=3000s & {\color{blue}adapt} & {\color{blue}fixed} & Bound\\
 		\hline \hline
-		$8\times200$\  &   $25\%$? & $72\%$? & $79\%$ & {\color{blue}$75.5\%$?}  & {\color{blue}$\mathbf{77\%}$} & $89\%$? \\ 
-		$\epsilon = 0.015$ & 17s & 95s? & 442s & {\color{blue}391s} & {\color{blue}562s} &\\ \hline
+		$8\times200$\  &   $25\%$? & $72\%$? & $\mathbf{79.5\%}$ & {\color{blue}$75.5\%$}  & {\color{blue}$77\%$} & $91\%$ \\ 
+		$\epsilon = 0.015$ & 17s & 95s? & 451s & {\color{blue}391s} & {\color{blue}562s} &\\ \hline
 	\end{tabular}
 	\caption{WIP! $\%$ of verified images over 200 images. To see how refined BAB scale with TimeOut.}
-	\label{tab:example3}
+	\label{tab:example4}
 \end{table}
 
 
