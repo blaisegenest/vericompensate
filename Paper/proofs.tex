@@ -294,13 +294,13 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			\end{proof}
 			
 			\begin{lemma}\label{lem:subnetwork}
-				$B_{pure}$ and $I$ form a sub-network, that is, 
+				$I \cup B_{pure} $ forms a sub-network, denoted $D_I$. That is, 
 				for $n \in B_{pure}$, for every path $\rho$ from $m$ to $n$
 				either $m \in B_{pure}\cup I$ or $weight(\rho)=0$.
+				Further, in $D_I$, there is no (weakly) compensating pair.
 			\end{lemma}
 
-			We call $D_I$ the subnetwork  made of nodes in $B_{pure}\cup I$.
-			In $D_I$, there is no weakly compensating pair.
+			
 
 			
 			\begin{proof}
@@ -342,71 +342,81 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			\fi
 			
 			\begin{lemma}\label{lem:subnetwork2}
-				The input set $J \cup B_{open}$ forms a sub-network, denoted $D_J$. 
-				$S$ is undefined on all nodes of $D_J$.
+				$J \cup B_{open}$ forms a sub-network, denoted $D_J$.
+				That is, for $n \in B_{open}$, for every path $\rho$ from $m$ to $n$
+				either $m \in B_{open}\cup J$ or $weight(\rho)=0$. 
+				Further, $S$ is undefined on all nodes of $D_J$.
 			\end{lemma}
 			
 			\begin{proof}
-				This is because if there exists nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in above set but $b$ is not, then $b$ has a path with nonzero weight from a node $a_i$ not in $J$ but this means so does $c$, a contradiction. Therefore any $b$ such that $W_{bc}\neq 0$ is also in above set. \qed
+				By contradiction, assume that there exists two nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in $D_J$ and $b \notin D_J$, then 
+				there is a path $\rho$ from an input node $a_i \notin J$ to $b$
+				 with nonzero weight. Then $\rho \cdot bc$ is a path from $a_i \notin J$ 
+				 to $c$ with non zero weight, a contradiction. \qed
 			\end{proof}
 			
 			By definition, for any $b\in D_J$, either $b\in B_{open}$, or $b$ is a constant node: any path from any input node must have zero weight to it.
 			
-			We denote $\boldsymbol{x}_S$ for any subset $S$ of input nodes to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We also use $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}$ and $\Val(z)=\Val_{\boldsymbol{x}}(z)=\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J} (z)$. For a node $b$ that $S$ is not defined on it, $b$ only depends on $J$; so, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ will be fixed.
+			For an input $\vx$ and a subset $S$ of input nodes, we denote by $\boldsymbol{x}_S$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We use $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}$ and $\Val(z)=\Val_{\boldsymbol{x}}(z)=\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J} (z)$. 
+			For a node $b$ for which $S$ is undefined, $b$ only depends on $J$; so, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ will be fixed.
 			
 			We define $\boldsymbol{x}_I^*$ to be the input vector such that for all $a_i \in I$, the value $x_{a_i}$ for $a_i$ gets its maximal value (if $S(a_i)=1$ or $0$) or $a_i$ gets its minimal value (if $S(a_i)=-1$). Similarly, we define $\boldsymbol{x}_I^\sharp$ to be the input vector such that for all $a_i \in I$, the value $x_{a_i}$ for $a_i$ gets its maximal value (if $S(a_i)=-1$ or $0$) or $a_i$ gets its minimal value (if $S(a_i)=1$).
 			
 			
 			
 			\begin{lemma} \label{lem:reach_max_2}
+				Let $b$ be an output node or a node in a hidden layers such that $S(b)=1$. Then for any valuation $\boldsymbol{x}^0_J$,	we have: 
+				$$\max_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^*,\boldsymbol{x}^0_J}(b).$$
 				
-				Assume $b$ is the output node or a node in hidden layers that $S(b)=1$, then   for any valuation $\boldsymbol{x}^0_J$, 
-				we have: $$\max_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J=\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^*,\boldsymbol{x}^0_J}(b).$$
-				
-				
-				
-				
-				
-				If $S(b)=-1$, then the similar results hold, replacing $\boldsymbol{x}^*_I$ by $\boldsymbol{x}^\sharp_I$, or replacing $\max$ by $\min$. 
+				If $S(b)=-1$, then a similar results hold, replacing $\boldsymbol{x}^*_I$ by $\boldsymbol{x}^\sharp_I$. The opposite holds for $\min_{\boldsymbol{x}_I}$.
 			\end{lemma}
 			
 			\begin{proof}
 				
 				
-				For any fixed input vector $\boldsymbol{x}^0_J$, we can regard $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z)$ as a DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ %and their propagation in hidden layers 
-				as bias. In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Lemma \ref{lem:key1} to get that $\Val_{x_I,\boldsymbol{x}^0_J}(z)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done. \qed
+				For any fixed input vector $\boldsymbol{x}^0_J$, consider the DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ 
+				%and their propagation in hidden layers 	
+				as bias. We denote $\val'$ values of nodes In this DNN $D'$.
+				 We have $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z) = \val'_{\vx}(\boldsymbol{x}_I)(z)$.
+				
+				In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Lemma \ref{lem:key1} to get that $\Val_{x_I,\boldsymbol{x}^0_J}(z)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done. \qed
 			\end{proof}
 			
+			From Lemma \ref{lem:reach_max_2}, we have the following corrolary:
+
+			\begin{corollary}
+			For a node $b$ with $S(b)=1$:
+		
+			$$\max(b)=\max_{\vx_j} \val_{\vx^{\star}_I,\vx_J}(b)$$
+	
+			and for $S(b)=-1$:
+	
+			$$\max(b)=\max_{\vx_j} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
+			\end{corollary}
 			
-			\subsection{MILP abstraction}
+	
 			
-			The standard MILP abstraction use the abstraction from \cite{MILP}, 
-			where each variable $\alpha_b$ for the ReLU from $b$ to $\hat{b}$ is:
-			\begin{itemize}
-				\item linear  (i.e. $\alpha_b \in [0,1]$) for $b \notin B_{open}$
-				\item binary/integer (i.e. $\alpha_b \in \{0,1\}$) for $b \in B_{open}$
-			\end{itemize}
+
+
+			\subsection{$\MILP_X$ is accurate}
 			
-			Now consider the MILP framework for all hidden and output nodes layer by layer (to compute their bounds, and use the bounds of previous layers to build the MILP models of current layer), with ReLUs being either linear or binary depending on whether $b \in B_{open}$ or not. We call this standard framework.
+			We denote by $X=B_{open}$, and consider $\MILP_{X}$.
+			Let $[\alpha,\beta]$ be the bounds computed by $\MILP_{X}$ for the target node $z$.
 			
-			For a node $b$ in a hidden layer or the output layer, we denote by $\UB(b)$ the upper bound on $b$ and $\LB(b)$ the lower bound on $b$ considering the MILP constraints above.
+			%\begin{lemma}
+			%	Both $D_I$ and $D_J$ are accurate in the sense that for any $b$ in $D_I$ or %$D_J$, $\UB(b)=\max(b)$ and $\LB(b)=\min(b)$.
+			%\end{lemma}
 			
-			
-			\begin{lemma}
-				In the standard $MILP$ framework, both $D_I$ and $D_J$ are accurate in the sense that for any $b$ in $D_I$ or $D_J$, $\UB(b)=\max(b)$ and $\LB(b)=\min(b)$.
-			\end{lemma}
-			
-			\begin{proof}
-				For $D_I$, it is because of no compensating as proved in the first section. For $D_J$, it is because all nodes are either opened or constants. \qed
-			\end{proof}
+			%\begin{proof}
+			%	For $D_I$, it is because of no compensating as proved in the first section. %For $D_J$, it is because all nodes are either opened or constants. \qed
+			%\end{proof}
 			
 			
 			%\begin{definition} Assume $\boldsymbol{x}^0_I\oplus \boldsymbol{x}^0_J$ is a input vector, and $b$ is node in hidden layers or output layer.
 			%
 			%	1. For a given vector $\boldsymbol{x}$ , $\B_{\boldsymbol{x}^0_I, \boldsymbol{x}^0_J, \boldsymbol{x}}(b)$ is the value of $b$ in the MILP model for values $\boldsymbol{x}^0_I, \boldsymbol{x}^0_J, \boldsymbol{x}$.
 			%\end{definition}
-			
-			
+\iffalse			
 			For input vectors $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$, let $\UB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ be the upper bound in the above fixed formulation and framework while the input $\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$ is fixed: that is, besides the constraints in above MILP models, we add new constraints $\boldsymbol{x}_I,\boldsymbol{x}_J=\boldsymbol{x}^0_I,\boldsymbol{x}^0_J$. We  define $\LB_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)$ similarly for $\LB$ lower bound. For them, we have the following lemma:
 			
 			\begin{lemma} In an MILP formulation, for a node $c$ in a hidden layer or output layer:
@@ -421,13 +431,16 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			\end{proof}
 			
 	
+			\fi
 			
+		We want to show that $\beta= \max(z)$. As the MILP abstraction is a sound over-approximation, it suffices to show that $\beta\leq \max (c)$.
+		The case for $\alpha$ is similar.
+		%We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemmas:
 			
-			We want to show that $\mathrm{UB}(z) = \max (z)$ and $\mathrm{LB}(z) = \min (z)$ for the unique output nodes. In fact, we will prove this for all $c\notin B_{zero}$ . As the MILP abstraction is a sound over-approximation, 
-			it suffices to show that $\mathrm{UB}(c)\leq \max (c)$ and $\mathrm{LB}(c) \geq \min (c)$. We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemmas:
-			
-			
-			\begin{lemma} \label{lem:main}
+		
+\iffalse
+
+		\begin{lemma} \label{lem:main}
 				For any node $c$ in a hidden layer or the output layer, if $c\notin B_{zero}$, then:		\begin{enumerate}
 					\item for any fixed $\boldsymbol{x}^0_J$, when  $\boldsymbol{x}_I=\boldsymbol{x}^*_I$, the value for $c$ in the MILP model is a fixed number, and naturally $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)=\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(c)$. The same is true for $\boldsymbol{x}^\sharp_I$.
 					
@@ -440,6 +453,8 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				
 			\end{lemma}
 			
+\fi
+
 			\begin{proof}
 				We prove this lemma by induction on layers. For first hidden layer $L_1$, it is obvious. Suppose we have proved part 1,2,3 up to layer $L_i$, then for layer $L_{i+1}$, suppose $c$ is a node in this layer. 
 				
