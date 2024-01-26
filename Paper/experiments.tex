@@ -244,39 +244,39 @@ Next, we shift focus to the comparison with $\beta$-CROWN, where we observe intr
 
 % test
 
+%
+%\begin{table}[t!]
+%	\centering
+%	\begin{tabular}{|c||c|c|cc||c||c|}
+%		
+%		\hline
+%		\text{DNN}  & DeepPoly & PRIMA &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (pureBaB) \,}} & 
+%		{\color{blue}Comp (adapt.)} & Upper\\ 
+%		& / CROWN & (refined) & TO=30s & TO=2000s & {\color{blue}fast} & Bound\\
+%		\hline \hline
+%		$6\times500$\  &   $26\%$ & $32.5\%$ & $41\%$ & $44.5\%$  & {\color{blue}$\mathbf{65\%}$} & $92\%$ \\ 
+%		$\epsilon = 0.035$ & 34s & 119s & 18.4s & 954s & {\color{blue}925s} &\\ \hline
+%	\end{tabular}
+%	\caption{$\%$ of verified images and average runtime in seconds, over 200 images.}
+%	\label{tab:example3}
+%	
+%\end{table}
 
-\begin{table}[t!]
-	\centering
-	\begin{tabular}{|c||c|c|cc||c||c|}
-		
-		\hline
-		\text{DNN}  & DeepPoly & PRIMA &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (pureBaB) \,}} & 
-		{\color{blue}Comp (adapt.)} & Upper\\ 
-		& / CROWN & (refined) & TO=30s & TO=2000s & {\color{blue}fast} & Bound\\
-		\hline \hline
-		$6\times500$\  &   $26\%$ & $32.5\%$ & $41\%$ & $44.5\%$  & {\color{blue}$\mathbf{65\%}$} & $92\%$ \\ 
-		$\epsilon = 0.035$ & 34s & 119s & 18.4s & 954s & {\color{blue}925s} &\\ \hline
-	\end{tabular}
-	\caption{$\%$ of verified images and average runtime in seconds, over 200 images.}
-	\label{tab:example3}
-	
-\end{table}
-
-\begin{table}[]
-	\centering
-	\begin{tabular}{|c|c|cc||cc||c|}
-		\hline
-		\text{DNN}  & DeepPoly &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (refinedBaB) \,}} & 
-		\multicolumn{2}{@{}c@{}|}{\text{ \color{blue}\CMP slow \,}}
-		& Upper\\ 
-		& / CROWN & TO=300s & TO=3000s & {\color{blue}adapt} & {\color{blue}fixed} & Bound\\
-		\hline \hline
-		$8\times200$\  &   $25\%$? & $72\%$? & $\mathbf{79.5\%}$ & {\color{blue}$75.5\%$}  & {\color{blue}$77\%$} & $91\%$ \\ 
-		$\epsilon = 0.015$ & 17s & 95s? & 451s & {\color{blue}391s} & {\color{blue}562s} &\\ \hline
-	\end{tabular}
-	\caption{WIP! $\%$ of verified images over 200 images. To see how refined BAB scale with TimeOut.}
-	\label{tab:example4}
-\end{table}
+%\begin{table}[]
+%	\centering
+%	\begin{tabular}{|c|c|cc||cc||c|}
+%		\hline
+%		\text{DNN}  & DeepPoly &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (refinedBaB) \,}} & 
+%		\multicolumn{2}{@{}c@{}|}{\text{ \color{blue}\CMP slow \,}}
+%		& Upper\\ 
+%		& / CROWN & TO=300s & TO=3000s & {\color{blue}adapt} & {\color{blue}fixed} & Bound\\
+%		\hline \hline
+%		$8\times200$\  &   $25\%$? & $72\%$? & $\mathbf{79.5\%}$ & {\color{blue}$75.5\%$}  & {\color{blue}$77\%$} & $91\%$ \\ 
+%		$\epsilon = 0.015$ & 17s & 95s? & 451s & {\color{blue}391s} & {\color{blue}562s} &\\ \hline
+%	\end{tabular}
+%	\caption{WIP! $\%$ of verified images over 200 images. To see how refined BAB scale with TimeOut.}
+%	\label{tab:example4}
+%\end{table}
 
 
 \subsection{Scalability of {\toolname} with Size of DNNs}
@@ -321,6 +321,7 @@ We now focus on understanding the potential of {\toolname} for even larger netwo
 	\caption{runtime (seconds per node)}
 	\label{fig2}
 \end{figure}
+
 
 
 
