@@ -552,35 +552,138 @@ The case for $\alpha=min(z)$ is similar. \qed
 	
 \end{proof}
 			
-\subsection{From weak to compensating}
+\subsection{Proof of Theorem \ref{th2}}
 			
-			We now show Theorem \ref{th2} from Theorem \ref{thm:2}.
-			Assume that $n$ is a node in a weakly compensating path $\rho$.
-			
-			There are three mutually exclusive cases:
-			\begin{enumerate}
-				\item $n$ is on a compensating pair of paths $\rho,\rho'$ to $z$ (but not its source or target), otherwise:
-				
-				\item $n$ is on a compensating pair of paths $\rho,\rho'$ to $z' \neq z$ (but not its source or target), otherwise:
-				
-				\item $n$ is not on any compensating pair of paths to any node (except may be as source or target).
-			\end{enumerate}
+Note: it does not need directly the previous proof, although it uses the same arguments.
+We should adapt the previous argument here, and then remove B.1. altogether.
 
-			In the first case, the ReLU for $n$ will be opened, so we do not need to worry about this case.
+We assume the fairly light hypothesis (H1) that the DNN is such that for every 2 paths $\rho_1,\rho_2$ (not necessarily disjoint) from any $m$ to any $n$ at least 2 layers apart, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$. Further we assume without loss of generality that every node can be reached from at least one input with a path of non-zero weight (otherwise we just remove this node altogether).
+We also assume without loss of generality that there is no node which can only reach $z$ with path of weight $0$, as such nodes have no contribution to the value $\val(z)$. We denote $m<n$ to mean that there exists a path with non zero weight from $m$ to $n$.
+
+			\smallskip
+
+
+			We now show Theorem \ref{th2} from Theorem \ref{thm:2}.
+			Let $X$ be the set of nodes on compensating paths with target $z$, but not as source or target.
+		
+			Let $Z$ be the subset of nodes $n$ of the DNN such that $S$ is defined on $n$ 
+			wrt node $z$. As proved earlier, $Z$ is suffix closed, i.e. if $m<n<z$ with $m \in Z$, then $n \in Z$. We can partition $Z = Z_{+} \sqcup Z_{-}$, for positive and negative sign. They form 2 independent subnetworks of the DNN.
+			$X$ can intersect both $Z_+$ and $Z_-$.
+			For nodes not in $Z$: some may be in $X$, and some may be out of $X$.
+			We call $X_+ = Z_+ \cap X$ and $X_-=Z_- \cap X$, as well as 
+			defined $Y_+,Y_-$ such that $Z_+ = X_+ \sqcup Y_+$ and $Z_- = X_- \sqcup Y_-$.
+			
+			Because of (H1), nodes not in $Z$ (and not in the inputs) are in $X$:
+			node $n \notin Z$ implies the existence of two path $\rho_1,\rho_2$ (not necessarily disjoint) to $z$, with opposite sign. 
+			Take an input node $a$ reaching $n$ with path $\rho$ with non zero weight.
+			Then using (H1), we get a third path $\rho_3$ disjoint from $\rho \cdot \rho_1$ and from $\rho \cdot \rho_2$ with non-zero weight. Depending on the sign of $weight(\rho_3)$, it will form a compensating pair of path to $z$ either with $\rho \cdot \rho_1$ or with $\rho \cdot \rho_2$, hence $n$ will be in $X$. We call $X_*$ this subset $X$.
+			
+			
+\begin{lemma}
+	\label{lemma10}
+		Let $y \in Y_+$. Then for all $m$, there does not exist a pair $(\rho_1,\rho_2)$ 
+		of paths  with weights of opposite sign with $\rho_1$ from $m$ to $y$ and 
+		with $\rho_2$ from $m$ to $z$ (even non disjoint).
+\end{lemma}
+
+\begin{proof}
+  $y \notin X$, so it is not on a pair of compensating pair with target $z$.
+  Let $\rho$ be a path from $y$ to $z$ (it has positive weight has $y \in Z_+$).
+  Hence $\rho_1 \rho, \rho_2$ have opposite sign, and they must meet before $z$.
+
+  If $\rho_1 \rho$ meets $\rho_2$ after $y$, then we use $(H_1)$ to get another disjoint path from $y$ to $z$ (it has positive weight has $y \in Z_+$), it would not meet $\rho_2$, a contradiction.
+
+  Hence $\rho_1$ must meet $\rho_2$ (that is before or at $y$).
+  Their weights must be of opposite sign, otherwise we can inductively reapplied the same argument to their suffixes.
+  Let $\rho_1=\rho_1'\rho_1''$.
+  Both $\rho_1 \cdot \rho$ and $\rho_2' \cdot \rho_1'' \cdot \rho$
+  are from $m$ to $z$ going through $y$, but with weights of opposite sign (as $\rho'_1$ and $\rho'_2$ have opposite sign).
+  Now, by $(H1)$, there exists a path $\rho_3$ disjoint from $\rho_1 \cdot \rho$ and$\rho_2' \cdot \rho_1'' \cdot \rho$ from $m$ to $z$. It means that we have a pair of compensating paths from $m$ tp $z$, and thus $y \in X$, a contradiction with $y \in Y_+$. \qed
+\end{proof}
+
+It means that if a path $\rho_1$ from $m$ to $y$ has stricly positive (resp. negative) weight, then all the paths from $m$ to $z$ will also have strictly positive (resp. negative) weights. It means that Sign is defined on all the $m$ that can reach $Y_+$.
+
+We have the same results for $y \in Y_-$, for paths $\rho_1, \rho_2$ of same sign:
+
+\begin{lemma}
+	\label{lemma11}
+	Let $y \in Y_-$. Then for all $m$, there does not exist a pair $(\rho_1,\rho_2)$ 
+	of paths with weights of same sign with $\rho_1$ from $m$ to $y$ and 
+	with $\rho_2$ from $m$ to $z$ (even non disjoint).
+\end{lemma}
+
+Hence, we obtain as corollary:
+
+\begin{corollary}
+\label{cor:simple}
+Assume that $m < n$ with $n \in Y= Y_+ \sqcup Y_-$.
+Then $m \in Z$.
+\end{corollary}
+
+From there, we conclude that $Y$ is actually prefix-closed:
+
+\begin{lemma}
+	\label{lemma12}
+	Assume that $m < n$ with $n \in Y$.
+	Then $m \in Y$.
+\end{lemma}
+
+\begin{proof}
+Assume by contradiction that $m \notin Y$ with $m<n \in Y$.
+That is, $m \in X$, and there exists a node $m'$ with a pair of compensating paths to $z$
+passing by $m$. But now, that means that $m'<m<n<z$.
+Thus $m'$ is in $Z$, a contradiction with $m'$ the source of a pair of compensating paths.
+\qed
+\end{proof}
+
+As in the proof of Theorem \ref{thm:2}, we can then optimize $Y$ first on its own (considering the sign of every node), and consider its (direct and indirect) contribution to $z$ as biases, before optimizing the rest of the network.
+This is exactly what $\MILP_X$ is doing:
+the bias from each node of $Y$ comes from the bounds on nodes (of $Y$) computed inductively in the previous layers, and then there is a global optimization of the rest of the network (set of nodes $X$ whose ReLU are encoded exactly in $\MILP_X$).
+
+This concludes the proof of Theorem \ref{th2}
+
+\iffalse
+
+
+\begin{lemma}
+	There does not exist a node $m$ with $m<n^+ \in Y^+$ and $m<n^- \in Y^-$.
+	\end{lemma}
+	
+	\begin{proof}
+	By contradiction, assume that there exist nodes $m, n^+ \in Y_+$ and  $n^
+	- \in Y_-$, such that there are two non-zero weight paths $\rho_1$ from $m$ to $n^+$ and $\rho_2$ from $n$ to $n^-$ Assume first that the weights of $\rho_1,\rho_2$ have the same sign, 
+	in which case it gives us a path $\rho_2 \rho_3$  from $m$ to $z$ of opposite sign than $\rho_1$. Applying Lemma \ref{lemma10}, we have prefixes $\rho'_1,\rho'_2$ of $\rho_1,\rho_2$ ending in the same state $m'$, and with weights of opposite sign.
+	So we are left with path from $m'$ to $Y_-,Y_+$ of opposite sign. 
+	We then apply Lemma \label{lemma11}, inductively then applying Lemma \label{lemma10} on the suffices etc. We obtain a contradiction to the existence of $m$ with $m<n^+$ and $m<n^-$. \qed
+	\end{proof}
+	
+	
+	With the same arguments, we obtain:
+	
+	\begin{lemma}
+	If we have $m<n \in X_*$ and $m < n^+ \in Y_+$ (or $m < n^- \in Y_-$),
+	then $n < n^+$ (or $n < n^-$), with compensating pairs of path from $m$ to $n$.
+	\end{lemma}
+	
+	Last, consider the case $m<n^+ \in Y_+$ and $m < n^- \in X_-$.
+	
+
+
+
+In the first case, the ReLU for $n$ will be opened, so we do not need to worry about this case.
 			
 			In the other cases, the ReLU associated with node $n$ will not be in $X$ 
 			(not opened in $\MILP_X$).
-			In the second case, as we assumed without loss of generality that $z$ was the unique output node, it means that $z'$ is in a layer strictly before $z'$.
-			Consider all the possible associated $z'$.
+			In the second case, as 
+			, it means that $z'$ is in a layer strictly before $z'$.
+			Consider all the possible associated target nodes $z'$ of compensating path from $n$.
 
-
-			In the last case, $a$ is in a compensating path (the difference is that this path is not from the input to output), and will be opened. So we focus on the first and second case.
-			
-			For the second case, if we replace $P'$ with $P''=P'_0,\cdots,P'_{i-1},P_{i},P'_{i+1},\cdots$, then $P,P''$ is a weak compensating pair that $a$ is a common nodes. So we only need to consider case 1.
 			
 			Therefore, choose a path $Q$ from input to output with nonzero weight and disjoint from $P,P''$. Now, since weights of $P,P''$ have different signs, and $a$ is in both paths, whatever the weight of $Q$ is, $Q$ and one of  $P$ or $P''$ can form a compensating pair (not weak compensating pair anymore, because $Q$ is disjoint with $P,P''$), and $a$ is in a path. This means $a$ will be opened.
 			
 			Combining all discussion above, if $a$ is in a weak compensating path from input to output, then it is in a compensating path from one layer to another layer. Therefore, Theorem \ref{thm:2} implies Theorem \ref{th2}. This is what we want to show.
+			\fi
 			
+
  			
 		
