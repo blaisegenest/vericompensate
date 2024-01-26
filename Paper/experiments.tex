@@ -156,7 +156,7 @@ Next, we shift focus to the comparison with $\beta$-CROWN, where we observe intr
 \begin{table}[htb]
 	\centering
 
-		\begin{tabularx}{0.9\textwidth}{|C||C|C|C|C|C|}
+		\begin{tabularx}{\textwidth}{|C||C|C|C|C|C|}
 		
 		\hline
 		\text{DNN} & \shortstack{DeepPoly/\\CROWN} & PRIMA & $\beta$-CROWN & {\toolname} & \shortstack{Upper\\Bound}\\ 
@@ -179,16 +179,22 @@ Next, we shift focus to the comparison with $\beta$-CROWN, where we observe intr
 		$8\times200$\  &   $25.9\%$ & $62.4\%$ & $73.5\%$ & {$\mathbf{80.7\%}$} & $91.1 \%$ \\ 
 		$\epsilon = 0.015$ & 17s & 395s & 95s  & {697s$^\star$} & \\ \hline
 		
+			$6\times500$\  &   $26\%$ & $32.5\%$ & $41\%$ & 65\% & $92\%$ \\ 
+				$\epsilon = 0.035$ & 34s & 119s & 18.4s &925s &\\ \hline 
+		
+		
 		%6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time & \\ 
 		%$\epsilon = 0.035$ & & & & & & & & & &\\ \hline
 	\end{tabularx}
 
-	\caption{$\%$ of verified images and average runtime in seconds, over 1000 images. 
+	\caption{$\%$ of verified images and average runtime in seconds.
 		Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.
 %		\newline $^\star$ For $8 \times 200$, slow fixed results are obtained after running slow adaptative.
 }
 	\label{tab:example}
 \end{table}
+
+
 
 
 %\begin{table}[t!]
