@@ -417,12 +417,12 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				\label{corr:main}
 			For a node $b$ with $S(b)=1$:
 		
-			$$\max(b)=\max_{\vx_j} \val_{\vx^{\star}_I,\vx_J}(b)$$
-			$$\min(b)=\max_{\vx_j} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
+			$$\max(b)=\max_{\vx_J} \val_{\vx^{\star}_I,\vx_J}(b)$$
+			$$\min(b)=\max_{\vx_J} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
 			and for $S(b)=-1$:
 	
-			$$\max(b)=\max_{\vx_j} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
-			$$\min(b)=\max_{\vx_j} \val_{\vx^{\star}_I,\vx_J}(b)$$
+			$$\max(b)=\max_{\vx_J} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
+			$$\min(b)=\max_{\vx_J} \val_{\vx^{\star}_I,\vx_J}(b)$$
 			\end{corollary}
 			
 	
@@ -431,10 +431,15 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 
 			%\subsection{$\MILP_X$ is accurate}
 			
-			We denote by $X=B_{open}$, and consider $\MILP_{X}$.
-			Let $[\alpha,\beta]$ be the bounds computed by $\MILP_{X}$ for the target node $z$. We want to show that $\beta= \max(z)$. 
+			
+
+
+
+
+
+			%We want to show that $\beta= \max(z)$. 
 			%As the MILP abstraction is a sound over-approximation, it suffices to show that %$\beta\leq \max (z)$.
-			The case for $\alpha$ is similar.
+			%The case for $\alpha$ is similar.
 			
 			
 			%\begin{lemma}
@@ -523,9 +528,9 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 
 
 
-We are now ready to finish the proof of Theorem \ref{thm:2}.
-			
-	
+	We denote by $X=B_{open}$, and consider $\MILP_{X}$.
+	Let $[\alpha,\beta]$ be the bounds computed by $\MILP_{X}$ for the target node $z$. We are now ready to finish the proof of Theorem \ref{thm:2}.
+
 			
 \begin{proof}
 	We show that $\beta=\max(z)$.
@@ -549,17 +554,26 @@ The case for $\alpha=min(z)$ is similar. \qed
 			
 \subsection{From weak to compensating}
 			
-			Now, we show that Theorem \ref{thm:2} can prove Theorem \ref{th2}. Suppose $a$ is a node in a weak compensating path $P$, and $P,P'$ form this weak compensating pair.
+			We now show Theorem \ref{th2} from Theorem \ref{thm:2}.
+			Assume that $n$ is a node in a weakly compensating path $\rho$.
 			
-			Cut $P,P'$ into segments $P_0,P_1,\cdots$, and $P'_0,P'_1,\cdots$ at each common node; hence each $P_i,P_i'$ either have not common nodes (except the start and end nodes), or are the same. Now, for node $a$, there are three cases:
-			\begin{itemize}
-				\item $a$ is a common nodes.
+			There are three mutually exclusive cases:
+			\begin{enumerate}
+				\item $n$ is on a compensating pair of paths $\rho,\rho'$ to $z$ (but not its source or target), otherwise:
 				
-				\item  $a$ is a in path $P_i$ such that weights of $P_i,P_i'$ have the same sign.
+				\item $n$ is on a compensating pair of paths $\rho,\rho'$ to $z' \neq z$ (but not its source or target), otherwise:
 				
-				\item  $a$ is a in path $P_i$ such that weights of $P_i,P_i'$ have the different sign.
-			\end{itemize}
+				\item $n$ is not on any compensating pair of paths to any node (except may be as source or target).
+			\end{enumerate}
+
+			In the first case, the ReLU for $n$ will be opened, so we do not need to worry about this case.
 			
+			In the other cases, the ReLU associated with node $n$ will not be in $X$ 
+			(not opened in $\MILP_X$).
+			In the second case, as we assumed without loss of generality that $z$ was the unique output node, it means that $z'$ is in a layer strictly before $z'$.
+			Consider all the possible associated $z'$.
+
+
 			In the last case, $a$ is in a compensating path (the difference is that this path is not from the input to output), and will be opened. So we focus on the first and second case.
 			
 			For the second case, if we replace $P'$ with $P''=P'_0,\cdots,P'_{i-1},P_{i},P'_{i+1},\cdots$, then $P,P''$ is a weak compensating pair that $a$ is a common nodes. So we only need to consider case 1.
