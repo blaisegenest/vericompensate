@@ -249,7 +249,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			\end{theorem}
 			
 			
-			\subsection{Preparation}
+			\subsection{Proof of Theorem \ref{thm:2}}
 			
 			\begin{definition}
 				We define a partition of the set $A$ of input nodes as $A_{zero} \sqcup A_{pure}\sqcup A_{open}$, with:  
@@ -401,7 +401,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				Fix an input vector $\boldsymbol{x}^0_J$.
 				This also fixes the values in $D_J$.
 				Consider the DNN $D'$ with input nodes $a_i\in I$, where all the 
-				edges from $m \in D_J$ to $n$ are replaced by a bias (equals to the weight of the edge times the fix value $\val_{\boldsymbol{x}^0_J}(m)$) for $n$ (we summ all these bias for a neuron $n$).
+				edges from $m \in D_J$ to $n$ are replaced by a bias (equals to the weight of the edge times the fix value $\val_{\boldsymbol{x}^0_J}(m)$) for $n$ (we sum all these bias for a neuron $n$).
 				We denote $\val'$ values of nodes in this DNN $D'$.
 				 
 				We have $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z) = \val'_{\boldsymbol{x}_I}(z)$.
@@ -414,6 +414,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			From Lemma \ref{lem:reach_max_2}, we immediatly obtain the following corollary:
 
 			\begin{corollary}
+				\label{corr:main}
 			For a node $b$ with $S(b)=1$:
 		
 			$$\max(b)=\max_{\vx_j} \val_{\vx^{\star}_I,\vx_J}(b)$$
@@ -428,10 +429,13 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			
 
 
-			\subsection{$\MILP_X$ is accurate}
+			%\subsection{$\MILP_X$ is accurate}
 			
 			We denote by $X=B_{open}$, and consider $\MILP_{X}$.
-			Let $[\alpha,\beta]$ be the bounds computed by $\MILP_{X}$ for the target node $z$.
+			Let $[\alpha,\beta]$ be the bounds computed by $\MILP_{X}$ for the target node $z$. We want to show that $\beta= \max(z)$. 
+			%As the MILP abstraction is a sound over-approximation, it suffices to show that %$\beta\leq \max (z)$.
+			The case for $\alpha$ is similar.
+			
 			
 			%\begin{lemma}
 			%	Both $D_I$ and $D_J$ are accurate in the sense that for any $b$ in $D_I$ or %$D_J$, $\UB(b)=\max(b)$ and $\LB(b)=\min(b)$.
@@ -461,14 +465,11 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			\end{proof}
 			
 	
-			\fi
 			
-		We want to show that $\beta= \max(z)$. As the MILP abstraction is a sound over-approximation, it suffices to show that $\beta\leq \max (c)$.
-		The case for $\alpha$ is similar.
+			
 		%We will prove this by induction on layers from the first hidden layer to the output layer. More specifically, we will prove the following lemmas:
 			
-		
-\iffalse
+	
 
 		\begin{lemma} \label{lem:main}
 				For any node $c$ in a hidden layer or the output layer, if $c\notin B_{zero}$, then:		\begin{enumerate}
@@ -483,7 +484,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				
 			\end{lemma}
 			
-\fi
+
 
 			\begin{proof}
 				We prove this lemma by induction on layers. For first hidden layer $L_1$, it is obvious. Suppose we have proved part 1,2,3 up to layer $L_i$, then for layer $L_{i+1}$, suppose $c$ is a node in this layer. 
@@ -517,11 +518,36 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				(3) Once we have part 2, we will have that for any fixed $\boldsymbol{x}^0_J$, $$\max_{\boldsymbol{x}_I} \UB_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(c)= \max_{\boldsymbol{x}_I} \Val_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c).$$ Therefore, $\max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \UB_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c)= \max_{\boldsymbol{x}_I,\boldsymbol{x}_J} \Val_{\boldsymbol{x}_I,\boldsymbol{x}_J}(c)$ and this is to say $\UB(c)=\max(c)$. This is what we want to show, and the same result holds for lower bound and minimal value. This is for part 3. \qed
 
 			\end{proof}
+
+	\fi
+
+
+
+We are now ready to finish the proof of Theorem \ref{thm:2}.
 			
-			From Lemma \ref{lem:main}, we already have that for the unique output node $z$, $$\UB(z)=\max(z).$$ This finish the proof of Theorem \ref{thm:2}.
+	
 			
+\begin{proof}
+	We show that $\beta=\max(z)$.
+
+	We fix the input vector $\vx^*_I$ for input $I$.
+	This also fixes the values in $D_I$.
+	Consider the DNN $D'$ with input nodes $J$, where all the 
+	edges from $m \in D_I$ to $n$ are replaced by a bias (equals to the weight of the edge times the fix value $\val_{\boldsymbol{x}^0_I}(m)$) for $n$ (we sum all these bias for a neuron $n$).
+	We denote $\val'$ values of nodes in this DNN $D'$.
+		 
+	We have $\val'_{\boldsymbol{x}_J}(n)=\Val_{\boldsymbol{x}^*_I,\boldsymbol{x}_J}(n)$ 
+	for every node $n$ of $D'$. All the ReLU nodes of $D'$ are in $X$, by definition of $X$.
+Thus $\MILP_X$ will be fully accurate in $D'$. Let $\beta'$ denote its upper bound.
+We have $\beta'=\max_{\vx{_J}} (\val'_{\vx_{J}}(z)) = 
+\Val_{\boldsymbol{x}^*_I,\boldsymbol{x}_J}(n) = \max(z)$ by Corrolary \ref{corr:main}.
+Now, in $D$, $\MILP_X$ will use simple LP on $D_I$, which suffices to get the upper bound $\val_{\vx^*_I}(n)=\max(n)$ for all $n$ in $D_I$ and the values will be pushed as bias in $D'$. Therefore, $\beta=\beta'=\max(z)$.
+
+The case for $\alpha=min(z)$ is similar. \qed
+	
+\end{proof}
 			
-			\subsubsection*{From weak to compensating}
+\subsection{From weak to compensating}
 			
 			Now, we show that Theorem \ref{thm:2} can prove Theorem \ref{th2}. Suppose $a$ is a node in a weak compensating path $P$, and $P,P'$ form this weak compensating pair.
 			
