@@ -257,10 +257,11 @@ Last, we display the average runtime per number of nodes of both fast adaptive a
 		& Upper\\ 
 		& / CROWN & TO=300s & TO=3000s & {\color{blue}adapt} & {\color{blue}fixed} & Bound\\
 		\hline \hline
-		$8\times200$\  &   $25\%$? & $72\%$? & $\mathbf{79.5\%}$ & {\color{blue}$75.5\%$}  & {\color{blue}$77\%$} & $91\%$ \\ 
-		$\epsilon = 0.015$ & 17s & 95s? & 451s & {\color{blue}391s} & {\color{blue}562s} &\\ \hline
+		$8\times200$\  &   $32\%$ & $73\%$ & $\mathbf{79.5\%}$ & {\color{blue}$75.5\%$}  & {\color{blue}$77\%$} & $91.5\%$ \\ 
+		$\epsilon = 0.015$ & 17s & 93s & 451s & {\color{blue}391s} & {\color{blue}562s} &\\ \hline
 	\end{tabular}
-	\caption{WIP! $\%$ of verified images over 200 images. To see how refined BAB scale with TimeOut.}
+	\caption{$\%$ of verified images over 200 images. To see how refined BAB scale with TimeOut.
+	We are not going to use it because on these 200 images, we dont do well ($4\%$ worse than on 1000 images), while $\alpha,\beta$-CROWN is similar.}
 	\label{tab:example4}
 \end{table}
 

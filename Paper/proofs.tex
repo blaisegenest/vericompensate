@@ -262,7 +262,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 						\item every path from $a_k$ to $z$ has weight $\leq 0$. 
 						
 					\end{enumerate}
-					That is, $a_k$ is not a source of a weak compensating pair. We denote 
+					Hence, $a_k$ is not a source of a weak compensating pair. We denote 
 					$A_{pure}$ by $I$ for short.
 					\item $a_k \in A_{open}$ iff $a_k \notin A_{pure} \sqcup A_{zero}$, that is there exists two paths $\rho,\rho'$ from $a_k$, one with positive and one with negative weight. 	We denote $A_{open}$ by $J$ for short.
 				\end{itemize}
@@ -315,19 +315,39 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			
 			
 			
-			Recall the sign function of nodes from Definition \ref{sign_of_nodes}. Because weak compensating paths are allowed, the sign function is no longer defined on all nodes. $S$ is defined on all nodes $a_i \in I$. 
-			Further, we have:
+			For an input $\vx$ and a subset $S$ of input nodes, we denote by $\boldsymbol{x}_S$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We use $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}$ and 
+			$\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J} (z)=\Val_{\boldsymbol{x}}(z)$. 
 			
+			
+			Invoking Lemma \ref{lem:subnetwork}, we can apply Theorem 1 on $D_I$, and obtain two input vectors $\boldsymbol{x}_I^*,\boldsymbol{x}_I^{\sharp}$ on $I$
+			minimizing and maximizing all the nodes in $D_I$.
+
+			\smallskip
+
+		
+			Recall the sign function of nodes from Definition \ref{sign_of_nodes}. 
+			Because weakly compensating paths are allowed, the sign function is no longer defined on all nodes. $S$ is defined for all nodes from which there is no weakly compensating pairs of paths to $z$. In particular, $S$ is defined on all nodes of $I$.
+
 			\begin{lemma}\label{lem:sign}
-				For a node $n$, if there exists at least one path from a node $a_i\in I$ to $n$ with nonzero weight, then $S$ is defined on $n$.
+				Let $m,n$ be two nodes, such that $S$ is defined on $m$ and there is a path $\rho$ with non zero weight to a node $n$. Then $S$ is defined on $n$
+				 (there is no compensating pair of paths from $n$ to $z$).
+				Further, $S(n)= Sign(weight(\rho)) S(m)$.
 			\end{lemma}
 			
 			\begin{proof}
-				By contradiction, suppose that there exists two paths $\rho_1,\rho_2$ from $n$ to $z$ with (strictly) different signs. The pair $\langle a_i,n\rangle \cdot \rho_1$ and $\langle a_i,n\rangle \cdot \rho_2$ is compensating, a contradiction with $a_i\in I$. \qed
+				By contradiction, assume that there exists two paths $\rho_1,\rho_2$ from 
+				$n$ to $z$ with (strictly) different signs. The pair $\langle a_i,n\rangle \cdot \rho_1$ and $\langle a_i,n\rangle \cdot \rho_2$ is compensating, a contradiction with $a_i\in I$. \qed
 			\end{proof}
 
-
-			Hence for any node $m$ such that $S$ is undefined on $m$, value of $m$ can only depends upon input nodes in $J$.
+			Hence, for all node $n$, either $S$ is defined on $n$, or 
+			$n$ depends only upon input nodes in $J$.
+			Let us call $D_J$ the set of such nodes which only depends upon nodes in $J$.
+			$D_J$ forms a sub-network.
+			$D_J$ contains the set of all nodes from which there is a weakly compensating pair of paths to $z$.
+			By definition, for any $b\in D_J$, either $b\in B_{open}$, or $b$ is a constant node: any path from any input node must have zero weight to it.
+			For a node $b$ for which $S$ is undefined, $b$ thus only depends on $J$; so, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ will be fixed.
+			Notice that $D_I \sqcup D_J$ does not cover the DNN entirely in general.
+			
 			
 			\iffalse
 			\begin{lemma}
@@ -339,7 +359,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				This is proved in the first section of appendix. \qed
 			\end{proof}
 
-			\fi
+			
 			
 			\begin{lemma}\label{lem:subnetwork2}
 				$J \cup B_{open}$ forms a sub-network, denoted $D_J$.
@@ -354,32 +374,41 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				 with nonzero weight. Then $\rho \cdot bc$ is a path from $a_i \notin J$ 
 				 to $c$ with non zero weight, a contradiction. \qed
 			\end{proof}
-			
-			By definition, for any $b\in D_J$, either $b\in B_{open}$, or $b$ is a constant node: any path from any input node must have zero weight to it.
-			
-			For an input $\vx$ and a subset $S$ of input nodes, we denote by $\boldsymbol{x}_S$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We use $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}$ and $\Val(z)=\Val_{\boldsymbol{x}}(z)=\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J} (z)$. 
-			For a node $b$ for which $S$ is undefined, $b$ only depends on $J$; so, if $\boldsymbol{x}_J$ is fixed, then the value of $b$ will be fixed.
-			
-			We define $\boldsymbol{x}_I^*$ to be the input vector such that for all $a_i \in I$, the value $x_{a_i}$ for $a_i$ gets its maximal value (if $S(a_i)=1$ or $0$) or $a_i$ gets its minimal value (if $S(a_i)=-1$). Similarly, we define $\boldsymbol{x}_I^\sharp$ to be the input vector such that for all $a_i \in I$, the value $x_{a_i}$ for $a_i$ gets its maximal value (if $S(a_i)=-1$ or $0$) or $a_i$ gets its minimal value (if $S(a_i)=1$).
+			\fi
+
+
+
+
 			
 			
 			
 			\begin{lemma} \label{lem:reach_max_2}
-				Let $b$ be an output node or a node in a hidden layers such that $S(b)=1$. Then for any valuation $\boldsymbol{x}^0_J$,	we have: 
+				Let $n$ be a node on which $S$ is defined. If $S(n)=1$,
+				for any valuation $\boldsymbol{x}^0_J$,	we have: 
 				$$\max_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^*,\boldsymbol{x}^0_J}(b).$$
 				
-				If $S(b)=-1$, then a similar results hold, replacing $\boldsymbol{x}^*_I$ by $\boldsymbol{x}^\sharp_I$. The opposite holds for $\min_{\boldsymbol{x}_I}$.
+				$$\min_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^{\sharp},\boldsymbol{x}^0_J}(b).$$
+				
+				
+				If $S(b)=-1$, 
+				$$\max_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^{\sharp},\boldsymbol{x}^0_J}(b).$$
+				
+				$$\min_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^{*},\boldsymbol{x}^0_J}(b).$$
+				
 			\end{lemma}
 			
-			\begin{proof}
-				
-				
-				For any fixed input vector $\boldsymbol{x}^0_J$, consider the DNN $D'$ with input nodes $a_i\in I$, with all $\boldsymbol{x}^0_J$ 
-				%and their propagation in hidden layers 	
-				as bias. We denote $\val'$ values of nodes In this DNN $D'$.
-				 We have $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z) = \val'_{\vx}(\boldsymbol{x}_I)(z)$.
-				
-				In the simplified $D'$, there is no compensating path because of the definition of $I$. Therefore we can apply Lemma \ref{lem:key1} to get that $\Val_{x_I,\boldsymbol{x}^0_J}(z)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and we are done. \qed
+			\begin{proof}	
+				Fix an input vector $\boldsymbol{x}^0_J$.
+				This also fixes the values in $D_J$.
+				Consider the DNN $D'$ with input nodes $a_i\in I$, where all the 
+				edges from $m \in D_J$ to $n$ are replaced by a bias (equals to the weight of the edge times the fix value $\val_{\boldsymbol{x}^0_J}(m)$) for $n$ (we summ all these bias for a neuron $n$).
+				We denote $\val'$ values of nodes in this DNN $D'$.
+				 
+				We have $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z) = \val'_{\boldsymbol{x}_I}(z)$.
+				In the simplified $D'$, there is no weakly compensating path to $z$ because 
+				$D_J$ contains all the source of weakly compensating path to $z$.
+				Therefore we can apply Lemma \ref{lem:key1} to get that 
+				$\val'_{x_I}(z)$ reaches its maximal value for $\boldsymbol{x}_I=\boldsymbol{x}_I^*$, and conclude by using $\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(z) = \val'_{\boldsymbol{x}_I}(z)$. The case for min is similar. \qed
 			\end{proof}
 			
 			From Lemma \ref{lem:reach_max_2}, we immediatly obtain the following corollary:
@@ -388,10 +417,11 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			For a node $b$ with $S(b)=1$:
 		
 			$$\max(b)=\max_{\vx_j} \val_{\vx^{\star}_I,\vx_J}(b)$$
-	
+			$$\min(b)=\max_{\vx_j} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
 			and for $S(b)=-1$:
 	
 			$$\max(b)=\max_{\vx_j} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
+			$$\min(b)=\max_{\vx_j} \val_{\vx^{\star}_I,\vx_J}(b)$$
 			\end{corollary}
 			
 	
