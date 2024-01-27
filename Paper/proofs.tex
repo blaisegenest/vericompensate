@@ -550,13 +550,68 @@ Now, in $D$, $\MILP_X$ will use simple LP on $D_I$, which suffices to get the up
 The case for $\alpha=min(z)$ is similar. \qed
 	
 \end{proof}
-			
+
+
+\subsection{Proof of Theorem \ref{th2}}
+
+
+We now prove Theorem \ref{th2} under the fairly light {\em well-connected hypothesis} (H1) that the DNN is such that for every 2 (not necessarily disjoint) paths $\rho_1,\rho_2$ with non-zero weight with the same source $m$ and the same target $n$ at least 2 layers apart, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). This hypothesis is used to remove corner cases which will not happen in actual DNNs, which all are well-connected.
+
+Further we assume without loss of generality that every node can be reached from at least one input with a path of non-zero weight (otherwise we just remove this node altogether).
+We also assume without loss of generality that there is no node which can only reach $z$ with path of weight $0$, as such nodes have no contribution to the value $\val(z)$. We denote $m<n$ to mean that there exists a path with non zero weight from $m$ to $n$.
+
+Under (H1), we have the following Lemma:
+
+\begin{lemma}
+  Let $n$ be on a {\em weakly} compensating pair $(\rho_1,\rho_2)$ of paths, 
+  except an input or $z$. Then there exists a compensating pair of paths 
+ $(\rho,\rho')$ including $n$, not as its source or its target.
+\end{lemma}
+
+\begin{proof}
+Let $(s,t)$ be the source and the target of $(\rho_1,\rho_2)$.
+Let an input $a$ such that $a<s$ with path $\rho_0$ between $a$ and $s$,
+and $\rho_3$  from $t$ to $z$.
+Applying (H1) to the pair 
+$(\rho_0 \cdot \rho_1 \cdot \rho_3, \rho_0\cdot \rho_2 \cdot \rho_3)$, 
+we have another (non zero weight) path $\rho'$ from $a$ to $z$ totally disjoint with these two path.
+The weights of $(\rho_0 \cdot \rho_1 \cdot \rho_3, \rho_0\cdot \rho_2 \cdot \rho_3)$
+are of opposite sign because $(\rho_1,\rho_2)$ is weakly compensating, so one of them must be of opposite sign than the weight of $\rho'$. Say its $\rho = \rho_0 \cdot \rho_1 \cdot \rho_3$
+else we pick $\rho=\rho_0\cdot \rho_2 \cdot \rho_3$.
+Then $(\rho,\rho')$ is a pair of compensating path from $a$ to $z$, and as $n$ is neither an input nor $z$, it is strictly on $\rho$.
+\end{proof}
+
+It suffices to invoke Theorem \ref{thm:2} in order to get the proof for Theorem \ref{th2},
+as the set $X$ considered in both are actually the same.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+
 \subsection{Proof of Theorem \ref{th2}}
 			
 Note: it does not need directly the previous proof, although it uses the same arguments.
 We should adapt the previous argument here, and then remove B.1. altogether.
 
-We assume the fairly light hypothesis (H1) that the DNN is such that for every 2 paths $\rho_1,\rho_2$ (not necessarily disjoint) from any $m$ to any $n$ at least 2 layers apart, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$. Further we assume without loss of generality that every node can be reached from at least one input with a path of non-zero weight (otherwise we just remove this node altogether).
+We assume the fairly light hypothesis (H1) that the DNN is such that for every 2 paths $\rho_1,\rho_2$ (not necessarily disjoint) from any $m$ to any $n$ at least 2 layers apart, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$. 
+
+Further we assume without loss of generality that every node can be reached from at least one input with a path of non-zero weight (otherwise we just remove this node altogether).
 We also assume without loss of generality that there is no node which can only reach $z$ with path of weight $0$, as such nodes have no contribution to the value $\val(z)$. We denote $m<n$ to mean that there exists a path with non zero weight from $m$ to $n$.
 
 			\smallskip
@@ -780,7 +835,8 @@ Thus $m'$ is in $Z$, a contradiction with $m'$ the source of a pair of compensat
 \qed
 \end{proof}
 
-To prove Theorem \ref{th2}, we can then optimize $Y$ first on its own (considering the sign of every node): use the same argument in Section A, the proof of Theorem \ref{th1}, we can maximize all $n$ such that $S(n)=1$ and minimize all $n$ such that $S(n)=-1$ at the same time, i.e., with the same input values. And for every node $n$ in $Y$, the value computed is the same as actual lower and upper bounds of $n$.
+To prove Theorem \ref{th2}, we can then optimize $Y$ first on its own (considering the sign of every node): we first maximize all $n$ such that $S(n)=1$ and minimize all $n$ such that 
+$S(n)=-1$ at the same time, i.e., with the same input values. And for every node $n$ in $Y$, the value computed is the same as actual lower and upper bounds of $n$.
 
 
 Now we consider the contribution  (direct and indirect) of nodes in $Y$ to $z$ as biases. Let $z=\boldsymbol{bias}_z+\sum_{m\in Y} Appx(W_{mz}m)+\sum_{m\notin Y} \ReLU(W_{mz}m)$. Because we have pre-optimized nodes in $Y$, $\sum_{m\in Y} Appx(W_{mz}m)$ will be a constant in the following optimization, and its term $W_{mz}z$ can be regarded as a part of bias. 
