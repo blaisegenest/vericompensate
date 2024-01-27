@@ -279,7 +279,7 @@ inputs in $A_{pure}$.
 
 We cannot define the Sign function on nodes from which a compensating path can be reached.
 However, we can define the sign function for neurons in $A_{pure}$ and $B_{pure}$.
-Further, the set of nodes on which the sign funciton is defined is suffix-closed:
+Further, the set of nodes on which the sign function is defined is suffix-closed:
 
 \begin{lemma}
 	Let $m,n$ be two nodes, such that $S$ is defined on $m$ and there is a path $\rho$ with non zero weight to a node $n$. Then $S$ is defined on $n$.
@@ -312,7 +312,7 @@ It will compute the bound in the same way in $D$, hence we get $\beta=\max(z)$ f
 \subsection{An efficient algorithm}
 
 
-Leveraging Theorem \ref{th2}, it is theoretically feasible to procure accurate bounds by iteratively applying MILP$_{X}$ to each node, layer by layer. This sequential approach would yield precise bounds $[\alpha,\beta]$ for each node, which could then be utilized to calculate accurate bounds for subsequent layers. However, in a practical setting, this methodology may prove to be computationally inefficient. Typically, the set $X_n$ includes a substantial portion of the nodes from all preceding layers up to layer $k-1$ for a given node $n$ in layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the the strength of compensation. Paths falling below this threshold are deemed to not warrant an individual integer variable due to insufficient compensatory strength. We denote the resultant subset of nodes situated on paths with substantial compensation as $Z_n$. In practical applications, one might consider selecting the $K$ nodes that are involved in the most significant compensating paths to construct the set $Z_n$, with $K$ being a relatively small integer. This strategy effectively provides a trade-off between the algorithm's performance and the precision of the results. The detailed steps of this approach are outlined in the pseudo-code for \CMP presented in Algorithm \ref{algo1}.
+Leveraging Theorem \ref{th2}, it is theoretically feasible to procure accurate bounds by iteratively applying MILP$_{X}$ to each node, layer by layer. This sequential approach would yield precise bounds $[\alpha,\beta]$ for each node, which could then be utilized to calculate accurate bounds for subsequent layers. However, in a practical setting, this methodology may prove to be computationally inefficient. Typically, the set $X_n$ includes a substantial portion of the nodes from all preceding layers up to layer $k-1$ for a given node $n$ in layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the strength of compensation. Paths falling below this threshold are deemed to not warrant an individual integer variable due to insufficient compensatory strength. We denote the resultant subset of nodes situated on paths with substantial compensation as $Z_n$. In practical applications, one might consider selecting the $K$ nodes that are involved in the most significant compensating paths to construct the set $Z_n$, with $K$ being a relatively small integer. This strategy effectively provides a trade-off between the algorithm's performance and the precision of the results. The detailed steps of this approach are outlined in the pseudo-code for \CMP presented in Algorithm \ref{algo1}.
 
 
 
