@@ -176,7 +176,10 @@
 
 In this paper, we introduced the notion of {\em compensating pairs of paths}, with rationale why such a phenomenon creates inaccuracies hard to handle when verifying DNNs. We proved that this phenomenon is actually explaining entirely the inaccuracies, as in their absence, even the simplest Box abstraction (interval arithmetic) suffices to verify accurately DNNs. We verified experimentally that DNNs learnt in a natural way, harder to verify than robustly trained DNNs, exhibit paths with larger compensating strength. 
 
-Based on this idea of compensating pairs of paths, we proposed abstraction $\MILP_{Z}$ considering a subset $Z$ of the set of unstable ReLU nodes, that we proved to be fully accurate if {\em all} the compensating paths are covered by $Z$. Last, we experimentally showed that choosing $Z$ covering {\em few} paths with the strongest compensations, results in very good accuracy, and runtime which can be favourable in some (but not all) cases. This proves that compensating strength is a promising novel concept which should be further studied to improve DNN verification. We finally proposed several ways to use the compensating strength to optimize current tools in different directions, and leave that as future work.
+
+
+Based on this idea of compensating pairs of paths, we proposed abstraction $\MILP_{Z}$ considering a subset $Z$ of the set of unstable ReLU nodes, that we proved to be fully accurate if {\em all} the compensating paths are covered by $Z$. Our empirical studies revealed that selecting $Z$ to cover only {\em a few} paths with the most significant compensation yields highly accurate results. Additionally, we observed that the runtime can be advantageous in certain scenarios, though not universally. This underscores the potential of compensating strength as an innovative and promising avenue for enhancing DNN verification.
+ We finally proposed several ways to use the compensating strength to optimize current tools in different directions, and leave that as future work.
 
 \newpage
 
