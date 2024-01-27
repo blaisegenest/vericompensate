@@ -553,18 +553,27 @@ We prove by induction from the input layer to higher layers that the upper bound
 This may be a single number or an interval. 
 Denote by $\beta_{x_J^0}(m)$ (resp $\beta'_{x_J^0}(m)$) the upper bound computed by $\MILP_X$ 
 for $m$ in $D$ (resp. $D'$) when the $J$ input is fixed to be ${x_J^0}$.
+We define in the same way  $\alpha_{x_J^0}(m)$ and $\alpha'_{x_J^0}(m)$ for the minimal values.
 
-For any input $x_J=x_J^0$, we prove $\beta'_{x_J^0} \geq \beta_{x_J^0}$ by induction on $n$:
+For any input $x_J=x_J^0$, we prove $\beta'_{x_J^0}(n) \geq \beta_{x_J^0}(n)$ 
+and
+$\alpha'_{x_J^0}(n) \leq \alpha_{x_J^0}(n)$ 
+by induction on $n$:
 
 
 \begin{align*}
-	\beta'_{x_J^0}(n) = & {bias}_n+\sum_{m\in B_{pure}} W_{mn} \beta'(\hat{m})
-	+\sum_{m\notin B_{pure}} W_{mn} (\beta'_{x_J^0}(\hat{m}))\\
-(\text{by induction})\geq & {bias}_n+\sum_{m\in B_{pure}} \max(\ReLU(W_{mn}m))+\sum_{m\notin B_{pure}} 
-\UB(\ReLU(W_{mn}\Val^{D}_{x_J^0}(m)))\\
-= & {bias}_n+\sum_{m\in B_{pure}} \UB(\mathrm{AppB}(W_{mn}))+\sum_{m\notin B_{pure}}  \UB(\ReLU(W_{mn}\Val^{D}_{x_J^0}(m)))\\
-\geq & \UB(\Val^{D}_{x_J^0}(n)), \text{when } S(n)=1
+\beta'_{x_J^0}(n) = & {bias}_n+\sum_{m\in B_{pure},W_{mn}>0} W_{mn} \beta'(\hat{m})+\sum_{m\in B_{pure},W_{mn}<0} W_{mn} \alpha'(\hat{m})\\
++&\sum_{m\notin B_{pure},W_{mn}>0} W_{mn} \beta'_{x_J^0}(\hat{m})+\sum_{m\notin B_{pure},W_{mn}<0} W_{mn} \alpha'_{x_J^0}(\hat{m})\\
+\\
+(\text{by induction})\geq & {bias}_n+\sum_{m\in B_{pure},W_{mn}>0} W_{mn} \beta'(\hat{m})+\sum_{m\in B_{pure},W_{mn}<0} W_{mn} \alpha'(\hat{m})\\
++&\sum_{m\notin B_{pure},W_{mn}>0} W_{mn} \beta_{x_J^0}(\hat{m})+\sum_{m\notin B_{pure},W_{mn}<0} W_{mn} \alpha_{x_J^0}(\hat{m})\\
+\\
+(\text{Lemma \ref{lem:key1}})= & {bias}_n+\sum_{m\in B_{pure},W_{mn}>0} W_{mn} \beta(\hat{m})+\sum_{m\in B_{pure},W_{mn}<0} W_{mn} \alpha(\hat{m})\\
++&\sum_{m\notin B_{pure},W_{mn}>0} W_{mn} \beta_{x_J^0}(\hat{m})+\sum_{m\notin B_{pure},W_{mn}<0} W_{mn} \alpha_{x_J^0}(\hat{m})\\
+\geq & \beta_{x_J^0}(n)
 \end{align*} 
+
+The case for $\alpha$ is similar, proving the induction.
 
 Hence, using the $\max$ over ${x_J^0}$, 
 we will have $\max(z) = \beta'\geq \beta \geq \max(z)$, and hence $\beta=\beta'=\max(z)$.
@@ -625,6 +634,34 @@ as the set $X$ considered in both are actually the same.
 
 
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{Proof of Theorem \ref{th2}}
 			

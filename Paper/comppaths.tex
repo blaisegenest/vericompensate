@@ -189,10 +189,10 @@ We will provide the proof under a fairly light well-connected hypothesis (H1), w
 	Let $n$ be any node of a DNN. Then for $[\alpha,\beta]$ the bounds computed by MILP$_{X_n}$ for neuron $n$, for all $\gamma \in [\alpha,\beta]$, there exists an input $\vy$ such that $\val_{\vy}(n)=\gamma$.
 \end{theorem}
 
-The sketch of proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs}.
+The sketch of proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs2}.
 
 
-\subsection{Sketch of Proofs}
+\subsection{Sketch of Proof for Theorem \ref{th1}}
 \label{sec.proofs}
 
 First, notice that by continuity of all the functions used in the DNNs, it suffices to show both theorem for $\gamma=\alpha$ and $\gamma=\beta$.
@@ -201,17 +201,47 @@ First, notice that by continuity of all the functions used in the DNNs, it suffi
 Consider a target neuron $z$.
 In case there is no compensating path, we can assign a sign to each neuron $n$: 0
 if all paths from $n$ to $z$ has weight 0, $+1$ if all paths have positive weights, and 
-$-1$ if they have negative weights. Then we prove:
+$-1$ if they have negative weights. 
+
+Using the concept of sign, we introduce input vectors $\vx^{*}, \vx^{\sharp}$: 
+
+\begin{definition}
+We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$: 
+	\begin{itemize}
+		\item $\vx^{*}$ is the input vector defined in the following way:
+		\begin {itemize}
+		 \item $x^*_{a_i}=\max(a_i)$ if $S(a_i)\in \{0,1\}$, and
+          \item $x^*_{a_i}=\min(a_i)$ otherwise, that is when $S(a_i)=-1$.
+	\end{itemize}
+		
+		\item $\vx^{\sharp}$ is the input vector defined in the following way:
+		\begin{itemize}
+			\item $x^{\sharp}_{a_i}=\min(a_i)$ if $S(a_i)\in \{0,1\}$, and
+			\item $x^{\sharp}_{a_i}=\max(a_i)$ otherwise, that is when $S(a_i)=-1$.
+		\end{itemize}
+	\end{itemize}
+\end{definition}
+
+
+
+We can then prove that $\vx^\star,\vx^\sharp$ maximize and minimize conjointly all the nodes in the DNN. Notice that it does {\em not} mean that there is no dependencies between nodes.
+There can be correlations between nodes, just they do not affect the $\min$ and $\max$ bounds that can be reached in any node.
 
 \begin{proposition}
 	\label{prop.sign}
-	There exist two inputs $\vx^\star,\vx^\sharp$ such that ${\vx^\star}$ maximizes the value of all positive neurons and minimizes the value of all negative neurons, and  ${\vx^\sharp}$ minimizes the value of all positive neurons and maximizes the value of all negative neurons.
+	${\vx^\star}$ maximizes the value of all positive neurons and minimizes the value of all negative neurons, and  
+	${\vx^\sharp}$ minimizes the value of all positive neurons and maximizes the value of all negative neurons.
 \end{proposition}
 
 Hence $\val_{\vx^\star}(z)=\beta$ and $\val_{\vx^\sharp}(z)=\alpha$,
 for $[\alpha, \beta]$ the bounds computed by the Box abstraction. We conclude Theorem \ref{th1} by invocking continuity.
 
 \smallskip
+The formal proof is in appendix A.
+
+
+\subsection{Sketch of Proof for Theorem \ref{th2}}
+\label{sec.proofs2}
 
 Concerning Theorem \ref{th2}, consider an output node $z$.
 Let $[\alpha(z),\beta(z)]$ be the bound computed by $\MILP_{X_z}$.
@@ -246,7 +276,11 @@ and input $\vx_{pure}^\sharp$ extending $\vx_{pure}^\sharp$
 from $A_{pure}$ to $A_{pure} \cup A_{open}$ such that 
 $\val_{\vx^\star}(z)=\beta(z)$ and $\val_{\vx^\sharp}(z)=\alpha(z)$.
 
-The formal proofs are in appendix.
+
+
+
+\smallskip
+The formal proof is in appendix.
 
 
 \subsection{An efficient algorithm}

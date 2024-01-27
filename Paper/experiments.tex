@@ -111,7 +111,7 @@ Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than
 also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. 
 Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier because the trade-off of accuracy vs evaluating the compensating strength of such paths is unclear.
 
-\begin{table}[h!]	
+\begin{table}[t!]	
 	\centering
 	\begin{tabular}{|c||c|c|c|}
 		\hline
@@ -127,7 +127,7 @@ Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier becaus
 	\end{tabular}
 	\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs random choice).}
 	\label{tab:example1}
-	%\vspace{-0.8cm}
+	\vspace{-0.6cm}
 \end{table}
 
 \subsection{Comparison with Prior State of the Art}
@@ -212,6 +212,7 @@ even $\alpha,\beta$-CROWN with the longest timeout, taking less than $0.3s$ per 
 	\caption{$\%$ of verified images and average runtime in seconds.
 		Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.
 	}
+	\vspace{-0.8cm}
 	\label{tab:example}
 \end{table}
 
