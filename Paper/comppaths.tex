@@ -151,9 +151,8 @@ if a DNN lacks any compensating path, then any methodology that is at least as a
 	\label{th1}
 	Consider any node $n$ within a DNN devoid of any compensating path. Let $[\alpha,\beta]$ represent the bounds computed by the Box abstraction for node $n$. Then, for every $\gamma$ within the interval $[\alpha,\beta]$, there exists an input $\vx$ such that $\val_{\vx}(n) = \gamma$.
 \end{theorem}
-\begin{proof}
-	The sketch of proof can be found in Section \ref{sec.proofs}. 
-\end{proof}
+
+The sketch of proof can be found in Section \ref{sec.proofs}. 
 
 This theorem underscores the significant role of compensating paths in the accuracy of bound estimation within DNNs, affirming that their absence guarantees the precision of computed bounds. Practically speaking, encountering a network entirely devoid of compensating paths is highly improbable, rendering this more a theoretical observation, highlighting that compensation is a key driver of inaccuracy.
 
@@ -171,14 +170,22 @@ An intriguing application of this result lies in elucidating why certain DNNs ar
 
 While Theorem \ref{th1} is interesting to understand that compensation is a key notion for accurate verification of DNNs, it cannot be used directly to analyze DNNs with compensations, which are actually those that are most interesting to tackle.
 Intuitively, when there are compensating paths, it seems necessary to consider exactly the (unstable) ReLU nodes that are seen along these paths. 
-Consider a neuron $n$ in layer $k$ for which we want to have accurate bounds 
-$[\alpha,\beta]$.
+%Consider a neuron $n$ in layer $k$ for which we want to have accurate bounds 
+%$[\alpha,\beta]$.
 
-Consider a neuron $n$ in layer $k$, for which we aim to establish accurate bounds $[\alpha,\beta]$. Define $X_n$ as the set of neurons $x$ in layers up to $k-1$, where each $x$ is part of a compensating path targeting neuron $n$, but not as the originating or terminating node of the path. Let $Y_n$ represent the set of all other neurons in the first $k-1$ layers, essentially serving as the complement of $X_n$. We introduce MILP${X_n}$, a variant of the MILP encoding where all nodes in $Y_n$ are linearly relaxed, hence incorporating $|X_n|$ binary variables, each corresponding to a neuron in $X_n$. Additionally, this encoding encapsulates precise bounds for every neuron $n'$ in the initial $k-1$ layers. We propose that the bounds $[\alpha,\beta]$ for neuron $n$, as computed by MILP${X_n}$, are accurate, thereby offering a more nuanced approach to DNN verification in scenarios involving compensating paths.
+Consider a neuron $n$ in layer $k$, for which we aim to establish accurate bounds $[\alpha,\beta]$. Define $X_n$ as the set of neurons $x$ in layers up to $k-1$, where each $x$ is part of a compensating path targeting neuron $n$, but not as the source or the target node of the path. Let $Y_n$ represents the set of all other neurons in the first $k-1$ layers, essentially serving as the complement of $X_n$. We introduce MILP${X_n}$, a variant of the MILP encoding where all nodes in $Y_n$ are linearly relaxed, hence incorporating $|X_n|$ binary variables, each corresponding to a neuron in $X_n$. Additionally, this encoding encapsulates bounds for every neuron $n'$ in the initial $k-1$ layers, as computed inductively in previous steps. That is, we do not use explicitly in $X_n$ nodes on compensating paths with target neurons before $n$ ({\em indirectly} compensating paths), 
+only those with target $n$ ({directly} compensating paths).
+The contribution of these {\em indirectly} compensating paths are thus 
+only taken into account indirectly via the bounds on previous neurons computed inductively,
+and not as binary variables. We demonstrate now that the bounds $[\alpha,\beta]$ for neuron $n$, as computed by MILP${X_n}$, are accurate, thereby offering a more nuanced approach to DNN verification in scenarios involving compensating paths.
+We will provide the proof under a fairly light well-connected hypothesis (H1), which only DNNs where all but very few weights are 0 does not satisfy.
+
+(H1): for every 2 (not necessarily disjoint) paths $\rho_1,\rho_2$ with non-zero weight with the same source $m$ and the same target $n$ with at least 2 transitions, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). This hypothesis is used to remove corner cases which will not happen in actual DNNs, which all are well-connected.
 
 
 \begin{theorem}
 	\label{th2} 
+	Assume the DNN satisfies the well-connected (H1) hypothesis.
 	Let $n$ be any node of a DNN. Then for $[\alpha,\beta]$ the bounds computed by MILP$_{X_n}$ for neuron $n$, for all $\gamma \in [\alpha,\beta]$, there exists an input $\vy$ such that $\val_{\vy}(n)=\gamma$.
 \end{theorem}
 
@@ -187,6 +194,8 @@ The sketch of proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs
 
 \subsection{Sketch of Proofs}
 \label{sec.proofs}
+
+First, notice that by continuity of all the functions used in the DNNs, it suffices to show both theorem for $\gamma=\alpha$ and $\gamma=\beta$.
 
 %Intuitively, our first proof shows that if there are no compensation, then there are no correlations between nodes.
 Consider a target neuron $z$.
