@@ -1,27 +1,33 @@
-
+\newpage
 \section{Experimental Evaluation}
 
 
-We implemented a prototype of {\toolname} in Python 3.8.  We conducted our evaluation on an AMD 5975WX  ($32$ cores$@3.6$GHz, 7nm, year 2022) with 256 GB of main memory and 2 NVIDIA RTX 3090. Gurobi 9.52 was used for solving MILP and LP problems. 
+We implemented a prototype of \toolname in Python 3.8. 
+We conducted our evaluation on an AMD 5975WX  ($32$ cores$@3.6$GHz, 7nm, year 2022) 
+with 256 GB of main memory and 2 NVIDIA RTX 3090. 
+Gurobi 9.52 was used for solving MILP and LP problems. 
 
-We conducted our evaluation on neural networks trained on MNIST that have been employed in prior work. The networks have varying sizes: $5\times 100$, $5\times 200$, $8 \times 100$, and $8 \times 200$. It is worth remarking that despite seemingly small size, these instances are challenging for the current state of the art techniques. In particular, the current state of the art methods are unable to characterize $12\%$ to $20\%$ of the images as neither certified robust \cite{crown} nor find an adversarial example \cite{attack}. Following methodology in prior work \cite{prima,crown}, we evaluate on the first 1000 images of the dataset. We also experimented on MLP of size $6\times 500$ (results not reported in \cite{prima,crown}), checking the first 200 images of the dataset, given the computational overhead associated with such larger networks. Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm. 
+We conducted our evaluation on neural networks trained on MNIST that have been employed in prior work. The networks have varying sizes: $5\times 100$, $5\times 200$, $8 \times 100$, and $8 \times 200$. It is worth remarking that despite seemingly small size, these instances are challenging for the current state of the art techniques. In particular, the current state of the art methods are unable to characterize $12\%$ to $20\%$ of the images as neither certified robust \cite{crown} nor find an adversarial example \cite{attack}. We call such images {\em undetermined}. Following methodology in prior work \cite{prima,crown}, we evaluate on the first 1000 images of the dataset. We also experimented on the network of size $6\times 500$ (results not reported in \cite{prima,crown}), checking the first 200 images of the dataset, given the computational overhead associated with such larger networks. 
+Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
+All these DNNs are found in the ERAN GitHub 
+(\url{https://github.com/eth-sri/eran}, the 4th to the 8th DNNs provided).
 %Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
 
 \paragraph{Baseline}: 
 We compare the following verifiers performing value-abstraction:
 \begin{itemize}
-	\item DeepPoly \cite{deeppoly}/ CROWN \cite{crown}. We report the runtime from our own implementation used in {\toolname}. It shows that our purely Python implementation is not optimal ($10$ to $100$ times slower than the implementation in ($\alpha$)($\beta$)CROWN, ERAN and PRIMA). 
-	\item PRIMA~\cite{prima} and $(\alpha)\beta$ CROWN. We use the results reported in \cite{prima} and \cite{crown} respectively for instances that were also used in prior works and report results for MLP $6\times500$ instances as it was not considered in prior work.  
+	\item DeepPoly \cite{deeppoly}/ CROWN \cite{crown}. We report the runtime from our own implementation, used in {\toolname}. It shows that our purely Python implementation is not optimal ($10$ to $100$ times slower than the implementation in ($\alpha$)($\beta$)CROWN, ERAN and PRIMA). 
+	\item PRIMA~\cite{prima} and $(\alpha)\beta$ CROWN \cite{crown}. We use the results reported in \cite{prima} and \cite{crown} respectively for instances that were also used in prior works.
+	We report results for the $6\times500$ network as it was not reported in prior work.  
 	
 %	They use GPU while we do not. When computing the whole correlated space, 
 %	parallelization is difficult.
 %	Notice that on these DNNs, PRIMA resort to refined bounds on the first few layers (3 or 4) using exact MILP encoding of all the nodes (which is easily parallelized - 16 nodes considered in parallel in PRIMA). This is doable on the first few layers as the number of integer variable is not too large. By comparison, we run MILP on all the layers, but with a bounded number of integer variables to control the runtime and to scale to all the layers.
-	\item ($\alpha$)$\beta$-CROWN, with results as reported in \cite{crown}, as it is the most accurate of the efficient tool to date. 
 %	Its main idea is to implement a very efficient Branch and Bound (BaB) verification tool, subsuming BaBSR \cite{BaB}, and using GPU implementation (while we do not). Performance of pure BaB on these 
 %	"hard to verify" DNNs is however impaired by the large number of branchs to consider. Similarly as PRIMA, $\beta$-CROWN resorts to refining the bounds of the first few layers using an exact MILP encoding, also computing 16 nodes in parallel, before running the branching heuristic BaB-FSB. 
 %	\item We also experimented with the latest versions of $\alpha$-$\beta$-CROWN (October 2023) and PRIMA (2022) on MLP $6 \times 500$ (results not reported in \cite{crown,prima}).
 	\item It is worth remarking that we do not report results from kPoly \cite{kpoly}, OptC2V \cite{optC2V}, 
-	SDPFO \cite{SDPFI}, MIPplanet \cite{MIPplanet}, as $(\alpha)\beta$-CROWN has been shown to outperform these methods\cite{crown}. 
+	SDPFO \cite{SDPFI}, MIPplanet \cite{MIPplanet}, as $(\alpha)\beta$-CROWN has been shown to outperform these methods \cite{crown}.
 	
 \end{itemize}
 
@@ -31,14 +37,14 @@ The  objective of our evaluation was to answer the following  questions:
 
 \begin{enumerate}
 	\item How does the the choice of  the set  $Z$ impacts the accuracy of $\MILP_Z$? 
-	\item  How does the performance, measured as the percentage of images verified, of {\toolname} compare to that of prior state of the art approaches? 
-	\item Evaluate how the runtime of {\toolname} scale with the size of DNNs.
+	\item  How does the performance, measured as the percentage of images verified, of \toolname compare to that of prior state of the art approaches? 
+%	\item Evaluate how the runtime of \toolname scales with the size of DNNs.
 \end{enumerate}
 
 \subsection{Utility of Heuristic based on Compensation Strength  }
 
 %The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes,  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
-To measure the impact of the heuristic based on compensation strength, we focused on the smallest MLP (i.e. of size $5\times 100$ \cite{crown}) so as to obtain exact bounds for the first few layers using a full MILP encoding of the DNN. We test over the $\vx=59$th image in the MNIST dataset, as it has a large number of unstable ReLU nodes in the first few layers ($61$ in the first and $55$ in the second layer), so we can experiment with a larger choice of values) for $K$.
+To measure the impact of the heuristic based on compensation strength, we focused on the smallest DNN (i.e. of size $5\times 100$ \cite{crown}) so as to obtain exact bounds for the first few layers using a full MILP encoding of the DNN. We test over the $\vx=59$th image in the MNIST dataset, as it has a large number of unstable ReLU nodes in the first few layers ($61$ in the first and $55$ in the second layer), so we can experiment with a larger choice of values) for $K$.
 
 To measure the accuracy, we measure the uncertainty of all nodes in a layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
@@ -47,10 +53,26 @@ Formally, for a node $n$ with bounds $[\alpha,\beta]$, its uncertainty $unc(a) =
 
 
 
+
+
+
+
+%KSM: I don't think this is really the place for the paragraph below
+% Let $c$ be a node of the second layer.
+%A compensating pair $(\pi,\pi')$ of paths with target $c$ is thus of the form a node $a b c$ and $a b' c$, with $a$ an input node and $b,b'$ on the first layer. The compensating strength for $(b,b')$ is defined as $comp(b,b')=\sum_a \val_{\vx}(a) \min(weight(abc),weight(ab'c))$. Indeed, the pair $(a b c,a b' c)$ of path cannot compensate more than $\val_{\vx}(a) \min(weight(a,b,c),$\newline $weight(a,b',c))$, and $b,b'$ would help compensated the set of pairs of paths $\{(a b c,a b' c) \mid a$ is in the first layer$\}$. After selecting the heaviest $(b_0,b_0')$, we can then compute $comp(b)= \sum_{b' \text{already selected}} comp(b,b')+comp(b',b)$ and select iteratively the heaviest $b$'s one by one till reaching the threshold. 
+%We do this for all node $c$ of the second layer.
+
+
+
 \subsubsection*{ReLU Node in the first hidden layer}
 
 
-\begin{table}[b!]
+We first focus on the choice of nodes in the first hidden layer, and its consequences on the accuracy of nodes in the second layer. 
+We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly. The range of uncertainty created by inacurate computations is up to $1.17=2.22-1.05$, $2.22$ being the accuracy provided by LP, and $1.05$ by an exact MILP encoding of all the unstable ReLU nodes. Selecting $30$ out of the $61$ unstable ReLU nodes, the uncertainty created by inacurracies is reduced by $80\%$, while a random choice of nodes only leads up to roughly halving this number. We can deduce that selecting nodes based on compensating strength helps to select important ReLU nodes for the accuracy.
+
+
+
+\begin{table}[h!]
 	\centering
 	\begin{tabular}{|c||c|c|}
 		\hline
@@ -71,17 +93,6 @@ Formally, for a node $n$ with bounds $[\alpha,\beta]$, its uncertainty $unc(a) =
 
 
 
-%KSM: I don't think this is really the place for the paragraph below
-% Let $c$ be a node of the second layer.
-%A compensating pair $(\pi,\pi')$ of paths with target $c$ is thus of the form a node $a b c$ and $a b' c$, with $a$ an input node and $b,b'$ on the first layer. The compensating strength for $(b,b')$ is defined as $comp(b,b')=\sum_a \val_{\vx}(a) \min(weight(abc),weight(ab'c))$. Indeed, the pair $(a b c,a b' c)$ of path cannot compensate more than $\val_{\vx}(a) \min(weight(a,b,c),$\newline $weight(a,b',c))$, and $b,b'$ would help compensated the set of pairs of paths $\{(a b c,a b' c) \mid a$ is in the first layer$\}$. After selecting the heaviest $(b_0,b_0')$, we can then compute $comp(b)= \sum_{b' \text{already selected}} comp(b,b')+comp(b',b)$ and select iteratively the heaviest $b$'s one by one till reaching the threshold. 
-%We do this for all node $c$ of the second layer.
-
-We first focus on the choice of nodes in the first hidden layer, and its consequences on the accuracy of nodes in the second layer. 
-We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly. The range of uncertainty created by inacurate computations is up to $1.17=2.22-1.05$, $2.22$ being the accuracy provided by LP, and $1.05$ by an exact MILP encoding of all the unstable ReLU nodes. Selecting $30$ out of the $61$ unstable ReLU nodes, the uncertainty created by inacurracy is reduced by $80\%$, while a random choice of nodes only leads up to roughly halving this number. We can deduce that selecting nodes based on compensating strength helps to select important ReLU nodes for the accuracy.
-
-
-
-
 
 \subsubsection*{ReLU Node in the first and second hidden layer}
 
@@ -89,11 +100,11 @@ We now turn to evaluating the choice of ReLU nodes in two layers, focusing on th
 The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. Let $d$ be a neuron of the third layer.
 We keep the previous evaluation for ranking nodes in the previous (second) layer. 
 Once the set $Z$ of selected nodes has sufficiently many nodes $c,c'$ in the second layer, adding $b,b'$ from the first layer to $Z$ allows to take into account accurately the pairs of paths of the form $(a b c d, a b' c' d)$ for all $\{c,c'\} \in Z$. We thus define:
-\vspace{-0.2cm}
+%\vspace{-0.2cm}
 $$comp(b,b')=\sum_a \sum_{c,c' \in Z} \val_{\vx}(a) \min( weight(abcd),weight(ab'c'd))$$ 
-\vspace{-0.2cm}
+%\vspace{-0.2cm}
 
-and the associated $comp(b)$, and select iteratively nodes $b$ (first layer) or $c$ (second layer) by selecting the heaviest $comp(b)$ or $comp(c)$.
+and the associated $comp(b)=\sum_{b' \in Z} comp(b,b') + comp(b',b)$. We then select iteratively nodes $b$ (first layer) or $c$ (second layer) by selecting the heaviest $comp(b)$ or $comp(c)$.
 
 We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly from layers $1$ and $2$. 
 We compare choosing nodes in the second layer only with choosing nodes in both the first and second layer.
@@ -101,7 +112,7 @@ Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than
 also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. 
 Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier because the trade-off of accuracy vs evaluating the compensating strength of such paths is unclear.
 
-\begin{table}[t!]	
+\begin{table}[h!]	
 	\centering
 	\begin{tabular}{|c||c|c|c|}
 		\hline
@@ -117,14 +128,20 @@ Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier becaus
 	\end{tabular}
 	\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs random choice).}
 	\label{tab:example1}
-	\vspace{-0.8cm}
+	%\vspace{-0.8cm}
 \end{table}
 
 \subsection{Comparison with Prior State of the Art}
 
-We present the runtime and accuracy analysis of various techniques in Table~\ref{tab:example}. Several observations are noteworthy: DeepPoly/CROWN is by far the fastest, yet it is also the least accurate, certifying robustness for fewer than $30\%$ of the images. In contrast, there are at least $82\%$ of the images for which no attack is found (attacks computed by \cite{attack} in $\beta$-CROWN). Similarly, while PRIMA achieves better accuracy than DeepPoly/CROWN but falls short of {\toolname}. 
+We present the runtime and accuracy analysis of various techniques in Table~\ref{tab:example}. Further, for each DNN, a PGD-attack \cite{attack} is run 
+on all the images. We report the $\%$ of images without attack, as being an {\em Upper Bound} on the $\%$ of images the vertifiers can certify.
 
-Next, we shift focus to the comparison with $\beta$-CROWN, where we observe intriguing trade-offs. As network sizes increase, {\toolname} demonstrates better accuracy in comparison to $\beta$-CROWN. As expected, there's a trade-off between runtime and accuracy: {\toolname} can verify more images, albeit at the cost of increased computation time. However, more often than not, our primary concern lies in running a tool for a fixed timeout to determine whether it can verify the desired property within that time.
+Several observations are noteworthy: DeepPoly (or CROWN) is by far the fastest, yet it is also the least accurate, certifying robustness for fewer than $30\%$ of the images. In contrast, there are at least $82\%$ of the images for which no attack is found. Similarly, PRIMA achieves better accuracy than DeepPoly/CROWN but falls short of \toolname. 
+
+Next, we shift focus to the comparison with ($\alpha$)$\beta$-CROWN, where we observe intriguing trade-offs. On the shallowest DNNs (5 layers, $5 \times 100$, $5 \times 200$), \toolname accuracy is close to $\beta$-CROWN, within 1.5\%. This is because RefinedBaB used by $\beta$-CROWN, used by 
+$\beta$-CROWN, has the time to refine most of the nodes, and thus the number of branches BaB has to explore is small enough.
+
+As network sizes increase, \toolname demonstrates better accuracy in comparison to $\beta$-CROWN. As expected, there's a trade-off between runtime and accuracy: \toolname can verify more images, albeit at the cost of increased computation time. However, more often than not, our primary concern lies in running a tool for a fixed timeout to determine whether it can verify the desired property within that time.
 
 
 % BaB focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence {\toolname} will spend a lot of time on nodes which are not necessary for the verification. 
@@ -153,16 +170,16 @@ Next, we shift focus to the comparison with $\beta$-CROWN, where we observe intr
 \newcolumntype{C}{>{\centering\arraybackslash}X}
 
 
-\begin{table}[htb]
+\begin{table}[t!]
 	\centering
-	\begin{tabularx}{\textwidth}{|C||C|C|C|C|C|}
+	\begin{tabularx}{\textwidth}{|C||C||C|C|C||C|}
 		
 		\hline
-		\text{DNN} & \shortstack{Upper\\Bound} & \shortstack{DeepPoly/\\CROWN} & PRIMA & $\beta$-CROWN & {\toolname}\\ 
+		\text{DNN} & \shortstack{Upper\\Bound} & \shortstack{DeepPoly/\\CROWN} & PRIMA & \shortstack{($\alpha$)$\beta$-\\CROWN} & \toolname \\ 
 		\hline \hline
 		
-		$5 \times100$\  & $84.2 \%$ & $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & {$68.4\%$}\\ 
-		$\epsilon = 0.026$ &  & 5s & 159s & 102s & {142s}\\
+		$5 \times100$\  & $84.2 \%$ & $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & $68.4\%$\\ 
+		$\epsilon = 0.026$ &  & 5s & 159s & 102s & 142s\\
 		\hline	
 		
 		$5 \times 200$ \  & $90.1 \%$ & $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & {$76.8\%$}\\ 
@@ -173,12 +190,11 @@ Next, we shift focus to the comparison with $\beta$-CROWN, where we observe intr
 		$\epsilon = 0.026$ &  & 8s & 301s & 103s & {346s}\\
 		\hline
 		
-		
 		$8\times200$\  & $91.1 \%$ & $25.9\%$ & $62.4\%$ & $73.5\%$ & {$\mathbf{80.7\%}$}\\ 
-		$\epsilon = 0.015$ &  & 17s & 395s & 95s  & {697s$^\star$}\\ \hline
+		$\epsilon = 0.015$ &  & 17s & 395s & 95s  & {697s}\\ \hline \hline
 		
-		$6\times500$\  & $92\%$ & $26\%$ & $32.5\%$ & $41\%$ & 65\%\\ 
-		$\epsilon = 0.035$ &  & 34s & 119s & 18.4s & 925s\\ \hline 
+		$6\times500$\  & $92\%$ & $26\%$ & $32.5\%$ & $41\%$ & {$\mathbf{65\%}$}\\ 
+		$\epsilon = 0.035$ &  & 34s & 119s & 18.4s & {925s} \\ \hline 
 		
 	\end{tabularx}
 	
@@ -282,15 +298,14 @@ Next, we shift focus to the comparison with $\beta$-CROWN, where we observe intr
 %\end{table}
 
 
+\iffalse
+
 \subsection{Scalability of {\toolname} with Size of DNNs}
 
-We now focus on understanding the potential of {\toolname} for even larger networks than those that are usually considered in the verification community. To this end, Figure~\ref{fig2} presents the  average runtime per node across various DNNS. Observe that while  the average runtime per node isn't fixed (attributable to $\LP(N,K)$), it remains regulated, avoiding exponential increases — from 0.1s per node for the smallest DNN to 0.3s per node for the largest. This suggests that {\toolname} is scalable to larger DNNs, bypassing the high complexity barrier often encountered with approaches such as those based on pure branch and bound.
-
-
-\begin{figure}[h!]
+\begin{figure}[b!]
 	\centering
 	\begin{tikzpicture}
-		\begin{axis}[width=10cm,height=5cm,
+		\begin{axis}[width=10cm,height=6cm,
 			xlabel={},
 			ylabel={},
 			legend pos=south east,
@@ -327,6 +342,9 @@ We now focus on understanding the potential of {\toolname} for even larger netwo
 
 
 
+We now focus on understanding the potential of {\toolname} for even larger networks than those that are usually considered in the verification community. To this end, Figure~\ref{fig2} presents the  average runtime per node across various DNNS. Observe that while  the average runtime per node isn't fixed (attributable to $\LP(N,K)$), it remains regulated, avoiding exponential increases — from 0.1s per node for the smallest DNN to 0.3s per node for the largest. This suggests that {\toolname} is scalable to larger DNNs, bypassing the high complexity barrier often encountered with approaches such as those based on pure branch and bound.
+
+\fi
 
 
 \section{Limitations and Discussion}
