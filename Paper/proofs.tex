@@ -544,25 +544,30 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 	for every node $n$ of $D'$. All the ReLU nodes of $D'$ are in $X$, by definition of $X$.
 Thus $\MILP_X$ will be fully accurate in $D'$. Let $\beta'$ denote its upper bound.
 We have $\beta'=\max_{\vx{_J}} (\val'_{\vx_{J}}(z)) = 
-\Val_{\boldsymbol{x}^*_I,\boldsymbol{x}_J}(n) = \max(z)$ by Corrolary \ref{corr:main}.
+\Val_{\boldsymbol{x}^*_I,\boldsymbol{x}_J}(n) = \max(z)$ by Corollary \ref{corr:main}.
 Now, in $D$, $\MILP_X$ will use simple LP on $D_I$, which suffices to get the upper bound $\val_{\vx^*_I}(n)=\max(n)$ for all $n$ in $D_I$ and the values will be pushed as bias in $D'$. Therefore, $\beta'=\max(z)$.
 
 We now prove that $\beta=\beta'$, which terminates the proof, as The case for $\alpha=min(z)$ is similar. 
 
-We prove by induction from the input layer to higher layers that the upper bound of node $n$ in $D'$, is greater than or equal to the upper bound in $D$; and similarly for the lower bound. We use  $\Val^{D}_{x_J^0}(n)$ to denote the range of possible values for node $n$ in MILP model of $D$ when $x_J=x_J^0$. This may be a single number or an interval. 
+We prove by induction from the input layer to higher layers that the upper bound of node $n$ in $D'$, is greater than or equal to the upper bound in $D$; and similarly for the lower bound. We use  $\Val^{D}_{x_J^0}(n)$ to denote the range of possible values for node $n$ in  model $D$ or $D'$ when $x_J=x_J^0$. 
+This may be a single number or an interval. 
+Denote by $\beta_{x_J^0}(m)$ (resp $\beta'_{x_J^0}(m)$) the upper bound computed by $\MILP_X$ 
+for $m$ in $D$ (resp. $D'$) when the $J$ input is fixed to be ${x_J^0}$.
 
-For any input $x_J=x_J^0$, we prove $\Val^{D'}_{x_J^0}(n) \geq \UB(\Val^{D}_{x_J^0}(n))$
-by induction:
+For any input $x_J=x_J^0$, we prove $\beta'_{x_J^0} \geq \beta_{x_J^0}$ by induction on $n$:
 
 
 \begin{align*}
-\Val^{D'}_{x_J^0}(n) = & \boldsymbol{bias}_n+\sum_{m\in B_{pure}} \max(\ReLU(W_{mn}m))+\sum_{m\notin B_{pure}} \ReLU(W_{mn}\Val^{D'}_{x_J^0}(m))\\
-(\text{by induction})\geq & \boldsymbol{bias}_n+\sum_{m\in B_{pure}} \max(\ReLU(W_{mn}m))+\sum_{m\notin B_{pure}} \UB(\ReLU(W_{mn}\Val^{D}_{x_J^0}(m)))\\
-= & \boldsymbol{bias}_n+\sum_{m\in B_{pure}} \UB(\mathrm{AppB}(W_{mn}))+\sum_{m\notin B_{pure}}  \UB(\ReLU(W_{mn}\Val^{D}_{x_J^0}(m)))\\
+	\beta'_{x_J^0}(n) = & {bias}_n+\sum_{m\in B_{pure}} W_{mn} \beta'(\hat{m})
+	+\sum_{m\notin B_{pure}} W_{mn} (\beta'_{x_J^0}(\hat{m}))\\
+(\text{by induction})\geq & {bias}_n+\sum_{m\in B_{pure}} \max(\ReLU(W_{mn}m))+\sum_{m\notin B_{pure}} 
+\UB(\ReLU(W_{mn}\Val^{D}_{x_J^0}(m)))\\
+= & {bias}_n+\sum_{m\in B_{pure}} \UB(\mathrm{AppB}(W_{mn}))+\sum_{m\notin B_{pure}}  \UB(\ReLU(W_{mn}\Val^{D}_{x_J^0}(m)))\\
 \geq & \UB(\Val^{D}_{x_J^0}(n)), \text{when } S(n)=1
 \end{align*} 
 
-Hence, using the $\max$, we will have $\max(z) = \beta'\geq \beta \geq \max(z)$, and hence $\beta=\beta'=\max(z)$.
+Hence, using the $\max$ over ${x_J^0}$, 
+we will have $\max(z) = \beta'\geq \beta \geq \max(z)$, and hence $\beta=\beta'=\max(z)$.
 
 \qed
 	
