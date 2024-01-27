@@ -314,7 +314,8 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			
 			
 			
-			For an input $\vx$ and a subset $S$ of input nodes, we denote by $\boldsymbol{x}_S$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We use $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}$ and 
+			For an input $\vx$ and a subset $S$ of input nodes, we denote by 
+			$\boldsymbol{x}_S$ to refer the input vector $\langle x_{a_k}\rangle_{a_k\in S}$. We use $\boldsymbol{x}_I\oplus \boldsymbol{x}_J = \boldsymbol{x}$ and 
 			$\Val_{\boldsymbol{x}_I,\boldsymbol{x}_J} (z)=\Val_{\boldsymbol{x}}(z)$. 
 			
 			
@@ -348,38 +349,6 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			Notice that $D_I \sqcup D_J$ does not cover the DNN entirely in general.
 			
 			
-			\iffalse
-			\begin{lemma}
-				If $n$ is in the layer after $m$, then $S(n), S(m)$ are both defined
-				with $S(n) \neq 0$ and $W_{mn}\neq 0$, then $sign(W_{mn})S(n)=S(m)$.
-			\end{lemma}
-			
-			\begin{proof}
-				This is proved in the first section of appendix. \qed
-			\end{proof}
-
-			
-			
-			\begin{lemma}\label{lem:subnetwork2}
-				$J \cup B_{open}$ forms a sub-network, denoted $D_J$.
-				That is, for $n \in B_{open}$, for every path $\rho$ from $m$ to $n$
-				either $m \in B_{open}\cup J$ or $weight(\rho)=0$. 
-				Further, $S$ is undefined on all nodes of $D_J$.
-			\end{lemma}
-			
-			\begin{proof}
-				By contradiction, assume that there exists two nodes $b,c$ such that $W_{bc}\neq 0$ and $c$ is in $D_J$ and $b \notin D_J$, then 
-				there is a path $\rho$ from an input node $a_i \notin J$ to $b$
-				 with nonzero weight. Then $\rho \cdot bc$ is a path from $a_i \notin J$ 
-				 to $c$ with non zero weight, a contradiction. \qed
-			\end{proof}
-			\fi
-
-
-
-
-			
-			
 			
 			\begin{lemma} \label{lem:reach_max_2}
 				Let $n$ be a node on which $S$ is defined. If $S(n)=1$,
@@ -392,8 +361,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				If $S(b)=-1$, 
 				$$\max_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^{\sharp},\boldsymbol{x}^0_J}(b).$$
 				
-				$$\min_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^{*},\boldsymbol{x}^0_J}(b).$$
-				
+				$$\min_{\boldsymbol{x}_I} (\Val_{\boldsymbol{x}_I,\boldsymbol{x}^0_J}(b)) =  \Val_{\boldsymbol{x}_I^{*},\boldsymbol{x}^0_J}(b).$$	
 			\end{lemma}
 			
 			\begin{proof}	
@@ -417,11 +385,11 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			For a node $b$ with $S(b)=1$:
 		
 			$$\max(b)=\max_{\vx_J} \val_{\vx^{\star}_I,\vx_J}(b)$$
-			$$\min(b)=\max_{\vx_J} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
+			$$\min(b)=\min_{\vx_J} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
 			and for $S(b)=-1$:
 	
 			$$\max(b)=\max_{\vx_J} \val_{\vx^{\sharp}_I,\vx_J}(b)$$
-			$$\min(b)=\max_{\vx_J} \val_{\vx^{\star}_I,\vx_J}(b)$$
+			$$\min(b)=\min_{\vx_J} \val_{\vx^{\star}_I,\vx_J}(b)$$
 			\end{corollary}
 			
 	
@@ -537,8 +505,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 	We fix the input vector $\vx^*_I$ for input $I$.
 	This also fixes the values in $D_I$.
 	Consider the DNN $D'$ with input nodes $J$, where all the 
-	edges from $m \in D_I$ to $n$ are replaced by a bias (equals to the weight of the edge times the fix value $\val_{\boldsymbol{x}^0_I}(m)$) for $n$ (we sum all these bias for a neuron $n$).
-	We denote $\val'$ values of nodes in this DNN $D'$.
+	edges from $m \in D_I$ to $n$ are replaced by a bias (equals to the weight of the edge times the fix value $\val_{\boldsymbol{x}^*_I}(m)$) for $n$ (we sum all these bias for a neuron $n$). We denote $\val'$ values of nodes in this DNN $D'$.
 		 
 	We have $\val'_{\boldsymbol{x}_J}(n)=\Val_{\boldsymbol{x}^*_I,\boldsymbol{x}_J}(n)$ 
 	for every node $n$ of $D'$. All the ReLU nodes of $D'$ are in $X$, by definition of $X$.

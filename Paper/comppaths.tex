@@ -265,28 +265,54 @@ We then partition the set of neurons in hidden layers:
 	\item $B_{pure}$ is the set of remaining neurons.
 \end{enumerate}
 
-We can define the sign function for neurons in $A_{pure}$ and $B_{pure}$.
-Further, the value of any neuron $n$ in $A_{pure}$ or $B_{pure}$ is entirely determined by 
-nodes in $A_{pure}$ or $B_{pure}$. Therefore, applying Prop. \ref{prop.sign} on the DNN
-made of nodes from $A_{pure}$ and $B_{pure}$, we obtain 
-$\vx_{pure}^\star,\vx_{pure}^\sharp$ optimizing neurons in $A_{pure}$ or $B_{pure}$.
-We can prove that there exists input 
-$\vx^\star$ extending $\vx_{pure}^\star$
-and input $\vx_{pure}^\sharp$ extending $\vx_{pure}^\sharp$
-from $A_{pure}$ to $A_{pure} \cup A_{open}$ such that 
-$\val_{\vx^\star}(z)=\beta(z)$ and $\val_{\vx^\sharp}(z)=\alpha(z)$.
+We can show the following lemma:
+
+\begin{lemma}
+	$A_{pure} \cup B_{pure} $ forms a sub-network, denoted $D_I$. That is, 
+	for $n \in B_{pure}$, for every path $\rho$ from $m$ to $n$
+	either $m \in B_{pure}\cup I$ or $weight(\rho)=0$.
+\end{lemma}
+
+Hence, the value of any neuron $n$ in $A_{pure}$ or $B_{pure}$ is entirely determined by 
+inputs in $A_{pure}$. 
 
 
+We cannot define the Sign function on nodes from which a compensating path can be reached.
+However, we can define the sign function for neurons in $A_{pure}$ and $B_{pure}$.
+Further, the set of nodes on which the sign funciton is defined is suffix-closed:
 
+\begin{lemma}
+	Let $m,n$ be two nodes, such that $S$ is defined on $m$ and there is a path $\rho$ with non zero weight to a node $n$. Then $S$ is defined on $n$.
+	Further, $S(n)= Sign(weight(\rho)) S(m)$.
+\end{lemma}
 
-\smallskip
-The formal proof is in appendix.
+We can apply Theorem \ref{th1} on the DNN made of nodes from $A_{pure}$ and $B_{pure}$, and obtain $\vx_{pure}^\star,\vx_{pure}^\sharp$ optimizing neurons in $A_{pure}$ or $B_{pure}$:
+
+\begin{proposition}
+For a node $b$ with $S(b)=1$:
+
+$$\max(b)=\max_{\vx_{open}} \val_{\vx^{\star}_{pure},\vx_{open}}(b)$$
+$$\min(b)=\min_{\vx_{open}} \val_{\vx^{\sharp}_{pure},\vx_{open}}(b)$$
+
+and for $S(b)=-1$:
+$$\max(b)=\max_{\vx_{open}} \val_{\vx^{\sharp}_{pure},\vx_{open}}(b)$$
+$$\min(b)=\min_{\vx_{open}} \val_{\vx^{\star}_{pure},\vx_{open}}(b)$$
+\end{proposition}
+
+Consider the DNN $D'$ with input nodes $A_{open}$, where all the 
+edges from $m \in A_{open} \cup B_{open}$ to $n$ are replaced by a bias 
+(equals to the weight of the edge times the fix value $\val_{\boldsymbol{x}^\star_{open}}(m)$) for $n$ (we sum all these bias for a neuron $n$).
+The values in $D'$ are the same as the values in $D$ for input $\vx^{\star}_{pure}$,
+which suffices to reach the maximal value of $D$.
+In $D'$, all the ReLU nodes are in $B_{open}$. 
+Hence $\MILP_{B_{open}}$ computes the bounds accurately in $D'$.
+It will compute the bound in the same way in $D$, hence we get $\beta=\max(z)$ for the target $z$. The formal proof is in appendix B.
 
 
 \subsection{An efficient algorithm}
 
 
-Leveraging Theorem \ref{th2}, it is theoretically feasible to procure accurate bounds by iteratively applying MILP$_{X}$ to each node, layer by layer. This sequential approach would yield precise bounds $[\alpha,\beta]$ for each node, which could then be utilized to calculate accurate bounds for subsequent layers. However, in a practical setting, this methodology may prove to be computationally inefficient. Typically, the set $X_n$ includes a substantial portion of the nodes from all preceding layers up to layer $k-1$ for a given node $n$ in layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the the strength of compensation. Paths falling below this threshold are deemed to not warrant an individual integer variable due to insufficient compensatory strength. We denote the resultant subset of nodes situated on paths with substantial compensation as $Z_n$. In practical applications, one might consider selecting the $K$ nodes that are involved in the most significant compensating paths to construct the set $Z_n$, with $K$ being a relatively small integer. This strategy effectively provides a trade-off between the algorithm's performance and the precision of the results. The detailed steps of this approach are outlined in the pseudo-code presented in Algorithm \ref{algo1}.
+Leveraging Theorem \ref{th2}, it is theoretically feasible to procure accurate bounds by iteratively applying MILP$_{X}$ to each node, layer by layer. This sequential approach would yield precise bounds $[\alpha,\beta]$ for each node, which could then be utilized to calculate accurate bounds for subsequent layers. However, in a practical setting, this methodology may prove to be computationally inefficient. Typically, the set $X_n$ includes a substantial portion of the nodes from all preceding layers up to layer $k-1$ for a given node $n$ in layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the the strength of compensation. Paths falling below this threshold are deemed to not warrant an individual integer variable due to insufficient compensatory strength. We denote the resultant subset of nodes situated on paths with substantial compensation as $Z_n$. In practical applications, one might consider selecting the $K$ nodes that are involved in the most significant compensating paths to construct the set $Z_n$, with $K$ being a relatively small integer. This strategy effectively provides a trade-off between the algorithm's performance and the precision of the results. The detailed steps of this approach are outlined in the pseudo-code for \CMP presented in Algorithm \ref{algo1}.
 
 
 
@@ -295,8 +321,8 @@ Leveraging Theorem \ref{th2}, it is theoretically feasible to procure accurate b
 \SetKwInput{KwInput}{Input}
 \SetKwInput{KwOutput}{Output}
 
-\begin{algorithm}[htb]
-	\caption{Compensate(K)}
+\begin{algorithm}[b!]
+	\caption{CMP($K$)}
 	\label{algo1}
 	\KwInput{Bounds $[\alpha_n,\beta_n]$ for input nodes $n$ at layer $0$ (input neighbourhood)}
 	
@@ -316,7 +342,7 @@ Leveraging Theorem \ref{th2}, it is theoretically feasible to procure accurate b
 
 
 
-This algorithm has a worst case complexity bounded by $O(N \MILP(N,K))$, 
+CMP($K$) has a worst case complexity bounded by $O(N \MILP(N,K))$, 
 where $N$ is the number of nodes of the DNN, 
 and $\MILP(N,K)$ is the complexity of solving a MILP program with $K$ integer variables and $N$ linear variables.
 We have $\MILP(N,K) \leq 2^K \LP(N)$ where $\LP(N)$ is the Polynomial time to solve a Linear Program with $N$ variables.
