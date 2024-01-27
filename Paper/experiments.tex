@@ -332,7 +332,15 @@ We now focus on understanding the potential of {\toolname} for even larger netwo
 \section{Limitations and Discussion}
 \label{Discussion}
 
-For DNNs robustly trained, $\alpha$-$\beta$-CROWN and PRIMA are excellent solutions, both very fast and very accurate, usually matching or getting very close \cite{crown} to the upper bound on the $\%$ of verified images \cite{attack}. Compensation strength is not required in these contexts, reason why we did not consider it.
+
+Our focus in this study was solely on DNNs employing ReLU activation functions since our approached on usage of MILP, which is naturally suited for ReLU activation function. That said, it is worth remarking that the notion of compensation strength is independent of  
+
+The rationale lies in the capability of MILP, the foundational component of {\toolname} (and branch-and-bound in the context of $\beta$-CROWN), to efficiently handle ReLU activations. 
+
+While other activation functions can be abstracted, as seen with PRIMA (contrary to $\beta$-CROWN), the concept of compensation remains independent of the activation function used. We leave studying the 
+
+We acknowledge the potential value in exploring compensation strength across varied activation functions and earmark this for subsequent research.
+
 
 We only considered DNNs with ReLU activation functions in this paper. The reason is that MILP, which is the basic block of {\toolname} (and BaB for $\beta$-Crown) can handle the ReLU activation function efficiently. Other activation functions are abstracted in more complex ways, e.g. by PRIMA (unlike $\beta$-CROWN). Still, the compensation paradigm is  orthogonal to the activation function. We believe that studying the compensation strength would be useful with other activation functions as well. We leave that for future work. 
 
