@@ -52,7 +52,7 @@ For $b_j$ in the hidden layer, we have $S(b_j)=1,-1,0$ if $W_{b_j c}$ is positiv
 \section{Proof of Theorem \ref{th1}}	
 
 
-Assume that there is a no (weakly) compensating pair of paths.
+Assume that there is no (weakly) compensating pair of paths.
 
 
 \begin{lemma}
@@ -74,7 +74,7 @@ Assume that there is a no (weakly) compensating pair of paths.
 %Notice that for $S(n)=1$, $n_s$ gets maximal value whenever $n$ gets maximal value; 
 %while for $S(n)=-1$, $n_s$ gets maximal value whenever $n$ gets minimal value (and vice versa). For $S(n)=0$, $n_s=0$ and thus always reach his minimal and maximal.
 
-Using the concept of sign, now we introduce the key lemma for Theorem \ref{th1}.
+Using the concept of sign, we introduce input vectors $\vx^{*}, \vx^{\sharp}$: 
 
 \begin{definition}
 We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$: 
@@ -91,10 +91,9 @@ We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$:
 			\item $x^{\sharp}_{a_i}=\max(a_i)$ otherwise, that is when $S(a_i)=-1$.
 		\end{itemize}
 	\end{itemize}
-	
-	
-	
 \end{definition}
+
+We can then prove the following key lemma for Theorem \ref{th1}.
 
 \begin{lemma}
 	\label{lem:key1}
@@ -241,7 +240,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			\begin{theorem} \label{thm:2}
 				
 				
-				Suppose $\mathcal{D}$ is a DNN with $\ReLU$ as the unique activation functions and with a unique output node $z$. 
+				Suppose $\mathcal{D}$ is a DNN with a unique output node $z$.
 				Let $X$ be the set of nodes $n$ such that there is a weak compensating path 
 				passing by $n$ (except its source and target nodes).
 				Then $\MILP_X$ computes the exact bounds $[\alpha,\beta]$ for $z$,
@@ -655,6 +654,170 @@ This concludes the proof of Theorem \ref{th2}
 	in which case it gives us a path $\rho_2 \rho_3$  from $m$ to $z$ of opposite sign than $\rho_1$. Applying Lemma \ref{lemma10}, we have prefixes $\rho'_1,\rho'_2$ of $\rho_1,\rho_2$ ending in the same state $m'$, and with weights of opposite sign.
 	So we are left with path from $m'$ to $Y_-,Y_+$ of opposite sign. 
 	We then apply Lemma \label{lemma11}, inductively then applying Lemma \label{lemma10} on the suffices etc. We obtain a contradiction to the existence of $m$ with $m<n^+$ and $m<n^-$. \qed
+	\end{proof}
+	
+	
+	With the same arguments, we obtain:
+	
+	\begin{lemma}
+	If we have $m<n \in X_*$ and $m < n^+ \in Y_+$ (or $m < n^- \in Y_-$),
+	then $n < n^+$ (or $n < n^-$), with compensating pairs of path from $m$ to $n$.
+	\end{lemma}
+	
+	Last, consider the case $m<n^+ \in Y_+$ and $m < n^- \in X_-$.
+	
+
+
+
+In the first case, the ReLU for $n$ will be opened, so we do not need to worry about this case.
+			
+			In the other cases, the ReLU associated with node $n$ will not be in $X$ 
+			(not opened in $\MILP_X$).
+			In the second case, as 
+			, it means that $z'$ is in a layer strictly before $z'$.
+			Consider all the possible associated target nodes $z'$ of compensating path from $n$.
+
+			
+			Therefore, choose a path $Q$ from input to output with nonzero weight and disjoint from $P,P''$. Now, since weights of $P,P''$ have different signs, and $a$ is in both paths, whatever the weight of $Q$ is, $Q$ and one of  $P$ or $P''$ can form a compensating pair (not weak compensating pair anymore, because $Q$ is disjoint with $P,P''$), and $a$ is in a path. This means $a$ will be opened.
+			
+			Combining all discussion above, if $a$ is in a weak compensating path from input to output, then it is in a compensating path from one layer to another layer. Therefore, Theorem \ref{thm:2} implies Theorem \ref{th2}. This is what we want to show.
+			\fi
+			
+
+ 			
+		
+			
+
+\newpage
+
+	
+\subsection{Revised Proof of Theorem \ref{th2}}
+			
+We assume without loss of generality that every node can be reached from at least one input with a path of non-zero weight (otherwise we just remove this node altogether).
+We also assume without loss of generality that there is no node which can only reach $z$ with path of weight $0$, as such nodes have no contribution to the value $\val(z)$. We denote $m<n$ to mean that there exists a path with non zero weight from $m$ to $n$.
+
+Further, we assume the fairly light {\em well-connected hypothesis} (H1) that the DNN is such that for every 2 (not necessarily disjoint) paths $\rho_1,\rho_2$ with non-zero weight with the same source $m$ and the same target $n$ at least 2 layers apart, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). This hypothesis is used to remove corner cases 
+which will not happen in actual DNNs, which all are well-connected.
+
+			\smallskip
+
+
+			We now show Theorem \ref{th2} under (H1).
+			Let $X$ be the set of nodes on compensating paths with target $z$, but not as source or target.
+		
+			Let $Z$ be the subset of nodes $n$ of the DNN such that $S$ is defined on $n$ 
+			wrt node $z$. As proved earlier, $Z$ is suffix closed, i.e. if $m<n<z$ with $m \in Z$, then $n \in Z$. We can partition $Z = Z_{+} \sqcup Z_{-}$, for positive and negative sign. $X$ can intersect both $Z_+$ and $Z_-$.
+			We call $X_+ = Z_+ \cap X$ and $X_-=Z_- \cap X$, as well as 
+			defined $Y_+,Y_-$ such that $Z_+ = X_+ \sqcup Y_+$ and $Z_- = X_- \sqcup Y_-$.
+			We denote $Y=Y_+ \sqcup Y_-$.
+			
+\begin{lemma}
+ Let $n \notin Z$. Then $n \in X$.
+\end{lemma}
+
+\begin{proof}
+			node $n \notin Z$ implies the existence of two path $\rho_1,\rho_2$ (not necessarily disjoint) to $z$, with opposite sign. 
+			Take an input node $a$ reaching $n$ with path $\rho$ with non zero weight.
+			Then using (H1), we get a third path $\rho_3$ disjoint from $\rho \cdot \rho_1$ and from $\rho \cdot \rho_2$ with non-zero weight. Depending on the sign of $weight(\rho_3)$, it will form a compensating pair of path to $z$ either with $\rho \cdot \rho_1$ or with $\rho \cdot \rho_2$, hence $n$ will be in $X$. We call $X_*$ this subset $X$. \qed
+\end{proof}
+			
+Hence, it means that $X \sqcup Y$ partitions the set of neurons in hidden layers.
+			
+\begin{lemma}
+	\label{lemma10}
+		Let $y \in Y_+$. Then for all $m$, there does not exist a pair $(\rho_1,\rho_2)$ 
+		of paths  with weights of opposite sign with $\rho_1$ from $m$ to $y$ and 
+		with $\rho_2$ from $m$ to $z$ (even non disjoint).
+\end{lemma}
+
+\begin{proof}
+  $y \notin X$, so it is not on a pair of compensating pair with target $z$.
+  Let $\rho$ be a path from $y$ to $z$ (it has positive weight has $y \in Z_+$).
+  Hence $\rho_1 \rho, \rho_2$ have opposite sign, and they must meet before $z$.
+
+  If $\rho_1 \rho$ meets $\rho_2$ after $y$, then we use $(H_1)$ to get another disjoint path from $y$ to $z$ (it has positive weight has $y \in Z_+$), it would not meet $\rho_2$, a contradiction.
+
+  Hence $\rho_1$ must meet $\rho_2$ (that is before or at $y$).
+  Their weights must be of opposite sign, otherwise we can inductively reapplied the same argument to their suffixes.
+  Let $\rho_1=\rho_1'\rho_1''$.
+  Both $\rho_1 \cdot \rho$ and $\rho_2' \cdot \rho_1'' \cdot \rho$
+  are from $m$ to $z$ going through $y$, but with weights of opposite sign (as $\rho'_1$ and $\rho'_2$ have opposite sign).
+  Now, by $(H1)$, there exists a path $\rho_3$ disjoint from $\rho_1 \cdot \rho$ and$\rho_2' \cdot \rho_1'' \cdot \rho$ from $m$ to $z$. It means that we have a pair of compensating paths from $m$ to $z$, and thus $y \in X$, a contradiction with $y \in Y_+$. \qed
+\end{proof}
+
+It means that if a path $\rho_1$ from $m$ to $y$ has stricly positive (resp. negative) weight, then all the paths from $m$ to $z$ will also have strictly positive (resp. negative) weights. It means that Sign is defined on all the $m$ that can reach $Y_+$.
+
+We have the same results for $y \in Y_-$, for paths $\rho_1, \rho_2$ of same sign:
+
+\begin{lemma}
+	\label{lemma11}
+	Let $y \in Y_-$. Then for all $m$, there does not exist a pair $(\rho_1,\rho_2)$ 
+	of paths with weights of same sign with $\rho_1$ from $m$ to $y$ and 
+	with $\rho_2$ from $m$ to $z$ (even non disjoint).
+\end{lemma}
+
+Hence, we obtain as corollary of both lemmas:
+
+\begin{corollary}
+\label{cor:simple}
+Assume that $m < n$ with $n \in Y$.
+Then $m \in Z$.
+\end{corollary}
+
+From there, we conclude that $Y$ is actually prefix-closed:
+
+\begin{lemma}
+	\label{lemma12}
+	Assume that $m < n$ with $n \in Y$.
+	Then $m \in Y$.
+\end{lemma}
+
+\begin{proof}
+Assume by contradiction that $m \notin Y$ with $m<n \in Y$.
+That is, $m \in X$, and there exists a node $m'$ with a pair of compensating paths to $z$
+passing by $m$. But now, that means that $m'<m<n<z$.
+Thus $m'$ is in $Z$, a contradiction with $m'$ the source of a pair of compensating paths.
+\qed
+\end{proof}
+
+To prove Theorem \ref{th2}, we can then optimize $Y$ first on its own (considering the sign of every node): use the same argument in Section A, the proof of Theorem \ref{th1}, we can maximize all $n$ such that $S(n)=1$ and minimize all $n$ such that $S(n)=-1$ at the same time, i.e., with the same input values. And for every node $n$ in $Y$, the value computed is the same as actual lower and upper bounds of $n$.
+
+
+Now we consider the contribution  (direct and indirect) of nodes in $Y$ to $z$ as biases. Let $z=\boldsymbol{bias}_z+\sum_{m\in Y} Appx(W_{mz}m)+\sum_{m\notin Y} \ReLU(W_{mz}m)$. Because we have pre-optimized nodes in $Y$, $\sum_{m\in Y} Appx(W_{mz}m)$ will be a constant in the following optimization, and its term $W_{mz}z$ can be regarded as a part of bias. 
+
+This is similar for nodes in other layers. Let $n\in X$ and $n=\boldsymbol{bias}_n+\sum_{m\in Y} Appx(W_{mn}m)+\sum_{m\notin Y} \ReLU(W_{mn}m)$; similarly, $\sum_{m\in Y}Appx(W_{mn}m)$ is fixed after the first optimization. Thus we can regard all these terms nodes $m$ in $Y$ as bias.
+
+
+
+Moreover, what is more important is that,  for $m\in Y_+$, the pre-optimization will obtain its maximal value, and for $m\in Y_-$, this will get its minimal value. And for $n\in X_+$ or $n=z$, it will receive $Appx(W_{mn}m)$'s maximal values as bias either $m\in Y_+$ (then $W_{mn}>0$) or $m\in Y_-$ (then $W_{mn}<0$). Similar for $n\in X_-$. The exception is $n$ not in $Z$. But if $n\notin Z$, then any $m<n$ cannot in $Y$ because $Y\subseteq Z$.   Hence, if $n$ is not in $Z$, then $n$ receives no bias from $Y$.
+
+
+Therefore, after the pre-optimization, for $z$ and every node $n\in X_+$, they receive nodes $m$ in $Y$ as bias, and this part of bias reaches its maximal. For every node $n\in X_-$,  they receive nodes $m$ in $Y$ as bias, and this part of bias reaches its minimal.
+
+
+Let $I$ be the set of input nodes of $Y$, and $J$ be the set of rest input nodes.
+After optimization of $Y$, the input values for $I$ are fixed, and therefore values of all nodes in $Y$.
+Consider the DNN $D'$ with input nodes $J$, where all the 
+edges from $m \in Y$ to $n$ are replaced by a bias for $n$ (we sum all these bias for a neuron $n$).
+We denote $\val'$ values of nodes in this DNN $D'$. All the ReLU nodes of $D'$ are in $X$, by definition of $X$.
+Thus $\MILP_X$ will be fully accurate in $D'$. Let $\beta'$ denote its upper bound. By the discussion earlier, we know that $\beta'=\max(z)$.
+
+
+Similarly, we can prove $\alpha=\min(z)$. This concludes the proof of Theorem \ref{th2}
+
+\iffalse
+
+
+\begin{lemma}
+	There does not exist a node $m$ with $m<n^+ \in Y^+$ and $m<n^- \in Y^-$.
+	\end{lemma}
+	
+	\begin{proof}
+	By contradiction, assume that there exist nodes $m, n^+ \in Y_+$ and  $n^
+	- \in Y_-$, such that there are two non-zero weight paths $\rho_1$ from $m$ to $n^+$ and $\rho_2$ from $n$ to $n^-$ Assume first that the weights of $\rho_1,\rho_2$ have the same sign, 
+	in which case it gives us a path $\rho_2 \rho_3$  from $m$ to $z$ of opposite sign than $\rho_1$. Applying Lemma \ref{lemma10}, we have prefixes $\rho'_1,\rho'_2$ of $\rho_1,\rho_2$ ending in the same state $m'$, and with weights of opposite sign.
+	So we are left with path from $m'$ to $Y_-,Y_+$ of opposite sign. 
+	We then apply Lemma \ref{lemma11}, inductively then applying Lemma \ref{lemma10} on the suffices etc. We obtain a contradiction to the existence of $m$ with $m<n^+$ and $m<n^-$. \qed
 	\end{proof}
 	
 	
