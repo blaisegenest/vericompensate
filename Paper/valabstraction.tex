@@ -1,0 +1,172 @@
+	\section{Value Abstraction for DNN verification}
+
+In this section, we describe different value (over-)abstractions on $\vz$ that are used by efficient algorithms to certify robustness around an input $\vx$. Over-abstractions of values include all values for $\vz$ in the neighbourhood of $\vx$, and thus a certificate for safety in the over-abstraction is a proof of safety for the original input $\vx$.
+
+\subsection{The Box and DeepPoly Abstractions}
+
+
+
+\begin{figure}[t!]
+	\centering
+	\begin{tikzpicture}
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (input1) {$n_1$};
+		
+		\node[circle, draw= purple, thick, minimum width = 20,
+		minimum height = 20] (input2) at ($(input1) + (0,-1.5)$) {$n_2$};
+		
+		
+		% Hidden layers
+		
+		\node (hidden10) at ($(input1) + (2.5,0.6)$) {$0$};
+		
+		\node (hidden20) at ($(input1) + (2.5,-1.5-0.6)$) {$0$};
+		
+		\node (hidden50) at ($(input1) + (7.5,0.6)$) {$0$};
+		
+		\node (hidden60) at ($(input1) + (7.5,-1.5-0.6)$) {$1.5$};
+		
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (hidden1) at ($(input1) + (2.5,0)$) {$n_3$};
+		\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$n_4$};
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$\hat{n}_3$};
+		\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$\hat{n}_4$};
+		
+		
+		\node[circle, draw= blue, thick, minimum width = 20,
+		minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$n_5$};
+		\node[circle, draw= black, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$n_6$};
+		
+		
+		
+		
+		% Output layer
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (output1) at ($(input1) + (10,0)$){$\hat{n}_5$};
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$\hat{n}_{6}$};
+		
+		
+		% Connections
+		
+		\draw[->,thick] ($(input1) + (-1.5,0)$) -- (input1) node[midway, above] {$[-1,1]$};
+		
+		\draw[->,thick] ($(input1) + (-1.5,-1.5)$) -- (input2) node[midway, above] {$[-1,1]$};
+		
+		
+		
+		\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$1$};
+		\draw[->,thick] (input1) -- (hidden2)node[near start, above] {$1$};
+		
+		\draw[->,color=green, thick] (input2) -- (hidden1) node[near start, below] {$1$};
+		\draw[->,color=red, thick] (input2) -- (hidden2)node[near start, below] {$-1$};
+		
+		
+		
+		
+		
+		\draw[->,color=green, thick] (hidden1) -- (hidden3) node[midway, above] {$\max(n_1,0)$};
+		\draw[->,color=red, thick] (hidden2) -- (hidden4) node[midway, above] {$\max(n_2,0)$};
+		
+		
+		
+		
+		
+		\draw[->,color=green, thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
+		\draw[->,thick] (hidden3) -- (hidden6) node[near start, above] {$0$};
+		
+		\draw[->,color=red, thick] (hidden4) -- (hidden5)node[near start, below] {$2$};
+		\draw[->,thick] (hidden4) -- (hidden6)node[near start, below] {$1$};
+		
+		
+		
+		
+		\draw[->,thick] (hidden5) -- (output1) node[midway, above] {$\max(n_5,0)$};
+		\draw[->,thick] (hidden6) -- (output2) node[midway, above] {$\max(n_6,0)$};
+		
+		
+	\end{tikzpicture}
+	\caption{A DNN example from \cite{kpoly}: every neuron is separated into 2 nodes, $n$ pre- and $\hat{n}$ post-ReLU activation function. The pair $(n_2 n_3 n_5,n_2 n_4 n_5)$ in green and red is compensating (weights of paths are $1,-2$).}
+	\label{fig1}
+\end{figure}
+
+The idea to perform value abstraction is to compute upper and lower bounds on the values of (some) neurons in the DNN when the inputs are in a given neighbourhood, in order to conclude on the robustness without needing to compute the values exactly for all inputs (in the neighbourhood).
+
+First, remark that weighted sums is a linear function, so it is easy to represent it explicitly. The only problematic part to represent accurately is the ReLU function. While it is fairly simple piecewise linear function with 2 modes ($x<0$ and $x \geq 0$), it is not linear. Considering its iterated impact along the different layers of a ReLU DNN is much more complex than it seems. First, let us remark that it is easy to represent exactly $\ReLU(x)$ in case $x$ is {\em stable}, that is, either it is known to be entirely positive, order
+it is known to be entirely negative, as in both case there is only one known linear mode involved. Hence, the sole problem remains how to handle {\em unstable} neurons.
+
+Consider the simpler abstraction, called the {\em Box abstraction} \cite{deeppoly}: inductively compute the bound on each neuron of the next layer independently, by considering the weighted sum over the bounds of the previous layer, then clip the lower bound at 
+$\max(0,$ lower bound$)$ to represent the ReLU function, and so on.
+For all $i$, let $x_i=\val_{\vx}(n_i)$, with $\vx=(x_1,x_2)$.
+For instance, on the DNN example of Fig \ref{fig1}, $x_1,x_2 \in [-1,1]$, then $x_3,x_4 \in [-2,2]$, using ReLU $\hat{x}_3,\hat{x}_4 \in [0,2]$, and $x_5 \in [0,6]$ while $x_6 \in [0,2]$. 
+While the bounds for $n_1, \ldots, n_4$ are exact (for all $\alpha$ 
+in the range, there is an input $\vy$ such that $\val_{\vy}(n_i)=\alpha$), 
+it is no more the case from the next layer (starting in $n_5,n_6$) because of potential 
+dependencies between earlier neurons: $n_3$ reaches value $2$ only when $x_1=x_2=2$,
+in which case $n_4$ reaches value $Val_{(2,2)}(n_4)=0$. Hence, it is impossible that $x_5=\Val_{\vx}(n_5)$ reaches $6$, as it would require both $n_3$ and $n_4$ to have value $2$.
+
+A still extremely fast algorithm that corrects some of this issue is {\em DeepPoly} \cite{deeppoly}, also rediscovered as the {\em CROWN} algorithm \cite{crown}. Instead of 
+hard bounds, for each neuron $n$ of layer $k$, two affine functions (with input at the previous layer $k-1$) are kept as lower bound and upper bound of the value of the node.
+Denote $f_i \leq x_i \leq g_i$ with e.g.  
+$f_{3}(x_3)=f_4(x_4)=0$ and 
+$g_3(x_3) = \frac{x_3+2}{2}$,
+$g_4(x_4) = \frac{x_4+2}{2}$. 
+With that, we get 
+$x_5 \leq g_3(x_3) + 2 g_4(x_4) = \frac{x_3 + 2x_4 + 6}{2} = \frac{3x_1 - x_2 + 6}{2}\leq 5$.
+
+For $[\alpha,\beta]$ bounds on $x_i$, there is one optimal linear function for the upper bound $g_i(x_i)= \beta \frac{x_i-\alpha}{\beta-\alpha}$ for ReLU nodes.
+There are two choices for the lower bound: $f^1_i(x_i) = 0$ or $f^2_i(x_i)=x_i$.
+In the DeepPoly algorithm, the choice is made by considering $\alpha < 0 < \beta$ (for unstable neurons). If $|\alpha|\geq |\beta|$ then $f_i=f^1_i$ is used, while if $|\beta|>|\alpha|$ then $f_i=f^2_i$ is used. Denote {\em $\overline{\mbox{DeepPoly}}$} the DeepPoly algorithm such that $f^1_i$ is always used, and $f^2_i$ is never used. 
+Unlike DeepPoly, {\em $\overline{\mbox{DeepPoly}}$} subsumes the {\em Box abstraction}. Indeed, taking bounds $[-0.2,5]$ on $x_i$, it gives $\ReLU(x_i) \in [0,5]$, 
+while the normal DeepPoly algorithm would only allow to conclude that $\ReLU(x_i) \in [-0.2,5]$.
+
+\iffalse
+\subsection{PRIMA and $\beta$-CROWN}
+\fi
+
+\subsection{MILP and LP encodings for DNNs}
+
+At the other end of the spectrum, we find the Mixed Integer Linear Programming (MILP) value abstraction, which is a priori a complete method (albeit much slower than DeepPoly). 
+Consider an unstable neuron $n \in[\alpha,\beta]$. The value $x$ of $\ReLU(n)$ can be encoded exactly in an MILP formula with one integer (actually even binary) variable $a$ valued in ${0,1}$, using 4 constraints \cite{MILP}:
+\vspace{-0.1cm}
+\begin{align*}
+	\hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a)
+\end{align*}
+
+From \cite{MILP}, for all $x \in [\alpha,\beta] \setminus 0$, there is a unique solution $(a,\hat{x})$ satisfying the constraints, and we have $\hat{x}=\ReLU(x)$ (and $a$ is 0 if $x < 0$ and 1 if $x>0$, and can be either for $x=0$). Such an encoding can be used for every (unstable) ReLU node, and optimizing its value allows to certify a given input. 
+For Networks with hundreds of nodes or more, the associated MILP formula will have have hundreds of integer variables, and it will usually not be solvable efficiently.
+
+MILP instances can be linearly relaxed into LP over-abstraction, where variables which were integers in $\{0,1\}$ (binary) are relaxed to be real in interval $[0,1]$, using otherwise the same encoding. Solving LP instances being Polynomial time, optimizing it is much more efficient, but at the price of a lack of accuracy (e.g. with not as tight bounds). This is called the {\em LP abstraction}.
+
+As far as we know, no formal result states the relationship between the LP approximation and DeepPoly.
+We prove now that the LP abstraction is strictly more accurate than the DeepPoly abstraction, as it actually corresponds to considering in DeepPoly both linear functions lower bounding the ReLU function, $ReLU(x) \geq 0$ and $ReLU(x) \geq x$, while DeepPoly considers exactly one.
+
+\begin{proposition}
+	\label{LP}
+	Given $x \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems of constraints 
+	1) for LP and 2) for DeepPoly with both lower bounds are equivalent:
+	\vspace{-0.3cm}
+	\begin{align*}
+		& 1) \quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, a \in [0,1] \\
+		\text{and} \quad  & 2)  \quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0 \quad \wedge \quad \hat{x} \leq \beta \frac{x-\alpha}{\beta-\alpha}
+	\end{align*} 
+\end{proposition}
+
+\begin{proof}
+	Obviously, the 2 lower bound constraints are the same in 1) and 2).
+	
+	It remains to prove that the 2 upper bound constraints of 1) LP corresponds to the 2) DeepPoly linear upper bound. For that, we study the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ in 1) is upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. 
+	The function $min(\beta \cdot a, x - \alpha (1-a))$ reaches its maximum for 
+	$\beta \cdot a = x - \alpha (1-a)$, that is 
+	$(\beta - \alpha) a = x - \alpha$, i.e. 
+	$ a = \frac{x - \alpha}{\beta-\alpha}$.
+	It thus gives an upper bound at 
+	$\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$, which is exactly the upper-bound function used in DeepPoly.
+	\hfill $\square$
+\end{proof}
+

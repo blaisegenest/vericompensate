@@ -155,40 +155,41 @@ Next, we shift focus to the comparison with $\beta$-CROWN, where we observe intr
 
 \begin{table}[htb]
 	\centering
-
-		\begin{tabularx}{\textwidth}{|C||C|C|C|C|C|}
+	\begin{tabularx}{\textwidth}{|C||C|C|C|C|C|}
 		
 		\hline
-		\text{DNN} & \shortstack{DeepPoly/\\CROWN} & PRIMA & $\beta$-CROWN & {\toolname} & \shortstack{Upper\\Bound}\\ 
+		\text{DNN} & \shortstack{Upper\\Bound} & \shortstack{DeepPoly/\\CROWN} & PRIMA & $\beta$-CROWN & {\toolname}\\ 
 		\hline \hline
 		
-		$5 \times100$\  &   $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & {$68.4\%$} &  $84.2 \%$ \\ 
-		$\epsilon = 0.026$ & 5s & 159s & 102s & {142s} &  \\
+		$5 \times100$\  & $84.2 \%$ & $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & {$68.4\%$}\\ 
+		$\epsilon = 0.026$ &  & 5s & 159s & 102s & {142s}\\
 		\hline	
 		
-		$5 \times 200$ \  &  $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & {$76.8\%$} & 
-		$90.1 \%$\\ 
-		$\epsilon = 0.015$ & 11s & 224s & 86s & {279s}  &\\ \hline \hline
+		$5 \times 200$ \  & $90.1 \%$ & $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & {$76.8\%$}\\ 
+		$\epsilon = 0.015$ &  & 11s & 224s & 86s & {279s} \\ \hline \hline
 		
 		
-		$8\times100$\  &   $29.2\%$ & $42.8\%$ & $62\%$ & {$\mathbf{65.8\%}$}  & $82.0 \%$ \\ 
-		$\epsilon = 0.026$ & 8s & 301s & 103s & {346s} & \\
+		$8\times100$\  & $82.0 \%$ & $29.2\%$ & $42.8\%$ & $62\%$ & {$\mathbf{65.8\%}$}\\ 
+		$\epsilon = 0.026$ &  & 8s & 301s & 103s & {346s}\\
 		\hline
 		
 		
-		$8\times200$\  &   $25.9\%$ & $62.4\%$ & $73.5\%$ & {$\mathbf{80.7\%}$} & $91.1 \%$ \\ 
-		$\epsilon = 0.015$ & 17s & 395s & 95s  & {697s$^\star$} & \\ \hline
+		$8\times200$\  & $91.1 \%$ & $25.9\%$ & $62.4\%$ & $73.5\%$ & {$\mathbf{80.7\%}$}\\ 
+		$\epsilon = 0.015$ &  & 17s & 395s & 95s  & {697s$^\star$}\\ \hline
 		
-			$6\times500$\  &   $26\%$ & $32.5\%$ & $41\%$ & 65\% & $92\%$ \\ 
-				$\epsilon = 0.035$ & 34s & 119s & 18.4s &925s &\\ \hline 
+		$6\times500$\  & $92\%$ & $26\%$ & $32.5\%$ & $41\%$ & 65\%\\ 
+		$\epsilon = 0.035$ &  & 34s & 119s & 18.4s & 925s\\ \hline 
 		
 	\end{tabularx}
-
+	
 	\caption{$\%$ of verified images and average runtime in seconds.
 		Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.
-}
+	}
 	\label{tab:example}
 \end{table}
+
+
+
 
 
 
