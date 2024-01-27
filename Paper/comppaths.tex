@@ -4,7 +4,8 @@
 \section{Compensating pairs of paths}
 \label{Sec.comp}
 
-In this section, we explore the key factor for the loss of accuracy in value abstraction methodologies. To this end, we first introduce a novel notion of compensating paths:
+In this section, we explore the key factor for the loss of accuracy in value 
+abstraction methodologies. To this end, we first introduce the novel notion of compensating paths:
 
 \begin{definition}
 A pair $(\pi,\pi')$ of paths is {\em compensating} if:
@@ -143,7 +144,8 @@ The following theorem shows the role of compensating pairs in the computation:
 \end{table}
 
 
-The discussion so far shows  that compensation is one of the possible factors contributing to inaccuracy. We now establish that it is indeed the sole cause of inaccuracy, in particular,  if a DNN lacks any compensating path, then any methodology that is at least as accurate as the Box abstraction, such as ${\text{DeepPoly}}$ or LP, will precisely determine the exact upper and lower bounds for every node. This assertion is formalized in the following theorem:
+The discussion so far shows  that compensation is one of the possible factors contributing to inaccuracy. We now establish that it is the sole cause of inaccuracy:
+if a DNN lacks any compensating path, then any methodology that is at least as accurate as the Box abstraction, such as LP and $\overline{\mbox{DeepPoly}}$ (but not DeepPoly), will precisely determine the exact upper and lower bounds for every node. This assertion is formalized in the following theorem:
 
 \begin{theorem}
 	\label{th1}
@@ -153,8 +155,7 @@ The discussion so far shows  that compensation is one of the possible factors co
 	The sketch of proof can be found in Section \ref{sec.proofs}. 
 \end{proof}
 
-This theorem underscores the significant role of compensating paths in the accuracy of bound estimation within DNNs, affirming that their absence guarantees the precision of computed bounds.
-Practically speaking, encountering a network entirely devoid of compensating paths is highly improbable, rendering this more a theoretical observation, highlighting that compensation is a key driver of inaccuracy.
+This theorem underscores the significant role of compensating paths in the accuracy of bound estimation within DNNs, affirming that their absence guarantees the precision of computed bounds. Practically speaking, encountering a network entirely devoid of compensating paths is highly improbable, rendering this more a theoretical observation, highlighting that compensation is a key driver of inaccuracy.
 
 
 
