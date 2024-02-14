@@ -1,0 +1,343 @@
+\documentclass{llncs}
+\pagestyle{plain}
+
+%\usepackage[latin9]{inputenc}
+%\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\captionsetup{compatibility=false}
+% \usepackage{esint}
+\usepackage{array}
+\usepackage{epstopdf}
+\usepackage{placeins}
+\usepackage{pgfplots}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usetikzlibrary{positioning, arrows.meta,calc}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\vx}{\boldsymbol{x}}
+\newcommand{\vy}{\boldsymbol{y}}
+\newcommand{\vW}{\boldsymbol{W}}
+\newcommand{\vz}{\boldsymbol{z}}
+\newcommand{\vb}{\boldsymbol{bias}}
+\newcommand{\val}{{\textrm{value}}}
+\newcommand{\Val}{{\textrm{value}}}
+\newcommand{\MILP}{{\textrm{MILP}}}
+\newcommand{\LP}{{\textrm{LP}}}
+
+\newcommand{\UB}{\mathrm{UB}}
+\newcommand{\LB}{\mathrm{LB}}
+\newcommand{\ub}{\mathrm{ub}}
+\newcommand{\lb}{\mathrm{lb}}
+\newcommand{\B}{\mathrm{B}}
+
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+
+
+\newcommand{\toolname}{\CMP}
+
+
+
+
+
+
+%\usepackage{amsmath, amsthm, amssymb, amsfonts}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{corollary}{Corollary}
+%\theoremstyle{definition}
+%\newtheorem{definition}{Definition}
+
+
+
+\newcommand{\ReLU}{\mathrm{ReLU}}
+
+
+
+\title{I Compensate, therefore I Am \\ (accurate for DNN verification)}
+\date{}
+
+\begin{document}
+	
+	\maketitle
+	
+	\begin{abstract}
+		
+		Deep Neural Networks (DNNs) verification has evolved into a robust field of research, furnished with a plethora of methodologies and tools designed for formal correctness verification. This area even boasts an annual competition to benchmark these tools. Formally, the question it addresses is whether a given DNN upholds a specified property across a set of input data. For instance, it can ascertain local robustness around an input $\vx$ by verifying if the i-th output neuron consistently demonstrates the highest weight amongst all output neurons within a certain vicinity of $\vx$. In recent years, the focus has shifted towards integrating various efficient techniques—such as branch and bound, multi-neuron encoding, and MILP encoding—to optimize the balance between speed and accuracy. Although modern verifiers can efficiently validate relatively large DNNs (with tens of thousands of neurons), the challenge persists, especially when dealing with certain DNNs, even smaller ReLU DNNs comprising hundreds of neurons, thereby highlighting the ongoing need for innovative methodologies.
+		
+		In this paper, we analyse efficient algorithms  for verifying ReLU DNNs, examining abstractions like DeepPoly, Linear Programming, PRIMA, and various versions of Crown. We identify the primary cause of accuracy loss: {\em compensations}. Compensations occur when dual paths exist between a neuron pair, with one path carrying positive weights and the other negative, leading to a partial offset. However, accurately quantifying this offset is complex due to the ReLU activation functions. Leveraging this insight, we introduce a novel approach for achieving promising speed-accuracy trade-offs. This involves conducting numerous queries with a limited number of 'open' ReLU nodes (considering both linear modes) rather than the traditional approach of fewer queries with potentially many 'open' ReLU nodes. These findings not only present practical implications but also pave the way for various applications of the concept of compensating paths in the realm of DNN verification.
+		
+		
+	\end{abstract}
+	
+	
+	\section{Introduction}
+	
+	\input{introduction}
+	
+	\input{relatedwork}
+	
+	\section{Notations and Preliminaries}
+	
+	In this paper, we will use lower case latin $a$ for scalars, bold for vectors $\boldsymbol{z}$, 
+	capitalized bold for matrices $\boldsymbol{W}$, similar to notations in \cite{prima,crown}.
+	To simplify the notations, we restrict the presentation to feed-forward, 
+	fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
+	$ReLU(x)=x$ for $x \geq 0$ and $ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
+	
+	%In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
+	
+	%\subsection{Neural Network and Verification}
+	
+	
+	% testtesttesttest
+	An $\ell$-layer DNN is provided by $\ell$ weight matrices 
+	$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
+	and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
+	We call $d_i$ the number of neurons of hidden layer $i \in \{1, \ldots, \ell-1\}$,
+	$d_0$ the input dimension, and $d_\ell$ the output dimension.
+	
+	Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
+	denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
+	\begin{align*}
+		{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i\\
+		\hat{\boldsymbol{z}}^{i} &= ReLU({\boldsymbol{z}}^i).
+	\end{align*} 
+	
+	The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
+	$\boldsymbol{z}$ is called pre-activation values, 
+	and $\boldsymbol{z}^{i}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
+	For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, pre- and post-activation neurons are called \emph{nodes}, and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$. A path $\pi$ is a sequence $\pi=(a_i)_{k \leq  i \leq k'}$ of neurons in consecutive layers, and the weight of $\pi$ is 
+	$weight(\pi)=W_{a_k,a_{k+1}} \times \cdots \times  W_{a_{k'-1},a_{k'}}$.
+	
+	
+	
+	\iffalse
+	and the $i$-th hidden layer is a vector in $\mathbb{R}^{d_i}$, 
+	and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. 
+	The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight 
+	$\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, 
+	the bias is a vector $\vb^i$ in $\mathbb{R}^{d_i}$, and the activation function 
+	is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, 
+	then the value of $i$-th layer is computed by: 
+	\begin{align*}
+		{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \vb^i\\
+		\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)).
+	\end{align*} The vector $\hat{\boldsymbol{z}}$ is called post-activation values, and $\boldsymbol{z}$ is called pre-activation values, and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
+	\fi
+	
+	\medskip
+	
+	Concerning the verification problem, we focus on the well studied local-robustness question. Local robustness asks to determine whether the output of a neural network will be affected under small perturbations to the input. 
+	Formally, for an input $\vx$ perturbed by $\varepsilon >0$ under distance $d$, then the DNN is locally $\varepsilon$-robust in $\vx$ whenever:
+	\begin{align*}
+		\forall \boldsymbol{x'} \text{ s.t. } d(\vx,\vx')\leq \varepsilon, \text{ we have }  
+		argmax_i (f(\boldsymbol{x'})[i]) = argmax_i(f(\boldsymbol{x})[i])
+	\end{align*} 
+	
+	\iffalse
+	In some cases, the output is a vector but the aim to get the label of dimension with the minimal value. In this case, the problem can be written as:\begin{align*}
+		\forall \boldsymbol{x} \in\mathcal{D} \  \min f(\boldsymbol{x}) = \min f(\boldsymbol{x}_0)
+	\end{align*}
+	
+	If so, the question of verification can turn to the following optimization question: \begin{align*}
+		\min f(\boldsymbol{x}) \ s.t. {\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ b^i\\
+		\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)), \boldsymbol{x}\in\mathcal{D}.
+	\end{align*}
+	
+	In this paper, we only consider $\ReLU$ function as the activation function: $\sigma(a)=\ReLU(a)=\max(0,a)$. 
+	
+	In this paper, we consider $L^{\infty}$ norm the max value of distance of each dimension, that is $d(\vx,\boldsymbol{x}_0)=\max |\boldsymbol{x}(n)-\boldsymbol{x}_0(n)|$. 
+	\fi
+	
+	
+
+\input{valabstraction}
+
+\input{comppaths}
+
+
+
+
+
+
+
+
+\input{experiments}
+
+
+\section{Conclusion}
+
+In this paper, we introduced the notion of {\em compensating pairs of paths}, with rationale why such a phenomenon creates inaccuracies hard to handle when verifying DNNs. We proved that this phenomenon is actually explaining entirely the inaccuracies, as in their absence, even the simplest Box abstraction (interval arithmetic) suffices to verify accurately DNNs. We verified experimentally that DNNs learnt in a natural way, harder to verify than robustly trained DNNs, exhibit paths with larger compensating strength. 
+
+
+
+Based on this idea of compensating pairs of paths, we proposed abstraction $\MILP_{Z}$ considering a subset $Z$ of the set of unstable ReLU nodes, that we proved to be fully accurate if {\em all} the compensating paths are covered by $Z$. Our empirical studies revealed that selecting $Z$ to cover only {\em a few} paths with the most significant compensation yields highly accurate results. Additionally, we observed that the runtime can be advantageous in certain scenarios, though not universally. This underscores the potential of compensating strength as an innovative and promising avenue for enhancing DNN verification.
+ We finally proposed several ways to use the compensating strength to optimize current tools in different directions, and leave that as future work.
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\newpage
+
+\appendix
+
+\input{proofs}
+
+\end{document}
+
+
+
+
+
+
+
+\section{Ranking of Compensating Pairs}
+
+In this subsection, we will introduce the method to choose open nodes for MILP model based on compensating pairs.
+
+Based on No Diamond Theorem, for a target node, in its MILP model, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we can only choose a limited number of compensating pairs and nodes. This is by setting a parameter $O$ such that the process only choose at most $O$ many nodes to open. Therefore, in this subsection, we will introduce the process of open node chosen: given a target node, choose up to $O$ many nodes to open.
+
+
+Basically, we do the process of open nodes chosen for one target node each time, that is, receive one target node (and other data) as input each time. But in principle, we can develop a method receive more than one nodes as input. But in our experiences, this does not work well.  
+
+This process is not the unique method but the most natural way to choose open nodes. We introduce it in three steps from the simplest case to more complex case.
+
+\subsubsection*{Value of a pair}
+
+
+For a compensating pair, if $V_1,V_2$ are the values of two paths, then the value of this compensating pair is defined by: $V=\min(|V_1|,|V_2|)$.
+
+
+\subsection*{Case: Source node fixed}
+
+The simplest case is when we only consider compensating pairs with a fixed source node. 
+
+In this case, the process is very simple: enumerate all compensating pairs, and then sort them by their values. Finally, from the first to the last compensating pair, pick all unstable nodes in its two paths except the target and source nodes into the list of open nodes, until $O$ many open nodes. 
+
+%\subsubsection*{Sort all paths by values}
+%
+%The first step is to sort all paths by their values and divide paths into two groups, a group of paths with positive values and a group of paths with negative values.
+%
+%Since we have set a bound $O$ for open nodes, we will store  a fixed number of path for each group.
+%
+%\subsubsection*{Sort pairs by values}
+%
+%The second step is to sort all pairs by their values. Enumerate paths from the positive group and the negative group one by one and put the pairs obtained into a new list of pairs. Then sort all pair by their values from largest to the smallest: recall that the value of a pair $\langle P_1,P_2\rangle$ is $\min(|V_1|,|V_2|)$.
+%
+%\subsubsection*{Choosing nodes}
+%
+%The third step is to choose nodes from the list of pairs. According to the sorted list of pairs, enumerate pair one by one; for each pair, pick the nodes unstable in the two paths except the source and target node into the open node list. Repeat this process until $O$ nodes chosen or reach the end of the list.
+%
+%\subsubsection*{Pseudocode}
+%
+%The following needs a chart of pseudo-code
+%
+%\vspace*{1ex}
+%
+%1. Enumerate all path from the fixed source node to the target node. 
+%
+%2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
+%
+%3. Divide all paths into two group: positive paths and negative paths.
+%
+%4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
+%
+%5. For each pair, its value is the min of the weight positive paths and absolute negative values.
+%
+%6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
+%
+%7. Repeat 6 until choosing sufficiently many nodes.
+%
+
+
+
+\subsection*{Case: Source nodes in one layer}
+
+The more general case is when the source node can be any node in a fixed layer. In this case, the process is very similar to previous case, except the value of a pair.
+
+In this case, for a pair $P_1,P_2$ with values $V_1,V_2$ with the source node $a$, its value is $\min(|V_1|,|V_2|)\times \text{upper bound of } a$.
+
+%\subsubsection*{Pseudocode}
+%
+%The following needs a chart of pseudo-code
+%
+%\vspace*{1ex}
+%
+%1. Enumerate all path from the fixed source node to the target node. 
+%
+%2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
+%
+%3. Divide all paths into two group: positive paths and negative paths.
+%
+%4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
+%
+%5. For each pair, its value is the min of the weight positive paths and absolute negative values, times the upper bound (at least 0) of the source node.
+%
+%6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
+%
+%7. Repeat 6 until choosing sufficiently many nodes.
+
+
+\subsection*{Case: Source nodes in different layers}
+
+The general case is that when the location of source nodes can be in different layers. This case is much more complex, because the scale level of values of paths from different layers are very different: usually a weight will be very small since every layer has a large number of nodes, therefore values of longer paths are products of more small numbers, and is definitely much smaller. If we sort all compensating pairs from different layers directly, then a very long initial segment of this list will be occupied by compensating pairs with the shortest length. Therefore, we need use some scale factors when comparing values of compensating pairs of different length.
+
+In our experiments, we only consider the paths of length 3 (the source node is 2 layers before) and length 4 (the source node is 3 layers before). We will dynamically adjust the values during the process of node chosen. In text, the process of node chosen for length 3 plus length 4 is as follows:
+
+\vspace*{1ex}
+
+1. Generate the two lists of pairs sorted by their values for source nodes in 2 layers before the target node and 3 layers before separately as in the previous case.
+
+2. Enumerate pair from two lists one by one by their values and pick nodes as previous case. When comparing the values between pairs of length 4 and pairs of length 3, multiply the numbers of nodes in 1 layer before to the value of pair of length 4.
+
+In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 with value $V_3$ and a pair $P_4$ of length 4 with value $V_4$, if we have chosen $N$ nodes in layer $L-1$. Then the adjusted values for $P_3$ and $P_4$ are: $$V_3, N\cdot V_4.$$ Then we pick the next pair by the adjust value in two lists.
+
+3. Repeat 2 until choosing sufficiently many nodes.
+
+\vspace*{1ex}
+
+The pseudo-code is as follows ():
+
+\begin{algorithm}
+\caption{Process for length 3 + length 4}
+\KwData{Sorted lists of length 3 + length 4}
+\KwResult{Open node list}
+
+Let $N = 0$ be the number of Chosen length 4 pair.
+
+\While{len(Open node) $<O$}{
+	Pick the first element $P_3$ in the list of length 3\;
+	
+	Let $V_3$ be the value of $P_3$\;
+	
+	Pick the first element $P_4$ in the list of length 4\;
+	
+	Let $V_4$ be the value of $P_4$\;
+	
+	\If{$V_3 > V_4 \cdot N$}{
+		Add nodes in $P_3$ into Open list\;
+		Number of Chosen lentgh pair $N$ += 1\; 
+	}
+	\Else{
+		Add nodes in $P_4$ into Open list\;
+	}
+}
+\end{algorithm}
+
+
+
+\end{document}
+
+
