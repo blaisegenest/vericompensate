@@ -63,7 +63,7 @@
 
 
 
-\title{I Compensate, therefore I Am \\ (accurate for DNN verification)}
+\title{Liptschiz}
 \date{}
 
 \begin{document}
@@ -72,19 +72,14 @@
 	
 	\begin{abstract}
 		
-		Deep Neural Networks (DNNs) verification has evolved into a robust field of research, furnished with a plethora of methodologies and tools designed for formal correctness verification. This area even boasts an annual competition to benchmark these tools. Formally, the question it addresses is whether a given DNN upholds a specified property across a set of input data. For instance, it can ascertain local robustness around an input $\vx$ by verifying if the i-th output neuron consistently demonstrates the highest weight amongst all output neurons within a certain vicinity of $\vx$. In recent years, the focus has shifted towards integrating various efficient techniques—such as branch and bound, multi-neuron encoding, and MILP encoding—to optimize the balance between speed and accuracy. Although modern verifiers can efficiently validate relatively large DNNs (with tens of thousands of neurons), the challenge persists, especially when dealing with certain DNNs, even smaller ReLU DNNs comprising hundreds of neurons, thereby highlighting the ongoing need for innovative methodologies.
-		
-		In this paper, we analyse efficient algorithms  for verifying ReLU DNNs, examining abstractions like DeepPoly, Linear Programming, PRIMA, and various versions of Crown. We identify the primary cause of accuracy loss: {\em compensations}. Compensations occur when dual paths exist between a neuron pair, with one path carrying positive weights and the other negative, leading to a partial offset. However, accurately quantifying this offset is complex due to the ReLU activation functions. Leveraging this insight, we introduce a novel approach for achieving promising speed-accuracy trade-offs. This involves conducting numerous queries with a limited number of 'open' ReLU nodes (considering both linear modes) rather than the traditional approach of fewer queries with potentially many 'open' ReLU nodes. These findings not only present practical implications but also pave the way for various applications of the concept of compensating paths in the realm of DNN verification.
-		
+		Local robustness is bad. We study a more global notion, lipsitcz constant.
 		
 	\end{abstract}
 	
 	
 	\section{Introduction}
 	
-	\input{introduction}
-	
-	\input{relatedwork}
+	TO DO.
 	
 	\section{Notations and Preliminaries}
 	
@@ -163,37 +158,14 @@
 
 \input{valabstraction}
 
-\input{comppaths}
-
-
-
-
-
-
-
-
-\input{experiments}
 
 
 \section{Conclusion}
-
-In this paper, we introduced the notion of {\em compensating pairs of paths}, with rationale why such a phenomenon creates inaccuracies hard to handle when verifying DNNs. We proved that this phenomenon is actually explaining entirely the inaccuracies, as in their absence, even the simplest Box abstraction (interval arithmetic) suffices to verify accurately DNNs. We verified experimentally that DNNs learnt in a natural way, harder to verify than robustly trained DNNs, exhibit paths with larger compensating strength. 
-
-
-
-Based on this idea of compensating pairs of paths, we proposed abstraction $\MILP_{Z}$ considering a subset $Z$ of the set of unstable ReLU nodes, that we proved to be fully accurate if {\em all} the compensating paths are covered by $Z$. Our empirical studies revealed that selecting $Z$ to cover only {\em a few} paths with the most significant compensation yields highly accurate results. Additionally, we observed that the runtime can be advantageous in certain scenarios, though not universally. This underscores the potential of compensating strength as an innovative and promising avenue for enhancing DNN verification.
- We finally proposed several ways to use the compensating strength to optimize current tools in different directions, and leave that as future work.
 
 \newpage
 
 \bibliographystyle{plain}
 \bibliography{references}
-
-\newpage
-
-\appendix
-
-\input{proofs}
 
 \end{document}
 
