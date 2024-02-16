@@ -308,8 +308,46 @@ The same as other experiments today.
 
 The same as Feb 15's experiments.
 
+\subsubsection*{Results.} No meaningful result. The $\gamma$ is still 0.24007008332521998.
+
+
+
+\subsection{Seek the best open ReLU number for layer 3 for normal 5x100}
+
+This experiment is to find the best open ReLU number for layer 3 normal 5x100 with new hyperplane constraints: previous open 17 node is based on old constraints.
+
+\vspace*{1ex}
+
+The running code's file name is \verb*|DiamondLipschitz_all_layers_test_LP_use_bound_seek_open_number.py|. And the partial output file name is \verb*|Gamma_5x100_normal_layer3_seek_openrelu.txt|.  It is based on the new hyperplane constraints, use MILP model to compute the gamma of layer 3 with different open ReLU numbers.
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item\emph{Experiments Id}: 021600202024
+	
+	\item\emph{Network:} 6x100 MNIST normal. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} Open 15,18,21,24,27 ReLU nodes for each node.
+	
+	\item\emph{Processes:} 20 processes in parallel. Do node 0 to 19 each 5 cases.
+	
+	\item\emph{Read binary files:} Read \verb*|Diamond_record_6_100_dictionary_with_end_layer5_2024_02_15_11_40_01.b|; this file stores all alpha beta gamma of nodes of all layers for the same network (gamma is up to layer 5). 
+\end{itemize}
+
+
+\subsubsection*{Technical Sketch.}
+
+Most is the same as Feb 15's experiments.
+
 \subsubsection*{Results.}
 
+Not finished before stop, but it is very obvious that 21 is the best among all 5 cases.
 
 
 \end{document}
