@@ -1,0 +1,317 @@
+\documentclass{llncs}
+\pagestyle{plain}
+
+%\usepackage[latin9]{inputenc}
+%\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\captionsetup{compatibility=false}
+% \usepackage{esint}
+\usepackage{array}
+\usepackage{epstopdf}
+\usepackage{placeins}
+\usepackage{pgfplots}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usetikzlibrary{positioning, arrows.meta,calc}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\vx}{\boldsymbol{x}}
+\newcommand{\vy}{\boldsymbol{y}}
+\newcommand{\vW}{\boldsymbol{W}}
+\newcommand{\vz}{\boldsymbol{z}}
+\newcommand{\vb}{\boldsymbol{bias}}
+\newcommand{\val}{{\textrm{value}}}
+\newcommand{\Val}{{\textrm{value}}}
+\newcommand{\MILP}{{\textrm{MILP}}}
+\newcommand{\LP}{{\textrm{LP}}}
+
+\newcommand{\UB}{\mathrm{UB}}
+\newcommand{\LB}{\mathrm{LB}}
+\newcommand{\ub}{\mathrm{ub}}
+\newcommand{\lb}{\mathrm{lb}}
+\newcommand{\B}{\mathrm{B}}
+
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+
+
+\newcommand{\toolname}{\ensuremath{\mathsf{Comp}}}
+
+
+
+
+
+
+%\usepackage{amsmath, amsthm, amssymb, amsfonts}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{corollary}{Corollary}
+%\theoremstyle{definition}
+%\newtheorem{definition}{Definition}
+
+
+
+\newcommand{\ReLU}{\mathrm{ReLU}}
+
+
+
+\title{Technical Report}
+\date{}
+
+\begin{document}
+	
+\maketitle
+
+\section*{Introduction}
+
+Only formal experiments will be recorded. Pre-debugging will not be recorded unless necessary.
+
+\section{February 15 experiments}
+
+\subsection{Rerun the gamma test}
+
+This experiment is to rerun the interrupted experiment on14 February night.
+
+\vspace*{1ex}
+
+The running code's file name is \verb*|DiamondLipschitz_all_layers_test_LP_use_bound.py|. And the output file name is \verb*|Gamma_V0p2_all_layers_MILP_usebounds1.txt|. It is to compute the gamma ($\gamma$). It is based on the new hyperplane constraints, use MILP model to compute the gamma from layer 5 to layer 5.
+
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item \emph{Experiments Id}: 021500102024
+	
+	\item\emph{Network:} 6x100 MNIST normal. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} 17 for layer 3, 23 for layer 5, 35 for layer 7 and 9. 
+	
+	\item\emph{Processes:} 20 processes in parallel.
+	
+	\item\emph{Read binary files:} \verb*|dict_bounds_gurobi_alphabeta_2024021401.b|; this file stores the alpha beta of nodes of all layers for the same network. \verb*|dict_bounds_gurobi_gamma_2024021501.b|; this file stores the gamma of nodes up to layer 3, computed by the same code.
+\end{itemize}
+
+
+
+
+
+
+
+\subsubsection*{Technical Sketch.}
+
+
+The new group of hyperplane constraints is as follows: \begin{align*}
+	&\hat{x}_i - \hat{x}_i' \leq \frac{1}{2} (x_i-x_i') + \frac{1}{2} \gamma_i\\
+	&\hat{x}_i' - \hat{x}_i \leq \frac{1}{2} (x_i'-x_i) + \frac{1}{2}\gamma_i
+\end{align*} Here, $x_i$ and $x_i'$ are the two variables corresponding to a node $i$ in previous layer, and $\gamma_i$ is the $\gamma$ of node $i$ computed in previous layer; $\hat{x}_i,\hat{x}_i'$ are variables after $\ReLU$ function.
+
+One characteristic is that the constraints do not reply on $\alpha$ or $\beta$. So even with $\alpha,\beta$ of very poor quality, this group of constraints can work.
+
+
+This running recover the last layer: in early experiments, the last layer is modified to 9 nodes. Now it is recovered to 10 nodes. Because of this, the Bootstrap data of last layer is computed.
+
+\subsubsection*{Results.}
+
+No result.
+
+It seems that open-23-node for layer 5 with new hyperplane constraints is not good, at least with respect to the time cost: most nodes run out of 600s x 12, and this means we need 10 hours to do the whole layer 5.
+
+Let's try a fewer number of open $\ReLU$ nodes.
+
+
+\subsection{Rerun the gamma test: layer 5 with changed parameters}
+
+This experiments shares some setting as previous one. 
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item\emph{Experiments Id}: 021500202024
+
+\item\emph{Network:} 6x100 MNIST normal. 
+
+\item\emph{Image:} 144 (meaningless).
+
+\item\emph{Epsilon $\varepsilon$:} 0.001.
+
+\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+
+\item\emph{Open $\ReLU$ number:} 17 for layer 5. 
+
+\item\emph{Processes:} 20 processes in parallel.
+
+\item\emph{Read binary files:} \verb*|dict_bounds_gurobi_alphabeta_2024021401.b|; this file stores the alpha beta of nodes of all layers for the same network. \verb*|dict_bounds_gurobi_gamma_2024021501.b|; this file stores the gamma of nodes up to layer 3, computed by the same code.
+\end{itemize}
+
+
+\subsubsection*{Technical Sketch.}
+
+The same as previous experiments.
+
+\subsubsection*{Results.}
+
+\begin{itemize}
+	\item \emph{Log:} \verb*|Gamma_V0p2_all_layers_MILP_usebounds1.txt|
+
+	\item \emph{Total time:} 4779s.
+
+	\item \emph{Key results:} $\gamma$ for layer 5 is 0.9922133701854773.
+\end{itemize}
+
+
+Open 17 nodes is OK, but we can still increase the number of open ReLU nodes for layer 5. Perhaps open 20 nodes is a good choice.
+
+
+
+\subsection{Rerun the gamma test: layer 7,9 with changed parameters}
+
+This experiments shares some setting as previous ones. 
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item\emph{Experiments Id}: 021500302024
+	
+	\item\emph{Network:} 6x100 MNIST normal. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} 20 for layer 7 and 9. 
+	
+	\item\emph{Processes:} 20 processes in parallel.
+	
+	\item\emph{Read binary files:} \verb*|Diamond_record_6_100_dictionary_with_end_layer5_2024_02_15_11_40_01.b|; this file stores all alpha beta gamma of nodes of all layers for the same network (gamma is up to layer 5). 
+\end{itemize}
+
+
+\subsubsection*{Technical Sketch.}
+
+The same as Experiments 021500202024.
+
+\subsubsection*{Results.}
+
+\begin{itemize}
+	\item \emph{Log:} \verb*|Gamma_V0p2_all_layers_MILP_usebounds2.txt|
+	
+	\item \emph{Total time:} 14985.4s.
+	
+	\item \emph{Key results:} $\gamma$ for layer 7 is 4.177719108178739; $\gamma$ for layer 9 is 16.878953032158446.
+\end{itemize}
+
+
+
+\subsection{Gamma test for robust 5x100 using MILP}
+
+This experiment is to rerun the interrupted experiment on14 February night.
+
+\vspace*{1ex}
+
+The running code's file name is \verb*|DiamondLipschitz_all_layers_test_LP_DiffAI.py|. The output file name is \verb*|Gamma_V0p2_all_layers_5x100_robust_MILP.txt| and \verb*|Diamond_record_5_100_dictionary_with_end_layer9_2024_02_15_19_29_17.b|. It is to compute the gamma ($\gamma$). It is based on the new hyperplane constraints, use MILP model to compute the gamma of robust 5x100 from layer 1 to layer 9.
+
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item \emph{Experiments Id}: 021500402024
+	
+	\item\emph{Network:} 6x100 MNIST robust. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} 17 for layer 3, 23 for layer 5, 35 for layer 7 and 9. 
+	
+	\item\emph{Processes:} 20 processes in parallel.
+	
+	\item\emph{Read binary files:} No read file. I planned to read alpha-beta data, but the pre-computed alpha-beta data seems to have some problems, so I use the version that will compute the alpha beta during the running.
+\end{itemize}
+
+
+
+
+
+
+
+\subsubsection*{Technical Sketch.}
+
+
+The same as other experiments today.
+
+\subsubsection*{Results.}
+
+
+\begin{itemize}
+	\item \emph{Log:} \verb*|Gamma_V0p2_all_layers_5x100_robust_MILP.txt|
+	
+	\item \emph{Total time:} 19270.8s.
+	
+	\item \emph{Key results:} $\gamma$ for layer 1 to layer 9: 0.006884580440378905, 0.014342863034246162,
+	0.034691083484486775, 0.09665049332723069,
+	0.28105516604910674
+\end{itemize}
+
+
+
+
+
+\section{February 16 experiments}
+
+
+
+\subsection{Rerun the gamma test: layer 3 with new settings}
+
+ 
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item\emph{Experiments Id}: 021600102024
+	
+	\item\emph{Network:} 6x100 MNIST normal. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} 
+	
+	\item\emph{Processes:} 20 processes in parallel.
+	
+	\item\emph{Read binary files:} 
+\end{itemize}
+
+
+\subsubsection*{Technical Sketch.}
+
+The same as Feb 15's experiments.
+
+\subsubsection*{Results.}
+
+
+
+\end{document}
+
+
