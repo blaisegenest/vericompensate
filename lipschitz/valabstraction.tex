@@ -152,6 +152,31 @@ We could get the following constraints for $\gamma$, using $y_i$ and $\hat{y}_i$
 	\hat{y}_i \geq (a-1) \gamma_i  \hspace*{2ex} &\wedge \hspace*{2ex} \hat{y} \leq y_i + (1-a) \gamma_i,
 \end{align*} where $a$ is a binary variable, $\gamma_i$ is the upper bound of $x_i-\hat{x}_i$.
 
+
+The following plot will show the above constraints:
+
+\begin{tikzpicture}
+	\begin{axis}[
+		xlabel={$y_i$},
+		ylabel={$\hat{y}_i$},
+		xmin=-2, xmax=2,
+		ymin=-2, ymax=2,
+		axis lines=center,
+		samples=100, 
+	 unit vector ratio=1 1 1, scale=1.5, xtick   = {-2,2},
+	 xticklabels = {$-\gamma_i$,$\gamma_i$},
+	 yticklabels = {},
+		]
+		\addplot[blue, thick, fill=blue, fill opacity=0.4] {x} \closedcycle; 
+		\addplot[blue, thick] {0}; 
+	
+			\node[label={above:$(-\gamma_i,-\gamma_i)$}] at (axis cs: -1.35, -2.1) {};
+			
+	
+			\node[label={above:$(\gamma_i,\gamma_i)$}] at (axis cs: 1.45, 1.7) {};
+	\end{axis}
+\end{tikzpicture}
+
 \vspace*{10ex}
 
 \begin{tikzpicture}
@@ -162,7 +187,10 @@ We could get the following constraints for $\gamma$, using $y_i$ and $\hat{y}_i$
 ymax = 1, ymin = -1,		
 zmax = 1, zmin = -1,
 				unit vector ratio=1 1 1, scale=1.5,
-				view={60}{50},
+				view={60}{50}, ytick   = {-1,0,1},
+				yticklabels = {$-\gamma_i$,$0$,$\gamma_i$}, xtick = {0},
+				xticklabels = {$0$}, ztick   = {-1,0,1},
+				zticklabels = {$-\gamma_i$,$0$,$\gamma_i$},
 				]
 		\addplot3[fill=blue,opacity=0.1, fill opacity=0.4] 
 		coordinates {
@@ -194,7 +222,10 @@ zmax = 1, zmin = -1,
 				xmax = 4, xmin = -4,
 		ymax = 1, ymin = -1,		
 				zmax = 1, zmin = -1,
-		unit vector ratio=1 1 1, scale=1.5,
+		unit vector ratio=1 1 1, scale=1.5,  ytick   = {-1,0,1},
+		yticklabels = {$-\gamma_i$,$0$,$\gamma_i$}, xtick = {0},
+		xticklabels = {$0$}, ztick   = {-1,0,1},
+		zticklabels = {$-\gamma_i$,$0$,$\gamma_i$},
 		view={35}{14},
 		]
 		\addplot3[ fill=blue,opacity=0.1, fill opacity=0.4] 
