@@ -351,7 +351,7 @@ Not finished before stop, but it is very obvious that 21 is the best among all 5
 
 
 
-\subsection{Seek the best open ReLU number for layer 35 for normal 5x100}
+\subsection{Seek the best open ReLU number for layer 5 for normal 5x100}
 
 This experiment is to find the best open ReLU number for layer 5 normal 5x100 with new hyperplane constraints. In addition, this test also compute the gamma data for layer 3 based on previous found best open number.
 
@@ -397,7 +397,7 @@ Most is the same as Feb 15's experiments.
 	0.9832281749149849,
 	0.9884851087698833. This means open 20 is the best among 5 choices.
 	
-	\item \emph{Binary data}: \verb*|Diamond_record_6_100_dictionary_with_end_layer3_2024_02_17_21_56_00.b| and \verb*|Diamond_record_6_100_dictionary_with_end_layer5_2024_02_17_21_56_00.b|. The first stores the gamma up to layer 3, and the second stores tests result of layer 5 in addition.
+	\item \emph{Binary data}: \verb*|Diamond_record_6_100_dictionary_with_end_layer3_2024_02_16_15_24_52.b| and \verb*|Diamond_record_6_100_dictionary_with_end_layer5_2024_02_16_15_24_52.b|. The first stores the gamma up to layer 3, and the second stores tests result of layer 5 in addition.
 \end{itemize}
 
 
@@ -508,7 +508,55 @@ Most is the same as Feb 15's experiments.
 
 \end{itemize}
 
+\section{February 19 experiments}
 
+\subsection{Randomly choose open ReLU for layer 5 for normal 5x100}
+
+This experiment is to test the random open ReLU nodes for layer 5 normal 5x100 with new hyperplane constraints.
+
+\vspace*{1ex}
+
+The running code's file name is \verb*|DiamondLipschitz_all_layers_test_LP_use_bound_seek_open_number_random.py| (a copy for it is \verb*|DiamondLipschitz_all_layers_test_LP_use_bound_seek_open_number_random2.py|). And the partial output file name is \verb*|Gamma_5x100_normal_layer5_seek_openrelu_random.txt|.  It is based on the new hyperplane constraints, use MILP model to compute the gamma of layer 5 with different open ReLU numbers and nodes chosen randomly.
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item\emph{Experiments Id}: 021900102024
+	
+	\item\emph{Network:} 6x100 MNIST normal. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} Open 17,20,23,26,29 ReLU nodes for each node, but choose open nodes randomly.
+	
+	\item\emph{Processes:} 20 processes in parallel. Do node 0 to 19 each 5 cases.
+	
+	\item\emph{Read binary files:} Read \verb*|Diamond_record_6_100_dictionary_with_end_layer3_2024_02_16_15_24_52.b|; this file stores all alpha beta gamma of nodes of all layers for the same network (gamma is up to layer 3 and is newly-computed). 
+\end{itemize}
+
+
+\subsubsection*{Technical Sketch.}
+
+Most is the same as Feb 15's experiments.
+
+\subsubsection*{Results.}
+
+\begin{itemize}
+	\item \emph{Log:} \verb*|Gamma_5x100_normal_layer5_seek_openrelu_random.txt| (from line 5776).
+	
+	\item \emph{Total time:} 11346.9s.
+	
+	\item \emph{Key results:} $\gamma$ for different open numbers are 1.1082117992614573    open 17
+	1.0902650122404043     20
+	1.0854613578404746     23
+	1.0692115311756667     26
+	1.055639230561528        29. This is much worse than open node by our method.
+	
+\end{itemize}
 
 \end{document}
 
