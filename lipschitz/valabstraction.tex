@@ -152,26 +152,56 @@ We could get the following constraints for $\gamma$, using $y_i$ and $\hat{y}_i$
 	\hat{y}_i \geq (a-1) \gamma_i  \hspace*{2ex} &\wedge \hspace*{2ex} \hat{y} \leq y_i + (1-a) \gamma_i,
 \end{align*} where $a$ is a binary variable, $\gamma_i$ is the upper bound of $x_i-\hat{x}_i$.
 
+\hspace*{-20ex}
 
-\begin{tikzpicture}[
-	declare function={
-		f(\x,\y)=max((\x+\y),0)-max(\x,0);
-	}]
+\begin{tikzpicture}
 	\begin{axis}[axis lines=center,
-		axis on top,
-		set layers=default,
-		xrange=-3:3,
-		yrange=-2:2,
-		unit vector ratio=1 1 1,% <- HERE (taken from Phelype Oleinik's deleted answer)
-		scale=3 %<- added to compensate for the downscaling
-		% resulting from unit vector ratio=1 1 1
-		]
-		\addplot3[
-		domain=-3:3,
-		domain y=-1:1,
-		samples=40,
-		samples y=40,
-		surf,
-		] {f(\x,\y)};
+				axis on top,
+				set layers=default,
+				xrange=-5:5,
+				yrange=-2:2,
+				unit vector ratio=1 1 1, scale=1.5,
+				view={45}{40},
+				]
+		\addplot3[	surf,] 
+		coordinates {
+	 (0,0,0) (-1,1,0) (-4,1,0) (-4,-1,0) (0,-1,0) (0,0,0)
+		};
+		
+		\addplot3[	surf,	] 
+		coordinates { (0,0,0) (0,1,1) (4, 1, 1) (4, -1, -1) (1,-1,-1) (0,0,0)
+		};
+		
+		\addplot3[	surf,	] 
+		coordinates { (0,0,0)  (-1,1,0) (0,1,1) (0,0,0)
+		};
+		
+			\addplot3[	surf,	] 
+		coordinates { (0,0,0)  (0,-1,0) (1,-1,-1) (0,0,0)
+		};
+		
 	\end{axis}
 \end{tikzpicture}
+
+
+%\begin{tikzpicture}[
+%	declare function={
+%		f(\x,\y)=max((\x+\y),0)-max(\x,0);
+%	}]
+%	\begin{axis}[axis lines=center,
+%		axis on top,
+%		set layers=default,
+%		xrange=-3:3,
+%		yrange=-2:2,
+%		unit vector ratio=1 1 1,% <- HERE (taken from Phelype Oleinik's deleted answer)
+%		scale=3 %<- added to compensate for the downscaling
+%		% resulting from unit vector ratio=1 1 1
+%		]
+%		\addplot3[
+%		domain=-3:3,
+%		domain y=-1:1, surf,
+%		samples=40,
+%		samples y=40,
+%		] {f(\x,\y)};
+%	\end{axis}
+%\end{tikzpicture}
