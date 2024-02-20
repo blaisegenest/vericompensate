@@ -155,10 +155,12 @@ We could get the following constraints for $\gamma$, using $y_i$ and $\hat{y}_i$
 \hspace*{-20ex}
 
 \begin{tikzpicture}
-	\begin{axis}[	axis on top,
+	\begin{axis}[	axis on top, xlabel = \(x_i\),
+		ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
 				set layers=default,
-				xrange=-5:5,
-				yrange=-2:2,
+	xmax = 4, xmin = -4,
+ymax = 1, ymin = -1,		
+zmax = 1, zmin = -1,
 				unit vector ratio=1 1 1, scale=1.5,
 				view={60}{50},
 				]
@@ -186,10 +188,12 @@ We could get the following constraints for $\gamma$, using $y_i$ and $\hat{y}_i$
 \hspace*{-20ex}
 
 \begin{tikzpicture}
-	\begin{axis}[	axis on top,
+	\begin{axis}[	axis on top, xlabel = \(x_i\),
+		ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
 		set layers=default,
-		xrange=-5:5,
-		yrange=-2:2,
+				xmax = 4, xmin = -4,
+		ymax = 1, ymin = -1,		
+				zmax = 1, zmin = -1,
 		unit vector ratio=1 1 1, scale=1.5,
 		view={35}{14},
 		]
