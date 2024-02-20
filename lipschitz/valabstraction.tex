@@ -155,28 +155,58 @@ We could get the following constraints for $\gamma$, using $y_i$ and $\hat{y}_i$
 \hspace*{-20ex}
 
 \begin{tikzpicture}
-	\begin{axis}[axis lines=center,
-				axis on top,
+	\begin{axis}[	axis on top,
 				set layers=default,
 				xrange=-5:5,
 				yrange=-2:2,
 				unit vector ratio=1 1 1, scale=1.5,
-				view={45}{40},
+				view={60}{50},
 				]
-		\addplot3[	surf,] 
+		\addplot3[fill=blue,opacity=0.1, fill opacity=0.4] 
 		coordinates {
 	 (0,0,0) (-1,1,0) (-4,1,0) (-4,-1,0) (0,-1,0) (0,0,0)
 		};
 		
-		\addplot3[	surf,	] 
+		\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
 		coordinates { (0,0,0) (0,1,1) (4, 1, 1) (4, -1, -1) (1,-1,-1) (0,0,0)
 		};
 		
-		\addplot3[	surf,	] 
+		\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
 		coordinates { (0,0,0)  (-1,1,0) (0,1,1) (0,0,0)
 		};
 		
-			\addplot3[	surf,	] 
+			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
+		coordinates { (0,0,0)  (0,-1,0) (1,-1,-1) (0,0,0)
+		};
+		
+	\end{axis}
+\end{tikzpicture}
+
+
+\hspace*{-20ex}
+
+\begin{tikzpicture}
+	\begin{axis}[	axis on top,
+		set layers=default,
+		xrange=-5:5,
+		yrange=-2:2,
+		unit vector ratio=1 1 1, scale=1.5,
+		view={35}{14},
+		]
+		\addplot3[ fill=blue,opacity=0.1, fill opacity=0.4] 
+		coordinates {
+			(0,0,0) (-1,1,0) (-4,1,0) (-4,-1,0) (0,-1,0) (0,0,0)
+		};
+		
+		\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4] 
+		coordinates { (0,0,0) (0,1,1) (4, 1, 1) (4, -1, -1) (1,-1,-1) (0,0,0)
+		};
+		
+		\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4	] 
+		coordinates { (0,0,0)  (-1,1,0) (0,1,1) (0,0,0)
+		};
+		
+		\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4	] 
 		coordinates { (0,0,0)  (0,-1,0) (1,-1,-1) (0,0,0)
 		};
 		
