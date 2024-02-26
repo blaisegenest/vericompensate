@@ -672,6 +672,82 @@ We will use the following new constraints, and keep the old variables and constr
 \end{itemize}
 
 
+
+\subsection{Find best open ReLU for layer 5 for normal 5x100, new pure y-constraints}
+
+This experiment is to find the best open ReLU number for layer 5 normal 5x100 with new pure-y constraints constraints.
+
+\vspace*{1ex}
+
+The running code's file name is \verb*|DiamondLipschitz_V0p3_test.py|. And the partial output file name is \verb*|DL_V0p3_layer5_find_best_number.txt|.  It is based on the new pure y-constraints, use MILP model to compute the gamma of layer 5 with different open ReLU numbers.
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item\emph{Experiments Id}: 022100202024
+	
+	\item\emph{Network:} 6x100 MNIST normal. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} Open 25,28,31, 34, 37 ReLU nodes for each node.
+	
+	\item\emph{Processes:} 20 processes in parallel. Do node 0 to 19 each 5 cases.
+	
+	\item\emph{Read binary files:} Read \verb*|Diamond_record_6_100_dictionary_with_end_layer3_2024_02_21_13_58_49.b|; this file stores all alpha beta gamma of nodes of all layers for the same network,and the data of gamma of layer 3 using the latest method. 
+\end{itemize}
+
+
+\subsubsection*{Technical Sketch.}
+
+We will use the following new constraints, and keep the old variables and constraints (will not use them at present).
+
+The new constraints are: \begin{align*}
+	\hat{y}_i \leq a \gamma_i \hspace*{2ex} &\wedge \hspace*{2ex}\hat{y} \geq y_i - a \gamma_i\\
+	\hat{y}_i \geq (a-1) \gamma_i  \hspace*{2ex} &\wedge \hspace*{2ex} \hat{y} \leq y_i + (1-a) \gamma_i,
+\end{align*} Here, $y_i$ is the variable that represents $x_i-x'_i$, $\hat{y}_i$ represents $\hat{x}_i-\hat{x}'_i$, $a$ is a binary variable, $\gamma_i$ is the upper bound of $x_i-x'_i$.
+
+
+
+\subsubsection*{Results.}
+
+Not completed. So here is the summary of the partial results.
+
+\begin{itemize}
+	\item \emph{Log:} \verb*|DL_V0p3_layer5_find_best_number.txt|.
+	
+	\item \emph{Total time:} 
+	
+	\item \emph{Key results:}  $\gamma$ for different open numbers are 
+	
+	Open 25 
+	Bound: 0.8382390973953313 , Solution: 0.8321314445556547 , Time: 306.77194131612777 2335.830235481262
+	
+	Open 28 
+	Bound: 0.8147201914056824 , Solution: 0.8054690328829098 , Time: 1176.2175419330597 7200.522756814957
+	
+	Open 31 
+	Bound: 0.7963056225858687 , Solution: 0.7818023933666046 , Time: 3502.1967465043067 7200.723284482956
+	
+	Open 34 
+	Bound: 0.7945120282557274 , Solution: 0.7582789017028382 , Time: 5760.061596000194 7200.779401540756
+	
+	Open 37 (not finished) 
+	Bound: 0.8022403621011988 , Solution: 0.7360574057164293 , Time: 4956.505218315125 7200.661721229553
+	
+	It seems that 34 is the best. In following experiments, we use open 33 node.
+	
+\end{itemize}
+
+
+
+
+
+
 \subsection{Compute the gamma of layer 5 for normal 5x100, new pure y-constraints}
 
 This experiment is to  compute the gamma of layer 5 normal 5x100 with new pure-y constraints constraints.
@@ -683,7 +759,7 @@ The running code's file name is \verb*|DiamondLipschitz_V0p3_test.py|. And the o
 \subsubsection*{Parameters.}
 
 \begin{itemize}
-	\item\emph{Experiments Id}: 022200102024
+	\item\emph{Experiments Id}: 022200302024
 	
 	\item\emph{Network:} 6x100 MNIST normal. 
 	
@@ -717,6 +793,66 @@ We will use the following new constraints, and keep the old variables and constr
 	The average solution for gamma of this layer is:  0.7549862461111381
 	
 	\item  \emph{Binary file:} \verb*|Diamond_record_6_100_dictionary_with_end_layer7_2024_02_23_09_28_54.b|. This file stores the gammas in this test.
+	
+\end{itemize}
+
+
+\section{February 22-25 experiments}
+
+\subsection{Find best open ReLU for layer 5 for normal 5x100, new pure y-constraints}
+
+This experiment is to find the best open ReLU number for layer 7 normal 5x100 with new pure-y constraints constraints.
+
+\vspace*{1ex}
+
+The running code's file name is \verb*|DiamondLipschitz_V0p3_test.py|. And the partial output file name is \verb*|DL_V0p3_layer7_find_Best_open_number.txt,DL_V0p3_layer7_find_Best_open_number2.txt,DL_V0p3_layer7_find_Best_open_number3.txt,DL_V0p3_layer7_find_Best_open_number4.txt|.  It is based on the new pure y-constraints, use MILP model to compute the gamma of layer 7 with different open ReLU numbers.
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item\emph{Experiments Id}: 022500102024
+	
+	\item\emph{Network:} 6x100 MNIST normal. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} Open 30, 33, $\cdots$, 72 ReLU nodes for each node (in 3 tests).
+	
+	\item\emph{Processes:} 20 processes in parallel. Do node 0 to 19 each 5 cases.
+	
+	\item\emph{Read binary files:} Read \verb*|Diamond_record_6_100_dictionary_with_end_layer7_2024_02_23_09_28_54.b|; this file stores all alpha beta gamma of nodes of all layers for the same network,and the data of gamma of layer 5 using the latest method. 
+\end{itemize}
+
+
+\subsubsection*{Technical Sketch.}
+
+We will use the following new constraints, and keep the old variables and constraints (will not use them at present).
+
+The new constraints are: \begin{align*}
+	\hat{y}_i \leq a \gamma_i \hspace*{2ex} &\wedge \hspace*{2ex}\hat{y} \geq y_i - a \gamma_i\\
+	\hat{y}_i \geq (a-1) \gamma_i  \hspace*{2ex} &\wedge \hspace*{2ex} \hat{y} \leq y_i + (1-a) \gamma_i,
+\end{align*} Here, $y_i$ is the variable that represents $x_i-x'_i$, $\hat{y}_i$ represents $\hat{x}_i-\hat{x}'_i$, $a$ is a binary variable, $\gamma_i$ is the upper bound of $x_i-x'_i$.
+
+
+
+\subsubsection*{Results.}
+
+Not completed. So here is the summary of the partial results.
+
+\begin{itemize}
+	\item \emph{Log:} \verb*|DL_V0p3_layer7_find_Best_open_number.txt,DL_V0p3_layer7_find_Best_open_number2.txt,DL_V0p3_layer7_find_Best_open_number3.txt,DL_V0p3_layer7_find_Best_open_number4.txt|.
+	
+	\item \emph{Total time:} 
+	
+	\item \emph{Key results:}  $\gamma$ for different open numbers are 
+	
+
+	
+	It seems that 34 is the best. In following experiments, we use open 33 node.
 	
 \end{itemize}
 
