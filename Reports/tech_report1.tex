@@ -973,9 +973,97 @@ Not completed. So here is the summary of the partial results.
 
 \section{March 4}
 
+
+\subsection{Compute gamma for layer 7 for normal 5x100, pure y-constraints, with 0.25}
+
+This experiment is to compute the gamma of layer 7 normal 5x100 with pure-y constraints constraints, with open 47 node.
+
+\vspace*{1ex}
+
+The running code's file name is \verb*|DiamondLipschitz_V0p7_test.py|. And the partial output file name is \verb*|DL_V0p3_layer7_comparison_layerWeight_0p25.txt|.  It is based on the new pure y-constraints, use MILP model to compute the gamma of layer 7 with open 81 ReLU.
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item\emph{Experiments Id}: 030400102024
+	
+	\item\emph{Network:} 6x100 MNIST normal. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} Open 81 ReLU node
+	
+	\item\emph{Processes:} 20 processes in parallel. 
+	
+	\item\emph{Read binary files:} Read \verb*|Diamond_record_6_100_dictionary_with_end_layer7_2024_02_27_18_03_13.b|; this file stores all alpha beta gamma of nodes of all layers for the same network,and the data of gamma of layer 5 using the latest method. 
+\end{itemize}
+
+
+\subsubsection*{Technical Sketch.}
+
+The same as previous experiments, except that when choosing open ReLU nodes in layer 3 and 5, we adjust the coefficient from 0.5 to 0.25.
+
+
+
+\subsubsection*{Results.}
+
+
+\begin{itemize}
+	\item \emph{Log:} \verb*|DL_V0p3_layer7_comparison_layerWeight_0p25.txt|.
+	
+	\item \emph{Total time:} 36546s.
+	
+	\item \emph{Key results:}  The average gamma of this layer is:  2.7275173326094007
+	
+	The average solution for gamma of this layer is:  2.6553045443329144
+	
+	\item  \emph{Binary output}: The gamma of layer 7 is stored in the file \verb*|Diamond_record_6_100_dictionary_with_end_layer7_2024_03_02_11_26_32.b|.
+	
+\end{itemize}
+
+\subsection*{Find compensating values for 6x500}
+
 For 6x500 normal, we have:
 
 layer 3:  0.016880075 0.002558308045652896.
+
+layer 5:  0.012260569 0.0025547753866600885.
+
+layer 7:  0.009393309 0.0024678166341261.
+
+layer 9:  0.01012707 0.002454717660170578.
+
+
+\vspace*{1ex}
+
+
+For 6x500 PGD 0.3:
+
+
+
+layer 3:  0.07386457 0.0007851583929458109
+
+layer 5:  0.16980232 0.006956658962832778
+
+layer 7:  0.061593153 0.007807677391123027
+
+layer 9:  0.06259781 0.007048364295146268
+
+\vspace*{1ex}
+
+For 6x500 PGD 0.1:
+
+0.059109613 0.0024193087092992493
+
+0.023277795 0.004074500587174903
+
+0.031013045 0.003997824062301744
+
+0.020129312 0.0031846138593207844
 
 \end{document}
 
