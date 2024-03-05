@@ -980,7 +980,7 @@ This experiment is to compute the gamma of layer 7 normal 5x100 with pure-y cons
 
 \vspace*{1ex}
 
-The running code's file name is \verb*|DiamondLipschitz_V0p7_test.py|. And the partial output file name is \verb*|DL_V0p3_layer7_comparison_layerWeight_0p25.txt|.  It is based on the new pure y-constraints, use MILP model to compute the gamma of layer 7 with open 81 ReLU.
+The running code's file name is \verb*|DiamondLipschitz_V0p7_test.py|. And the partial output file name is \verb*|DL_V0p3_layer7_comparison_layerWeight_0p25.txt|.  It is based on the new pure y-constraints, use MILP model to compute the gamma of layer 7 with open 47 ReLU.
 
 \subsubsection*{Parameters.}
 
@@ -995,7 +995,7 @@ The running code's file name is \verb*|DiamondLipschitz_V0p7_test.py|. And the p
 	
 	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
 	
-	\item\emph{Open $\ReLU$ number:} Open 81 ReLU node
+	\item\emph{Open $\ReLU$ number:} Open 47 ReLU node
 	
 	\item\emph{Processes:} 20 processes in parallel. 
 	
@@ -1064,6 +1064,65 @@ For 6x500 PGD 0.1:
 0.031013045 0.003997824062301744
 
 0.020129312 0.0031846138593207844
+
+
+
+
+
+\subsection{Compute gamma for layer 7 for normal 5x100, pure y-constraints, with 0.25, using updated code}
+
+This experiment is to compute the gamma of layer 7 normal 5x100 with pure-y constraints constraints, with open 47 node. The major update is that now in the code of finding open ReLU node by compensating, we use $\gamma_i$ instead of $\beta_i$.
+
+\vspace*{1ex}
+
+The running code's file name is \verb*|DiamondLipschitz_V0p7_test.py|. And the partial output file name is \verb*|DL_V0p7_layer7_comparison_layerWeight_5.txt|.  It is based on the new pure y-constraints, use MILP model to compute the gamma of layer 7 with open 81 ReLU.
+
+\subsubsection*{Parameters.}
+
+\begin{itemize}
+	\item\emph{Experiments Id}: 030400302024
+	
+	\item\emph{Network:} 6x100 MNIST normal. 
+	
+	\item\emph{Image:} 144 (meaningless).
+	
+	\item\emph{Epsilon $\varepsilon$:} 0.001.
+	
+	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
+	
+	\item\emph{Open $\ReLU$ number:} Open 47 ReLU node
+	
+	\item\emph{Processes:} 20 processes in parallel. 
+	
+	\item\emph{Read binary files:} Read \verb*|Diamond_record_6_100_dictionary_with_end_layer7_2024_02_27_18_03_13.b|; this file stores all alpha beta gamma of nodes of all layers for the same network,and the data of gamma of layer 5 using the latest method. 
+\end{itemize}
+
+
+\subsubsection*{Technical Sketch.}
+
+The same as previous experiments, except that when choosing open ReLU nodes in layer 3 and 5, we use $\gamma_i$ instead of $\beta_i$.
+
+
+
+\subsubsection*{Results.}
+
+
+\begin{itemize}
+	\item \emph{Log:} \verb*|DL_V0p7_layer7_comparison_layerWeight_5.txt|.
+	
+	\item \emph{Total time:} 36034s.
+	
+	\item \emph{Key results:}  The average gamma of this layer is:  2.7484474999036674
+	
+	The average solution for gamma of this layer is:  2.4304639934792
+	
+	\item  \emph{Binary output}: The gamma of layer 7 is stored in the file \verb*|Diamond_record_6_100_dictionary_with_end_layer7_2024_03_04_15_32_38.b|.
+	
+\end{itemize}
+
+
+
+
 
 \end{document}
 
