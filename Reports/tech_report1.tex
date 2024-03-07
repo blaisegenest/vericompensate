@@ -1121,7 +1121,7 @@ The same as previous experiments, except that when choosing open ReLU nodes in l
 \end{itemize}
 
 
-\section*{March 6}
+\section{March 6}
 
 \subsection{Compute gamma for layer 7 for normal 5x100, pure y-constraints, with 0.25, using updated code}
 
@@ -1144,7 +1144,7 @@ The running code's file name is \verb*|DiamondLipschitz_V0p9_test.py|. And the p
 	
 	\item\emph{Timeout:} No global timeout. The loop timeout for $\gamma$ is 600s with 12 loops at most.
 	
-	\item\emph{Open $\ReLU$ number:} Open 37 ReLU node with coefficient 0.5.
+	\item\emph{Open $\ReLU$ number:} Open 37 ReLU node with open ReLU coefficient 0.5.
 	
 	\item\emph{Processes:} 20 processes in parallel. 
 	
@@ -1186,6 +1186,8 @@ And similar to old version, we can also multiply a coefficient when comparing we
 	The average solution for gamma of this layer is:  2.521051645492814
 	
 	\item  \emph{Binary output}: The gamma of layer 7 is stored in the file \verb*|Diamond_record_6_100_dictionary_with_end_layer7_2024_03_06_23_12_22.b|.
+	
+	\item  However, although the new formula is supposed to be more accurate, the actual result is only a little bit better than old result. This needs to be explained.
 	
 \end{itemize}
 
