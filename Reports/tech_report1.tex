@@ -1156,6 +1156,21 @@ The running code's file name is \verb*|DiamondLipschitz_V0p9_test.py|. And the p
 
 The new feature is that we update the formula of finding open ReLU nodes.
 
+The formula is focus on the case when we need to deal with paths of length 3 and length 4. For paths of length 3, we use the standard formula to compute their weights.
+
+For length paths, in the past we multiply a coefficient  to it that is depending on the number of chosen nodes by length 3 paths.
+
+The new formula is more complex. If we use symbol $a,b,c,d$ to denote the nodes in 4 layers, and let $C$ be the set of chosen nodes by length 3 paths, then: \begin{align*}
+	W_{b,b'} = \sum_{a} \sum_{c,c'\in C} \min (|W_{abcd}|,|W_{ab'c'd}|).
+\end{align*} The sum of $a$ is over all nodes in that layer.
+
+
+In the code, our strategy is to update the weights of all length 4 paths when a new node is put into $C$ by a length path. In formula, if we use $c^*$ to denote this new node and $C$ to denote old chosen nodes, then: \begin{align*}
+	W_{b,b'}\  +\!\!= \sum_{a} \sum_{\substack{c\in C \wedge c'= c^* \ \vee\ \\c'\in C \wedge c= c^*}} \min (|W_{abcd}|,|W_{ab'c'd}|).
+\end{align*}
+
+And similar to old version, we can also multiply a coefficient when comparing weights of length 3 paths and length 4 paths, and its default value is 1. 
+
 
 
 \subsubsection*{Results.}
