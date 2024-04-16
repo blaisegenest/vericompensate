@@ -307,7 +307,7 @@ The formal proof is in appendix A.
 %		% Connect input to hidden layer
 		\foreach \i in {3,4} {
 			\foreach \h in {3,2} {
-				\draw[->] (input\i) -- (hidden\h);
+				\draw[line width=1pt, ->] (input\i) -- (hidden\h);
 			}
 		}
 		
@@ -319,18 +319,24 @@ The formal proof is in appendix A.
 		}
 %		
 		% Connect hidden layer to output
-		\foreach \h in {2,3,4,5} {
+		\foreach \h in {2,3} {
+			\draw[line width=1pt,->] (hidden\h) -- (output);
+		}
+		
+		\foreach \h in {4,5} {
 			\draw[->] (hidden\h) -- (output);
 		}
 		
-%		% Input label
-%		\node[left=0.5cm of input1] {Input Layer};
-%		% Hidden label
-%		\node[right=0.5cm of hidden2] {Hidden Layer};
-%		% Output label
-%		\node[right=0.5cm of output] {Output Layer};
+%\		% Input label
+		\node[left=0.7cm of input6] {Input Layer};
+		
+		% Hidden label
+		\node[left=0.7cm of hidden5] {Hidden Layer};
+	
+		% Output label
+		\node[left=0.5cm of output] {Output Layer};
 	\end{tikzpicture}
-	\caption{Simple Neural Network with Different Types of Input Nodes}
+	\caption{Definitions in the proof of Theorem \ref{th2}}
 	\label{fig:neural_network_types_simplified}
 \end{figure}
 
