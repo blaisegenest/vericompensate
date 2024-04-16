@@ -243,6 +243,97 @@ The formal proof is in appendix A.
 \subsection{Sketch of Proof for Theorem \ref{th2}}
 \label{sec.proofs2}
 
+\begin{figure}[h]
+	\centering
+	\begin{tikzpicture}[>=stealth, node distance=2cm]
+		% Input nodes (two types)
+		\node[circle, draw, minimum size=0.5cm] (input1) at (-1,0) {$a_0$};
+		\node[circle, draw, minimum size=0.5cm] (input2) at (-2,0) {$a_1$};
+		\node[circle, draw, minimum size=0.5cm] (input3) at (-4,0) {$a_2$};
+		
+		\node[circle, draw, minimum size=0.5cm] (input4) at (-5,0) {$a_3$};
+		\node[circle, draw, minimum size=0.5cm] (input5) at (-7,0) {$a_4$};
+		\node[circle, draw, minimum size=0.5cm] (input6) at (-8,0) {$a_5$};
+	
+		\draw[draw=black, dashed] (-1.5,0) ellipse (1.35 and 0.75);
+		\node[below] at (-1.5,-0.75) {$A_{zero}$};
+		
+		\draw[draw=black, dashed] (-2,2) ellipse (0.75 and 0.75);
+		\node[right] at (-1,2) {$B_{zero}$};
+		
+		% Hidden layer nodes
+		
+		\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden1) at (-2,2) {$n_0$};
+		
+		\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden2) at (-4,2) {$n_1$};
+		\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden3) at (-5,2) {$n_2$};
+		
+		\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden4) at (-7,2) {$n_3$};
+		\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden5) at (-8,2) {$n_4$};
+		
+		
+		
+		\draw[draw=black, dashed] (-4.5,0) ellipse (1.35 and 0.75);
+		\node[below] at (-4.5,-0.75) {$A_{pure}$};
+		
+		
+		\draw[draw=black, dashed] (-7.5,0) ellipse (1.35 and 0.75);
+		\node[below] at (-7.5,-0.75) {$A_{open}$};
+		
+		
+		
+		\draw[draw=black, dashed] (-4.5,2) ellipse (1.35 and 0.75);
+		\node[left] at (-3.5,3) {$B_{pure}$};
+		
+		
+		\draw[draw=black, dashed] (-7.5,2) ellipse (1.35 and 0.75);
+		\node[left] at (-8.5,1.5) {$B_{open}$};
+		
+		
+		
+		% Output node
+		\node[circle, draw, minimum size=0.8cm, fill=red!20] (output) at (-5,4) {$z$};
+		
+		
+		% connections
+		
+		\draw[->] (input1) -- (hidden1);
+		
+		\draw[->] (input3) -- (hidden5);
+		
+		\draw[->] (input4) -- (hidden4);
+		
+		
+%		% Connect input to hidden layer
+		\foreach \i in {3,4} {
+			\foreach \h in {3,2} {
+				\draw[->] (input\i) -- (hidden\h);
+			}
+		}
+		
+		
+		\foreach \i in {5,6} {
+			\foreach \h in {4,5} {
+				\draw[->] (input\i) -- (hidden\h);
+			}
+		}
+%		
+		% Connect hidden layer to output
+		\foreach \h in {2,3,4,5} {
+			\draw[->] (hidden\h) -- (output);
+		}
+		
+%		% Input label
+%		\node[left=0.5cm of input1] {Input Layer};
+%		% Hidden label
+%		\node[right=0.5cm of hidden2] {Hidden Layer};
+%		% Output label
+%		\node[right=0.5cm of output] {Output Layer};
+	\end{tikzpicture}
+	\caption{Simple Neural Network with Different Types of Input Nodes}
+	\label{fig:neural_network_types_simplified}
+\end{figure}
+
 Concerning Theorem \ref{th2}, consider an output node $z$.
 Let $[\alpha(z),\beta(z)]$ be the bound computed by $\MILP_{X_z}$.
 %We will show the existence of $\vx^\sharp,\vx^\star$
