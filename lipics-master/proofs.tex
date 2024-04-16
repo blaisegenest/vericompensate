@@ -93,7 +93,7 @@ We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$:
 	\end{itemize}
 \end{definition}
 
-Notice that above definitions only involve weights, not bias. From the following lemmas and proofs, we can find that our discussion is irrelevant to bias, no matter the bias are very large positive or negative, or very close to 0.
+{\color{red}Notice that above definitions only involve weights, not bias. From the following lemmas and proofs, we can find that our discussion is irrelevant to bias, no matter the bias are very large positive or negative, or very close to 0.}
 
 We can then prove the following key lemma for Theorem \ref{th1}.
 
@@ -268,7 +268,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				\end{itemize}
 			\end{definition} 
 			
-			Similarly, this definition does not involve bias, and any kind of bias will not influence our theorem.
+
 			
 			\begin{lemma} \label{lem:open_node_2}
 				A node $b$ in a hidden layer will not be on a weak compensating path if and only if one of the following happens:
@@ -282,6 +282,8 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			We denote $B_{zero}$ the set of nodes $b$ that case 1 holds, and denote $B_{pure}$ the set of nodes $b$ such that case 2 holds but case 1 does not hold.
 			We denote $B_{open}$ the set of all nodes $b$ in a weak compensating path (remaining cases).
 			
+	
+			
 			\begin{proof}
 				First, we show that if one of case 1, 2 happens, then $b$ will not be in a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. This is a contradiction as 2) $weight({a_j,b})=0$ implies weight$(\pi)=0$.
 				
@@ -292,6 +294,8 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				from $a_j$ to $z$, say with $\pi'$ with weight $<0$.
 				Then two paths $(a_j,b,z)$ and $\pi'$ also form a weak compensating pair.
 			\end{proof}
+			
+							{ \color{red}	Similarly, above definitions $A_{zero},A_{open}, A_{pure}$ and $B_{zero},B_{open},B_{pure}$ do not involve bias, and any kind of bias will not influence our theorem.}
 			
 			\begin{lemma}\label{lem:subnetwork}
 				$I \cup B_{pure} $ forms a sub-network, denoted $D_I$. That is, 
@@ -546,6 +550,7 @@ The case for $\alpha$ is similar, proving the induction.
 Hence, using the $\max$ over ${x_J^0}$, 
 we will have $\max(z) = \beta'\geq \beta \geq \max(z)$, and hence $\beta=\beta'=\max(z)$.\end{proof}
 
+{\color{red} In all above statements and proofs, we do not use any assumption of bias, and the bias will have no influence on our discussion. }
 
 \subsection{Proof of Theorem \ref{th2}}
 
