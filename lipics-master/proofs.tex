@@ -93,7 +93,7 @@ We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$:
 	\end{itemize}
 \end{definition}
 
-{\color{red}Notice that above definitions only involve weights, not bias. From the following lemmas and proofs, we can find that our discussion is irrelevant to bias, no matter the bias are very large positive or negative, or very close to 0.}
+{\color{red}Notice that above definitions only involve weights, and do not use bias. From the following lemmas and proofs, we can find that our discussion is irrelevant to bias, no matter the bias are very large positive or negative, or very close to 0.}
 
 We can then prove the following key lemma for Theorem \ref{th1}.
 
@@ -135,6 +135,8 @@ $$\min(n)=\sum_{m \in L, W_{mn}>0}W_{mn} \min(\hat{m}) + \sum_{m \in L, W_{mn}<0
 	We prove similarly that $\min(n)=\Val_{\vx^\sharp}(n)$,
 	and the case $S(n)=-1$. This concludes the induction. 
 \end{proof}
+
+{\color{red} As we mentioned before, this proof does not have any requirements on the bias.}
 
 \iffalse
 	As direct corollary of Lemma \ref{lem:key1}, we obtain:
@@ -282,7 +284,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			We denote $B_{zero}$ the set of nodes $b$ that case 1 holds, and denote $B_{pure}$ the set of nodes $b$ such that case 2 holds but case 1 does not hold.
 			We denote $B_{open}$ the set of all nodes $b$ in a weak compensating path (remaining cases).
 			
-	
+		{ \color{red}	Similarly, above definitions $A_{zero},A_{open}, A_{pure}$ and $B_{zero},B_{open},B_{pure}$ do not involve bias, and any kind of bias will not influence our theorem.}
 			
 			\begin{proof}
 				First, we show that if one of case 1, 2 happens, then $b$ will not be in a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. This is a contradiction as 2) $weight({a_j,b})=0$ implies weight$(\pi)=0$.
@@ -295,7 +297,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				Then two paths $(a_j,b,z)$ and $\pi'$ also form a weak compensating pair.
 			\end{proof}
 			
-							{ \color{red}	Similarly, above definitions $A_{zero},A_{open}, A_{pure}$ and $B_{zero},B_{open},B_{pure}$ do not involve bias, and any kind of bias will not influence our theorem.}
+						
 			
 			\begin{lemma}\label{lem:subnetwork}
 				$I \cup B_{pure} $ forms a sub-network, denoted $D_I$. That is, 
@@ -555,7 +557,7 @@ we will have $\max(z) = \beta'\geq \beta \geq \max(z)$, and hence $\beta=\beta'=
 \subsection{Proof of Theorem \ref{th2}}
 
 
-We now prove Theorem \ref{th2} under the fairly light {\em well-connected hypothesis} (H1) that the DNN is such that for every 2 (not necessarily disjoint) paths $\rho_1,\rho_2$ with non-zero weight with the same source $m$ and the same target $n$ at least 2 layers apart, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). This hypothesis is used to remove corner cases which will not happen in actual DNNs, which all are well-connected. {\color{red} On the other hand, this hypothesis only matters in theoretical proof. This is because in practice, paths with zero or very small weights will have very small effect on the output, and very small effect on the models, too.  Usually these paths will not be considered.} 
+We now prove Theorem \ref{th2} under the fairly light {\em well-connected hypothesis} (H1) that the DNN is such that for every 2 (not necessarily disjoint) paths $\rho_1,\rho_2$ with non-zero weight with the same source $m$ and the same target $n$ at least 2 layers apart, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). This hypothesis is used to remove corner cases which will not happen in actual DNNs, which all are well-connected. {\color{red} Moreover, this hypothesis only matters in the theoretical proof. This is because in practice, paths with zero or very small weights will have very small effect on the output, and very small effect on the models, too.  Usually these paths will not be considered.} 
 
 Further we assume without loss of generality that every node can be reached from at least one input with a path of non-zero weight (otherwise we just remove this node altogether).
 We also assume without loss of generality that there is no node which can only reach $z$ with path of weight $0$, as such nodes have no contribution to the value $\val(z)$. We denote $m<n$ to mean that there exists a path with non zero weight from $m$ to $n$.
