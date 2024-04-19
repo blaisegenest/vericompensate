@@ -1,0 +1,207 @@
+
+\documentclass[10pt,table, UTF8]{beamer}
+\mode<presentation>
+{
+	\usefonttheme{professionalfonts}
+	\usecolortheme{orchid}
+	\setbeamertemplate{theorems}[numbered]
+	\setbeamertemplate{footline}[frame number]
+	\setbeamertemplate{navigation symbols}{}
+	\hypersetup{pdfpagemode={FullScreen}}
+}
+\usepackage{amsmath}
+\usepackage{cite}
+\def\pgfsysdriver{pgfsys -dvipdfmx.def}
+\usepackage{tikz}
+\tikzset{
+	dline/.style ={color = blue, line width =1pt}
+}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{fontawesome5}
+\usepackage{geometry}
+%\usepackage{fontspec}
+%\setmainfont{Arial Unicode MS}
+%\usepackage[utf8]{inputenc}
+%\usepackage{ctex}
+\usepackage[normalem]{ulem}
+\usepackage{amsthm}
+\newtheoremstyle{mydef}{}{}{\rmfamily}{}{\rmfamily}{}{ }{}
+\theoremstyle{mydef}
+\newtheorem{myDef}{Definition}
+\newtheorem{myTheo}{Theorem}
+\newtheorem{myCol}{Collory}
+\newtheorem{myPro}{Proposition}
+\newtheorem{myExm}{Example}
+\newtheorem{myLem}{Lemma}
+\numberwithin{equation}{section}
+\usepackage{graphicx}
+
+\title{Summary of ConvSmall}
+
+
+\begin{document}
+
+\begin{frame}{ConvSmall}
+	
+	\begin{enumerate}
+		\item ConvSmall is CNN with 3 hidden layers.
+		
+		\vspace*{1ex}
+		
+		\item  Input layer has 28x28 = 784 nodes, the same.
+		
+		\vspace*{1ex}
+		
+		\item Layer 1 (the first hidden layer) is a convolution with 4x4 kernel. It has 16x13x13 = 2704 nodes.
+		
+		\vspace*{1ex}
+		
+		\item  Layer 3 is a convolution layer with 4x4 kernel. It has 32x5x5 = 800 nodes.
+		
+		\vspace*{1ex}
+		
+		\item  layer 5 is a FC with 100 nodes.
+		
+		\vspace*{1ex}
+		
+		\item  Output has 10 nodes as usual.
+	\end{enumerate}
+	
+	
+	
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Layer 1 and 3}
+	
+
+	\begin{enumerate}
+		\item Layer 1 is naturally accurate.
+		
+		\vspace*{2ex}
+		
+		\item  Layer 3 has a very small uncertainty, even using LP. So we do not need to worry about it.
+	\end{enumerate}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{Layer 5}
+	
+	
+	\begin{enumerate}
+		\item Layer 5 is similar as our previous networks.
+		
+		\vspace*{2ex}
+		
+		\item  If we increase the open number of ReLU nodes, then it will use more time and get more accuracy.
+		
+		
+		\vspace*{2ex}
+		
+		\item  The computed bounds for Layer 5 is very important. I am testing the best open number: it seems that open = 300 or 250 is worse than open = 200.
+	\end{enumerate}
+	
+	
+\end{frame}
+
+\begin{frame}{Tests of layer 5}
+	\begin{table}[htbp]
+		\centering
+		\caption{Average uncertainty: UB - LB}
+		\begin{tabular}{|c|c|c|c|c|c|}
+			\hline
+			case: &image 0 & image 1 & image 2 & image 3 & image 4 \\
+			\hline
+			open 100 all & 1.860 & 1.8285 & 1.907 & 1.813 & 1.865 \\
+			open 100 unstable & 1.395 & 1.116 & 1.728 & 1.102 & 1.5205 \\
+			\hline
+			open 200 all & 1.702 & 1.702 & 1.847 & 1.745 & 1.739 \\
+			open 200 unstable & 1.274 & 0.997 & 1.675 & 1.031 & 1.361 \\
+			\hline
+			open 250 all & 1.67 & 1.741 & 1.776 & 1.749 & 1.768\\
+			open 250 unstable & 1.230 & 1.018 & 1.533 & 1.034 & 1.382 \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	Average time of open 100, 200, 250 are 411.8s, 467.0s,  501.5s (including previous layers).
+
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{Layer 7}
+	
+	
+	\begin{enumerate}
+		\item Layer 7 is the key problem.
+		
+		\vspace*{2ex}
+		
+		\item In previous code there are bugs so the open relu function cannot return enough nodes. Now it is fixed.
+		
+		\vspace*{2ex}
+		
+		\item  But the accuracy is still not high.
+		
+		\vspace*{2ex}
+		
+		\item  I will go to test the best open number of layer 7.
+		
+		
+	\end{enumerate}
+	\vspace*{2ex}
+	
+	One question is that, even I open all unstable nodes in layer 5, the bounds of layer 5 will still heavily influence the accuracy of layer 7. Why?
+	
+	
+\end{frame}
+
+\begin{frame}{Summary of tests}
+	\begin{enumerate}
+		\item  On  April 1 and 2, the early code has lots of bugs/mistakes. 
+		
+		\vspace*{2ex}
+		
+		\item  Most of them are because in previous code, I sometimes assumed all hidden layers have the same number of nodes (I should not). But this is not true in ConvSmall.
+		
+		\vspace*{2ex}
+		
+		\item  Some of them are easy to find (will cause error directly). Some of them are not as evident (they will influence the open nodes chosen, but the code can run).
+		
+		\vspace*{2ex}
+		
+		\item  Now I think all such mistakes have been fixed.
+	\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Other details}
+	\begin{enumerate}
+		\item ERAN: They also tried a lot to improve the accuracy and speed on ConvSmall: we can see the table in their or beta-Crown's paper.
+		
+		
+		\vspace*{2ex}
+		
+		\item Beta-Crown: They are very very good at this network. Their average time is only 7s, and even DeepPoly need 3s per image.
+		
+		\vspace*{1ex}
+		
+		\item According to their default configuration file, they do not use refine-part/MILP to run ConvSmall. They use pure bab.
+	\end{enumerate}
+\end{frame}
+
+
+
+
+
+
+\end{document}
