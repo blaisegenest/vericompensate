@@ -93,7 +93,7 @@ We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$:
 	\end{itemize}
 \end{definition}
 
-{\color{red}Notice that above definitions only involve weights, and do not use bias. From the following lemmas and proofs, we can find that our discussion is irrelevant to bias, no matter the bias are very large positive or negative, or very close to 0.}
+{\color{red}Notice that above definitions only involve weights, and do not use bias. As demonstrated by the following lemmas and proofs, our discussion is independent of bias, regardless of whether the bias values are very large or very small.}
 
 We can then prove the following key lemma for Theorem \ref{th1}.
 
@@ -136,7 +136,7 @@ $$\min(n)=\sum_{m \in L, W_{mn}>0}W_{mn} \min(\hat{m}) + \sum_{m \in L, W_{mn}<0
 	and the case $S(n)=-1$. This concludes the induction. 
 \end{proof}
 
-{\color{red} As we mentioned before, this proof does not have any requirements on the bias.}
+{\color{red} As we mentioned earlier, this proof does not have any requirements on the bias.}
 
 \iffalse
 	As direct corollary of Lemma \ref{lem:key1}, we obtain:
@@ -284,7 +284,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			We denote $B_{zero}$ the set of nodes $b$ that case 1 holds, and denote $B_{pure}$ the set of nodes $b$ such that case 2 holds but case 1 does not hold.
 			We denote $B_{open}$ the set of all nodes $b$ in a weak compensating path (remaining cases).
 			
-		{ \color{red}	Similarly, above definitions $A_{zero},A_{open}, A_{pure}$ and $B_{zero},B_{open},B_{pure}$ do not involve bias, and any kind of bias will not influence our theorem.}
+		{ \color{red}	Similarly, above definitions $A_{zero},A_{open}, A_{pure}$ and $B_{zero},B_{open},B_{pure}$ do not consider bias, and any kind of bias will not affect our theorem.}
 			
 			\begin{proof}
 				First, we show that if one of case 1, 2 happens, then $b$ will not be in a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. This is a contradiction as 2) $weight({a_j,b})=0$ implies weight$(\pi)=0$.
@@ -552,7 +552,7 @@ The case for $\alpha$ is similar, proving the induction.
 Hence, using the $\max$ over ${x_J^0}$, 
 we will have $\max(z) = \beta'\geq \beta \geq \max(z)$, and hence $\beta=\beta'=\max(z)$.\end{proof}
 
-{\color{red} In all above statements and proofs, we do not use any assumption of bias, and the bias will have no influence on our discussion. }
+{\color{red} In all the statements and proofs above, we do not make any assumptions about bias, and bias will not affect our discussion. }
 
 \subsection{Proof of Theorem \ref{th2}}
 
