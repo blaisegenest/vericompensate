@@ -93,7 +93,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 \end{table}
 
 
-{\color{red} We also do a comparison of our method and the method in paper \cite{9211410}}
+{\color{red} We also do a comparison of our method and the method in paper \cite{9211410}. They find a formula to choose nodes in their algorithm. We can use the same formula in our setting, and since we only have $\ReLU$ function, that formula can be simplified to: $$V(n) = (UB(n)-LB(n))\cdot W_{nm}.$$ In this formula, $m$ is the target node, and $n$ is one of source nodes in one layer before. We sort all nodes $n$ by their $V(n)$ values, and choose the nodes with largest values.}
 
 \subsubsection*{ReLU Node in the first and second hidden layer}
 
