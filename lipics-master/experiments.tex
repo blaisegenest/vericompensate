@@ -93,7 +93,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 \end{table}
 
 
-{\color{red} We also do a comparison of our method and the method in paper \cite{9211410}. They find a formula to choose nodes in their algorithm. We can use the same formula in our setting, and since we only have $\ReLU$ function, that formula can be simplified to: $$V(n) = (UB(n)-LB(n))\cdot W_{nm}.$$ In this formula, $m$ is the target node, and $n$ is one of source nodes in one layer before. We sort all nodes $n$ by their $V(n)$ values, and choose the nodes with largest values.}
+
 
 \subsubsection*{ReLU Node in the first and second hidden layer}
 
@@ -110,11 +110,25 @@ Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than
 also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. 
 Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier because the trade-off of accuracy vs evaluating the compensating strength of such paths is unclear.
 
+{\color{red} We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly from layers $1$ and $2$. 
+	Moreover, we also compare choosing nodes in the second layer only (using method in paper \cite{9211410}) with choosing nodes in both the first and second layer.
+	
+	
+		The method in paper \cite{9211410} use a formula to value different nodes in a layer, and then choose nodes by their values. We can use the same formula in this comparison experiments. Because we only have $\ReLU$ function, that formula can be simplified to: $$V(n) = (UB(n)-LB(n))\cdot W_{nm}.$$ In this formula, $m$ is the target node, and $n$ is one of source nodes in one layer before. We sort all nodes $n$ by their $V(n)$ values, and choose the nodes with larger values. 
+	
+	
+	
+	Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
+	also choosing nodes in layer $1$. 	When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. 
+	Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier because the trade-off of accuracy vs evaluating the compensating strength of such paths is unclear. 
+	
+}
+
 \begin{table}[t!]	
 	\centering
 	\begin{tabular}{|c||c|c|c|}
 		\hline
-		\text{Number $K$}  &  \text{Compensate layer} 1+2 &  \text{Compensate layer} 2 & \text{Random layer } 1+2 \\ \hline
+		\text{Number $K$}  &  \text{Compensate layer} 1+2 &  \text{{\color{red}Quick Method} layer} 2 & \text{Random layer } 1+2 \\ \hline
 		\hline
 		0  &  1.761 & 1.761 & 1.761  \\ \hline
 		10  &  1.656 & 1.651 & 1.696  \\ \hline
