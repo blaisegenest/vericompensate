@@ -1,6 +1,7 @@
 \documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate]{lipics-v2021}
 \pagestyle{plain}
 
+
 %\usepackage[latin9]{inputenc}
 %\usepackage[T1]{fontenc}
 \usepackage{float}
@@ -66,23 +67,23 @@
 \title{I Compensate, therefore I Am \\ (accurate for DNN verification)}
 \date{}
 
-\author{Yuke Liao}{CNRS@CREATE, Singapore}{yuke.liao@cnrsatcreate.sg}{}{}
+%\author{Yuke Liao}{CNRS@CREATE, Singapore}{yuke.liao@cnrsatcreate.sg}{}{}
 
-\author{Blaise Genest}{CNRS, France \and CNRS@CREATE, Singapore \and https://perso.crans.org/genest/}{blaise.genest@cnrsatcreate.sg}{}{}
+%\author{Blaise Genest}{IPAL Lab, CNRS and CNRS@CREATE, France and Singapore}{blaise.genest@cnrsatcreate.sg}{}{}
 
-\author{Kuldeep Meel}{University of Toronto, Canada \and https://www.cs.toronto.edu/~meel/}{ meel@cs.toronto.edu}{}{}
+%\author{Kuldeep Meel}{University of Toronto, Canada}{ meel@cs.toronto.edu}{}{}
 
-\author{Shaan Aryaman}{NYU Courant Institute of Mathematical Sciences, United States}{aryaman.shaan@gmail.com}{}{}
+%\author{Shaan Aryaman}{NYU Courant Institute of Mathematical Sciences, United States}{aryaman.shaan@gmail.com}{}{}
 
 %\author{John Q. Public}{Dummy University Computing Laboratory, [optional: Address], Country \and My second affiliation, Country \and \url{http://www.myhomepage.edu} }{johnqpublic@dummyuni.org}{https://orcid.org/0000-0002-1825-0097}{(Optional) author-specific funding acknowledgements}
-\authorrunning{Y. Liao, B. Genest, K. Meel and S. Aryaman} %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+%\authorrunning{Y. Liao, B. Genest, K. Meel and S. Aryaman} %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
 
 
 \keywords{Dummy keyword} %TODO mandatory; please add comma-separated list of keywords
 
-\Copyright{Liao Yuke, Blaise Genest, Kuldeep Meel and Shaan Aryaman} %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+%\Copyright{Liao Yuke, Blaise Genest, Kuldeep Meel and Shaan Aryaman} %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
 
-\ccsdesc[100]{\textcolor{red}{Replace ccsdesc macro with valid one}} %TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm 
+\ccsdesc[100]{} %TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm 
 
 
 
@@ -108,8 +109,8 @@
 	
 	\section{Notations and Preliminaries}
 	
-	In this paper, we will use lower case latin $a$ for scalars, bold for vectors $\boldsymbol{z}$, 
-	capitalized bold for matrices $\boldsymbol{W}$, similar to notations in \cite{prima,crown}.
+	In this paper, we will use lower case latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
+	capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{prima,crown}.
 	To simplify the notations, we restrict the presentation to feed-forward, 
 	fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
 	$ReLU(x)=x$ for $x \geq 0$ and $ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
@@ -129,8 +130,8 @@
 	Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
 	denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
 	\begin{align*}
-		{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i\\
-		\hat{\boldsymbol{z}}^{i} &= ReLU({\boldsymbol{z}}^i).
+		\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i \qquad \, \qquad
+		\hat{\boldsymbol{z}}^{i} = ReLU({\boldsymbol{z}}^i).
 	\end{align*} 
 	
 	The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 

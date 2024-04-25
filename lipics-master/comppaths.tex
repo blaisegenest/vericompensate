@@ -1,6 +1,4 @@
 
-
-
 \section{Compensating pairs of paths}
 \label{Sec.comp}
 
@@ -23,9 +21,13 @@ We call a path $\pi$ {\em compensating} if there exists a path $\pi'$ such that 
 	\end{example}
 
 
-The phenomenon of compensating pairs of paths significantly impacts the precision of the target state due to the overabstraction of values. For instance, consider a scenario where $x_5 \leq 4$ is attainable when $x_1=1$ and $x_2=-1$, leading to $\val_{(1,-1)}(n_5)=4$. However, the Box methodology estimates an upper limit of $6$. Although DeepPoly partially rectifies the dependency on $x_2$, it achieves only partial negation of the $x_2$ value owing to the excessive abstraction characteristic of ReLU. This results in an overestimated upper bound of $x_5 \leq 5$ through a contribution of $\frac{-x_2+3}{2} \leq 2$, as opposed to the exact calculation of $-x_2 \leq 1$, culminating in a precise upper bound of $x_5 \leq 4$.
+The phenomenon of compensating pairs of paths significantly impacts the precision of the target state due to the overabstraction of values. We have $\val_{(1,-1)}(n_5)=4$. 
+This is actually the maximum value reachable by $\val_{\vx}(n_5)$. However, the Box methodology estimates an upper limit $\val_{\vx}(n_5) \leq 6$ (contribution $\leq 3$ from $n_1$ plus $\leq 3$ from $n_2$ to $n_5$). 
+DeepPoly rectifies the bound from the contribution of $n_2$ to $n_5$ by an (overestimated) upper bound $\frac{-x_2+3}{2} \leq 2$, leading to $\val_{\vx}(n_5) \leq 5$. 
+The exact contribution of $n_2$ to $n_5$ is actually bounded by $-x_2 \leq 1$, leading to $x_5 \leq 4$. Considering exactly $ReLU(n_3),ReLU(n_4)$ allows one to obtain 
+this precise bound $-x_2$ for the contribution of $n_2$ to $n_5$.
 
-In an intuitive sense, the target state accrues weight from the source state via different paths connecting the source to the target. When these connecting paths possess weights of contrasting signs, a certain degree of cancellation occurs, with the extent of cancellation being up to $min(|weight(\pi')|,|weight(\pi')|)$. This mechanism also serves to mitigate error propagation in a manner similar to how $0 = |1+(-1)| \leq |1|+|-1| = 2$ in imprecise analyses. However, the ReLU functions can constrain the level of compensation due to their clipping effect. For instance, if the inputs $x_1, x_2$ are confined within the range $[-1,-0]$, then $\hat{x}_3$ will consistently be 0 for any input $\vx=(x_1,x_2)$ within the domain $[-1,-0] \times [-1,-0]$, thereby preventing $weight(\pi')$ from effectively counterbalancing $weight(\pi')$.
+In an intuitive sense, the target state accrues weight from the source state via different paths connecting the source to the target. When these connecting paths possess weights of contrasting signs, a certain degree of cancellation occurs, with the extent of cancellation being up to $min(|weight(\pi')|,|weight(\pi')|)$. This mechanism also serves to mitigate error propagation in a manner similar to how $0 = |1+(-1)| \leq |1|+|-1| = 2$ in imprecise analyses. However, the ReLU functions can constrain the level of compensation due to their clipping effect. For instance, if the inputs $x_1, x_2$ are confined within the range $[-1,-0]$, then $\hat{x}_3$ will consistently be 0 for any input $\vx=(x_1,x_2)$ within the domain $[-1,-0] \times [-1,-0]$, thereby preventing $weight(\pi')$ from effectively counterbalancing $weight(\pi)$.
 
 
 
@@ -129,6 +131,20 @@ The following theorem shows the role of compensating pairs in the computation:
 
 \fi
 
+\smallskip
+
+The discussion so far shows  that compensation is {\em one} of the factors contributing to inaccuracy. We now establish that it is {\em the sole cause} of inaccuracy:
+if a DNN lacks any compensating path, then any methodology that is at least as accurate as the Box abstraction, such as LP and $\overline{\mbox{DeepPoly}}$ (but not DeepPoly), will precisely determine the exact upper and lower bounds for every node. This assertion is formalized in the following theorem:
+
+\begin{theorem}
+	\label{th1}
+	Consider any node $n$ within a DNN devoid of any compensating path. Let $[\alpha,\beta]$ represent the bounds computed by the Box abstraction for node $n$. Then, for every $\gamma$ within the interval $[\alpha,\beta]$, there exists an input $\vx$ such that $\val_{\vx}(n) = \gamma$.
+\end{theorem}
+
+The sketch of proof can be found in Section \ref{sec.proofs}. 
+This theorem underscores the significant role of compensating paths in the accuracy of bound estimation within DNNs, affirming that their absence guarantees the precision of computed bounds. Practically speaking, encountering a network entirely devoid of compensating paths is highly improbable, rendering this more a theoretical observation, highlighting that compensation is a key driver of inaccuracy.
+
+
 \begin{table}[b!]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
@@ -144,24 +160,14 @@ The following theorem shows the role of compensating pairs in the computation:
 \end{table}
 
 
-The discussion so far shows  that compensation is one of the possible factors contributing to inaccuracy. We now establish that it is the sole cause of inaccuracy:
-if a DNN lacks any compensating path, then any methodology that is at least as accurate as the Box abstraction, such as LP and $\overline{\mbox{DeepPoly}}$ (but not DeepPoly), will precisely determine the exact upper and lower bounds for every node. This assertion is formalized in the following theorem:
-
-\begin{theorem}
-	\label{th1}
-	Consider any node $n$ within a DNN devoid of any compensating path. Let $[\alpha,\beta]$ represent the bounds computed by the Box abstraction for node $n$. Then, for every $\gamma$ within the interval $[\alpha,\beta]$, there exists an input $\vx$ such that $\val_{\vx}(n) = \gamma$.
-\end{theorem}
-
-The sketch of proof can be found in Section \ref{sec.proofs}. 
-
-This theorem underscores the significant role of compensating paths in the accuracy of bound estimation within DNNs, affirming that their absence guarantees the precision of computed bounds. Practically speaking, encountering a network entirely devoid of compensating paths is highly improbable, rendering this more a theoretical observation, highlighting that compensation is a key driver of inaccuracy.
-
-
 
 
 %It is worth remarking that  Theorem~\ref{th1} does not directly apply to standard DeepPoly since DeepPoly does not inherently refine the Box abstraction.  Furthermore, it is unclear whether  Theorem~\ref{th1} applies to PRIMA or $\beta$-CROWN as these techniques refine DeepPoly.  Nevertheless, this limitation could potentially be addressed by integrating $\overline{\text{DeepPoly}}$.
 
-An intriguing application of this result lies in elucidating why certain DNNs are inherently more amenable to verification compared to others. This distinction is notably evident between DNNs adversarially trained for robustness and those trained naturally, utilizing the same architecture \cite{deeppoly,prima,crown}. Notably, the presence of compensating pairs is an intrinsic structural attribute of the learned DNN, contrasting with more semantic aspects like the number of unstable ReLUs, which are significantly influenced by the specific image and algorithm employed. To illustrate this point, we consider two networks, each comprising 5 hidden layers with 100 nodes, sourced from the ERAN GitHub repository. One is naturally trained ($6\times100$), and the other is trained using DiffAI ($5\times100$). In Table \ref{tab:compensation}, we present the average compensation strength, computed as the mean of $max_{\pi,\pi'} min(|weight(\pi')|,|weight(\pi')|)$ across all source/target states within specified layers. The findings reveal that the average compensation strength is considerably lower in the Robust DNN compared to the natural DNN. Correspondingly, the Robust DNN is substantially easier to verify than its natural counterpart, as evidenced by the enhanced accuracy and image verification rate of DeepPoly.
+Additionally we offer an experimental corroboration of this result:
+Consider 2 similar network, one verification agnostic and one trained robustly to be more easily verifiable (using DiffAI). TBC
+
+This distinction is notably evident between DNNs adversarially trained for robustness and those trained naturally, utilizing the same architecture \cite{deeppoly,prima,crown}. Notably, the presence of compensating pairs is an intrinsic structural attribute of the learned DNN, contrasting with more semantic aspects like the number of unstable ReLUs, which are significantly influenced by the specific image and algorithm employed. To illustrate this point, we consider two networks, each comprising 5 hidden layers with 100 nodes, sourced from the ERAN GitHub repository. One is naturally trained ($6\times100$), and the other is trained using DiffAI ($5\times100$). In Table \ref{tab:compensation}, we present the average compensation strength, computed as the mean of $max_{\pi,\pi'} min(|weight(\pi')|,|weight(\pi')|)$ across all source/target states within specified layers. The findings reveal that the average compensation strength is considerably lower in the Robust DNN compared to the natural DNN. Correspondingly, the Robust DNN is substantially easier to verify than its natural counterpart, as evidenced by the enhanced accuracy and image verification rate of DeepPoly.
 
 
 \subsection{MILP$_{X_n}$}
