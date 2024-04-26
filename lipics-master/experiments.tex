@@ -1,34 +1,41 @@
-\newpage
-
 \section{Experimental Evaluation}
 
 
 We implemented a prototype of \toolname in Python 3.8. 
 We conducted our evaluation on an AMD 5975WX  ($32$ cores$@3.6$GHz, 7nm, year 2022) 
-with 256 GB of main memory and 2 NVIDIA RTX 3090. 
-Gurobi 9.52 was used for solving MILP and LP problems. 
+with 256 GB of main memory and an (unused) NVIDIA RTX 3090. 
+Gurobi 9.52 was used for solving LP and MILP problems. 
 
-We conducted our evaluation on neural networks trained on MNIST that have been employed in prior work. The networks have varying sizes: $5\times 100$, $5\times 200$, $8 \times 100$, and $8 \times 200$. It is worth remarking that despite seemingly small size, these instances are challenging for the current state of the art techniques. In particular, the current state of the art methods are unable to characterize $12\%$ to $20\%$ of the images as neither certified robust \cite{crown} nor find an adversarial example \cite{attack}. We call such images {\em undetermined}. Following methodology in prior work \cite{prima,crown}, we evaluate on the first 1000 images of the dataset. We also experimented on the network of size $6\times 500$ (results not reported in \cite{prima,crown}), checking the first 200 images of the dataset, given the computational overhead associated with such larger networks. 
-Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
-All these DNNs are found in the ERAN GitHub 
-(\url{https://github.com/eth-sri/eran}, the 4th to the 8th DNNs provided).
-%Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
+We conducted our evaluation on neural networks obtained from the ERAN GitHub (\url{https://github.com/eth-sri/eran}, the 4th to the 8th DNNs provided).
+These verification-agnostic DNNs have varying sizes: $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$ and $6 \times 500$. We selected the 4 first because they have been tested in both \cite{prima} and \cite{crown}, they have good accuracy ($>94\%$ \cite{prima}), 
+and depite their small sizes there is still a large portion ($12\%$ to $20\%$) of images which are {\em undetermined} by these SOTA methods, that is images neither verified nor for which an attack has been found  \cite{attack}. Hence more accurate methods are useful. 
+The next DNN in the list was the larger $6 \times 500$ DNN, which seemed an interesting challenge (still high accuracy) to understand the scaling of CMP. Interestingly, tests on $6 \times 500$ were not reported in \cite{prima} nor in \cite{crown}. All these DNNs tackle the MNIST benchmark, which is not a limitation as we want to validate that focusing on compensating strength improves the accuracy: we do not claim that the particular CMP implementation is the most efficient in all the situations.
 
-\paragraph{Baseline}: 
+To obtain results comparable with \cite{prima,crown}, 
+we evaluated CMP on $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$ for the first 1000 images of the dataset. For $6\times 500$ (results not reported in \cite{prima,crown}), we run all the tools ourselves for the first 200 images, given the computational overhead associated with such larger networks. Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
+
+\smallskip
+
+\noindent{\bf Baseline}: 
 We compare the following verifiers performing value-abstraction:
 \begin{itemize}
-	\item DeepPoly \cite{deeppoly}/ CROWN \cite{crown}. We report the runtime from our own implementation, used in {\toolname}. It shows that our purely Python implementation is not optimal ($10$ to $100$ times slower than the implementation in ($\alpha$)($\beta$)CROWN, ERAN and PRIMA). 
-	\item PRIMA~\cite{prima} and $(\alpha)\beta$ CROWN \cite{crown}. We use the results reported in \cite{prima} and \cite{crown} respectively for instances that were also used in prior works.
-	We report results for the $6\times500$ network as it was not reported in prior work.  
-	
+	\item DeepPoly \cite{deeppoly}/ CROWN \cite{crown}. We report the runtime from our  implementation in \toolname. 
+	%It shows that our purely Python implementation is not optimal ($10$ to $100$ times slower than the implementation in ($\alpha$)($\beta$)CROWN, ERAN and PRIMA). 
+	\item PRIMA~\cite{prima} and $(\alpha)\beta$ CROWN \cite{crown}. We use the results reported in \cite{prima} and \cite{crown} respectively for 
+	$5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$.
+	We report our experimental results for the $6\times500$ DNN as they are not available in prior work. Notice that PRIMA and CROWN run 16 CPU threads for the first 4 benchmarks, and use massively parallel (>4000 threads) GPUs on $6\times500$, compared to 20 CPU threads for CMP on all DNNs.
+	\item We also tested MN-BaB \cite{ferrari2022complete} on $6\times500$
+	(slightly lower accuracy and slower than $\alpha$,$\beta$CROWN), 
+	in line with results reported in \cite{ferrari2022complete} for other DNNs. Further, results for MN-BaB on $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$	are not reported in \cite{ferrari2022complete} or elsewhere. 
+	We thus do not include MN-BaB results in Table \ref{tab:example}, to avoid clutter.
 %	They use GPU while we do not. When computing the whole correlated space, 
 %	parallelization is difficult.
 %	Notice that on these DNNs, PRIMA resort to refined bounds on the first few layers (3 or 4) using exact MILP encoding of all the nodes (which is easily parallelized - 16 nodes considered in parallel in PRIMA). This is doable on the first few layers as the number of integer variable is not too large. By comparison, we run MILP on all the layers, but with a bounded number of integer variables to control the runtime and to scale to all the layers.
 %	Its main idea is to implement a very efficient Branch and Bound (BaB) verification tool, subsuming BaBSR \cite{BaB}, and using GPU implementation (while we do not). Performance of pure BaB on these 
 %	"hard to verify" DNNs is however impaired by the large number of branchs to consider. Similarly as PRIMA, $\beta$-CROWN resorts to refining the bounds of the first few layers using an exact MILP encoding, also computing 16 nodes in parallel, before running the branching heuristic BaB-FSB. 
 %	\item We also experimented with the latest versions of $\alpha$-$\beta$-CROWN (October 2023) and PRIMA (2022) on MLP $6 \times 500$ (results not reported in \cite{crown,prima}).
-	\item It is worth remarking that we do not report results from kPoly \cite{kpoly}, OptC2V \cite{optC2V}, 
-	SDPFO \cite{SDPFI}, MIPplanet \cite{MIPplanet}, as $(\alpha)\beta$-CROWN has been shown to outperform these methods \cite{crown}.
+	\item We do not report results from kPoly \cite{kpoly}, OptC2V \cite{optC2V}, 
+	SDPFO \cite{SDPFI}, MIPplanet \cite{MIPplanet}, as $(\alpha)\beta$-CROWN has been shown to outperform these methods in accuracy and time \cite{crown}.
 	
 \end{itemize}
 

@@ -126,10 +126,7 @@ standard DeepPoly would conclude $\ReLU(x_i) \in [-0.2,5]$, while
 
 At the other end of the spectrum, we find the Mixed Integer Linear Programming (MILP) value abstraction, which is a complete (but inefficient) method. 
 Consider an unstable neuron $n \in[\alpha,\beta]$. The value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one integer (actually even binary) variable $a$ valued in $\{0,1\}$, using constants $(\alpha,\beta)$ with 4 constraints \cite{MILP}:
-\vspace{-0.1cm}
-\begin{align*}
-	\hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a)
-\end{align*}
+$\quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a)$.
 
 For all $x \in [\alpha,\beta] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. Here, $a$ is 0 if $x < 0$, 1 if $x>0$, and can be either if $x=0$~\cite{MILP}. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
 

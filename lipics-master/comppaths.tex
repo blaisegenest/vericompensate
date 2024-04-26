@@ -16,18 +16,23 @@ We call a path $\pi$ {\em compensating} if there exists a path $\pi'$ such that 
 \end{definition}
 
 \begin{example}
-	For instance, on Fig.~\ref{fig1}, the paths $\pi= n_2 n_3 n_5$ has weight $1$, while the
+	On Fig.~\ref{fig1}, the paths $\pi= n_2 n_3 n_5$ has weight $1$, while the
 	path $\pi'= n_2 n_4 n_5$ has weight $-2$, hence $(\pi,\pi')$ is a compensating pair of paths.
 	\end{example}
 
 
-The phenomenon of compensating pairs of paths significantly impacts the precision of the target state due to the overabstraction of values. We have $\val_{(1,-1)}(n_5)=4$. 
+	The phenomenon of compensating pairs of paths significantly impacts the precision of the target state due to the overabstraction of values. In an intuitive sense, the target state accrues weight from the source state via different paths connecting the source to the target. When these connecting paths possess weights of contrasting signs, a certain degree of cancellation occurs, with the extent of cancellation being up to $min(|weight(\pi')|,|weight(\pi')|)$.
+
+	For instance, on Fig.~\ref{fig1}, we have $\val_{(1,-1)}(n_5)=4$. 
 This is actually the maximum value reachable by $\val_{\vx}(n_5)$. However, the Box methodology estimates an upper limit $\val_{\vx}(n_5) \leq 6$ (contribution $\leq 3$ from $n_1$ plus $\leq 3$ from $n_2$ to $n_5$). 
 DeepPoly rectifies the bound from the contribution of $n_2$ to $n_5$ by an (overestimated) upper bound $\frac{-x_2+3}{2} \leq 2$, leading to $\val_{\vx}(n_5) \leq 5$. 
-The exact contribution of $n_2$ to $n_5$ is actually bounded by $-x_2 \leq 1$, leading to $x_5 \leq 4$. Considering exactly $ReLU(n_3),ReLU(n_4)$ allows one to obtain 
-this precise bound $-x_2$ for the contribution of $n_2$ to $n_5$.
+The exact contribution of $n_2$ to $n_5$ is actually bounded by $-x_2 \leq 1$, leading to $x_5 \leq 4$. 
+It s however hard to obtain this precise bound $-x_2$ for the contribution of $n_2$ to $n_5$
+without considering exactly $ReLU(n_3),ReLU(n_4)$.
 
-In an intuitive sense, the target state accrues weight from the source state via different paths connecting the source to the target. When these connecting paths possess weights of contrasting signs, a certain degree of cancellation occurs, with the extent of cancellation being up to $min(|weight(\pi')|,|weight(\pi')|)$. This mechanism also serves to mitigate error propagation in a manner similar to how $0 = |1+(-1)| \leq |1|+|-1| = 2$ in imprecise analyses. However, the ReLU functions can constrain the level of compensation due to their clipping effect. For instance, if the inputs $x_1, x_2$ are confined within the range $[-1,-0]$, then $\hat{x}_3$ will consistently be 0 for any input $\vx=(x_1,x_2)$ within the domain $[-1,-0] \times [-1,-0]$, thereby preventing $weight(\pi')$ from effectively counterbalancing $weight(\pi)$.
+ 
+%This mechanism also serves to mitigate error propagation in a manner similar to how $0 = |1+(-1)| \leq |1|+|-1| = 2$ in imprecise analyses. 
+Indeed, the ReLU functions can constrain the level of compensation due to their clipping effect. For instance, if the inputs $x_1, x_2$ are confined within the range $[-1,-0]$, then $\hat{x}_3$ will consistently be 0 for any input $\vx=(x_1,x_2)$ within the domain $[-1,-0] \times [-1,-0]$, thereby preventing $weight(\pi')$ from effectively counterbalancing $weight(\pi)$.
 
 
 
@@ -145,18 +150,19 @@ The sketch of proof can be found in Section \ref{sec.proofs}.
 This theorem underscores the significant role of compensating paths in the accuracy of bound estimation within DNNs, affirming that their absence guarantees the precision of computed bounds. Practically speaking, encountering a network entirely devoid of compensating paths is highly improbable, rendering this more a theoretical observation, highlighting that compensation is a key driver of inaccuracy.
 
 
-\begin{table}[b!]
+\begin{table}[t!]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
 		\hline
-		\text{Source/Target Layers}  &  \text{Natural DNN} & \text{Robust DNN} & \text{Ratio Natural vs Robust} \\ \hline \hline
-		0 / 2 & 0.0304 & 0.00220  & 13.8x\\ \hline
-		1 / 3  & 0.0313 & 0.00875 & 3.58x \\ \hline
-		2 / 4  &  0.0267 & 0.00785 & 3.40x \\ \hline
-		3 / 5  &  0.0253 & 0.00804  & 3.18x \\ \hline
+		\text{Target Layer}  &  \text{Verification-agnostic DNN} & \text{DiffAI-trained DNN} & \text{Ratio} \\ \hline \hline
+		2 & 0.0304 & 0.00220  & 13.8x\\ \hline
+		3  & 0.0313 & 0.00875 & 3.58x \\ \hline
+		4  &  0.0267 & 0.00785 & 3.40x \\ \hline
+		5  &  0.0253 & 0.00804  & 3.18x \\ \hline
 	\end{tabular}
-	\caption{Comparison of the average compensation strength over all the pairs of nodes of layer source/target between a DNN naturally-trained and a DNN robustly-trained using DiffAI \cite{DiffAI} with the same architecture and training set. {\color{red} Compensation strength with 1 layer between source and target is straightforward, and was sufficient to show the difference between DNNs trained naturally and by DiffAI.}}
+	\caption{Average compensating strength over all pairs of paths of length 3 to nodes in the target layer, between a verification-agnostic DNN and a DNN robustly-trained using DiffAI \cite{DiffAI}. \vspace{-0.8cm}}
 	\label{tab:compensation}
+	
 \end{table}
 
 
@@ -165,28 +171,28 @@ This theorem underscores the significant role of compensating paths in the accur
 %It is worth remarking that  Theorem~\ref{th1} does not directly apply to standard DeepPoly since DeepPoly does not inherently refine the Box abstraction.  Furthermore, it is unclear whether  Theorem~\ref{th1} applies to PRIMA or $\beta$-CROWN as these techniques refine DeepPoly.  Nevertheless, this limitation could potentially be addressed by integrating $\overline{\text{DeepPoly}}$.
 
 Additionally we offer an experimental corroboration of this result:
-Consider 2 similar network, one verification agnostic and one trained robustly to be more easily verifiable (using DiffAI). TBC
-
-This distinction is notably evident between DNNs adversarially trained for robustness and those trained naturally, utilizing the same architecture \cite{deeppoly,prima,crown}. Notably, the presence of compensating pairs is an intrinsic structural attribute of the learned DNN, contrasting with more semantic aspects like the number of unstable ReLUs, which are significantly influenced by the specific image and algorithm employed. To illustrate this point, we consider two networks, each comprising 5 hidden layers with 100 nodes, sourced from the ERAN GitHub repository. One is naturally trained ($6\times100$), and the other is trained using DiffAI ($5\times100$). In Table \ref{tab:compensation}, we present the average compensation strength, computed as the mean of $max_{\pi,\pi'} min(|weight(\pi')|,|weight(\pi')|)$ across all source/target states within specified layers. The findings reveal that the average compensation strength is considerably lower in the Robust DNN compared to the natural DNN. Correspondingly, the Robust DNN is substantially easier to verify than its natural counterpart, as evidenced by the enhanced accuracy and image verification rate of DeepPoly.
+Consider 2 similar networks, one verification-agnostic and one trained robustly to be more easily verifiable (using DiffAI), namely with 5 hidden layers of 100 neurons each, sourced from the ERAN GitHub repository.
+%This distinction is notably evident between DNNs adversarially trained for robustness and those trained naturally, utilizing the same architecture \cite{deeppoly,prima,crown}. 
+%To illustrate this point, we consider two networks, each comprising 5 hidden layers with 100 nodes, 
+%One is naturally trained ($6\times100$), and the other is trained using DiffAI ($5\times100$). 
+In Table \ref{tab:compensation}, we present the average compensation strength, computed as the mean of $max_{\pi,\pi'} min(|weight(\pi')|,|weight(\pi')|)$ across all source/target states separated by 1 layer. The findings reveal that the average compensation strength is considerably lower in the robustly trained DNN compared to the verification-agnostic DNN, which matches the fact that the former is substantially easier to verify than the later 
+\cite{deeppoly}.
 
 
 \subsection{MILP$_{X_n}$}
 
 
 
-While Theorem \ref{th1} is interesting to understand that compensation is a key notion for accurate verification of DNNs, it cannot be used directly to analyze DNNs with compensations, which are actually those that are most interesting to tackle.
-Intuitively, when there are compensating paths, it seems necessary to consider exactly the (unstable) ReLU nodes that are seen along these paths. 
+While Theorem \ref{th1} demonstrates that compensation is a key notion for accurate verification of DNNs, it does not explicitly provide an algorithm to analyze DNNs with compensations. However, Theorem \ref{th1} hints to considering the ReLU nodes that are seen along the compensating paths, in an exact way to improve the accuracy. 
 %Consider a neuron $n$ in layer $k$ for which we want to have accurate bounds 
 %$[\alpha,\beta]$.
 
-Consider a neuron $n$ in layer $k$, for which we aim to establish accurate bounds $[\alpha,\beta]$. Define $X_n$ as the set of neurons $x$ in layers up to $k-1$, where each $x$ is part of a compensating path targeting neuron $n$, but not as the source or the target node of the path. Let $Y_n$ represents the set of all other neurons in the first $k-1$ layers, essentially serving as the complement of $X_n$. We introduce MILP${X_n}$, a variant of the MILP encoding where all nodes in $Y_n$ are linearly relaxed, hence incorporating $|X_n|$ binary variables, each corresponding to a neuron in $X_n$. Additionally, this encoding encapsulates bounds for every neuron $n'$ in the initial $k-1$ layers, as computed inductively in previous steps. That is, we do not use explicitly in $X_n$ nodes on compensating paths with target neurons before $n$ ({\em indirectly} compensating paths), 
-only those with target $n$ ({directly} compensating paths).
+Consider a neuron $n$ in layer $k$, for which we aim to establish accurate bounds $[\alpha,\beta]$. Define $X_n$ as the set of {\em unstable} neurons $x$ in layers up to $k-1$, where each $x$ is part of a compensating path targeting neuron $n$ (except its the source node). Let $\overline{X_n}$ represents the set of all other neurons in the first $k-1$ layers, essentially serving as the complement of $X_n$. We introduce MILP${X_n}$, a variant of the MILP encoding where all nodes in $\overline{X_n}$ are linearly relaxed (if the neuron is stable, it is the exact linear mode of the ReLU), hence incorporating $|X_n|$ binary variables, each corresponding to a neuron in $X_n$. Additionally, this encoding encapsulates bounds for every neuron $n'$ in the initial $k-1$ layers, as computed inductively in previous steps. That is, we do not use explicitly in $X_n$ nodes on compensating paths with target neurons before $n$ ({\em indirectly} compensating paths), only those with target $n$ ({directly} compensating paths).
 The contribution of these {\em indirectly} compensating paths are thus 
 only taken into account indirectly via the bounds on previous neurons computed inductively,
-and not as binary variables. We demonstrate now that the bounds $[\alpha,\beta]$ for neuron $n$, as computed by MILP${X_n}$, are accurate, thereby offering a more nuanced approach to DNN verification in scenarios involving compensating paths.
-We will provide the proof under a fairly light well-connected hypothesis (H1), which only DNNs where all but very few weights are 0 does not satisfy.
+and not as binary variables. Theorem \ref{th2} states that the bounds $[\alpha,\beta]$ for neuron $n$, as computed by MILP${X_n}$, are accurate, thereby offering an algorithm for DNN verification in scenarios involving compensating paths. We will provide the proof under a fairly light well-connected hypothesis (H1), which only very specific DNNs does not satisfy, namely very sparse DNNs where almost all weights are 0. (H1) removes some corner cases, simplifying the proof.
 
-(H1): for every 2 (not necessarily disjoint) paths $\rho_1,\rho_2$ with non-zero weight with the same source $m$ and the same target $n$ with at least 2 transitions, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). This hypothesis is used to remove corner cases which will not happen in actual DNNs, which all are well-connected.
+(H1) for every 2 (not necessarily totally disjoint) paths $\rho_1 \neq \rho_2$ with non-zero weight with the same source $m$ and the same target $n$ with at least 2 transitions, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). 
 
 
 \begin{theorem}
@@ -202,14 +208,14 @@ The sketch of proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs
 \label{sec.proofs}
 
 First, notice that by continuity of all the functions used in the DNNs, it suffices to show both theorem for $\gamma=\alpha$ and $\gamma=\beta$.
-
 %Intuitively, our first proof shows that if there are no compensation, then there are no correlations between nodes.
 Consider a target neuron $z$.
 In case there is no compensating path, we can assign a sign to each neuron $n$: 0
 if all paths from $n$ to $z$ has weight 0, $+1$ if all paths have positive weights, and 
-$-1$ if they have negative weights. 
-
-Using the concept of sign, we introduce input vectors $\vx^{*}, \vx^{\sharp}$: 
+$-1$ if they have negative weights. %Using the concept of sign, 
+We introduce
+% input vectors 
+$\vx^{*}, \vx^{\sharp}$: 
 
 \begin{definition}
 We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$: 
@@ -240,15 +246,13 @@ There can be correlations between nodes, just they do not affect the $\min$ and 
 \end{proposition}
 
 Hence $\val_{\vx^\star}(z)=\beta$ and $\val_{\vx^\sharp}(z)=\alpha$,
-for $[\alpha, \beta]$ the bounds computed by the Box abstraction. We conclude Theorem \ref{th1} by invocking continuity.
-
-\smallskip
-The formal proof is in appendix A.
+for $[\alpha, \beta]$ computed by the Box abstraction. We conclude Theorem \ref{th1} by invocking continuity. The full proof is in appendix A.
 
 
 \subsection{Sketch of Proof for Theorem \ref{th2}}
 \label{sec.proofs2}
 
+\iffalse
 \begin{figure}[h]
 	\centering
 	\begin{tikzpicture}[>=stealth, node distance=2cm]
@@ -345,6 +349,8 @@ The formal proof is in appendix A.
 	\caption{Definitions in the proof of Theorem \ref{th2}}
 	\label{fig:neural_network_types_simplified}
 \end{figure}
+\fi
+
 
 Concerning Theorem \ref{th2}, consider an output node $z$.
 Let $[\alpha(z),\beta(z)]$ be the bound computed by $\MILP_{X_z}$.
@@ -376,7 +382,7 @@ We can show the following lemma:
 	either $m \in B_{pure}\cup I$ or $weight(\rho)=0$.
 \end{lemma}
 
-Hence, the value of any neuron $n$ in $A_{pure}$ or $B_{pure}$ is entirely determined by 
+Hence, the value of any neuron $n \in B_{pure}$ is entirely determined by 
 inputs in $A_{pure}$. 
 
 
@@ -392,30 +398,27 @@ Further, the set of nodes on which the sign function is defined is suffix-closed
 We can apply Theorem \ref{th1} on the DNN made of nodes from $A_{pure}$ and $B_{pure}$, and obtain $\vx_{pure}^\star,\vx_{pure}^\sharp$ optimizing neurons in $A_{pure}$ or $B_{pure}$:
 
 \begin{proposition}
-For a node $b$ with $S(b)=1$:
+For a node $b$ with $S(b)=1$ and $b'$ with $S(b())=-1$:
 
-$$\max(b)=\max_{\vx_{open}} \val_{\vx^{\star}_{pure},\vx_{open}}(b)$$
-$$\min(b)=\min_{\vx_{open}} \val_{\vx^{\sharp}_{pure},\vx_{open}}(b)$$
-
-and for $S(b)=-1$:
-$$\max(b)=\max_{\vx_{open}} \val_{\vx^{\sharp}_{pure},\vx_{open}}(b)$$
-$$\min(b)=\min_{\vx_{open}} \val_{\vx^{\star}_{pure},\vx_{open}}(b)$$
+$$\max(b)=\max_{\vx_{open}} \val_{\vx^{\star}_{pure},\vx_{open}}(b); \quad 
+\min(b)=\min_{\vx_{open}} \val_{\vx^{\sharp}_{pure},\vx_{open}}(b)$$
+$$\max(b'))=\max_{\vx_{open}} \val_{\vx^{\sharp}_{pure},\vx_{open}}(b'); \quad \min(b')=\min_{\vx_{open}} \val_{\vx^{\star}_{pure},\vx_{open}}(b')$$
 \end{proposition}
 
 Consider the DNN $D'$ with input nodes $A_{open}$, where all the 
-edges from $m \in A_{open} \cup B_{open}$ to $n$ are replaced by a bias 
-(equals to the weight of the edge times the fix value $\val_{\boldsymbol{x}^\star_{open}}(m)$) for $n$ (we sum all these bias for a neuron $n$).
+edges from $m \in A_{open} \cup B_{open}$ to $n$ are replaced by a bias, 
+equals to the weight of the edge times the fix value $\val_{\boldsymbol{x}^\star_{open}}(m)$ (we sum all these biases).
 The values in $D'$ are the same as the values in $D$ for input $\vx^{\star}_{pure}$,
 which suffices to reach the maximal value of $D$.
 In $D'$, all the ReLU nodes are in $B_{open}$. 
 Hence $\MILP_{B_{open}}$ computes the bounds accurately in $D'$.
-It will compute the bound in the same way in $D$, hence we get $\beta=\max(z)$ for the target $z$. The formal proof is in appendix B.
+It will compute the bound in the same way in $D$, hence we get $\beta=\max(z)$ for the target $z$. The full proof is in appendix B.
 
 
-\subsection{An efficient algorithm}
+\subsection{The CMP algorithm}
 
 
-Leveraging Theorem \ref{th2}, it is theoretically feasible to procure accurate bounds by iteratively applying MILP$_{X}$ to each node, layer by layer. This sequential approach would yield precise bounds $[\alpha,\beta]$ for each node, which could then be utilized to calculate accurate bounds for subsequent layers. However, in a practical setting, this methodology may prove to be computationally inefficient. Typically, the set $X_n$ includes a substantial portion of the nodes from all preceding layers up to layer $k-1$ for a given node $n$ in layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the strength of compensation. Paths falling below this threshold are deemed to not warrant an individual integer variable due to insufficient compensatory strength. We denote the resultant subset of nodes situated on paths with substantial compensation as $Z_n$. In practical applications, one might consider selecting the $K$ nodes that are involved in the most significant compensating paths to construct the set $Z_n$, with $K$ being a relatively small integer. This strategy effectively provides a trade-off between the algorithm's performance and the precision of the results. The detailed steps of this approach are outlined in the pseudo-code for \CMP presented in Algorithm \ref{algo1}.
+Theorem \ref{th2} theoretically computes accurate bounds by iteratively applying MILP$_{X}$ to each node, layer by layer. Practically, however, the set $X_n$ includes a substantial portion of the nodes from all preceding layers up to layer $k-1$ for a given node $n$ in layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the strength of compensation. Paths falling below this threshold are deemed to not warrant an individual integer variable due to insufficient compensatory strength. We denote the resultant subset of nodes situated on paths with substantial compensation as $Z_n$. In practical applications, one might consider selecting the $K$ nodes that are involved in the most significant compensating paths to construct the set $Z_n$, with $K$ being a relatively small integer. This strategy effectively provides a trade-off between the algorithm's performance and the precision of the results. The pseudo-code for \CMP is presented in Algorithm \ref{algo1}.
 
 
 
@@ -448,13 +451,15 @@ Leveraging Theorem \ref{th2}, it is theoretically feasible to procure accurate b
 CMP($K$) has a worst case complexity bounded by $O(N \MILP(N,K))$, 
 where $N$ is the number of nodes of the DNN, 
 and $\MILP(N,K)$ is the complexity of solving a MILP program with $K$ integer variables and $N$ linear variables.
-We have $\MILP(N,K) \leq 2^K \LP(N)$ where $\LP(N)$ is the Polynomial time to solve a Linear Program with $N$ variables.
+We have $\MILP(N,K) \leq 2^K \LP(N)$ where $\LP(N)$ is the Polynomial time to solve a Linear Program with $N$ variables, $2^K$ being an upper bound. Solvers like Gurobi are quite adept and usually do not need to evaluate all $2^K$ ReLU configurations to deduce the bounds.
+It is worth mentioning that the "for" loop iterating over neurons $n$ in layer $k$ (line 2) can be executed in parallel, because the computation only depends on bounds from preceding layers, not the current layer $k$. 
+%This parallelization results in a time complexity of $O(\sum_{i=1}^{\ell} \MILP(N_{i-1},K))$, where $\ell$ denotes the total number of layers and $N_i$ the count of neurons in layers $0, ..., i$. 
+CMP uses 20 threads.
 
-Notably, this complexity serves as an upper bound. For instance, solvers like Gurobi are quite adept and usually do not need to evaluate all $2^K$ ReLU configurations to deduce the bounds.
-It's worth mentioning that the for loop iterating over neurons $n$ in layer $k$, as seen in line 2, can be executed in parallel. This is feasible because the computation only depends on bounds from preceding layers, not the current layer $k$. This parallelization results in a time complexity of $O(\sum_{i=1}^{\ell} \MILP(N_{i-1},K))$, where $\ell$ denotes the total number of layers and $N_i$ the count of neurons in layers $0, ..., i$.
 
-
-Therefore, if $K$ is sufficiently small, Algorithm \ref{algo1} frequently invokes MILP (e.g., using Gurobi) with a manageable number of integer variables. This approach is expected to be efficient and yet remains fairly precise, as it can accurately compute (according to Theorem \ref{th2}) the most significant compensating path. The effectiveness of this strategy is further examined in the subsequent section.
+If $K$ is sufficiently small, 
+%Algorithm \ref{algo1} invokes many MILP (e.g., using Gurobi) with a manageable number of %integer variables. 
+this approach is expected to be efficient and yet remains fairly precise, as it can accurately compute (according to Theorem \ref{th2}) the most significant compensating path. The effectiveness of this strategy is further examined in the subsequent section.
 
 
 
