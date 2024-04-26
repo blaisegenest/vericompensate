@@ -211,7 +211,7 @@ As expected, there's a trade-off between runtime and accuracy: \toolname can ver
 	\end{tabularx}
 	
 	\caption{$\%$ of verified images and average runtime in seconds.
-		Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}.
+		Results for PRIMA, $\beta$-Crown and the upper bound on the $\%$ are from \cite{crown}, except for $6 \times 500$ for which we run every verifier ourselves.
 	}
 	\vspace{-0.8cm}
 	\label{tab:example}
@@ -395,14 +395,10 @@ We now focus on understanding the potential of {\toolname} for even larger netwo
 \section{Discussion}
 \label{Discussion}
 
+CMP ranks highly in terms of accuracy, on the moderatly large network (but challenging verification-agnostic) DNNs we experimented with. Even if the CMP complexity is not subject to combinatorial explosion, its runtime, particularly for larger DNNs, can be relatively slow, as CMP needs to consider every node one by one. Tackling much larger networks may thus need different implementation than CMP, while still benefitting from the novel compensation notion we uncovered and validated thanks to CMP. Numerous avenues exist:
 
-In this work, we focused on DNNs employing ReLU activation functions since our approached on usage of MILP, which is naturally suited for ReLU activation function. However, it is worth remarking that the notion of compensation strength is independent of  activation function, and therefore, an interesting direction of future work would be to explore other the impact of compensation strength-based approaches for other activation functions. 
+A primary strategy involves utilizing $\alpha$-$\beta$-CROWN initially in the sequence, reserving {\toolname} for images unresolved by $\alpha$-$\beta$-CROWN, potentially enhancing this with parallel node computation across additional CPU cores. Another tactic could involve adapting the refined branch-and-bound approach of $\beta$-CROWN to permit {\toolname} to process additional layers beyond MILP's capability, concluding the verification with BaB. More complex strategies might include modifying BaB to branch on unstable ReLU nodes, driven by compensation strength, or analyzing crucial nodes linked to uncertain outputs, enabling quicker computation of less precise bounds for less critical nodes. Furthermore, implementing a Refinement Abstraction framework, akin to methodologies in \cite{atva}, \cite{elboher}, or \cite{SRGR}, could be beneficial.
 
+In terms of neuron correlation, a key feature explicitly encoded by PRIMA, our findings suggest that leveraging compensation strength for network abstraction is generally more effective. Although precise local accuracy is achieved by directly considering ReLU nodes, the accuracy diminishes when correlations originate from distant layers. Retaining a select few significant correlations, in the style of PRIMA, as explicit linear constraints in the MILP model, might offer a strategy to further improve accuracy while keeping the number of binary variables limited. 
 
-Regarding accuracy, {\toolname} ranks highly among verifiers that abstract values. However, its runtime, particularly for larger DNNs, can be relatively slow, though not excessively so. Numerous optimization avenues exist. A primary strategy involves utilizing $\alpha$-$\beta$-CROWN initially in the sequence, reserving {\toolname} for images unresolved by $\alpha$-$\beta$-CROWN, potentially enhancing this with parallel node computation across additional CPU cores. Another tactic could involve adapting the refined branch-and-bound approach of $\beta$-CROWN to permit {\toolname} to process additional layers beyond MILP's capability, concluding the verification with BaB. More complex strategies might include modifying BaB to branch on unstable ReLU nodes, driven by compensation strength, or analyzing crucial nodes linked to uncertain outputs, enabling quicker computation of less precise bounds for less critical nodes. Furthermore, implementing a Refinement Abstraction framework, akin to methodologies in \cite{atva}, \cite{elboher}, or \cite{SRGR}, could be beneficial.
-
-
-In terms of neuron correlation, a key feature explicitly encoded by PRIMA, our findings suggest that leveraging compensation strength for network abstraction is generally more effective. Although precise local accuracy is achieved by directly considering ReLU nodes, the accuracy diminishes when correlations originate from distant layers. Retaining a select few significant correlations, in the style of PRIMA, as explicit linear constraints in the MILP model, might offer a strategy to further improve accuracy. 
-
-
-
+Finally, we focused on DNNs employing ReLU activation functions since our approached on usage of MILP, which is naturally suited for ReLU activation function. However, it is worth remarking that the notion of compensation strength is independent of activation function, and therefore, an interesting direction of future work would be to explore other the impact of compensation strength-based approaches for other activation functions. 
