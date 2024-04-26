@@ -305,9 +305,9 @@ The formal proof is in appendix A.
 		
 		\draw[->] (input1) -- (hidden1);
 		
-		\draw[->] (input3) -- (hidden5);
+		\draw[line width=1.5pt,->] (input3) -- (hidden5);
 		
-		\draw[->] (input4) -- (hidden4);
+		\draw[line width=1.5pt,->] (input4) -- (hidden4);
 		
 		
 %		% Connect input to hidden layer
@@ -326,7 +326,7 @@ The formal proof is in appendix A.
 %		
 		% Connect hidden layer to output
 		\foreach \h in {2,3} {
-			\draw[line width=1pt,->] (hidden\h) -- (output);
+			\draw[line width=1.5pt,->] (hidden\h) -- (output);
 		}
 		
 		\foreach \h in {4,5} {
