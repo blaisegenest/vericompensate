@@ -190,9 +190,9 @@ While Theorem \ref{th1} demonstrates that compensation is a key notion for accur
 Consider a neuron $n$ in layer $k$, for which we aim to establish accurate bounds $[\alpha,\beta]$. Define $X_n$ as the set of {\em unstable} neurons $x$ in layers up to $k-1$, where each $x$ is part of a compensating path targeting neuron $n$ (except its the source node). Let $\overline{X_n}$ represents the set of all other neurons in the first $k-1$ layers, essentially serving as the complement of $X_n$. We introduce MILP${X_n}$, a variant of the MILP encoding where all nodes in $\overline{X_n}$ are linearly relaxed (if the neuron is stable, it is the exact linear mode of the ReLU), hence incorporating $|X_n|$ binary variables, each corresponding to a neuron in $X_n$. Additionally, this encoding encapsulates bounds for every neuron $n'$ in the initial $k-1$ layers, as computed inductively in previous steps. That is, we do not use explicitly in $X_n$ nodes on compensating paths with target neurons before $n$ ({\em indirectly} compensating paths), only those with target $n$ ({directly} compensating paths).
 The contribution of these {\em indirectly} compensating paths are thus 
 only taken into account indirectly via the bounds on previous neurons computed inductively,
-and not as binary variables. Theorem \ref{th2} states that the bounds $[\alpha,\beta]$ for neuron $n$, as computed by MILP${X_n}$, are accurate, thereby offering an algorithm for DNN verification in scenarios involving compensating paths. We will provide the proof under a fairly light well-connected hypothesis (H1), which only very specific DNNs does not satisfy, namely very sparse DNNs where almost all weights are 0. (H1) removes some corner cases, simplifying the proof.
+and not as binary variables. Theorem \ref{th2} states that the bounds $[\alpha,\beta]$ for neuron $n$, as computed by MILP${X_n}$, are accurate, thereby offering an algorithm for DNN verification in scenarios involving compensating paths. We provide the proof in Section \ref{sec.proofs2}, under a fairly light well-connected hypothesis (H1), which only very sparse DNNs where almost all weights are 0 does not satisfy. (H1) removes some corner cases, simplifying the proof.
 
-(H1) for every 2 (not necessarily totally disjoint) paths $\rho_1 \neq \rho_2$ with non-zero weight with the same source $m$ and the same target $n$ with at least 2 transitions, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). 
+(H1) for every 2 (not necessarily totally disjoint) paths $\rho_1 \neq \rho_2$ with at least 2 non-zero transitions with the same source $m$ and target $n$, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). 
 
 
 \begin{theorem}
@@ -201,8 +201,6 @@ and not as binary variables. Theorem \ref{th2} states that the bounds $[\alpha,\
 	Let $n$ be any node of a DNN. Then for $[\alpha,\beta]$ the bounds computed by MILP$_{X_n}$ for neuron $n$, for all $\gamma \in [\alpha,\beta]$, there exists an input $\vy$ such that $\val_{\vy}(n)=\gamma$.
 \end{theorem}
 
-The sketch of proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs2}.
-
 
 \subsection{Sketch of Proof for Theorem \ref{th1}}
 \label{sec.proofs}
@@ -210,15 +208,12 @@ The sketch of proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs
 First, notice that by continuity of all the functions used in the DNNs, it suffices to show both theorem for $\gamma=\alpha$ and $\gamma=\beta$.
 %Intuitively, our first proof shows that if there are no compensation, then there are no correlations between nodes.
 Consider a target neuron $z$.
-In case there is no compensating path, we can assign a "sign" $S(n)$ to each neuron $n$: $S(n)=0$
-if all paths from $n$ to $z$ has weight 0, $+1$ if all paths have positive weights, and 
-$-1$ if they have negative weights. %Using the concept of sign, 
-We introduce
-% input vectors 
-$\vx^{*}, \vx^{\sharp}$: 
+In case there is no compensating path, we can assign an "influence sign" $S(n)$ to each neuron $n$: $S(n)=0$ if all paths from $n$ to $z$ has weight 0, $S(n)=+1$ if all paths have positive weights, and $S(n)=-1$ if they have negative weights. E.g., $S(n)=-1$ means that $\val_{\vx}(z)$ will increase if $\val_{\vx}(n)$ decreases. 
+Specifically, $S(n)$ is {\em not} the sign of $\val_{\vx}(n)$, and biases have no impact on  $S(n)$: bias in $n$ changes $\val_{\vx}(n)$, not $S(n)$, while biases in between $n$ and $z$ will not change the influence of $\val_{\vx}(n)$ over $\val_{\vx}(z)$ (though it will change $\val_{\vx}(z)$ itself). We introduce $\vx^{*}, \vx^{\sharp}$:
+%Using the concept of sign, 
 
 \begin{definition}
-We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$: 
+Let $\vx^{*}, \vx^{\sharp}$ be the two input vectors in $\cal B$ such that: 
 	\begin{itemize}
 		\item $\vx^{*}$ is the input vector defined in the following way:
 		\begin {itemize}
@@ -235,9 +230,8 @@ We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$:
 \end{definition}
 
 
-
 We can then prove that $\vx^\star,\vx^\sharp$ maximize and minimize conjointly all the nodes in the DNN. It does {\em not} mean that there is no dependencies between nodes.
-There can be correlations between nodes, but they do not affect the $\min$ and $\max$ bounds that can be reached.
+There can be correlations between nodes, but they do not affect the $\min$ and $\max$ values that can be reached.
 
 \begin{proposition}
 	\label{prop.sign}
@@ -246,10 +240,7 @@ There can be correlations between nodes, but they do not affect the $\min$ and $
 \end{proposition}
 
 Hence $\val_{\vx^\star}(z)=\beta$ and $\val_{\vx^\sharp}(z)=\alpha$,
-for $[\alpha, \beta]$ computed by the Box abstraction. We conclude Theorem \ref{th1} by invocking continuity. 
-Notice that biases have no impact on $S(n)$ (it is {\em not} the sign of )nor the 
-
-The full proof is in appendix A.
+for $[\alpha, \beta]$ computed by the Box abstraction. We conclude Theorem \ref{th1} by invocking continuity. The full proof is in appendix A.
 
 
 \subsection{Sketch of Proof for Theorem \ref{th2}}
