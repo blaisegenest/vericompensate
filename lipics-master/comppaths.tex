@@ -382,9 +382,8 @@ Hence, the value of any neuron $n \in B_{pure}$ is entirely determined by
 inputs in $A_{pure}$. 
 
 
-We cannot define the Sign function on nodes from which a compensating path can be reached.
-However, we can define the sign function for neurons in $A_{pure}$ and $B_{pure}$.
-Further, the set of nodes on which the sign function is defined is suffix-closed:
+We cannot define the influence sign function $S$ on nodes from which a compensating path can be reached. However, we can define $S(n)$ for neurons $n$ in $A_{pure}$ and $B_{pure}$.
+Further, the set of nodes $n$ on which the $S(n)$ is defined is suffix-closed:
 
 \begin{lemma}
 	Let $m,n$ be two nodes, such that $S$ is defined on $m$ and there is a path $\rho$ with non zero weight to a node $n$. Then $S$ is defined on $n$.
