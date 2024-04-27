@@ -210,7 +210,7 @@ The sketch of proof of Theorem \ref{th2} can be found in Section \ref{sec.proofs
 First, notice that by continuity of all the functions used in the DNNs, it suffices to show both theorem for $\gamma=\alpha$ and $\gamma=\beta$.
 %Intuitively, our first proof shows that if there are no compensation, then there are no correlations between nodes.
 Consider a target neuron $z$.
-In case there is no compensating path, we can assign a sign to each neuron $n$: 0
+In case there is no compensating path, we can assign a "sign" $S(n)$ to each neuron $n$: $S(n)=0$
 if all paths from $n$ to $z$ has weight 0, $+1$ if all paths have positive weights, and 
 $-1$ if they have negative weights. %Using the concept of sign, 
 We introduce
@@ -236,17 +236,20 @@ We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$:
 
 
 
-We can then prove that $\vx^\star,\vx^\sharp$ maximize and minimize conjointly all the nodes in the DNN. Notice that it does {\em not} mean that there is no dependencies between nodes.
-There can be correlations between nodes, just they do not affect the $\min$ and $\max$ bounds that can be reached in any node.
+We can then prove that $\vx^\star,\vx^\sharp$ maximize and minimize conjointly all the nodes in the DNN. It does {\em not} mean that there is no dependencies between nodes.
+There can be correlations between nodes, but they do not affect the $\min$ and $\max$ bounds that can be reached.
 
 \begin{proposition}
 	\label{prop.sign}
-	${\vx^\star}$ maximizes the value of all positive neurons and minimizes the value of all negative neurons, and  
-	${\vx^\sharp}$ minimizes the value of all positive neurons and maximizes the value of all negative neurons.
+	${\vx^\star}$ maximizes (${\vx^\sharp}$ minimizes) the value of all positive neurons 
+	and minimizes (${\vx^\sharp}$ maximizes) the value of all negative neurons.
 \end{proposition}
 
 Hence $\val_{\vx^\star}(z)=\beta$ and $\val_{\vx^\sharp}(z)=\alpha$,
-for $[\alpha, \beta]$ computed by the Box abstraction. We conclude Theorem \ref{th1} by invocking continuity. The full proof is in appendix A.
+for $[\alpha, \beta]$ computed by the Box abstraction. We conclude Theorem \ref{th1} by invocking continuity. 
+Notice that biases have no impact on $S(n)$ (it is {\em not} the sign of )nor the 
+
+The full proof is in appendix A.
 
 
 \subsection{Sketch of Proof for Theorem \ref{th2}}
