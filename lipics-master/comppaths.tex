@@ -235,8 +235,10 @@ There can be correlations between nodes, but they do not affect the $\min$ and $
 
 \begin{proposition}
 	\label{prop.sign}
-	${\vx^\star}$ maximizes (${\vx^\sharp}$ minimizes) the value of all positive neurons 
-	and minimizes (${\vx^\sharp}$ maximizes) the value of all negative neurons.
+	$\max_{\vx} (\val_{\vx} (n)) = \val_{\vx^\star}(n)$ if $S(n)=+1$,
+	and $\val_{\vx^\sharp}(n)$ if $S(n)=-1$; and 
+	$\min_{\vx} (\val_{\vx} (n)) = \val_{\vx^\sharp}(n)$ if $S(n)=+1$,
+	and $\val_{\vx^\star}(n)$ if $S(n)=-1$, for all $n$.
 \end{proposition}
 
 Hence $\val_{\vx^\star}(z)=\beta$ and $\val_{\vx^\sharp}(z)=\alpha$,
