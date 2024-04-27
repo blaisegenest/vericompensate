@@ -93,7 +93,7 @@ We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$:
 	\end{itemize}
 \end{definition}
 
-{\color{red}Notice that above definitions only involve weights, and do not use bias. As demonstrated by the following lemmas and proofs, our discussion is independent of bias, regardless of whether the bias values are very large or very small.}
+{Notice that above definitions only involve weights, and do not use bias. As demonstrated by the following lemmas and proofs, our discussion is independent of bias, regardless of whether the bias values are very large or very small.}
 
 We can then prove the following key lemma for Theorem \ref{th1}.
 
@@ -136,7 +136,7 @@ $$\min(n)=\sum_{m \in L, W_{mn}>0}W_{mn} \min(\hat{m}) + \sum_{m \in L, W_{mn}<0
 	and the case $S(n)=-1$. This concludes the induction. 
 \end{proof}
 
-{\color{red} As we mentioned earlier, this proof does not have any requirements on the bias.}
+{ As we mentioned earlier, this proof does not have any requirements on the bias.}
 
 \iffalse
 	As direct corollary of Lemma \ref{lem:key1}, we obtain:
@@ -284,7 +284,104 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			We denote $B_{zero}$ the set of nodes $b$ that case 1 holds, and denote $B_{pure}$ the set of nodes $b$ such that case 2 holds but case 1 does not hold.
 			We denote $B_{open}$ the set of all nodes $b$ in a weak compensating path (remaining cases).
 			
-		{ \color{red}	Similarly, above definitions $A_{zero},A_{open}, A_{pure}$ and $B_{zero},B_{open},B_{pure}$ do not consider bias, and any kind of bias will not affect our theorem.}
+		{ 	Similarly, above definitions $A_{zero},A_{open}, A_{pure}$ and $B_{zero},B_{open},B_{pure}$ do not consider bias, and any kind of bias will not affect our theorem.}
+		
+		\begin{figure}[h]
+			\centering
+			\begin{tikzpicture}[>=stealth, node distance=2cm]
+				% Input nodes (two types)
+				\node[circle, draw, minimum size=0.5cm] (input1) at (-1,0) {$a_0$};
+				\node[circle, draw, minimum size=0.5cm] (input2) at (-2,0) {$a_1$};
+				\node[circle, draw, minimum size=0.5cm] (input3) at (-4,0) {$a_2$};
+				
+				\node[circle, draw, minimum size=0.5cm] (input4) at (-5,0) {$a_3$};
+				\node[circle, draw, minimum size=0.5cm] (input5) at (-7,0) {$a_4$};
+				\node[circle, draw, minimum size=0.5cm] (input6) at (-8,0) {$a_5$};
+				
+				\draw[draw=black, dashed] (-1.5,0) ellipse (1.35 and 0.75);
+				\node[below] at (-1.5,-0.75) {$A_{zero}$};
+				
+				\draw[draw=black, dashed] (-2,2) ellipse (0.75 and 0.75);
+				\node[right] at (-1,2) {$B_{zero}$};
+				
+				% Hidden layer nodes
+				
+				\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden1) at (-2,2) {$n_0$};
+				
+				\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden2) at (-4,2) {$n_1$};
+				\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden3) at (-5,2) {$n_2$};
+				
+				\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden4) at (-7,2) {$n_3$};
+				\node[circle, draw, minimum size=0.5cm, fill=blue!20] (hidden5) at (-8,2) {$n_4$};
+				
+				
+				
+				\draw[draw=black, dashed] (-4.5,0) ellipse (1.35 and 0.75);
+				\node[below] at (-4.5,-0.75) {$A_{pure}$};
+				
+				
+				\draw[draw=black, dashed] (-7.5,0) ellipse (1.35 and 0.75);
+				\node[below] at (-7.5,-0.75) {$A_{open}$};
+				
+				
+				
+				\draw[draw=black, dashed] (-4.5,2) ellipse (1.35 and 0.75);
+				\node[left] at (-3.5,3) {$B_{pure}$};
+				
+				
+				\draw[draw=black, dashed] (-7.5,2) ellipse (1.35 and 0.75);
+				\node[left] at (-8.5,1.5) {$B_{open}$};
+				
+				
+				
+				% Output node
+				\node[circle, draw, minimum size=0.8cm, fill=red!20] (output) at (-5,4) {$z$};
+				
+				
+				% connections
+				
+				\draw[->] (input1) -- (hidden1);
+				
+				\draw[->] (input3) -- (hidden5);
+				
+				\draw[->] (input4) -- (hidden4);
+				
+				
+				%		% Connect input to hidden layer
+				\foreach \i in {3,4} {
+					\foreach \h in {3,2} {
+						\draw[line width=1.5pt, ->] (input\i) -- (hidden\h);
+					}
+				}
+				
+				
+				\foreach \i in {5,6} {
+					\foreach \h in {4,5} {
+						\draw[->] (input\i) -- (hidden\h);
+					}
+				}
+				%		
+				% Connect hidden layer to output
+				\foreach \h in {2,3} {
+					\draw[line width=1pt,->] (hidden\h) -- (output);
+				}
+				
+				\foreach \h in {4,5} {
+					\draw[->] (hidden\h) -- (output);
+				}
+				
+				%\		% Input label
+				\node[left=0.7cm of input6] {Input Layer};
+				
+				% Hidden label
+				\node[left=0.7cm of hidden5] {Hidden Layer};
+				
+				% Output label
+				\node[left=0.5cm of output] {Output Layer};
+			\end{tikzpicture}
+			\caption{Definitions in the proof of Theorem \ref{th2}}
+			\label{fig:neural_network_types_simplified}
+		\end{figure}
 			
 			\begin{proof}
 				First, we show that if one of case 1, 2 happens, then $b$ will not be in a weak compensating pair. If 1), it is obvious. For 2, we reason by contradiction: assume there is a pair of weak compensating paths 	$(\pi,\pi')$ starting with $a$, with $b$ in $\pi$ and weight$(\pi) > 0$. It means that $a \in J$. This is a contradiction as 2) $weight({a_j,b})=0$ implies weight$(\pi)=0$.
@@ -552,12 +649,12 @@ The case for $\alpha$ is similar, proving the induction.
 Hence, using the $\max$ over ${x_J^0}$, 
 we will have $\max(z) = \beta'\geq \beta \geq \max(z)$, and hence $\beta=\beta'=\max(z)$.\end{proof}
 
-{\color{red} In all the statements and proofs above, we do not make any assumptions about bias, and bias will not affect our discussion. }
+{ In all the statements and proofs above, we do not make any assumptions about bias, and bias will not affect our discussion. }
 
 \subsection{Proof of Theorem \ref{th2}}
 
 
-We now prove Theorem \ref{th2} under the fairly light {\em well-connected hypothesis} (H1) that the DNN is such that for every 2 (not necessarily disjoint) paths $\rho_1,\rho_2$ with non-zero weight with the same source $m$ and the same target $n$ at least 2 layers apart, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). This hypothesis is used to remove corner cases which will not happen in actual DNNs, which all are well-connected. {\color{red} Moreover, this hypothesis only matters in the theoretical proof. This is because in practice, paths with zero or very small weights will have very small effect on the output, and very small effect on the models, too.  Usually these paths will not be considered.} 
+We now prove Theorem \ref{th2} under the fairly light {\em well-connected hypothesis} (H1) that the DNN is such that for every 2 (not necessarily disjoint) paths $\rho_1,\rho_2$ with non-zero weight with the same source $m$ and the same target $n$ at least 2 layers apart, there exists another path $\rho_3$ from $m$ to $n$ (with non zero-weight) totally disjoint from $\rho_1$ and $\rho_2$ (except at the source and target). This hypothesis is used to remove corner cases which will not happen in actual DNNs, which all are well-connected. { Moreover, this hypothesis only matters in the theoretical proof. This is because in practice, paths with zero or very small weights will have very small effect on the output, and very small effect on the models, too.  Usually these paths will not be considered.} 
 
 Further we assume without loss of generality that every node can be reached from at least one input with a path of non-zero weight (otherwise we just remove this node altogether).
 We also assume without loss of generality that there is no node which can only reach $z$ with path of weight $0$, as such nodes have no contribution to the value $\val(z)$. We denote $m<n$ to mean that there exists a path with non zero weight from $m$ to $n$.
