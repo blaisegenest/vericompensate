@@ -208,7 +208,7 @@ and not as binary variables. Theorem \ref{th2} states that the bounds $[\alpha,\
 First, notice that by continuity of all the functions used in the DNNs, it suffices to show both theorem for $\gamma=\alpha$ and $\gamma=\beta$.
 %Intuitively, our first proof shows that if there are no compensation, then there are no correlations between nodes.
 Consider a target neuron $z$.
-In case there is no compensating path, we can assign an "influence sign" $S(n)$ to each neuron $n$: $S(n)=0$ if all paths from $n$ to $z$ has weight 0, $S(n)=+1$ if all paths have positive weights, and $S(n)=-1$ if they have negative weights. E.g., $S(n)=-1$ means that $\val_{\vx}(z)$ will increase if $\val_{\vx}(n)$ decreases. 
+In case there is no compensating path, we can assign an "influence sign" $S(n)$ to each neuron $n$: $S(n)=0$ if all paths from $n$ to $z$ has weight 0, $S(n)=+1$ if all paths have positive weights, and $S(n)=-1$ if they have negative weights. E.g., $S(n)=-1$ means that $\val_{\vx}(z)$ will deacrese if $\val_{\vx}(n)$ increases. 
 Specifically, $S(n)$ is {\em not} the sign of $\val_{\vx}(n)$, and biases have no impact on  $S(n)$: bias in $n$ changes $\val_{\vx}(n)$, not $S(n)$, while biases in between $n$ and $z$ will not change the influence of $\val_{\vx}(n)$ over $\val_{\vx}(z)$ (though it will change $\val_{\vx}(z)$ itself). We introduce $\vx^{*}, \vx^{\sharp}$:
 %Using the concept of sign, 
 
@@ -241,8 +241,9 @@ There can be correlations between nodes, but they do not affect the $\min$ and $
 	and $\val_{\vx^\star}(n)$ if $S(n)=-1$, for all $n$.
 \end{proposition}
 
-Hence $\val_{\vx^\star}(z)=\beta$ and $\val_{\vx^\sharp}(z)=\alpha$,
-for $[\alpha, \beta]$ computed by the Box abstraction. We conclude Theorem \ref{th1} by invocking continuity. The full proof is in appendix A.
+We can then prove that $\val_{\vx^\star}(z)=\beta$ and $\val_{\vx^\sharp}(z)=\alpha$,
+for $[\alpha, \beta]$ computed by the Box abstraction. 
+We conclude Theorem \ref{th1} by continuity. The full proof is in appendix A.
 
 
 \subsection{Sketch of Proof for Theorem \ref{th2}}
@@ -393,7 +394,7 @@ Further, the set of nodes $n$ on which the $S(n)$ is defined is suffix-closed:
 We can apply Theorem \ref{th1} on the DNN made of nodes from $A_{pure}$ and $B_{pure}$, and obtain $\vx_{pure}^\star,\vx_{pure}^\sharp$ optimizing neurons in $A_{pure}$ or $B_{pure}$:
 
 \begin{proposition}
-For a node $b$ with $S(b)=1$ and $b'$ with $S(b())=-1$:
+For a node $b$ with $S(b)=1$ and $b'$ with $S(b)=-1$:
 
 $$\max(b)=\max_{\vx_{open}} \val_{\vx^{\star}_{pure},\vx_{open}}(b); \quad 
 \min(b)=\min_{\vx_{open}} \val_{\vx^{\sharp}_{pure},\vx_{open}}(b)$$
@@ -413,7 +414,7 @@ It will compute the bound in the same way in $D$, hence we get $\beta=\max(z)$ f
 \subsection{The CMP algorithm}
 
 
-Theorem \ref{th2} theoretically computes accurate bounds by iteratively applying MILP$_{X}$ to each node, layer by layer. Practically, however, the set $X_n$ includes a substantial portion of the nodes from all preceding layers up to layer $k-1$ for a given node $n$ in layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the strength of compensation. Paths falling below this threshold are deemed to not warrant an individual integer variable due to insufficient compensatory strength. We denote the resultant subset of nodes situated on paths with substantial compensation as $Z_n$. In practical applications, one might consider selecting the $K$ nodes that are involved in the most significant compensating paths to construct the set $Z_n$, with $K$ being a relatively small integer. This strategy effectively provides a trade-off between the algorithm's performance and the precision of the results. The pseudo-code for \CMP is presented in Algorithm \ref{algo1}.
+Theorem \ref{th2} theoretically computes accurate bounds by iteratively applying MILP$_{X_n}$ to each node $n$, layer by layer. Practically, however, the set $X_n$ includes a substantial portion of the nodes from all preceding layers up to layer $k-1$ for a given node $n$ in layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the strength of compensation. Paths falling below this threshold are deemed to not warrant an individual integer variable due to insufficient compensatory strength. We denote the resultant subset of nodes situated on paths with substantial compensation as $Z_n$. In practical applications, one might consider selecting the $K$ nodes that are involved in the most significant compensating paths to construct the set $Z_n$, with $K$ being a relatively small integer. This strategy effectively provides a trade-off between the algorithm's performance and the precision of the results. The pseudo-code for \CMP is presented in Algorithm \ref{algo1}.
 
 
 
@@ -443,7 +444,7 @@ Theorem \ref{th2} theoretically computes accurate bounds by iteratively applying
 
 
 
-CMP($K$) has a worst case complexity bounded by $O(N \MILP(N,K))$, 
+CMP($K$) has a worst case complexity bounded by $O(N \cdot \MILP(N,K))$, 
 where $N$ is the number of nodes of the DNN, 
 and $\MILP(N,K)$ is the complexity of solving a MILP program with $K$ integer variables and $N$ linear variables.
 We have $\MILP(N,K) \leq 2^K \LP(N)$ where $\LP(N)$ is the Polynomial time to solve a Linear Program with $N$ variables, $2^K$ being an upper bound. Solvers like Gurobi are quite adept and usually do not need to evaluate all $2^K$ ReLU configurations to deduce the bounds.
