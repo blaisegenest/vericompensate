@@ -13,11 +13,11 @@ then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal).
 
 
 We fix a target node $z$.
-We now define the partial sign function $S^z$, denoted $S$ when $z$ is clear from the context:
+We now define the partial influence sign function $S^z$, denoted $S$ when $z$ is clear from the context:
 
 \begin{definition}
 	\label{sign_of_nodes}
-	We define the partial sign function $S$ on node $n$: 	
+	We define the partial influence sign function $S$ on node $n$: 	
 	\begin{enumerate}
 		\item $S(n)=0$ if all path from $n$ to $z$ have weight $0$; 
 		\item $S(n)=1$ if all path from $n$ to $z$ have non-negative weight, and at least one path has a positive weight; 
@@ -63,8 +63,8 @@ Assume that there is no (weakly) compensating pair of paths.
 \end{lemma}
 
 \begin{proof}
-	If $S(n) \neq 0$, then there is a path $\pi$ from $n$ to the output node $z$ with a nonzero weight of the same sign as $S(n)$. 
-	So there is a non zero path from $m$ to $z$: $(m n) \pi$, whose sign is 
+	If $S(n) \neq 0$, then there is a path $\pi$ from $n$ to the output node $z$ with a nonzero weight of the same influence sign as $S(n)$. 
+	So there is a non zero path from $m$ to $z$: $(m n) \pi$, whose influence sign is 
 	$S(n)\mathrm{Sign}(W_{n m})$. As there is no compensation, $S(m)=S(n)\mathrm{Sign}(W_{n m})$.
 	\hfill $\square$
 \end{proof}
@@ -74,7 +74,7 @@ Assume that there is no (weakly) compensating pair of paths.
 %Notice that for $S(n)=1$, $n_s$ gets maximal value whenever $n$ gets maximal value; 
 %while for $S(n)=-1$, $n_s$ gets maximal value whenever $n$ gets minimal value (and vice versa). For $S(n)=0$, $n_s=0$ and thus always reach his minimal and maximal.
 
-Using the concept of sign, we introduce input vectors $\vx^{*}, \vx^{\sharp}$: 
+Using the concept of influence sign, we introduce input vectors $\vx^{*}, \vx^{\sharp}$: 
 
 \begin{definition}
 We define the following two input vectors $\vx^{*}, \vx^{\sharp}$ in $\cal B$: 
@@ -166,7 +166,7 @@ $$\min(n)=\sum_{m \in L, W_{mn}>0}W_{mn} \min(\hat{m}) + \sum_{m \in L, W_{mn}<0
 \begin{proof}
 	 We show that inductively. The initialization is obvious as Box Abstraction is always exact for the first layer.
 
-	Let $n$ be node of the DNN. We set the target $z=n$ and consider the sign function $S^z=S^n=S$ corresponding to that node. By definition, $S(n)=1$. 
+	Let $n$ be node of the DNN. We set the target $z=n$ and consider the influence sign function $S^z=S^n=S$ corresponding to that node. By definition, $S(n)=1$. 
 	
 	The Box abstraction computes its upper bound using:
 	$$\beta_n= \sum_{W_{mn}>0} W_{mn} \beta_{\hat{m}} + \sum_{W_{mn}<0} W_{mn} \alpha_{\hat{m}} + bias_n$$
@@ -208,8 +208,8 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 		By contradiction, if there is a weak compensating pair of two paths, $\rho_1,\rho_2$, 
 		then consider the common nodes by increasing layer $n_1 \cdots n_k$ in $\rho_1,\rho_2$ (including the initial and final nodes).
 		Assume that there is no compensating pair.
-		It means that all the segment of $\rho_1,\rho_2$ from $n_i$ to $n_{i+1}$ have the same sign (they have no nodes in common but the initial and final nodes).
-		Hence $\rho_1$ and $\rho_2$ have the same sign, a contradiction with $\rho_1,\rho_2$ being a weakly compensating pair. 
+		It means that all the segment of $\rho_1,\rho_2$ from $n_i$ to $n_{i+1}$ have the same influence sign (they have no nodes in common but the initial and final nodes).
+		Hence $\rho_1$ and $\rho_2$ have the same influence sign, a contradiction with $\rho_1,\rho_2$ being a weakly compensating pair. 
 	\end{proof}
 	
 	This finishes the proof of Theorem \ref{th1}.
@@ -429,8 +429,8 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			\smallskip
 
 		
-			Recall the sign function of nodes from Definition \ref{sign_of_nodes}. 
-			Because weakly compensating paths are allowed, the sign function is no longer defined on all nodes. $S$ is defined for all nodes from which there is no weakly compensating pairs of paths to $z$. In particular, $S$ is defined on all nodes of $I$.
+			Recall the influence sign function of nodes from Definition \ref{sign_of_nodes}. 
+			Because weakly compensating paths are allowed, the influence sign function is no longer defined on all nodes. $S$ is defined for all nodes from which there is no weakly compensating pairs of paths to $z$. In particular, $S$ is defined on all nodes of $I$.
 
 			\begin{lemma}\label{lem:sign}
 				Let $m,n$ be two nodes, such that $S$ is defined on $m$ and there is a path $\rho$ with non zero weight to a node $n$. Then $S$ is defined on $n$
@@ -440,7 +440,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			
 			\begin{proof}
 				By contradiction, assume that there exists two paths $\rho_1,\rho_2$ from 
-				$n$ to $z$ with (strictly) different signs. The pair $\langle a_i,n\rangle \cdot \rho_1$ and $\langle a_i,n\rangle \cdot \rho_2$ is compensating, a contradiction with $a_i\in I$. 
+				$n$ to $z$ with (strictly) different influence signs. The pair $\langle a_i,n\rangle \cdot \rho_1$ and $\langle a_i,n\rangle \cdot \rho_2$ is compensating, a contradiction with $a_i\in I$. 
 			\end{proof}
 
 			Hence, for all node $n$, either $S$ is defined on $n$, or 
@@ -581,9 +581,9 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 				
 				(2) If $S(c)=1$, then we have the following:	\begin{align*}
 					\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c) \leq constant + \sum_{b\in B_{open}\cap l_i} W_{bc}\ReLU(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{bc} \mathrm{AppB}(\B_{\boldsymbol{x}^0_I,\boldsymbol{x}^0_J}(b)),
-				\end{align*}where $\B$ means one of $\UB$ or $\LB$ depending on the sign of $W_{bc}$: if $W_{bc}$ is positive, then $\UB$, otherwise $\LB$. Notice that all $b$ displayed are that $S(b)$ defined, because if $S(b)$ undefined, then for fixed $\vx_J$, value of $b$ is fixed and will be put into the constant.
+				\end{align*}where $\B$ means one of $\UB$ or $\LB$ depending on the influence sign of $W_{bc}$: if $W_{bc}$ is positive, then $\UB$, otherwise $\LB$. Notice that all $b$ displayed are that $S(b)$ defined, because if $S(b)$ undefined, then for fixed $\vx_J$, value of $b$ is fixed and will be put into the constant.
 				
-				Now by induction hypothesis part 2, if $S(b)=1$, then $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)=\max_{\vx_I}\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$; and if $S(b)=-1$, $\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)=\min_{\vx_I}\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$. Moreover, since $S(c)=1$, $S(b)$ and $W_{bc}$ have the same sign. And both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions. Combining all these facts, we have:\begin{align*}
+				Now by induction hypothesis part 2, if $S(b)=1$, then $\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)=\max_{\vx_I}\UB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$; and if $S(b)=-1$, $\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)=\min_{\vx_I}\LB_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)$. Moreover, since $S(c)=1$, $S(b)$ and $W_{bc}$ have the same influence sign. And both $\ReLU$ and $\mathrm{AppB}$ are non-decreasing functions. Combining all these facts, we have:\begin{align*}
 					\mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^0_I}(c)\leq 
 					&constant + \sum_{b\in B_{open}\cap l_i} W_{bc}\ReLU(\B_{\boldsymbol{x}^*_I,\boldsymbol{x}^0_J}(b)) + \sum_{b\in B_{pure}\cap l_{i}} W_{bc} \mathrm{AppB}(\B_{\boldsymbol{x}^*_I}(b))\\
 					= & \mathrm{UB}_{\boldsymbol{x}^0_J,\boldsymbol{x}^*_I}(c). 
@@ -675,7 +675,7 @@ Applying (H1) to the pair
 $(\rho_0 \cdot \rho_1 \cdot \rho_3, \rho_0\cdot \rho_2 \cdot \rho_3)$, 
 we have another (non zero weight) path $\rho'$ from $a$ to $z$ totally disjoint with these two path.
 The weights of $(\rho_0 \cdot \rho_1 \cdot \rho_3, \rho_0\cdot \rho_2 \cdot \rho_3)$
-are of opposite sign because $(\rho_1,\rho_2)$ is weakly compensating, so one of them must be of opposite sign than the weight of $\rho'$. Say its $\rho = \rho_0 \cdot \rho_1 \cdot \rho_3$
+are of opposite influence sign because $(\rho_1,\rho_2)$ is weakly compensating, so one of them must be of opposite influence sign than the weight of $\rho'$. Say its $\rho = \rho_0 \cdot \rho_1 \cdot \rho_3$
 else we pick $\rho=\rho_0\cdot \rho_2 \cdot \rho_3$.
 Then $(\rho,\rho')$ is a pair of compensating path from $a$ to $z$, and as $n$ is neither an input nor $z$, it is strictly on $\rho$.
 \end{proof}
@@ -748,48 +748,48 @@ We also assume without loss of generality that there is no node which can only r
 			Let $X$ be the set of nodes on compensating paths with target $z$, but not as source or target.
 		
 			Let $Z$ be the subset of nodes $n$ of the DNN such that $S$ is defined on $n$ 
-			wrt node $z$. As proved earlier, $Z$ is suffix closed, i.e. if $m<n<z$ with $m \in Z$, then $n \in Z$. We can partition $Z = Z_{+} \sqcup Z_{-}$, for positive and negative sign. They form 2 independent subnetworks of the DNN.
+			wrt node $z$. As proved earlier, $Z$ is suffix closed, i.e. if $m<n<z$ with $m \in Z$, then $n \in Z$. We can partition $Z = Z_{+} \sqcup Z_{-}$, for positive and negative influence signs. They form 2 independent subnetworks of the DNN.
 			$X$ can intersect both $Z_+$ and $Z_-$.
 			For nodes not in $Z$: some may be in $X$, and some may be out of $X$.
 			We call $X_+ = Z_+ \cap X$ and $X_-=Z_- \cap X$, as well as 
 			defined $Y_+,Y_-$ such that $Z_+ = X_+ \sqcup Y_+$ and $Z_- = X_- \sqcup Y_-$.
 			
 			Because of (H1), nodes not in $Z$ (and not in the inputs) are in $X$:
-			node $n \notin Z$ implies the existence of two path $\rho_1,\rho_2$ (not necessarily disjoint) to $z$, with opposite sign. 
+			node $n \notin Z$ implies the existence of two path $\rho_1,\rho_2$ (not necessarily disjoint) to $z$, with opposite influence sign. 
 			Take an input node $a$ reaching $n$ with path $\rho$ with non zero weight.
-			Then using (H1), we get a third path $\rho_3$ disjoint from $\rho \cdot \rho_1$ and from $\rho \cdot \rho_2$ with non-zero weight. Depending on the sign of $weight(\rho_3)$, it will form a compensating pair of path to $z$ either with $\rho \cdot \rho_1$ or with $\rho \cdot \rho_2$, hence $n$ will be in $X$. We call $X_*$ this subset $X$.
+			Then using (H1), we get a third path $\rho_3$ disjoint from $\rho \cdot \rho_1$ and from $\rho \cdot \rho_2$ with non-zero weight. Depending on the influence sign of $weight(\rho_3)$, it will form a compensating pair of path to $z$ either with $\rho \cdot \rho_1$ or with $\rho \cdot \rho_2$, hence $n$ will be in $X$. We call $X_*$ this subset $X$.
 			
 			
 \begin{lemma}
 	\label{lemma10}
 		Let $y \in Y_+$. Then for all $m$, there does not exist a pair $(\rho_1,\rho_2)$ 
-		of paths  with weights of opposite sign with $\rho_1$ from $m$ to $y$ and 
+		of paths  with weights of opposite influence sign with $\rho_1$ from $m$ to $y$ and 
 		with $\rho_2$ from $m$ to $z$ (even non disjoint).
 \end{lemma}
 
 \begin{proof}
   $y \notin X$, so it is not on a pair of compensating pair with target $z$.
   Let $\rho$ be a path from $y$ to $z$ (it has positive weight has $y \in Z_+$).
-  Hence $\rho_1 \rho, \rho_2$ have opposite sign, and they must meet before $z$.
+  Hence $\rho_1 \rho, \rho_2$ have opposite influence sign, and they must meet before $z$.
 
   If $\rho_1 \rho$ meets $\rho_2$ after $y$, then we use $(H_1)$ to get another disjoint path from $y$ to $z$ (it has positive weight has $y \in Z_+$), it would not meet $\rho_2$, a contradiction.
 
   Hence $\rho_1$ must meet $\rho_2$ (that is before or at $y$).
-  Their weights must be of opposite sign, otherwise we can inductively reapplied the same argument to their suffixes.
+  Their weights must be of opposite influence sign, otherwise we can inductively reapplied the same argument to their suffixes.
   Let $\rho_1=\rho_1'\rho_1''$.
   Both $\rho_1 \cdot \rho$ and $\rho_2' \cdot \rho_1'' \cdot \rho$
-  are from $m$ to $z$ going through $y$, but with weights of opposite sign (as $\rho'_1$ and $\rho'_2$ have opposite sign).
+  are from $m$ to $z$ going through $y$, but with weights of opposite influence sign (as $\rho'_1$ and $\rho'_2$ have opposite influence sign).
   Now, by $(H1)$, there exists a path $\rho_3$ disjoint from $\rho_1 \cdot \rho$ and$\rho_2' \cdot \rho_1'' \cdot \rho$ from $m$ to $z$. It means that we have a pair of compensating paths from $m$ tp $z$, and thus $y \in X$, a contradiction with $y \in Y_+$. 
 \end{proof}
 
 It means that if a path $\rho_1$ from $m$ to $y$ has stricly positive (resp. negative) weight, then all the paths from $m$ to $z$ will also have strictly positive (resp. negative) weights. It means that Sign is defined on all the $m$ that can reach $Y_+$.
 
-We have the same results for $y \in Y_-$, for paths $\rho_1, \rho_2$ of same sign:
+We have the same results for $y \in Y_-$, for paths $\rho_1, \rho_2$ of same influence sign:
 
 \begin{lemma}
 	\label{lemma11}
 	Let $y \in Y_-$. Then for all $m$, there does not exist a pair $(\rho_1,\rho_2)$ 
-	of paths with weights of same sign with $\rho_1$ from $m$ to $y$ and 
+	of paths with weights of same influence sign with $\rho_1$ from $m$ to $y$ and 
 	with $\rho_2$ from $m$ to $z$ (even non disjoint).
 \end{lemma}
 
@@ -816,7 +816,7 @@ passing by $m$. But now, that means that $m'<m<n<z$.
 Thus $m'$ is in $Z$, a contradiction with $m'$ the source of a pair of compensating paths.
 \end{proof}
 
-As in the proof of Theorem \ref{thm:2}, we can then optimize $Y$ first on its own (considering the sign of every node), and consider its (direct and indirect) contribution to $z$ as biases, before optimizing the rest of the network.
+As in the proof of Theorem \ref{thm:2}, we can then optimize $Y$ first on its own (considering the influence sign of every node), and consider its (direct and indirect) contribution to $z$ as biases, before optimizing the rest of the network.
 This is exactly what $\MILP_X$ is doing:
 the bias from each node of $Y$ comes from the bounds on nodes (of $Y$) computed inductively in the previous layers, and then there is a global optimization of the rest of the network (set of nodes $X$ whose ReLU are encoded exactly in $\MILP_X$).
 
@@ -831,9 +831,9 @@ This concludes the proof of Theorem \ref{th2}
 	
 	\begin{proof}
 	By contradiction, assume that there exist nodes $m, n^+ \in Y_+$ and  $n^
-	- \in Y_-$, such that there are two non-zero weight paths $\rho_1$ from $m$ to $n^+$ and $\rho_2$ from $n$ to $n^-$ Assume first that the weights of $\rho_1,\rho_2$ have the same sign, 
-	in which case it gives us a path $\rho_2 \rho_3$  from $m$ to $z$ of opposite sign than $\rho_1$. Applying Lemma \ref{lemma10}, we have prefixes $\rho'_1,\rho'_2$ of $\rho_1,\rho_2$ ending in the same state $m'$, and with weights of opposite sign.
-	So we are left with path from $m'$ to $Y_-,Y_+$ of opposite sign. 
+	- \in Y_-$, such that there are two non-zero weight paths $\rho_1$ from $m$ to $n^+$ and $\rho_2$ from $n$ to $n^-$ Assume first that the weights of $\rho_1,\rho_2$ have the same influence sign, 
+	in which case it gives us a path $\rho_2 \rho_3$  from $m$ to $z$ of opposite influence sign than $\rho_1$. Applying Lemma \ref{lemma10}, we have prefixes $\rho'_1,\rho'_2$ of $\rho_1,\rho_2$ ending in the same state $m'$, and with weights of opposite influence sign.
+	So we are left with path from $m'$ to $Y_-,Y_+$ of opposite influence sign. 
 	We then apply Lemma \label{lemma11}, inductively then applying Lemma \label{lemma10} on the suffices etc. We obtain a contradiction to the existence of $m$ with $m<n^+$ and $m<n^-$. 
 	\end{proof}
 	
@@ -859,7 +859,7 @@ In the first case, the ReLU for $n$ will be opened, so we do not need to worry a
 			Consider all the possible associated target nodes $z'$ of compensating path from $n$.
 
 			
-			Therefore, choose a path $Q$ from input to output with nonzero weight and disjoint from $P,P''$. Now, since weights of $P,P''$ have different signs, and $a$ is in both paths, whatever the weight of $Q$ is, $Q$ and one of  $P$ or $P''$ can form a compensating pair (not weak compensating pair anymore, because $Q$ is disjoint with $P,P''$), and $a$ is in a path. This means $a$ will be opened.
+			Therefore, choose a path $Q$ from input to output with nonzero weight and disjoint from $P,P''$. Now, since weights of $P,P''$ have different influence signs, and $a$ is in both paths, whatever the weight of $Q$ is, $Q$ and one of  $P$ or $P''$ can form a compensating pair (not weak compensating pair anymore, because $Q$ is disjoint with $P,P''$), and $a$ is in a path. This means $a$ will be opened.
 			
 			Combining all discussion above, if $a$ is in a weak compensating path from input to output, then it is in a compensating path from one layer to another layer. Therefore, Theorem \ref{thm:2} implies Theorem \ref{th2}. This is what we want to show.
 			\fi
@@ -887,7 +887,7 @@ which will not happen in actual DNNs, which all are well-connected.
 			Let $X$ be the set of nodes on compensating paths with target $z$, but not as source or target.
 		
 			Let $Z$ be the subset of nodes $n$ of the DNN such that $S$ is defined on $n$ 
-			wrt node $z$. As proved earlier, $Z$ is suffix closed, i.e. if $m<n<z$ with $m \in Z$, then $n \in Z$. We can partition $Z = Z_{+} \sqcup Z_{-}$, for positive and negative sign. $X$ can intersect both $Z_+$ and $Z_-$.
+			wrt node $z$. As proved earlier, $Z$ is suffix closed, i.e. if $m<n<z$ with $m \in Z$, then $n \in Z$. We can partition $Z = Z_{+} \sqcup Z_{-}$, for positive and negative influence signs. $X$ can intersect both $Z_+$ and $Z_-$.
 			We call $X_+ = Z_+ \cap X$ and $X_-=Z_- \cap X$, as well as 
 			defined $Y_+,Y_-$ such that $Z_+ = X_+ \sqcup Y_+$ and $Z_- = X_- \sqcup Y_-$.
 			We denote $Y=Y_+ \sqcup Y_-$.
@@ -897,9 +897,9 @@ which will not happen in actual DNNs, which all are well-connected.
 \end{lemma}
 
 \begin{proof}
-			node $n \notin Z$ implies the existence of two path $\rho_1,\rho_2$ (not necessarily disjoint) to $z$, with opposite sign. 
+			node $n \notin Z$ implies the existence of two path $\rho_1,\rho_2$ (not necessarily disjoint) to $z$, with opposite influence sign. 
 			Take an input node $a$ reaching $n$ with path $\rho$ with non zero weight.
-			Then using (H1), we get a third path $\rho_3$ disjoint from $\rho \cdot \rho_1$ and from $\rho \cdot \rho_2$ with non-zero weight. Depending on the sign of $weight(\rho_3)$, it will form a compensating pair of path to $z$ either with $\rho \cdot \rho_1$ or with $\rho \cdot \rho_2$, hence $n$ will be in $X$. We call $X_*$ this subset $X$.
+			Then using (H1), we get a third path $\rho_3$ disjoint from $\rho \cdot \rho_1$ and from $\rho \cdot \rho_2$ with non-zero weight. Depending on the influence sign of $weight(\rho_3)$, it will form a compensating pair of path to $z$ either with $\rho \cdot \rho_1$ or with $\rho \cdot \rho_2$, hence $n$ will be in $X$. We call $X_*$ this subset $X$.
 \end{proof}
 			
 Hence, it means that $X \sqcup Y$ partitions the set of neurons in hidden layers.
@@ -907,33 +907,33 @@ Hence, it means that $X \sqcup Y$ partitions the set of neurons in hidden layers
 \begin{lemma}
 	\label{lemma10}
 		Let $y \in Y_+$. Then for all $m$, there does not exist a pair $(\rho_1,\rho_2)$ 
-		of paths  with weights of opposite sign with $\rho_1$ from $m$ to $y$ and 
+		of paths  with weights of opposite influence sign with $\rho_1$ from $m$ to $y$ and 
 		with $\rho_2$ from $m$ to $z$ (even non disjoint).
 \end{lemma}
 
 \begin{proof}
   $y \notin X$, so it is not on a pair of compensating pair with target $z$.
   Let $\rho$ be a path from $y$ to $z$ (it has positive weight has $y \in Z_+$).
-  Hence $\rho_1 \rho, \rho_2$ have opposite sign, and they must meet before $z$.
+  Hence $\rho_1 \rho, \rho_2$ have opposite influence sign, and they must meet before $z$.
 
   If $\rho_1 \rho$ meets $\rho_2$ after $y$, then we use $(H_1)$ to get another disjoint path from $y$ to $z$ (it has positive weight has $y \in Z_+$), it would not meet $\rho_2$, a contradiction.
 
   Hence $\rho_1$ must meet $\rho_2$ (that is before or at $y$).
-  Their weights must be of opposite sign, otherwise we can inductively reapplied the same argument to their suffixes.
+  Their weights must be of opposite influence sign, otherwise we can inductively reapplied the same argument to their suffixes.
   Let $\rho_1=\rho_1'\rho_1''$.
   Both $\rho_1 \cdot \rho$ and $\rho_2' \cdot \rho_1'' \cdot \rho$
-  are from $m$ to $z$ going through $y$, but with weights of opposite sign (as $\rho'_1$ and $\rho'_2$ have opposite sign).
+  are from $m$ to $z$ going through $y$, but with weights of opposite influence sign (as $\rho'_1$ and $\rho'_2$ have opposite influence sign).
   Now, by $(H1)$, there exists a path $\rho_3$ disjoint from $\rho_1 \cdot \rho$ and$\rho_2' \cdot \rho_1'' \cdot \rho$ from $m$ to $z$. It means that we have a pair of compensating paths from $m$ to $z$, and thus $y \in X$, a contradiction with $y \in Y_+$. 
 \end{proof}
 
 It means that if a path $\rho_1$ from $m$ to $y$ has stricly positive (resp. negative) weight, then all the paths from $m$ to $z$ will also have strictly positive (resp. negative) weights. It means that Sign is defined on all the $m$ that can reach $Y_+$.
 
-We have the same results for $y \in Y_-$, for paths $\rho_1, \rho_2$ of same sign:
+We have the same results for $y \in Y_-$, for paths $\rho_1, \rho_2$ of same influence sign:
 
 \begin{lemma}
 	\label{lemma11}
 	Let $y \in Y_-$. Then for all $m$, there does not exist a pair $(\rho_1,\rho_2)$ 
-	of paths with weights of same sign with $\rho_1$ from $m$ to $y$ and 
+	of paths with weights of same influence sign with $\rho_1$ from $m$ to $y$ and 
 	with $\rho_2$ from $m$ to $z$ (even non disjoint).
 \end{lemma}
 
@@ -959,7 +959,7 @@ That is, $m \in X$, and there exists a node $m'$ with a pair of compensating pat
 passing by $m$. But now, that means that $m'<m<n<z$.
 Thus $m'$ is in $Z$, a contradiction with $m'$ the source of a pair of compensating paths.\end{proof}
 
-To prove Theorem \ref{th2}, we can then optimize $Y$ first on its own (considering the sign of every node): we first maximize all $n$ such that $S(n)=1$ and minimize all $n$ such that 
+To prove Theorem \ref{th2}, we can then optimize $Y$ first on its own (considering the influence sign of every node): we first maximize all $n$ such that $S(n)=1$ and minimize all $n$ such that 
 $S(n)=-1$ at the same time, i.e., with the same input values. And for every node $n$ in $Y$, the value computed is the same as actual lower and upper bounds of $n$.
 
 
@@ -994,9 +994,9 @@ Similarly, we can prove $\alpha=\min(z)$. This concludes the proof of Theorem \r
 	
 	\begin{proof}
 	By contradiction, assume that there exist nodes $m, n^+ \in Y_+$ and  $n^
-	- \in Y_-$, such that there are two non-zero weight paths $\rho_1$ from $m$ to $n^+$ and $\rho_2$ from $n$ to $n^-$ Assume first that the weights of $\rho_1,\rho_2$ have the same sign, 
-	in which case it gives us a path $\rho_2 \rho_3$  from $m$ to $z$ of opposite sign than $\rho_1$. Applying Lemma \ref{lemma10}, we have prefixes $\rho'_1,\rho'_2$ of $\rho_1,\rho_2$ ending in the same state $m'$, and with weights of opposite sign.
-	So we are left with path from $m'$ to $Y_-,Y_+$ of opposite sign. 
+	- \in Y_-$, such that there are two non-zero weight paths $\rho_1$ from $m$ to $n^+$ and $\rho_2$ from $n$ to $n^-$ Assume first that the weights of $\rho_1,\rho_2$ have the same influence sign, 
+	in which case it gives us a path $\rho_2 \rho_3$  from $m$ to $z$ of opposite influence sign than $\rho_1$. Applying Lemma \ref{lemma10}, we have prefixes $\rho'_1,\rho'_2$ of $\rho_1,\rho_2$ ending in the same state $m'$, and with weights of opposite influence sign.
+	So we are left with path from $m'$ to $Y_-,Y_+$ of opposite influence sign. 
 	We then apply Lemma \ref{lemma11}, inductively then applying Lemma \ref{lemma10} on the suffices etc. We obtain a contradiction to the existence of $m$ with $m<n^+$ and $m<n^-$. 
 	\end{proof}
 	
@@ -1022,7 +1022,7 @@ In the first case, the ReLU for $n$ will be opened, so we do not need to worry a
 			Consider all the possible associated target nodes $z'$ of compensating path from $n$.
 
 			
-			Therefore, choose a path $Q$ from input to output with nonzero weight and disjoint from $P,P''$. Now, since weights of $P,P''$ have different signs, and $a$ is in both paths, whatever the weight of $Q$ is, $Q$ and one of  $P$ or $P''$ can form a compensating pair (not weak compensating pair anymore, because $Q$ is disjoint with $P,P''$), and $a$ is in a path. This means $a$ will be opened.
+			Therefore, choose a path $Q$ from input to output with nonzero weight and disjoint from $P,P''$. Now, since weights of $P,P''$ have different influence signs, and $a$ is in both paths, whatever the weight of $Q$ is, $Q$ and one of  $P$ or $P''$ can form a compensating pair (not weak compensating pair anymore, because $Q$ is disjoint with $P,P''$), and $a$ is in a path. This means $a$ will be opened.
 			
 			Combining all discussion above, if $a$ is in a weak compensating path from input to output, then it is in a compensating path from one layer to another layer. Therefore, Theorem \ref{thm:2} implies Theorem \ref{th2}. This is what we want to show.
 			\fi
