@@ -1,10 +1,9 @@
 \section{Experimental Evaluation}
 
 
-We implemented \toolname in Python 3.8. 
-We conducted our evaluation on an AMD 5975WX  ($32$ cores$@3.6$GHz, 7nm, year 2022) 
+We implemented \toolname in Python 3.8, and Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD 5975WX  ($32$ cores$@3.6$GHz, 7nm, year 2022) 
 with 256 GB of main memory and an NVIDIA RTX 3090 (not used for CMP). 
-Gurobi 9.52 was used for solving LP and MILP problems. 
+
 
 We conducted our evaluation on neural networks obtained from the ERAN GitHub (\url{https://github.com/eth-sri/eran}, the 4th to the 8th DNNs provided).
 These verification-agnostic DNNs have varying sizes: $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$ and $6 \times 500$. We selected the 4 first because they have been tested in both \cite{prima} and \cite{crown}, they have good accuracy ($>94\%$ \cite{prima}), 
@@ -23,8 +22,8 @@ We compare the following verifiers performing value-abstraction:
 	%It shows that our purely Python implementation is not optimal ($10$ to $100$ times slower than the implementation in ($\alpha$)($\beta$)CROWN, ERAN and PRIMA). 
 	\item PRIMA~\cite{prima} and $(\alpha)\beta$ CROWN \cite{crown}. We use the results reported in \cite{prima} and \cite{crown} respectively for 
 	$5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$.
-	We report our experimental results for the $6\times500$ DNN as they are not available in prior work. Notice that PRIMA and CROWN run 16 CPU threads for the first 4 benchmarks, and use massively parallel (>4000 threads) GPUs on $6\times500$, compared to 20 CPU threads for CMP on all DNNs.
-	\item We also tested MN-BaB \cite{ferrari2022complete} on $6\times500$ using the GPU
+	We report our experimental results for the $6\times500$ DNN as they are not available in prior work. Notice that PRIMA and CROWN use massively parallel (>4000 threads) GPUs, and run 16 CPU threads for the first 4 benchmarks, compared with 20 CPU threads and no GPU for CMP.
+	\item We also tested MN-BaB \cite{ferrari2022complete} on $6\times500$
 	(slightly lower accuracy and slower than $\alpha$,$\beta$-CROWN), 
 	in line with results reported in \cite{ferrari2022complete} for other DNNs. Further, results for MN-BaB on $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$	are not reported in \cite{ferrari2022complete} or elsewhere. 
 	We thus do not include MN-BaB results in Table \ref{tab:example}, to avoid clutter.
@@ -41,7 +40,7 @@ We compare the following verifiers performing value-abstraction:
 
 
 
-The  objective of our evaluation was to answer the following  questions:
+The  objectives of our evaluation was to answer the following  questions:
 
 \begin{enumerate}
 	\item How does the the choice of the set $Z$ impacts the accuracy of $\MILP_Z$? 
