@@ -1217,6 +1217,25 @@ We do two parts of test: one is for only considering length 3 paths, for layer 3
 For part1, there is no parameter. And for part2, there is a parameter (let us call it $r$) when comparing values of nodes in layer 1 and layer 3. 
 
 
+When do the test of layer 5, we read the accurate bounds information (open all nodes) of layer 3: \verb*|Diamond_record_6_100image59_dictionary_with_end_layer3_2024_04_23_17_02_11.b| 
+
+
+\subsection*{Method for part1}
+
+
+\subsection*{Methods for part2}
+
+
+The basic formula is as following: 
+
+\begin{align*}
+	comp(b,b') &= \sum_{a}\sum_{c,c'\in C} u(a)\min(|W_{abcd}|,|W_{ab'c'd}|)\\
+	comp(b) &= \sum_{b'\in B} comp(b,b')
+\end{align*} Here, $d$ is the fixed target node. $B$ and $C$ are two specific sets. They can be all nodes in that layer, or more complex.
+
+
+
+
 
 
 \end{document}
