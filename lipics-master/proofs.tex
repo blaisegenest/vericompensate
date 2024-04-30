@@ -1,15 +1,15 @@
 \section*{Appendix}
-As a first step to prove Theorems \ref{th1},\ref{th2}, 
+As a first step to prove Theorems \ref{th1} and \ref{th2}, 
 we will relax the compensating pairs notion to allows pairs of paths having nodes in common.
 Such a pair is called a {\em weak compensating pair}.
-We will then in a second step prove Theorems \ref{th1},\ref{th2} for the full definition of compensating pairs of paths.
+We will then in a second step prove Theorems \ref{th1} and \ref{th2} for the full definition of compensating pairs of paths.
 
 Let $\cal B$ be a neighbourhood of an input.
 For convenience,
 when the neighbourhood $\cal B$ is clear, 
 we will write $\max(n)$ to denote $\max_{\vx \in \cal B}(\Val_{\vx}(n))$, and $\min(n)$ to denote $\min_{\vx \in \cal B}(\Val_{\vx}(n))$.
 Notice that if $\Val_{\vx}(b)$ is maximal (resp. minimal), 
-then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal). 
+then $\Val_{\boldsymbol{x}}(\hat{b})$ also gets maximal (resp. minimal), for $\hat{b}=\texttt{ReLU}(b)$. 
 
 
 We fix a target node $z$.
@@ -221,13 +221,11 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 
 
 
+\newpage
 
 
 
 
-
-
-	\newpage
 
 	
 
@@ -240,9 +238,7 @@ This shows the statement of Theorem 1 with the weaker statement that there is no
 			
 			In this section, we will prove theorem \ref{th2}. We first prove the following weaker theorem:
 			
-			\begin{theorem} \label{thm:2}
-				
-				
+			\begin{theorem} \label{thm:2}	
 				Suppose $\mathcal{D}$ is a DNN with a unique output node $z$.
 				Let $X$ be the set of nodes $n$ such that there is a weak compensating path 
 				passing by $n$ (except its source and target nodes).

@@ -111,14 +111,14 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 		\text{Number $K$}  &  \text{Compensate} &  \text{Incoming Weights} \cite{9211410} & \text{Random} \\ \hline
 		\hline
 		0  &  1.761 & 1.761 & 1.761  \\ \hline
-		10  &  1.648 & 1.651 & 1.696  \\ \hline
-		20  &  1.527 & 1.557 & 1.619  \\ \hline
-		30  &  1.402 & 1.489 & 1.546  \\ \hline
-		40  &  1.281 & 1.447 & 1.469  \\ \hline
-		50  &  1.165 & 1.426 & 1.388  \\ \hline
-		116 (max) &  0.895 & 1.424 & 0.895  \\ \hline
+		10  &  1.641 & 1.651 & 1.696  \\ \hline
+		20  &  1.517 & 1.557 & 1.619  \\ \hline
+		30  &  1.392 & 1.489 & 1.546  \\ \hline
+		40  &  1.275 & 1.447 & 1.469  \\ \hline
+		50  &  1.158 & 1.426 & 1.388  \\ \hline
+		116 (max) &  0.895 & 1.424 (max=$61$) & 0.895  \\ \hline
 	\end{tabular}
-	\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs random choice).}
+	\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs \cite{9211410} vs random choice).}
 	\label{tab:example1}
 	\vspace{-0.6cm}
 \end{table}
@@ -175,7 +175,7 @@ on all the images. We report the $\%$ of images without attack, giving an {\em U
 Several observations are noteworthy: DeepPoly (or CROWN) is by far the fastest, yet it is also the least accurate, certifying robustness for fewer than $30\%$ of the images. In contrast, there are at least $82\%$ of the images for which no attack is found. Similarly, PRIMA achieves better accuracy than DeepPoly/CROWN but falls short of \toolname. 
 
 Next, we shift focus to the comparison with ($\alpha$)$\beta$-CROWN, where we observe intriguing trade-offs. On the shallowest DNNs (5 layers, $5 \times 100$, $5 \times 200$), \toolname accuracy is close to $\beta$-CROWN, within 1.5\%. Here, RefinedBaB used by $\beta$-CROWN, has the time to refine most of the nodes, and thus the number of branches BaB has to explore is small enough that it is very accurate.
-As network depth increase, \toolname demonstrates better accuracy in comparison to $\beta$-CROWN. For $8 \times 100$ and $8 \times 200$, 
+As the network size increases, \toolname demonstrates better accuracy in comparison to $\beta$-CROWN: For $8 \times 100$ and $8 \times 200$, 
 RefinedBaB used by $\beta$-CROWN can only consider half of the layers. 
 On many images, there are too many branches for BaB left to consider, and it times-out.
 As expected, there's a trade-off between runtime and accuracy: \toolname can verify more images, albeit with increased computation time. Overall, on $8 \times 200$, CMP closes the gap of {\em undetermined} images from $17.6\%$ ($\beta$-CROWN) to $10.4\%$ (CMP).
@@ -221,7 +221,7 @@ As expected, there's a trade-off between runtime and accuracy: \toolname can ver
 
 
 The last network $6 \times 500$ (verification-agnostic) is the largest one. 
-Results for CMP are good, at $65\%$ of verified images, comparable with $8\times 100$, taking less than $0.3s$ per neuron to perform the verification in average per image (there are more neurons, so longer runtime was expected). For comparison, results for $6 \times 500$ were not reported in \cite{crown,prima}. On this larger network, it is unclear whether the refined strategy of PRIMA and of $(\alpha)\beta$-CROWN is applicable, as the number of binary variables to encode even the first few layers is very large. As a matter of fact, refinedBaB is "NotImplemented" in $\alpha,\beta$-CROWN for this network, and the results are surprisingly inaccurate and fast in refinedPRIMA (even faster than for $5 \times 100$), probably because few/no nodes are actually refined. We thus resort and reported the standard pureBaB setting of $\alpha,\beta$-CROWN, with the usual 30s timeout. Accuracy on $\alpha,\beta$-CROWN is very low, only $15\%$ more images verified than DeepPoly. 
+Results for CMP are good, at $65\%$ of verified images, comparable with $8\times 100$, taking less than $0.3s$ per neuron to perform the verification in average per image (there are more neurons, so longer runtime was expected). For comparison, results for $6 \times 500$ were not reported in \cite{crown,prima}. On this larger network, it is unclear whether the {\em refined strategy} of PRIMA and of $(\alpha)\beta$-CROWN is applicable, as the number of binary variables to encode even the first few layers is very large. As a matter of fact, refinedBaB is "NotImplemented" in $(\alpha),\beta$-CROWN for this network, and the results are surprisingly inaccurate and fast in refinedPRIMA (even faster than for $5 \times 100$), probably because few/no nodes are actually refined. We thus resort and reported the standard pureBaB setting of $\alpha,\beta$-CROWN, with the usual 30s timeout. Accuracy on $\alpha,\beta$-CROWN is very low, only $15\%$ more images verified than DeepPoly. 
 We also tested $\alpha,\beta$-CROWN with longer time-out, to understand $\alpha,\beta$-CROWN scaling. With time-out=$2000s$, the runtime of $\alpha,\beta$-CROWN is $954s$, comparable with $925s$ for CMP. This only improved the accuracy of $\alpha,\beta$-CROWN by $3.5\%$, at $44.5\%$, with a runtime $50$ times longer. We conclude that the number of branches is often too high for $\alpha,\beta$-CROWN to tackle such a hard verification-agnostic DNN. We also experimented MN-BaB \cite{ferrari2022complete} on $6 \times 500$. Results were similar to $\alpha,\beta$-CROWN: $40\%$ (18s) [30s Time-out] and $43\%$ (1036s) [2000s Time-out]; within 1.5\% of $\alpha,\beta$-CROWN. For comparison, CMP could verify more than $20\%$ more images than $\alpha,\beta$-CROWN (or MN-BaB) with similar runtime (around 17min per image).
 
 
@@ -398,4 +398,4 @@ A primary strategy involves utilizing $\alpha$-$\beta$-CROWN initially in the se
 
 In terms of neuron correlation, a key feature explicitly encoded by PRIMA, our findings suggest that leveraging compensation strength for network abstraction is generally more effective. Although precise local accuracy is achieved by directly considering ReLU nodes, the accuracy diminishes when correlations originate from distant layers. Retaining a select few significant correlations, in the style of PRIMA, as explicit linear constraints in the MILP model, might offer a strategy to further improve accuracy while keeping the number of binary variables limited. 
 
-Finally, we focused on DNNs employing ReLU activation functions since our approached on usage of MILP, which is naturally suited for ReLU activation function. However, it is worth remarking that the notion of compensation strength is independent of activation function, and therefore, an interesting direction of future work would be to explore other the impact of compensation strength-based approaches for other activation functions. 
+Finally, we focused on DNNs employing ReLU activation functions since our approached on usage of MILP, which is naturally suited for ReLU activation function. However, it is worth remarking that the notion of compensation strength is independent of activation function, and therefore, an interesting direction of future work would be to explore the impact of compensation strength-based approaches for other activation functions. 
