@@ -1255,11 +1255,45 @@ After a few tests, we decide to only use ALL-ALL for all cases: For length 3 par
 
 
 
+\section{Large test of layer 3 and layer 5 of 1023 cases}
 
 
+These tests consist of several parts: layer 3, layer 5 mixed 1 and 2, layer 5 open only layer 3, layer 5 open layer 1.
+
+\subsection*{Basic Scheme of tests}
+
+In each test, first use the standard/quick method to choose first 50/70 nodes for target layer. Then group 50/70 nodes in 10 groups. In $2^10-1$ cases, use corresponding nodes to open.
 
 
+The value $Imp(a,a',\cdots)$ of nodes $a,a',\cdots$ is the difference of average uncertainty of LP model and the model when only open nodes $a,a',\cdots$: Let $A=\{a,a',\cdots\}$, then $$Imp(A)=LP-MILP_A.$$
 
+
+The finding of these tests is that: $$Imp(A)\approx \sum_{a\in A} Imp(a).$$ We use $\dfrac{\sum_{a\in A} Imp(a)}{Imp(A)}$ to check how close they are.
+
+For each case $A_0$, its error means $$|\dfrac{\sum_{a\in A_0} Imp(a)}{Imp(A_0)}-Average_{A} \dfrac{\sum_{a\in A} Imp(a)}{Imp(A)}|.$$
+
+\subsection*{Layer 3}
+
+In the case, we open nodes in layer 1.
+
+The average quotient is 0.9893127409573279. The error is very small: in all 1023, no error is greater than 1\%.
+
+\subsection*{Layer 5, only open in layer 3}
+
+In this case, we open nodes in layer 3. 
+
+The average quotient is 0.9930808321092559. The error is also very small: in all cases, the max error is 1.042\%.
+
+\subsection*{Layer 5, only open in layer 1}
+
+From now, the error and average become not so good. The average quotient is 0.9027497392008165, and the standard deviation of error is 3.01\%, the max error is about 10\%.
+
+\subsection*{Layer 5, both in layer 1 and layer 3}
+
+
+The error and average are still not so good. The average quotient is 0.8951295616274486, and the standard deviation of error is 3.7\%, the max error is about 10\%.
+
+From this we can guess that the error is mostly caused by nodes in layer 1 rather than layer 3.
 
 \end{document}
 
