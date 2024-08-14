@@ -1245,11 +1245,116 @@ The basic formula is as following:
 \end{align*} Here, $d$ is the fixed target node. $B$ and $C$ are two specific sets. They can be all nodes in that layer, or more complex.
 
 
+\subsection*{CURRENT or ALL}
+
+After a few tests, we decide to only use ALL-ALL for all cases: For length 3 part, we find ALL is significantly better; For length 4 part, ALL-ALL are the easiest to implement, and do not lose accuracy.
 
 
 
+\section{New Bootstrap Form}
 
 
+
+\section{Large test of layer 3 and layer 5 of 1023 cases}
+
+
+These tests consist of several parts: layer 3, layer 5 mixed 1 and 2, layer 5 open only layer 3, layer 5 open layer 1.
+
+\subsection*{Basic Scheme of tests}
+
+In each test, first use the standard/quick method to choose first 50/70 nodes for target layer. Then group 50/70 nodes in 10 groups. In $2^10-1$ cases, use corresponding nodes to open.
+
+
+The value $Imp(a,a',\cdots)$ of nodes $a,a',\cdots$ is the difference of average uncertainty of LP model and the model when only open nodes $a,a',\cdots$: Let $A=\{a,a',\cdots\}$, then $$Imp(A)=LP-MILP_A.$$
+
+
+The finding of these tests is that: $$Imp(A)\approx \sum_{a\in A} Imp(a).$$ We use $\dfrac{\sum_{a\in A} Imp(a)}{Imp(A)}$ to check how close they are.
+
+For each case $A_0$, its error means $$|\dfrac{\sum_{a\in A_0} Imp(a)}{Imp(A_0)}-Average_{A} \dfrac{\sum_{a\in A} Imp(a)}{Imp(A)}|.$$
+
+\subsection*{Layer 3}
+
+In the case, we open nodes in layer 1.
+
+The average quotient is 0.9893127409573279. The error is very small: in all 1023, no error is greater than 1\%.
+
+\subsection*{Layer 5, only open in layer 3}
+
+In this case, we open nodes in layer 3. 
+
+The average quotient is 0.9930808321092559. The error is also very small: in all cases, the max error is 1.042\%.
+
+\subsection*{Layer 5, only open in layer 1}
+
+From now, the error and average become not so good. The average quotient is 0.9027497392008165, and the standard deviation of error is 3.01\%, the max error is about 10\%.
+
+\subsection*{Layer 5, both in layer 1 and layer 3}
+
+
+The error and average are still not so good. The average quotient is 0.8951295616274486, and the standard deviation of error is 3.7\%, the max error is about 10\%.
+
+From this we can guess that the error is mostly caused by nodes in layer 1 rather than layer 3.
+
+
+\subsection*{Layer 5, both in layer 1 and layer 3, separately}
+
+In this test we choose 30 nodes in layer 1 and 30 nodes in layer 3. Again they are grouped 5 by 5. We use $A,a,a'$ to denote nodes in layer 1, and use $B,b,b'$ to denote nodes in layer 3.
+
+And we define:  $$Imp^A(B)=MILP_{A}-MILP_{A\cup B}.$$ We still use $Imp(B)$ for $Imp^{\emptyset}(B)$.
+
+The aim of this section is to check, how can we compute $Imp^A(B)$?
+
+\subsubsection*{Based on $Imp^A$}
+
+If we use $Imp^A(b)$ to compute $Imp^A(B)$, then the accuracy is very high: $$Imp^A(B)\approx\sum_{b\in B} Imp^A(b).$$
+
+The average of $\dfrac{\sum_{b\in B} Imp^A(b)}{Imp^A(B)}$ is 1.0012830624338422, and the standard deviation over all cases is
+0.263 \%.
+
+However, this is not very useful since we must face more than one possible $A$ and we cannot compute $Imp^A(b)$ every-time.
+
+
+
+\subsubsection*{Based on $Imp$}
+
+In this case, the accuracy is relatively low: The average of $\dfrac{\sum_{b\in B} Imp(b)}{Imp^A(B)}$ is 0.8943970938704465, and the standard deviation over all cases is
+4.26 \%.
+
+However, this does not mean that $Imp(b)$ is useless. If we group $A$ by $\#(A)$ and compute the standard deviation group by group, then we will find it is much smaller. We use $\mu(n)$ to denote the average number of all $\dfrac{\sum_{b\in B} Imp(b)}{Imp^{A}(B)}$ that $\#(A)=n$.
+
+
+For $n$ in $0$ to $6$, $\mu(n)$ and corresponding standard deviations are: 
+
+\vspace*{1ex}
+
+0.995, 0.30\%
+
+0.957, 0.98\%
+
+ 0.923, 1.68\%
+ 
+ 0.893, 2.25\%
+ 
+ 0.865, 2.71 \%
+ 
+ 0.839, 3.08 \%
+ 
+ 0.814, 3.45 \%
+
+It is reasonable that the average goes smaller and smaller.
+
+If we look at the absolute value of $Imp$, we will find that for almost all $A,B$, $$|Imp^A(B)-\frac{1}{\mu(\#(A))}(\sum_{b\in B} Imp(b))| < 0.01,$$ and this is usable. At least that we can still use $Imp(b)$ to sort nodes in layer 3 for any $A$.
+
+\section{Layer 7, large test 0}
+
+
+This is similar to the tests in last section but more simpler. We choose 35 nodes by our algorithm in layer 1, layer 3 and layer 5 separately, and group them 5 by 5 nodes. 
+
+The difference is that, we do not consider all $2^{7+7+7}$ cases, but only consider about $7\times 7 \times 7$ cases: first $m\times 5$ nodes in layer 1, first $n\times 5$ nodes in layer 3 and first $l \times 5$ nodes in layer 5. 
+
+We can count the information by node in layer 7. For example, when $n+m+l=10$ (50 nodes), we can count the best $[n,m,l]$ combinations for every node: the average is $[3.92,2.02,4.06]$. For $n+m+l=12$ (60 nodes), the average is $[4.92,2.81,4.27]$. This is consistent with our previous observations.
+
+However, although the average values are consistent with previous result, for a single node, the case can be very different: the deviation of $n,m$ is about 2, and there are a few nodes for which $m=7$ is the best.
 
 
 \end{document}
