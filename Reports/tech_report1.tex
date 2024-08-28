@@ -1357,6 +1357,33 @@ We can count the information by node in layer 7. For example, when $n+m+l=10$ (5
 However, although the average values are consistent with previous result, for a single node, the case can be very different: the deviation of $n,m$ is about 2, and there are a few nodes for which $m=7$ is the best.
 
 
+\section{Tests about CNN-B-adv}
+
+CNN-B-adv has 1 input layer of 3072 nodes, 3 hidden layers with node numbers: 8k, 8k, 250, and 1 output layer. Our tests is doing on the first 100 images of the default dataset.
+
+We will do 3 steps: 
+
+\begin{enumerate}
+	\item Run beta-Crown with Timeout = 30s. After that, we will continue on unknown images: they are harder.
+	
+	\item Run fast turn: the first mode of fast turn uses the follow: open 200 nodes by standard algorithm for layer 3, LP for layer 5, and 40 (layer 3+layer 5) + 160 (layer 1) for layer 7. The Timeout for layer 7 is 1 hour with 4 min a loop x 15 loops.
+	
+	\item Run slow turn: the global Timeout is 10000s, so we will try a slow turn for images failed in fast turn. We use the data of layer 3 obtained in fast turn, and open 25 nodes for 250 nodes in layer 5.
+	
+	For layer 7, the process is more complex: to decide the open numbers. The key idea is to use the improvement values obtained by formula to estimate the possible solution.
+	
+	\item  Second version of fast: however, it seems to be not good.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
 \end{document}
 
 
