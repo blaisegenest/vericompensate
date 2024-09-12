@@ -105,7 +105,7 @@ However, the error is still too large. This is because the improvement of a node
 	\end{align*}
 \end{definition}
 
-This is the formula to compute improvement of nodes two layers before.
+$D(a)$ is the estimation of improvement of upper bound of $a$ by openning node $b$. This is the formula to compute improvement of nodes two layers before.
 
 
 \subsubsection*{Formula for nodes in 3 layers before} 
@@ -127,7 +127,7 @@ The key problem is that, how to compute the coefficient $k$ for nodes in 2 layer
 \end{definition} 
 
 \begin{definition}
-	Continue the assumption in Definition \ref{3layer}. We define function $D$ layer by layer.
+	Continue the assumption in Definition \ref{3layer}. To compute the improvement of of upper bound of $a$ by $b$, we define function $D$ layer by layer.
 	
 	First, $D(b) = \ReLU(v(b))-v(\hat{b})$.
 	
@@ -153,5 +153,5 @@ For $c$ in the next layer, we define \begin{align*}
 		\end{cases}\\
 		&D(a) = -\sum_c D(d)W_{da}
 	\end{align*}
-\end{definition}
+\end{definition}$D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$. 
 		
