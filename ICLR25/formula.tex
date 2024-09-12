@@ -1,0 +1,157 @@
+\section*{Formula}
+
+One of the key formula is to choose some nodes and set the corresponding variables to be binary variable in the MILP model. We will say that we open those nodes. In our algorithm, we will open nodes at most 3 layer3 before the target layer. So the formula will consists of three parts.
+
+\subsubsection*{Observation}
+
+The key of our formula is based on the following observation:
+
+\begin{definition}[Improvement]
+	
+	Let $a$ be a node in the network (at least the second hidden layer) and we have computed a series of lower and upper bound for all nodes before the layer of $a$. If we consider to compute the upper bound of $a$ by the standard MILP model.
+	
+	\begin{enumerate}
+		\item $M^a_X$ means the MILP model with target node $a$ and open node set $X$. $M^a_{\emptyset}$ is the LP model for $a$.
+		
+		\item For a set $X$, if the upper bound of $a$ computed from $M^a_{\emptyset}$ is $u_0$, and from $M^a_X$ is $u_X$, then the improvement (of upper bound of $a$) of $X$, $I_X$ (or $I_X^{a,u}$) is defined as : $$I_X = u_0-u_X.$$ 
+	\end{enumerate}
+\end{definition}
+
+Similarly we can define the improvement of lower bound to be $I_X^{a,l} = l_X-l_0$.
+
+Our observation (by experiments) is that \begin{align*}
+	I_X \approx \sum_{b\in X} I_b.
+\end{align*} Separately, if all nodes in $X$ are from the layer before $a$, then in experiments, we observe that 
+
+\begin{align*}
+	|(I_X - \sum_{b\in X} I_b)/I_X| < 1\%. \ (\text{in experiments})
+\end{align*} And even $X$ comes from 3 layers before the target layer, in experiments, $I_X$ is still close to $\sum_{b\in X} I_b$.
+
+Therefore, based on this observation, the question to choose $X$ is convert to compute $I_b$ for nodes $b$ in 3 layers before the target layer.
+
+\subsubsection*{Compute the improvement of a single node}
+
+The formula to compute the improvement of a single node is the actual content of our formula. For different layers, the formula will be different.
+
+For one layer before the target layer, it is very simple and more accurate. Notice that, either the observation in last subsection, or formula in this subsection, does not have solid theoretical proof to show they are very accurate. They are all based on experiments. 
+
+Suppose $b$ is a node one layer before $a$. To compute $I_b$, we need to run $M^a_{\emptyset}$ to compute the upper bound of $a$ first to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
+
+\begin{definition}
+	Let $v(b)$ be the value of $b$ in the LP solution of upper bound of $a$, and $v(\hat{b})$ be the value of $\hat{b}$.
+	
+	Then the formula to estimate improvement of upper bound of $b$ is: \begin{align*}
+		I_b \approx W_{ba}(v(\hat{b})-\ReLU(v(b))).
+	\end{align*}
+	
+	Specially, if $v(\hat{b})=\ReLU(v(b))$, then \begin{align*}
+		I_b = W_{ba}(v(\hat{b})-\ReLU(v(b))) = 0.
+	\end{align*}
+	
+	
+	Similarly, let $v(b)$ be the value of $b$ in the LP solution of lower bound of $a$, and $v(\hat{b})$ be the value of $\hat{b}$.
+	
+	Then the formula to estimate improvement of lower bound of $b$ is: \begin{align*}
+		I_b \approx -W_{ba}(v(\hat{b})-\ReLU(v(b))).
+	\end{align*}
+	
+\end{definition}
+
+To explain the formula, we use upper bound and $W_{ba} > 0$ as an example. To compute the upper bound of $a$, $\hat{b}$ should be as large as possible. In the LP model, for fixed $v(b)$, the upper bound of $\hat{b}$ may be larger than $\ReLU(v(b))$. This is because in LP model, the upper bound of $v(\hat{b})$ is decided by the linear approximation rather than $\ReLU$ function. So, then node $b$ is open, if values before $v(\hat{b})$ do not change, the the upper bound of $a$ will improve by lower $v(\hat{b})$ to $\ReLU(v(b))$.
+ 			
+Of course changing other variables may effect the upper bound, but our experiments show that, the change from $v(\hat{b})$ to $\ReLU(v(b))$ is the major source of improvement.
+
+For earlier layers, the formula will be more complex and less accurate. But we will still focus on the source $v(\hat{b})-\ReLU(v(b))$.
+
+
+\subsubsection*{Two layers before the target layer}
+
+Basically, we hope to use $\sum_c W_{ca}W_{bc}$ to replace the coefficient $W_{bc}$ in last subsection. 
+
+However, directly replace $W_{ba}$ with the new coefficient will lose too much accuracy. So we try to improve the accuracy by considering more details from the LP solutions.
+
+For nodes $c$ in the layer between $a$ and $b$, according to the LP solution, we may check $v(c)$ is positive or negative. And as we discussed in last subsection, $W_{ca}$ can decide whether $v(\hat{c})$ is more close $\ReLU(v(c))$ or the linear approximation. That is the following definition. 
+
+\begin{definition}
+	For a fixed target node $a$ and a fixed source node $b$ in two layers before $a$. To compute the improvement of of upper bound of $a$ by $b$, we define the following function for nodes in 1 layer before $a$:
+	\begin{align*}
+		k(c) =
+		\begin{cases}
+			1, & \text{if } v(c) > 0 \text{ and } W_{ca} < 0\\
+			0, & \text{if } v(c) \leq 0 \text{ and } W_{ca} < 0\\
+			\frac{\UB(c)}{\UB(c)-\LB(c)}, & \text{if }W_{ca} > 0
+		\end{cases}
+	\end{align*} and use the following formula to compute the estimation of improvement: \begin{align*}
+	I_b = (v(\hat{b})-\ReLU(v(b)))\sum_c W_{bc}W_{ca}k(c)
+	\end{align*}
+	
+\end{definition} 
+
+However, the error is still too large. This is because the improvement of a node $c$ can not exceed its precomputed upper and lower bound (we may use $UB(c)$ and $LB(c)$ to denote them). Considering this, we may improve our formula to the following:
+
+\begin{definition}
+	For a fixed target node $a$ and a fixed source node $b$ in two layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bound used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, we use the following formula:
+	
+	We define a distance function $D$:
+	
+	\begin{align*}
+		&D(b) = \ReLU(v(b))-v(\hat{b})\\
+			&D(c) =
+		\begin{cases}
+			\max(\LB(c), 0, v(c)+D(b)k(c)W_{bc})-v(\hat{c}), & \text{if }W_{ca} < 0\\
+			\min(\UB(c), v(\hat{c})+D(b)k(c)W_{bc})-v(\hat{c}), & \text{if }  W_{ca} > 0
+		\end{cases}\\
+		&D(a) = -\sum_c D(c)W_{ca}
+	\end{align*}
+\end{definition}
+
+This is the formula to compute improvement of nodes two layers before.
+
+
+\subsubsection*{Formula for nodes in 3 layers before} 
+
+This formula is based on previous subsection but more complex. In some network, run this formula may cost too much time. 
+
+The key problem is that, how to compute the coefficient $k$ for nodes in 2 layers before the target layer. We use the following method to estimate the coefficient.
+
+\begin{definition}\label{3layer}
+	For a fixed target node $a$ and a fixed source node $b$ in two layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bound used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model;then we define the following function $k$, so that for a node $c$ in 2 layers before the target node $a$, the value $k(c)$ is computed as:
+	\begin{align*}
+		&v_0 = v(\hat{c}), v_1 = \ReLU(v(c)), v_2 = \frac{\UB(c)v(c)-\UB(c)\LB(c)}{\UB(c)-\LB(c)}\\
+		&k(c) =
+		\begin{cases}
+			\frac{v_0-v_1}{v_2-v_1}, & \text{if } v_2-v_1 > 0\\
+			0.5, & \text{otherwise.}
+		\end{cases}
+	\end{align*} 
+\end{definition} 
+
+\begin{definition}
+	Continue the assumption in Definition \ref{3layer}. We define function $D$ layer by layer.
+	
+	First, $D(b) = \ReLU(v(b))-v(\hat{b})$.
+	
+For $c$ in the next layer, we define \begin{align*}
+	&u_0 = \max(\LB(c),\min(\UB(c),  v(c)+D(b)W_{bc}))\\
+	&u_1 = \begin{cases}
+		\ReLU(u_0)+k(c)(\frac{\UB(c)u_0-\UB(c)\LB(c)}{\UB(c)-\LB(c)}-u_0), & \text{if }\LB(c) < 0\\
+	u_0, & \text{if }  \LB(c) \geq 0
+	\end{cases}\\
+	&D(c) = u_1-v(\hat{c})
+\end{align*}
+	
+	Next is to compute $D(d)$ for nodes $d$ in one layer before $a$.
+	
+	\begin{align*}
+		&w_0 = \sum_C D(c)W_{cd}\\
+		&w_1 = \min(\UB(d),v(d)+w_0)\\		
+		&D(d) =
+		\begin{cases}
+			w_1-v({d}), & \text{if }W_{da} > 0 \text{ and } \LB(d)\geq 0\\
+		k(d)(w_1-v({d})), & \text{if }W_{da} > 0 \text{ and } \LB(d)< 0\\
+		\ReLU(w_1)-v(\hat{d})	, & \text{if }  W_{da} < 0
+		\end{cases}\\
+		&D(a) = -\sum_c D(d)W_{da}
+	\end{align*}
+\end{definition}
+		
