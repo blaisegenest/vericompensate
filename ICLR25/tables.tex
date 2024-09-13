@@ -1,0 +1,44 @@
+
+
+The following table are the results of running $\alpha,\beta$-Crown pure BaB mode with different timeout for different networks.
+
+\section*{Tables}
+
+\begin{tabular}{|c|c|c|c|c|c|c|}
+	\hline
+	Network & Accuracy & Upper bound & $\alpha,\beta$-Crown, 10s & $\alpha,\beta$-Crown, 30s & $\alpha,\beta$-Crown, 2000s &  0 \\ \hline
+	MNIST 6$\times$100 & \% & 90\% & 33\% & 35\% & 40\% &  0 \\ \hline
+	MNIST 6$\times$200 & \% & 96\% & 46\% & 49\% & 50\% &  0 \\ \hline
+	MNIST 9$\times$100 & \% & 86\% & 23\% & 28\% & 28\% &  0 \\ \hline
+	MNIST 9$\times$200 & \% & 91\% & 35\% & 36\% & 37\% &  0 \\ \hline
+	MNIST 6$\times$500 & \% & 94\% & 41\% & 43\% & 44\% &  \% \\ \hline
+	CIFAR CNN-B-adv & \% & 62\% & \% & 40\% & 42\% &  \% \\ \hline
+	0 & 0 & 0 & 0 & 0 & 0 & 0  \\ \hline
+\end{tabular}
+
+\vspace*{4ex}
+\begin{tabular}{|c|c|c|}
+	\hline
+	Verifier & Rate & Average time \\ \hline
+	Marabou & 0 & 0 \\ \hline
+	$\alpha,\beta$-Crown & 0 & 0 \\ \hline
+	Full MILP & 0 & 0 \\ \hline
+	0 & 0 & 0 \\ \hline
+\end{tabular}
+
+
+
+\vspace*{4ex}
+
+The table of undecided images among first 100 images in database by different methods for different network.
+
+\begin{tabular}{|c|c|c|c|c|c|}
+	\hline
+	Network & $\alpha,\beta$-Crown, 10s & $\alpha,\beta$-Crown, 30s & $\alpha,\beta$-Crown, 2000s & $\alpha,\beta$-Crown-refine & Our method \\ \hline
+	& Rate \hfill Time & Rate \hfill Time & Rate \hfill Time & Rate \hfill Time & Rate \hfill Time\\ \hline
+	MNIST 6$\times$100 & 0 & 0 & 0 & 0 & 0 \\ \hline
+	MNIST 6$\times$200 & 0 & 0 & 0 & 0 & 0 \\ \hline
+	MNIST 9$\times$100 & 0 & 0 & 0 & 0 & 0 \\ \hline
+	MNIST 9$\times$200 & 0 & 0 & 0 & 0 & 0 \\ \hline
+	MNIST 6$\times$100 & 0 & 0 & 0 & 0 & 0 \\ \hline
+\end{tabular}
