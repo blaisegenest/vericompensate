@@ -6,16 +6,16 @@
 
 The following table are the results of running $\alpha,\beta$-Crown pure BaB mode with different timeout for different networks. The numbers shown in the table is the rate of images in percentage.
 
-\begin{tabular}{|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|c|}
 	\hline
-	Network & Accuracy & Upper bound & $\alpha,\beta$-Crown, 10s & $\alpha,\beta$-Crown, 30s & $\alpha,\beta$-Crown, 2000s &  0 \\ \hline
-	MNIST 6$\times$100 &  & 90 & 33 & 35\% & 40  &  0 \\ \hline
-	MNIST 6$\times$200 &   & 96  & 46  & 49  & 50  &  0 \\ \hline
-	MNIST 9$\times$100 &   & 86  & 23  & 28  & 28  &  0 \\ \hline
-	MNIST 9$\times$200 &   & 91  & 35  & 36  & 37  &  0 \\ \hline
-	MNIST 6$\times$500 &   & 94  & 41  & 43  & 44  &    \\ \hline
-	CIFAR CNN-B-adv &   & 62  &   & 40  & 42  &    \\ \hline
-	0 & 0 & 0 & 0 & 0 & 0 & 0  \\ \hline
+	Network & Accuracy & Upper bound & $\alpha,\beta$-Crown, 10s & $\alpha,\beta$-Crown, 30s & $\alpha,\beta$-Crown, 2000s  \\ \hline
+	MNIST 6$\times$100 &  & 90 & 33 & 35 & 40   \\ \hline
+	MNIST 6$\times$200 &   & 96  & 46  & 49  & 50   \\ \hline
+	MNIST 9$\times$100 &   & 86  & 23  & 28  & 28   \\ \hline
+	MNIST 9$\times$200 &   & 91  & 35  & 36  & 37   \\ \hline
+	MNIST 6$\times$500 &   & 94  & 41  & 43  & 44   \\ \hline
+	CIFAR CNN-B-adv &   & 62  &   & 40  & 42   \\ \hline
+	0 & 0 & 0 & 0 & 0 & 0  \\ \hline
 \end{tabular}
 
 \vspace*{4ex}
@@ -38,9 +38,9 @@ The table of undecided images among first 100 images in database by different me
 	\hline
 	Network & $\alpha,\beta$-Crown, 10s & $\alpha,\beta$-Crown, 30s & $\alpha,\beta$-Crown, 2000s & $\alpha,\beta$-Crown-refine & Our method \\ \hline
 	& Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s)\\ \hline
-	MNIST 6$\times$100 & 57 \hfill 6.9 & 55 \hfill 18.9 & 50 \hfill 1026.1 & Rate \hfill Time & Rate \hfill Time \\ \hline
-	MNIST 6$\times$200 & 50 \hfill 6.5 & 47 \hfill 16.6 & 46 \hfill 930.3 & Rate \hfill Time & Rate \hfill Time \\ \hline
-	MNIST 9$\times$100 & 63 \hfill 7.2 & 58 \hfill 20.1 & 58 \hfill 1162.9 & Rate \hfill Time & Rate \hfill Time \\ \hline
-	MNIST 9$\times$200 & 56 \hfill 6.8 & 55 \hfill 18.2 & 54 \hfill 1083.1 & Rate \hfill Time & Rate \hfill Time \\ \hline
-	MNIST 6$\times$100 & 0 & 0 & 0 & 0 & 0 \\ \hline
+	MNIST 6$\times$100 & 57 \hfill 6.9 & 55 \hfill 18.9 & 50 \hfill 1026.1 & 13 \hfill 91.7 & Rate \hfill Time \\ \hline
+	MNIST 6$\times$200 & 50 \hfill 6.5 & 47 \hfill 16.6 & 46 \hfill 930.3 & 9 \hfill 79.8 & Rate \hfill Time \\ \hline
+	MNIST 9$\times$100 & 63 \hfill 7.2 & 58 \hfill 20.1 & 58 \hfill 1162.9 & 21 \hfill 102.2 & Rate \hfill Time \\ \hline
+	MNIST 9$\times$200 & 56 \hfill 6.8 & 55 \hfill 18.2 & 54 \hfill 1083.1 & 16 \hfill 83.2 & Rate \hfill Time \\ \hline
+	0 & 0 & 0 & 0 & 0 & 0 \\ \hline
 \end{tabular}
