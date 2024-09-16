@@ -4,27 +4,27 @@ The following table are the results of running $\alpha,\beta$-Crown pure BaB mod
 
 \begin{table}
 	\centering
-	\caption{$\beta$-Crown}
+	\caption{$\alpha,\beta$-Crown with pure BaB}
 	\label{table_beta}
 	\begin{tabular}{||c|c|c||c|c|c||}
 		\hline
 		Network & Acc & Upper  & $\alpha,\beta$-Crown& $\alpha,\beta$-Crown & $\alpha,\beta$-Crown \\ 
 		Perturbation &   & Bound & TO=10s & TO=30s & TO=2000s\\ \hline
 		
-		MNIST 6$\times$100 & 96\% & 90\% & 33\% & 35\% & 40\%   \\
+		MNIST 6$\times$100 & 99\% & 90\% & 33\% & 35\% & 40\%   \\
 		$\epsilon = 0.026$ &  &  & 6.9s &  18.9s &  1026.1s  \\  \hline
-		MNIST 6$\times$200 & 97\%  & 96\%  & 46\%  & 49\%  & 50\%   \\ 
+		MNIST 6$\times$200 & 99\%  & 96\%  & 46\%  & 49\%  & 50\%   \\ 
 		$\epsilon = 0.015$ & &  & 6.5s &  16.6s &  930.3s  \\  \hline
-		MNIST 9$\times$100 & 95\%  & 86\%  & 23\%  & 28\%  & 28\%   \\
+		MNIST 9$\times$100 & 97\%  & 86\%  & 23\%  & 28\%  & 28\%   \\
 		$\epsilon = 0.026$ &  &  & 7.2s &  20.1s &  930.3s  \\  \hline
-		MNIST 9$\times$200 & 95\%  & 91\%  & 35\%  & 36\%  & 37\%   \\ 
+		MNIST 9$\times$200 & 97\%  & 91\%  & 35\%  & 36\%  & 37\%   \\ 
 		$\epsilon = 0.015$ & &  & 6.8s &  18.2s &  1083.1s  \\  \hline
 		MNIST 6$\times$500 & 100\%  & 94\%  & 41\%  & 43\%  & 44\%   \\ 
 		$\epsilon = 0.035$ & &  & 6.4s &  16.4s &  1002.5s  \\  \hline
 		CIFAR CNN-B-adv & 78\%  & 62\%  &  34\% & 40\%  & 42\%   \\
-		&  &  & 4.3s & 8.7s & 373s  \\ \hline \hline
+		$\epsilon = 2/255$&  &  & 4.3s & 8.7s & 373s  \\ \hline \hline
 		CIFAR ResNet & 29\%  & 25\%  & 25\%  & 25\%  & 25\%   \\
-		Wong &  &  & 2s & 2s & 2s  \\ \hline
+		$\epsilon = 2/255$ &  &  & 2s & 2s & 2s  \\ \hline
 	\end{tabular}
 \end{table}
 
@@ -32,18 +32,18 @@ The following table are the results of running $\alpha,\beta$-Crown pure BaB mod
 \vspace*{4ex}
 
 
-The following table is the summary of running results of some complete verifier with timeout = 10000s.
+The following table is the summary of running results of some complete verifier with timeout = 10000s. 
 
 \begin{table}
 	\centering
-	\caption{Complete Verifiers}
+	\caption{SAME FORMAT for complete verifiers!!!}
 	\label{table_complete}
-	\begin{tabular}{|c|c|c|}
+	\begin{tabular}{||c||c|c|c||}
 		\hline
-		Verifier & Rate(\%) & Average time (s) \\ \hline
-		Marabou & 28 & 6200  \\ \hline
-		NeVer2 & 0 & 0 \\ \hline
-		Full MILP & 0 & 0 \\ \hline
+		Network &  Marabou  & Full MILP & NNenum? \\ \hline
+		MNIST 6$\times$100 & 28\% & 39\% & ?\%   \\ \hline
+		$\epsilon = 0.026$ & 6200s & 7000s
+		&  ?s  \\  \hline
 	\end{tabular}
 \end{table}
 
@@ -55,12 +55,12 @@ The table of undecided images among first 100 images in database by different me
 
 \begin{table}
 	\centering
-	\caption{Undecided images}
+	\caption{Gap between verified and attackable images. Lower is better}
 	\label{table_undecided}
 	\begin{tabular}{|c|c|c|c|c|c|}
 		\hline
 		Network & $\alpha,\beta$-Crown, 10s & $\alpha,\beta$-Crown, 30s & $\alpha,\beta$-Crown, 2000s & $\alpha,\beta$-Crown-refine & Our method \\ 
-		& Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s)\\ \hline
+		& Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s)\\ \hline
 		MNIST 6$\times$100 & 57 \hfill 6.9 & 55 \hfill 18.9 & 50 \hfill 1026.1 & 13 \hfill 91.7 & 13 \hfill 46 \\ \hline
 		MNIST 6$\times$200 & 50 \hfill 6.5 & 47 \hfill 16.6 & 46 \hfill 930.3 & 9 \hfill 79.8 & 8 \hfill 71 \\ \hline
 		MNIST 9$\times$100 & 63 \hfill 7.2 & 58 \hfill 20.1 & 58 \hfill 1162.9 & 21 \hfill 102.2 & 15 \hfill 61 \\ \hline
