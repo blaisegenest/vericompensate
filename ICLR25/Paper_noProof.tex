@@ -116,7 +116,7 @@ Address \\
 $\alpha,\beta$-CROWN has won the last 4 VNNcomp(etitions), as the DNN verifier with the best 
 trade-off between accuracy vs computational time. VNNcomp however is focusing on relatively easy verification instances (network, inputs (images)), 
 with few {\em unstable nodes}. In this paper, we consider harder verification instances, namely the usual local robustness problem, and 
-compare how different solutions out there fare. On such instances, $\alpha,\beta$-CROWN displays a large gap ($\approx 40\%$) between instances that can be verified, and instances with an explicit attack. Enabling much larger time-outs for $\alpha,\beta$-CROWN only improves verification rate by few percents, leaving a large gap of undecided instances while already taking a considerable amount of time. Resorting to other techniques, such as complete verifiers, does not fare better even with very large time-outs (10000s per instance): They would theoretically be able to close the gap, but with an untractable runtime on all but small instances, because the instances considered are hard. 
+compare how different solutions out there fare. On such instances, $\alpha,\beta$-CROWN displays a large gap ($20-58\%$) between instances that can be verified, and instances with an explicit attack. Enabling much larger time-outs for $\alpha,\beta$-CROWN only improves verification rate by few percents, leaving a large gap of undecided instances while already taking a considerable amount of time. Resorting to other techniques, such as complete verifiers, does not fare better even with very large time-outs (10000s per instance): They would theoretically be able to close the gap, but with an untractable runtime on all but small instances, because the instances considered are hard. 
 
 In this paper, we study the complete MILP encoding of ReLU-DNNs, provide new deep insights in the LP relaxation, which allows us to carefully craft a {\em partial MILP} solution which only considers few neurons as integer variables, the rest using the LP relaxation. Compared with previous attempts, we can reduce the number of integer variables by around 4 times while maintaining the same level of accuracy. This gives rise to a very efficient yet accurate algorithm. Implemented as $\alpha,\beta$-pMILP, calling first $\alpha,\beta$-CROWN with a short time-out (10s) to solve easier instances, and then partial MILP for those for which $\alpha,\beta$-CROWN fails, produces a very accurate yet efficient verifier, reducing tremendously the gap of undecided instances to $\approx 10\%$, while keeping a reasonable runtime ($<500s$ on average per instance).
 \end{abstract}
@@ -145,10 +145,10 @@ The following table are the results of running $\alpha,\beta$-Crown pure BaB mod
 	$\epsilon = 0.015$ & &  & 7s &  s &  ?s  \\  \hline
 	MNIST 6$\times$500 &  ? & 94\%  & 41\%  & 43\%  & 44\%   \\ 
 	$\epsilon = 0.035$ & &  & 6s &  15s &  1002s  \\  \hline
-	CIFAR CNN-B-adv & ?  & 62\%  &  ? & 40\%  & 42\%   \\
-	 &  &  & s & s & s  \\ \hline \hline
+	CIFAR CNN-B-adv & ?  & 62\%  &  40\% & 41\%  & 42\%   \\
+	 &  &  & 15s & 32s & 373s  \\ \hline \hline
 	CIFAR ResNet & 29\%  & 25\%  & 25\%  & 25\%  & 25\%   \\
-	Wong &  &  & 2s & 2s & 2s  \\ \hline
+	$\epsilon=2/255$ & : &  & 2s & 2s & 2s  \\ \hline
 	
 
 \end{tabular}
