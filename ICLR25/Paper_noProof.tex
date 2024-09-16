@@ -167,17 +167,24 @@ SAME FORMAT for complete verifiers!!!
 \vspace*{4ex}
 
 Gap between verified and attackable images. Lower is better.
+M for MNIST, C for CIFAR
 %The table of undecided images among first 100 images in database by different methods for different network.
 
-\begin{tabular}{|c|c|c|c|c|c|}
+\begin{tabular}{||c||c|c|c|c||c||}
+	\hline \hline
+	Network & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & $\beta$-Crown & Our \\ 
+	 & TO=10s & TO=30s & TO=2000s & refine & Method \\ 
+	
 	\hline
-	Network & $\alpha,\beta$-Crown, 10s & $\alpha,\beta$-Crown, 30s & $\alpha,\beta$-Crown, 2000s & $\alpha,\beta$-Crown-refine & Our method \\ \hline
-	& Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s)\\ \hline
-	MNIST 6$\times$100 & 57 \hfill 6.9 & 55 \hfill 18.9 & 50 \hfill 1026.1 & 13 \hfill 91.7 & Rate \hfill Time \\ \hline
-	MNIST 6$\times$200 & 50 \hfill 6.5 & 47 \hfill 16.6 & 46 \hfill 930.3 & 9 \hfill 79.8 & Rate \hfill Time \\ \hline
-	MNIST 9$\times$100 & 63 \hfill 7.2 & 58 \hfill 20.1 & 58 \hfill 1162.9 & 21 \hfill 102.2 & Rate \hfill Time \\ \hline
-	MNIST 9$\times$200 & 56 \hfill 6.8 & 55 \hfill 18.2 & 54 \hfill 1083.1 & 16 \hfill 83.2 & Rate \hfill Time \\ \hline
-	0 & 0 & 0 & 0 & 0 & 0 \\ \hline
+
+	
+	M 6$\times$100 & 57\% (6.9s) & 55\% (18.9s) & 50 \hfill 1026.1 & 13 \hfill 91.7 & Rate \hfill Time \\ \hline
+	M 6$\times$200 & 50\% \hfill 6.5 & 47\% \hfill 16.6 & 46 \hfill 930.3 & 9 \hfill 79.8 & Rate \hfill Time \\ \hline
+	M 9$\times$100 & 63\% \hfill 7.2 & 58\% \hfill 20.1 & 58 \hfill 1162.9 & 21 \hfill 102.2 & Rate \hfill Time \\ \hline
+	M 9$\times$200 & 56\% \hfill 6.8 & 55 \hfill 18.2 & 54 \hfill 1083.1 & 16 \hfill 83.2 & Rate \hfill Time \\ \hline
+	M 6$\times$500 & ? \hfill ? & ? \hfill ? & ? \hfill ? & ? \hfill ? & Rate \hfill Time \\ \hline
+	C CNN-B-Adv & ? \hfill ? & ? \hfill ? & ? \hfill ? & ? \hfill ? & Rate \hfill Time \\ \hline \hline
+	C Resnet & 0\% \hfill 2s & 0\% \hfill 2s & 0\% \hfill 2s & 0\% \hfill 2s & 0\% \hfill 2s \\ \hline \hline
 \end{tabular}
 
 
