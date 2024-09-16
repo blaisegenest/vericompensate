@@ -131,10 +131,9 @@ In this paper, we study the complete MILP encoding of ReLU-DNNs, provide new dee
 The following table are the results of running $\alpha,\beta$-Crown pure BaB mode with different timeout for different networks. The numbers shown in the table is the rate of images in percentage.
 
 \begin{tabular}{||c|c|c||c|c|c||}
-	\hline
+	\hline \hline
 	Network & Acc & Upper  & $\alpha,\beta$-Crown& $\alpha,\beta$-Crown & $\alpha,\beta$-Crown \\ 
 	Perturbation &   & Bound & TO=10s & TO=30s & TO=2000s\\ \hline
-
 	MNIST 6$\times$100 & 96\% & 90\% & 33\% & 35\% & 40\%   \\
 	$\epsilon = 0.026$ &  &  & ? &  18s &  1600s  \\  \hline
     MNIST 6$\times$200 & 97\%  & 96\%  & 46\%  & 49\%  & 50\%   \\ 
@@ -146,33 +145,34 @@ The following table are the results of running $\alpha,\beta$-Crown pure BaB mod
 	MNIST 6$\times$500 &  ? & 94\%  & 41\%  & 43\%  & 44\%   \\ 
 	$\epsilon = 0.035$ & &  & 6s &  15s &  1002s  \\  \hline
 	CIFAR CNN-B-adv & ?  & 62\%  &  40\% & 41\%  & 42\%   \\
-	 &  &  & 15s & 32s & 373s  \\ \hline \hline
+	$\epsilon = 2/255$ &  &  & 15s & 32s & 373s  \\ \hline \hline
 	CIFAR ResNet & 29\%  & 25\%  & 25\%  & 25\%  & 25\%   \\
-	$\epsilon=2/255$ & : &  & 2s & 2s & 2s  \\ \hline
+	$\epsilon=2/255$ & : &  & 2s & 2s & 2s  \\ \hline \hline
 	
 
 \end{tabular}
 
-\vspace*{4ex}
-\begin{tabular}{|c|c|c|}
+SAME FORMAT for complete verifiers!!!
+
+\begin{tabular}{||c||c|c|c||}
 	\hline
-	Verifier & Rate & Average time \\ \hline
-	Marabou & 0 & 0 \\ \hline
-	$\alpha,\beta$-Crown & 0 & 0 \\ \hline
-	Full MILP & 0 & 0 \\ \hline
-	0 & 0 & 0 \\ \hline
+	Network &  Marabou  & Full MILP & NNenum? \\ \hline
+	MNIST 6$\times$100 & 26\% & 30\% & ?\%   \\ \hline
+	$\epsilon = 0.026$ & 6520s & 7000s s
+	 &  ?s  \\  \hline
 \end{tabular}
 
 
 
 \vspace*{4ex}
 
-The table of undecided images among first 100 images in database by different methods for different network.
+Gap between verified and attackable images. Lower is better.
+%The table of undecided images among first 100 images in database by different methods for different network.
 
 \begin{tabular}{|c|c|c|c|c|c|}
 	\hline
 	Network & $\alpha,\beta$-Crown, 10s & $\alpha,\beta$-Crown, 30s & $\alpha,\beta$-Crown, 2000s & $\alpha,\beta$-Crown-refine & Our method \\ \hline
-	& Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s) & Rate(\%) \hfill Time(s)\\ \hline
+	& Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s) & Gap(\%) \hfill Time(s)\\ \hline
 	MNIST 6$\times$100 & 57 \hfill 6.9 & 55 \hfill 18.9 & 50 \hfill 1026.1 & 13 \hfill 91.7 & Rate \hfill Time \\ \hline
 	MNIST 6$\times$200 & 50 \hfill 6.5 & 47 \hfill 16.6 & 46 \hfill 930.3 & 9 \hfill 79.8 & Rate \hfill Time \\ \hline
 	MNIST 9$\times$100 & 63 \hfill 7.2 & 58 \hfill 20.1 & 58 \hfill 1162.9 & 21 \hfill 102.2 & Rate \hfill Time \\ \hline
