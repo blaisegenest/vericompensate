@@ -91,11 +91,11 @@ We may use the following formula to estimate the improvement:  \begin{align*}
 			\max(\LB(c), 0, v(c)+D(b)k(c)W_{bc})-v(\hat{c}), & \text{if }W_{ca} < 0\\
 			\min(\UB(c), v(\hat{c})+D(b)k(c)W_{bc})-v(\hat{c}), & \text{if }  W_{ca} > 0
 		\end{cases}\\
-		&D(a) = -\sum_c D(c)W_{ca}
+		&D(a) = \sum_c D(c)W_{ca}
 	\end{align*}
 \end{definition}
 
-Then $D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$. This is the formula to compute improvement of nodes two layers before.
+Then $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$. For the lower bound, we can compute $D(a)$ by the same formula with the $v$ for lower bound LP solution and negative weights instead. This is the formula to compute improvement of nodes two layers before.
 
 
 \subsubsection*{Formula for nodes in 3 layers before} 
@@ -141,7 +141,7 @@ For $c$ in the next layer, we define \begin{align*}
 		k(d)(w_1-v({d})), & \text{if }W_{da} > 0 \text{ and } \LB(d)< 0\\
 		\ReLU(w_1)-v(\hat{d})	, & \text{if }  W_{da} < 0
 		\end{cases}\\
-		&D(a) = -\sum_c D(d)W_{da}
+		&D(a) = \sum_c D(d)W_{da}
 	\end{align*}
-\end{definition} $D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$. 
+\end{definition} $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$.  For the lower bound, we can compute $D(a)$ by the same formula with the $v$ for lower bound LP solution and negative weights  instead.
 		
