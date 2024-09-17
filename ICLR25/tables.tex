@@ -4,13 +4,10 @@ The following table are the results of running $\alpha,\beta$-Crown pure BaB mod
 
 \begin{table}
 	\centering
-	\caption{$\alpha,\beta$-Crown with pure BaB}
-	\label{table_beta}
 	\begin{tabular}{||c|c|c||c|c|c||}
 		\hline
 		Network & Acc & Upper  & $\alpha,\beta$-Crown& $\alpha,\beta$-Crown & $\alpha,\beta$-Crown \\ 
 		Perturbation &   & Bound & TO=10s & TO=30s & TO=2000s\\ \hline
-		
 		MNIST 6$\times$100 & 99\% & 90\% & 33\% & 35\% & 40\%   \\
 		$\epsilon = 0.026$ &  &  & 6.9s &  18.9s &  1026.1s  \\  \hline
 		MNIST 6$\times$200 & 99\%  & 96\%  & 46\%  & 49\%  & 50\%   \\ 
@@ -26,6 +23,8 @@ The following table are the results of running $\alpha,\beta$-Crown pure BaB mod
 		CIFAR ResNet & 29\%  & 25\%  & 25\%  & 25\%  & 25\%   \\
 		$\epsilon = 2/255$ &  &  & 2s & 2s & 2s  \\ \hline
 	\end{tabular}
+	\caption{$\alpha,\beta$-Crown with pure BaB. 6 first Networks are hard instances, while the last one (ResNet) is an easy instance (it is trained to be easy to verify using Wong, but with a very low accuracy level), provided for reference.}
+	\label{table_beta}
 \end{table}
 
 
