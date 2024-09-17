@@ -117,7 +117,7 @@ $\alpha,\beta$-CROWN has won the last 4 VNNcomp(etitions), as the DNN verifier w
 trade-off between accuracy vs computational time. VNNcomp however is focusing on relatively easy verification instances (network, inputs (images)), 
 with few {\em unstable nodes}. In this paper, we consider harder verification instances, namely the usual local robustness problem. On such instances, $\alpha,\beta$-CROWN displays a large gap ($20-58\%$) between instances that can be verified, and instances with an explicit attack. Enabling much larger time-outs for $\alpha,\beta$-CROWN only improves verification rate by few percents, leaving a large gap of undecided instances while already taking a considerable amount of time. Resorting to other techniques, such as complete verifiers, does not fare better even with very large time-outs: They would theoretically be able to close the gap, but with an untractable runtime on all but small {\em hard} instances.
 
-In this paper, we study the MILP encoding of ReLU-DNNs, provide new deep insights in the LP relaxation, which allows us to carefully craft a {\em partial MILP} solution which only considers few neurons as integer variables, the rest using the LP relaxation. Compared with previous attempts, we can reduce the number of integer variables by around 4 times while maintaining the same level of accuracy. This gives rise to a very efficient yet accurate algorithm. Implemented in {\em Hybrid MILP (hMILP)}, calling first $\alpha,\beta$-CROWN with a short time-out to solve easier instances, and then partial MILP for those for which $\alpha,\beta$-CROWN fails, produces a very accurate yet efficient verifier, reducing tremendously the gap of undecided instances to $\approx 10\%$, while keeping a reasonable runtime ($<500s$ on average per instance).
+In this paper, we study the MILP encoding of ReLU-DNNs, provide new deep insights in the LP relaxation, which allows us to carefully craft a {\em partial MILP} solution which selects automatically few neurons encoded as integer variables, the rest using the LP relaxation. Compared with previous attempts, we can reduce the number of integer variables by around 4 times while maintaining the same level of accuracy. This gives rise to a very efficient yet accurate algorithm. Implemented in {\em Hybrid MILP (hMILP)}, calling first $\alpha,\beta$-CROWN with a short time-out to solve easier instances, and then partial MILP for those for which $\alpha,\beta$-CROWN fails, produces a very accurate yet efficient verifier, reducing tremendously the gap of undecided instances to $\approx 10\%$, while keeping a reasonable runtime ($<500s$ on average per instance).
 \end{abstract}
 
 
@@ -137,15 +137,15 @@ The following table are the results of running $\alpha,\beta$-Crown pure BaB mod
 		Network & Acc & Upper  & $\alpha,\beta$-Crown& $\alpha,\beta$-Crown & $\alpha,\beta$-Crown \\ 
 		Perturbation &   & Bound & TO=10s & TO=30s & TO=2000s\\ \hline
 		MNIST 6$\times$100 & 99\% & 90\% & 33\% & 35\% & 40\%   \\
-		$\epsilon = 0.026$ &  &  & 6.9s &  18.9s &  1026.1s  \\  \hline
+		$\epsilon = 0.026$ &  &  & 6.9s &  18.9s &  1026s  \\  \hline
 		MNIST 6$\times$200 & 99\%  & 96\%  & 46\%  & 49\%  & 50\%   \\ 
-		$\epsilon = 0.015$ & &  & 6.5s &  16.6s &  930.3s  \\  \hline
+		$\epsilon = 0.015$ & &  & 6.5s &  16.6s &  930s  \\  \hline
 		MNIST 9$\times$100 & 97\%  & 86\%  & 23\%  & 28\%  & 28\%   \\
-		$\epsilon = 0.026$ &  &  & 7.2s &  20.1s &  930.3s  \\  \hline
+		$\epsilon = 0.026$ &  &  & 7.2s &  20.1s &  930s  \\  \hline
 		MNIST 9$\times$200 & 97\%  & 91\%  & 35\%  & 36\%  & 37\%   \\ 
-		$\epsilon = 0.015$ & &  & 6.8s &  18.2s &  1083.1s  \\  \hline
+		$\epsilon = 0.015$ & &  & 6.8s &  18.2s &  1083s  \\  \hline
 		MNIST 6$\times$500 & 100\%  & 94\%  & 41\%  & 43\%  & 44\%   \\ 
-		$\epsilon = 0.035$ & &  & 6.4s &  16.4s &  1002.5s  \\  \hline
+		$\epsilon = 0.035$ & &  & 6.4s &  16.4s &  1003s  \\  \hline
 		CIFAR CNN-B-adv & 78\%  & 62\%  &  34\% & 40\%  & 42\%   \\
 		$\epsilon = 2/255$&  &  & 4.3s & 8.7s & 373s  \\ \hline \hline
 		CIFAR ResNet & 29\%  & 25\%  & 25\%  & 25\%  & 25\%   \\
@@ -160,15 +160,16 @@ SAME FORMAT for complete verifiers!!!
 
 \begin{table}
 	\centering
-\begin{tabular}{||l|c|c||c|c|c||}
-	\hline
-	Network &  Acc & Upper Bound & Marabou 2.0  & Full MILP & NNenum? \\\hline
-	MNIST 6$\times$100 & 99\% & 90\% & 26\% & 30\% & ?\%   \\
-	$\epsilon = 0.026$ & &  & 6520s & 7000s &  ?s  \\  \hline
-\end{tabular}
+	\begin{tabular}{||c||c|c|c||}
+		\hline
+		Network &  Marabou  & & NNenum? Full MILP  \\ \hline
+		MNIST 6$\times$100 & 28\% & $\approx 30\%$ & 40 \%    \\ \hline
+		$\epsilon = 0.026$ & 6200s &  5588s & 6100s
+		  \\  \hline
+	\end{tabular}
 \caption{Complete verifiers run on the smallest of the considered DNN. 
 Because the instances are hard, most test time-out at the global threshold of 10.000s per image, and no complete verifier could outperform 
-$\alpha,\beta$-CROWN (40\%) for this DNN, despite the much larger average runtime. We didnt test on larger DNNs as this small one already took considerable amount of time.}
+$\alpha,\beta$-CROWN (40\%, 1026s) for this DNN, despite the much larger average runtime. We didnt test on larger DNNs as this small one already took considerable amount of time.}
 \label{table_complete}
 \end{table}
 
