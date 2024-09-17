@@ -37,9 +37,9 @@ For one layer before the target layer, it is very simple and most accurate.
 Suppose $b$ is a node in one layer before $a$. To estimate $I_b$, first we need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
 
 \begin{definition}
-	Let $v(b)$ be the value of $b$ in the LP solution of upper bound of $a$, and $v(\hat{b})$ be the value of $\hat{b}$.	Then the formula to estimate improvement of upper bound of $b$ is: \begin{align*}
+	Let $v(b)$ be the value of $b$ in the LP solution of upper bound of $a$, and $v(\hat{b})$ be the value of $\hat{b}$.	Then the formula to estimate improvement of upper bound of $b$ is: \begin{align}
 		I_b \approx W_{ba}(v(\hat{b})-\ReLU(v(b))).
-	\end{align*}
+	\end{align}
 	
 	Specially, if $v(\hat{b})=\ReLU(v(b))$, then we can prove \begin{align*}
 		I_b = W_{ba}(v(\hat{b})-\ReLU(v(b))) = 0.
@@ -68,23 +68,23 @@ For nodes $c$ in the layer between $a$ and $b$, according to the LP solution, we
 \begin{definition} \label{2layer}
 	Suppose we have a fixed target node $a$ and a fixed source node $b$ in two layers before $a$. Let $\UB,\LB$ be the function of precomputed upper and lower bound before the layer of $a$, and let $v$ be the function of values of nodes in the LP solution of upper bound of $a$. 
 	To compute the improvement of of upper bound of $a$ by $b$, we define the following function for nodes $c$ in one layer before $a$:
-	\begin{align*}
+	\begin{align}
 		k(c) =
 		\begin{cases}
 			1, & \text{if } v(c) > 0 \text{ and } W_{ca} < 0\\
 			0, & \text{if } v(c) \leq 0 \text{ and } W_{ca} < 0\\
 			\frac{\UB(c)}{\UB(c)-\LB(c)}, & \text{if }W_{ca} > 0
 		\end{cases}
-	\end{align*} 
+	\end{align} 
 \end{definition} 
 
 We may use the following formula to estimate the improvement:  \begin{align*}
 	I_b \approx (v(\hat{b})-\ReLU(v(b)))\sum_c W_{bc}W_{ca}k(c).
-\end{align*}However, the error is still too large. This is because the improvement of a node $c$ can not exceed its precomputed upper and lower bound. Considering this, we may improve our formula.
+\end{align*}However, the error is still too large. This is because the improved value of a node $c$ can not exceed its precomputed upper and lower bound. Considering this, we can update our formula.
 
 \begin{definition}
 	Continue the assumption in Definition \ref{2layer} To compute the improvement of of upper bound of $a$ by $b$, we define a distance function $D$:
-	\begin{align*}
+	\begin{align}
 		&D(b) = \ReLU(v(b))-v(\hat{b})\\
 			&D(c) =
 		\begin{cases}
@@ -92,7 +92,7 @@ We may use the following formula to estimate the improvement:  \begin{align*}
 			\min(\UB(c), v(\hat{c})+D(b)k(c)W_{bc})-v(\hat{c}), & \text{if }  W_{ca} > 0
 		\end{cases}\\
 		&D(a) = \sum_c D(c)W_{ca}
-	\end{align*}
+	\end{align}
 \end{definition}
 
 Then $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$. For the lower bound, we can compute $D(a)$ by the same formula with the $v$ for lower bound LP solution and negative weights instead. This is the formula to compute improvement of nodes two layers before.
@@ -100,20 +100,20 @@ Then $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening n
 
 \subsubsection*{Formula for nodes in 3 layers before} 
 
-This formula is based on previous subsection but more complex. In some network, run this formula may cost too much time but obtain little accuracy. 
+This formula is based on previous subsection but more complex. In some network, running this formula may cost too much time but obtain little accuracy. 
 
-The key problem is how to compute the coefficient $k$ for nodes in two layers before the target layer. We use the following method to estimate the coefficient.
+The key problem is how to compute the coefficient $k$ for nodes in two layers before the target layer. To do this, we may use the values in the solution of LP model as follows:
 
 \begin{definition}\label{3layer}
-	For a fixed target node $a$ and a fixed source node $b$ in two layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bound used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model;then we define the following function $k$, so that for a node $c$ in 2 layers before the target node $a$, the value $k(c)$ is computed as:
-	\begin{align*}
+	For a fixed target node $a$ and a fixed source node $b$ in three layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bound used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model; then we define the following function $h$ for all nodes $c$ in 2 layers before the target node $a$ as follows:
+	\begin{align}
 		&v_0 = v(\hat{c}), v_1 = \ReLU(v(c)), v_2 = \frac{\UB(c)v(c)-\UB(c)\LB(c)}{\UB(c)-\LB(c)}\\
-		&k(c) =
+		&h(c) =
 		\begin{cases}
 			\frac{v_0-v_1}{v_2-v_1}, & \text{if } v_2-v_1 > 0\\
 			0.5, & \text{otherwise.}
 		\end{cases}
-	\end{align*} 
+	\end{align} 
 \end{definition} 
 
 \begin{definition}
@@ -121,19 +121,18 @@ The key problem is how to compute the coefficient $k$ for nodes in two layers be
 	
 	First, $D(b) = \ReLU(v(b))-v(\hat{b})$.
 	
-For $c$ in the next layer, we define \begin{align*}
+To compute $D(c)$ for nodes $c$ in two layer before $a$, we define \begin{align}
 	&u_0 = \max(\LB(c),\min(\UB(c),  v(c)+D(b)W_{bc}))\\
 	&u_1 = \begin{cases}
-		\ReLU(u_0)+k(c)(\frac{\UB(c)u_0-\UB(c)\LB(c)}{\UB(c)-\LB(c)}-u_0), & \text{if }\LB(c) < 0\\
+		\ReLU(u_0)+h(c)(\frac{\UB(c)u_0-\UB(c)\LB(c)}{\UB(c)-\LB(c)}-\ReLU(u_0)), & \text{if }\LB(c) < 0\\
 	u_0, & \text{if }  \LB(c) \geq 0
 	\end{cases}\\
 	&D(c) = u_1-v(\hat{c})
-\end{align*}
+\end{align}
 	
-	Next is to compute $D(d)$ for nodes $d$ in one layer before $a$.
-	
-	\begin{align*}
-		&w_0 = \sum_C D(c)W_{cd}\\
+	To compute $D(d)$ for nodes $d$ in one layer before $a$, we define 
+	\begin{align}
+		&w_0 = \sum_c D(c)W_{cd}\\
 		&w_1 = \min(\UB(d),v(d)+w_0)\\		
 		&D(d) =
 		\begin{cases}
@@ -142,6 +141,6 @@ For $c$ in the next layer, we define \begin{align*}
 		\ReLU(w_1)-v(\hat{d})	, & \text{if }  W_{da} < 0
 		\end{cases}\\
 		&D(a) = \sum_c D(d)W_{da}
-	\end{align*}
+	\end{align}
 \end{definition} $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$.  For the lower bound, we can compute $D(a)$ by the same formula with the $v$ for lower bound LP solution and negative weights  instead.
 		
