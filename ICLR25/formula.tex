@@ -19,12 +19,12 @@ The key of our formula is based on the following observation:
 
 
 
-Our observation (by experiments) is that \begin{align*}
+Our observation (by experiments) is that \begin{align}
 	I_X \approx \sum_{b\in X} I_b.
-\end{align*} Separately, if all nodes in $X$ are from the layer before $a$, then in experiments, we observe that 
+\end{align} Separately, if all nodes in $X$ are from one layer before $a$, then in experiments, we observe that 
 
 \begin{align}
-	|(I_X - \sum_{b\in X} I_b)/I_X| << 1. \ (\text{in experiments})
+	|(I_X - \sum_{b\in X} I_b)/I_X| < 1\%. \ (\text{in experiments})
 \end{align} Even $X$ contains nodes from 3 layers before the target layer, in experiments, $I_X$ is still close to $\sum_{b\in X} I_b$.
 
 Therefore, based on this observation, the question to choose $X$ is converted to compute $I_b$ for nodes $b$ in layers before the target layer. Our formula is to estimate the improvement of different individual nodes in different layers. For different layers, the formula will be different.  However, neither the observation in this subsection nor the formula in the next subsection has solid theoretical proof to show that they are very accurate. They are all based on experiments. 
@@ -32,16 +32,14 @@ Therefore, based on this observation, the question to choose $X$ is converted to
 \subsubsection*{Compute the improvement of a single node}
 
 
-For one layer before the target layer, it is very simple and most accurate. 
-
-Suppose $b$ is a node in one layer before $a$. To estimate $I_b$, first we need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
+For one layer before the target layer, the formula is simple and most accurate. Suppose $b$ is a node in one layer before $a$. To estimate $I_b$, first we need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
 
 \begin{definition}
-	Let $v(b)$ be the value of $b$ in the LP solution of upper bound of $a$, and $v(\hat{b})$ be the value of $\hat{b}$.	Then the formula to estimate improvement of upper bound of $b$ is: \begin{align}
+	Let $v(b)$ be the value of $b$ in the LP solution of upper bound of $a$, and $v(\hat{b})$ be the value of $\hat{b}=\ReLU(b)$.	Then the formula to estimate improvement of upper bound of $b$ is: \begin{align}
 		I_b \approx W_{ba}(v(\hat{b})-\ReLU(v(b))).
 	\end{align}
 	
-	Specially, if $v(\hat{b})=\ReLU(v(b))$, then we can prove \begin{align*}
+	Specially, if $v(\hat{b})=\ReLU(v(b))$, then we will have \begin{align*}
 		I_b = W_{ba}(v(\hat{b})-\ReLU(v(b))) = 0.
 	\end{align*}
 	
@@ -54,7 +52,7 @@ Suppose $b$ is a node in one layer before $a$. To estimate $I_b$, first we need 
 
 To explain the formula, we use upper bound and the case that $W_{ba} > 0$ as an example. To compute the upper bound of $a$, $\hat{b}$ should be as large as possible. In the LP model, for fixed $v(b)$, the upper bound of $\hat{b}$ may be larger than $\ReLU(v(b))$. This is because in LP model, the upper bound of $v(\hat{b})$ is decided by the linear approximation rather than $\ReLU$ function. So, when node $b$ is open, if $v(b)$ do not change, then the upper bound of $a$ will be improved because the value of $v(\hat{b})$ will be lower to $\ReLU(v(b))$.
  			
-Of course changing other variables may also effect the upper bound, but our experiments show that, the change from $v(\hat{b})$ to $\ReLU(v(b))$ is the major source of improvement. 
+Of course changing other variables may also effect the upper bound, but our experiments show that, the change from $v(\hat{b})$ to $\ReLU(v(b))$ is the major part of improvement. 
 
 
 
