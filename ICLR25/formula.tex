@@ -61,7 +61,7 @@ Of course changing other variables may also effect the upper bound, but our expe
 
 For earlier layers, the formula will be more complex and less accurate. We will still focus on the source $v(\hat{b})-\ReLU(v(b))$. Basically, we hope to use $\sum_c W_{ca}W_{bc}$ to replace the coefficient $W_{bc}$ in last subsection. However, directly using $\sum_c W_{ca}W_{bc}$ will lose too much accuracy. So we try to improve the accuracy by considering more details from the LP solutions.
 
-For nodes $c$ in the layer between $a$ and $b$, according to the LP solution, we may check $v(c)$ is positive or negative. Next we consider the following definition. 
+For nodes $c$ in the layer between $a$ and $b$, according to the LP solution, we may check $v(c)$ is positive or negative, that will be the following definition. 
 
 \begin{definition} \label{2layer}
 	Suppose we have a fixed target node $a$ and a fixed source node $b$ in two layers before $a$. Let $\UB,\LB$ be the function of precomputed upper and lower bound before the layer of $a$, and let $v$ be the function of values of nodes in the LP solution of upper bound of $a$. 
