@@ -61,11 +61,11 @@ Of course changing other variables may also effect the upper bound, but our expe
 
 For earlier layers, the formula will be more complex and less accurate. We will still focus on the source $v(\hat{b})-\ReLU(v(b))$. Basically, we hope to use $\sum_c W_{ca}W_{bc}$ to replace the coefficient $W_{bc}$ in last subsection. However, directly using $\sum_c W_{ca}W_{bc}$ will lose too much accuracy. So we try to improve the accuracy by considering more details from the LP solutions.
 
-For nodes $c$ in the layer between $a$ and $b$, according to the LP solution, we may check $v(c)$ is positive or negative, that will be the following definition. 
+For nodes $c$ in the layer between $a$ and $b$, according to the LP solution, we may check $v(c)$ is positive or negative, which is the following definition. 
 
 \begin{definition} \label{2layer}
-	Suppose we have a fixed target node $a$ and a fixed source node $b$ in two layers before $a$. Let $\UB,\LB$ be the function of precomputed upper and lower bound before the layer of $a$, and let $v$ be the function of values of nodes in the LP solution of upper bound of $a$. 
-	To compute the improvement of of upper bound of $a$ by $b$, we define the following function for nodes $c$ in one layer before $a$:
+	Suppose we have a fixed target node $a$, and a fixed source node $b$ in two layers before $a$. Let $\UB,\LB$ be the function of precomputed upper and lower bound before the layer of $a$, and let $v$ be the function of values of nodes in the LP solution of upper bound of $a$. 
+	To compute the improvement of of upper bound of $a$ by $b$, we define the following function $k$ for nodes $c$ in one layer before $a$:
 	\begin{align}
 		k(c) =
 		\begin{cases}
@@ -81,7 +81,7 @@ We may use the following formula to estimate the improvement:  \begin{align*}
 \end{align*}However, the error is still too large. This is because the improved value of a node $c$ can not exceed its precomputed upper and lower bound. Considering this, we can update our formula.
 
 \begin{definition}
-	Continue the assumption in Definition \ref{2layer} To compute the improvement of of upper bound of $a$ by $b$, we define a distance function $D$:
+	Continue the assumption in Definition \ref{2layer}. To compute the improvement of of upper bound of $a$ by $b$, we define a distance function $D$:
 	\begin{align}
 		&D(b) = \ReLU(v(b))-v(\hat{b})\\
 			&D(c) =
@@ -138,7 +138,7 @@ To compute $D(c)$ for nodes $c$ in two layer before $a$, we define \begin{align}
 		k(d)(w_1-v({d})), & \text{if }W_{da} > 0 \text{ and } \LB(d)< 0\\
 		\ReLU(w_1)-v(\hat{d})	, & \text{if }  W_{da} < 0
 		\end{cases}\\
-		&D(a) = \sum_c D(d)W_{da}
+		&D(a) = \sum_d D(d)W_{da}
 	\end{align}
 \end{definition} $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$.  For the lower bound, we can compute $D(a)$ by the same formula with the $v$ for lower bound LP solution and negative weights  instead.
 		
