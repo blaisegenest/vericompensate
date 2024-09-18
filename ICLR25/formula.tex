@@ -93,17 +93,17 @@ We may use the following formula to estimate the improvement:  \begin{align*}
 	\end{align}
 \end{definition}
 
-Then $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$. For the lower bound, we can compute $D(a)$ by the same formula with the $v$ for lower bound LP solution and negative weights instead. This is the formula to compute improvement of nodes two layers before.
+Then $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$. For the lower bound, we can compute $D(a)$ by the same formula with the function $v$ from lower bound LP solution and negative $-W_{ca}$ instead. This is the formula to compute improvement of nodes two layers before.
 
 
 \subsubsection*{Formula for nodes in 3 layers before} 
 
-This formula is based on previous subsection but more complex. In some network, running this formula may cost too much time but obtain little accuracy. 
+This formula is based on previous subsection but more complex. In some network, running this formula may cost too much time. 
 
 The key problem is how to compute the coefficient $k$ for nodes in two layers before the target layer. To do this, we may use the values in the solution of LP model as follows:
 
 \begin{definition}\label{3layer}
-	For a fixed target node $a$ and a fixed source node $b$ in three layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bound used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model; then we define the following function $h$ for all nodes $c$ in 2 layers before the target node $a$ as follows:
+	Suppose we have a fixed target node $a$ and a fixed source node $b$ in three layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bound used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model; then we define the following function $h$ for all nodes $c$ in 2 layers before the target node $a$ as follows:
 	\begin{align}
 		&v_0 = v(\hat{c}), v_1 = \ReLU(v(c)), v_2 = \frac{\UB(c)v(c)-\UB(c)\LB(c)}{\UB(c)-\LB(c)}\\
 		&h(c) =
@@ -140,5 +140,5 @@ To compute $D(c)$ for nodes $c$ in two layer before $a$, we define \begin{align}
 		\end{cases}\\
 		&D(a) = \sum_d D(d)W_{da}
 	\end{align}
-\end{definition} $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$.  For the lower bound, we can compute $D(a)$ by the same formula with the $v$ for lower bound LP solution and negative weights  instead.
+\end{definition} $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$.  For the lower bound, we can compute $D(a)$ by the same formula with the function $v$ from lower bound LP solution and negative $-W_{da}$  instead.
 		
