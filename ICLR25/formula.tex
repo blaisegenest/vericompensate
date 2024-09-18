@@ -21,11 +21,11 @@ The key of our formula is based on the following observation:
 
 Our observation (by experiments) is that \begin{align}
 	I_X \approx \sum_{b\in X} I_b.
-\end{align} Separately, if all nodes in $X$ are from one layer before $a$, then in experiments, we observe that 
+\end{align} Especially, if all nodes in $X$ are from one layer before $a$, then in experiments, we observe that 
 
-\begin{align}
+\begin{align*}
 	|(I_X - \sum_{b\in X} I_b)/I_X| < 1\%. \ (\text{in experiments})
-\end{align} Even $X$ contains nodes from 3 layers before the target layer, in experiments, $I_X$ is still close to $\sum_{b\in X} I_b$.
+\end{align*} Even $X$ contains nodes from 3 layers before the target layer, in experiments, $I_X$ is still close to $\sum_{b\in X} I_b$.
 
 Therefore, based on this observation, the question to choose $X$ is converted to compute $I_b$ for nodes $b$ in layers before the target layer. Our formula is to estimate the improvement of different individual nodes in different layers. For different layers, the formula will be different.  However, neither the observation in this subsection nor the formula in the next subsection has solid theoretical proof to show that they are very accurate. They are all based on experiments. 
 
@@ -103,7 +103,7 @@ This formula is based on previous subsection but more complex. In some network, 
 The key problem is how to compute the coefficient $k$ for nodes in two layers before the target layer. To do this, we may use the values in the solution of LP model as follows:
 
 \begin{definition}\label{3layer}
-	Suppose we have a fixed target node $a$ and a fixed source node $b$ in three layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bound used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model; then we define the following function $h$ for all nodes $c$ in 2 layers before the target node $a$ as follows:
+	Suppose we have a fixed target node $a$ and a fixed source node $b$ in three layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bounds used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model; then we define the following function $h$ for all nodes $c$ in 2 layers before the target node $a$ as follows:
 	\begin{align}
 		&v_0 = v(\hat{c}), v_1 = \ReLU(v(c)), v_2 = \frac{\UB(c)v(c)-\UB(c)\LB(c)}{\UB(c)-\LB(c)}\\
 		&h(c) =
