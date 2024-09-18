@@ -1,20 +1,96 @@
-Deep neural networks have demonstrated remarkable capabilities, achieving \newline human-like or even superior performance across a wide range of tasks. However, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the verification community to develop various methodologies, each presenting a unique balance between completeness and computational efficiency \cite{katz2019marabou,Reluplex,deeppoly}. This surge in innovation has also led to the inception of competitions such as VNNComp \cite{VNNcomp}, which aim to systematically evaluate the performance of neural network verification tools. While the verification engines are generic, the benchmarks usually focus on local robustness, i.e. given a DNN, an image and a small neighbourhood around this image, is it the case that all the images in the neighbourhood are classified in the same way. While some quite large DNNs (e.g. ResNet with tens of thousands of neurons) can be verified very efficiently (tens of seconds per input) \cite{crown}, with all inputs either certified robust or an attack on robustness is found; some smaller DNNs (with hundreds of neurons, only using the simpler ReLU activation function) cannot be analysed fully, with $12-20\%$ of {\em undecided} inputs where neither of the decisions can be reached (\cite{crown} and Table \ref{tab:example}). Using complete verifiers, while theoretically would close the gap, fail to answer fully due to (very long) time-outs. Actually, the DNNs easy to verify are trained specifically (using DiffAI \cite{DiffAI} or PGD \cite{PGD}), while the DNNs harder to verify are {\em verification-agnostic} \cite{SDPFI}, trained in a {\em natural} way.
+Deep neural networks (DNNs for short) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks. However, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the verification community to develop various methodologies, each presenting a unique balance between completeness and computational efficiency \cite{katz2019marabou,Reluplex,deeppoly}. This surge in innovation has also led to the inception of competitions such as VNNComp \cite{VNNcomp}, which aim to systematically evaluate the performance of neural network verification tools. While the verification engines are generic, the benchmarks usually focus on local robustness, i.e. given a DNN, an image and a small neighbourhood around this image, is it the case that all the images in the neighbourhood are classified in the same way. 
+For the past 5 years, VNNcomp has focused on rather easy instances, that can be solved within tens of seconds (the typical hard time-out is 300s). For this reason, DNN verifiers in the past years have mainly focused on optimizing for such easy instances. Among them, NNenum \cite{nnenum}, Marabou \cite{Marabou, Marabou2}, and PyRAT, respectively 4th, 3rd and 2sd of the last VNNcomp'24 \cite{VNNcomp24}
+and 5th, 2sd and 3rd  of the VNNcomp'23 \cite{VNNcomp24}; MnBAB \cite{ferrari2022complete}, 2sd in VNNcomp'22 \cite{VNNcomp22}, built upon ERAN \cite{deeppoly} and PRIMA \cite{prima}; and importantly, $\alpha,\beta$-CROWN \cite{crown,xu2020fast}, the winner of the last 4 VNNcomp, benefiting from branch-and-bound based methodology \cite{cutting,BaB}.
+We will thus focus in the following mostly on $\alpha,\beta$-CROWN.
 
-In this work, we concentrate on {\em verification-agnostic} DNNs, given the prevalence of techniques for {\em easier} DNNs, and also the decrease in accuracy of specifically trained DNNs (e.g. the large easy-to-verify ResNet network has $29\%$ accuracy \cite{prima}!). Our analysis focuses on DNNs employing the standard ReLU activation function, though our findings potentially extend to more sophisticated architectures. Our investigation delves into the core abstraction mechanisms integral to several prominent algorithms, such as Eran-DeepPoly \cite{deeppoly}, Linear Programming \cite{MILP}, PRIMA \cite{prima}, 
-MN-BaB \cite{ferrari2022complete} and various implementations of ($\alpha$)($\beta$)-CROWN \cite{crown,xu2020fast}\footnote{\cite{VNNcomp} reports that $\alpha,\beta$-Crown \cite{crown,xu2020fast} often surpasses in accuracy other competing techniques, even complete ones due to (even long) time-outs;  It maintains completeness for smaller DNNs \cite{xu2020fast}, and showcases impressive efficiency for larger networks, benefiting from branch-and-bound based methodology \cite{cutting,BaB}.}. 
-	The high-level approach followed by all these techniques is to compute lower or/and upper bounds for the values of neurons (abstraction on values) for inputs in the considered input region, and then finally conclude based on the bounds of neurons in the output layer. These tools are thus sound but not necessarily complete, i.e., when these tools certify a DNN to be robust for a particular image $I$, then the corresponding DNN is indeed robust but it may happen that the tool is unable to certify a DNN to be robust even though it actually is, because of bounds inaccuracies. 
+Easy instances does not mean small DNNs: for instance, a ResNet architecture for CIFAR10 (with tens of thousands of neurons) has been fully checked by $\alpha,\beta$-CROWN \cite{crown}, each instance taking only a couple of seconds to either certify that there is no robustness attack, or finding a very close neighbour with a different decision. One issue is however that easy instances are trained specifically to be easier to verified
+e.g. using DiffAI \cite{DiffAI} or PGD \cite{PGD}, which can impact the accuracy of the network, i.e. answering correctly to an unperturbed input. For instance, this ResNet was trained using Wong, and only $29\%$ of its answers are correct (the other $71\%$ are thus not even tested by $\alpha,\beta$-CROWN). While more accurate trainers for verification have been recently developped \cite{TrainingforVerification}, they can only simplify one given verification specification by a limited amount before hurting accuracy, turning e.g. very hard verification instances into hard verification instances.
+Also, verification questions intrinsically harder than local robustness, such as 
+bounding on Lipschitz constants \cite{lipshitz} globally or asking several specification at once, makes the instance particularly harder. Last, there are many situation (workflow, no access to the dataset...) where using specific trainers to learn easy to verify DNN is simply not possible ({\em verification-agnostic} networks \cite{SDPFI}). The bottom line is, one cannot expect only easy verification instances: hard verification instances need to be explored as well.
+
+In this paper, we focused on 6 {\em hard} ReLU-DNNs that have been previously tested in one or several of \cite{prima},\cite{SDPFI},\cite{crown}, and with a large gap ($>20\%$) between images that can be certified and the upper bound when we remove those which can be falsified. In turns, hard instances does not necessarily mean very large DNNs, the smallest of the DNN considered having only 500 hidden neurons, namely 5x100 for MNIST. We first dwelve into the scaling of $\alpha,\beta$- Crown, to understand how longer Time-Out (TO) affects the number of undecided images and the runtime. Table \ref{table_beta} reveals that even allowing for 200 times longer time outs only improves the verification from 2\% to 8\%, leaving a considerable $20\%-50\%$ gap of undecided images, while necessitating vastly longer runtime (300s-1000s in average per instance).
+
+
+
+
+
+\begin{table}[t!]
+	\centering
+	\begin{tabular}{||l|c|c||c|c|c||}
+		\hline
+		Network & Accuracy & Upper  & $\alpha,\beta$-Crown& $\alpha,\beta$-Crown & $\alpha,\beta$-Crown \\ 
+		Perturbation &   & Bound & TO=10s & TO=30s & TO=2000s\\ \hline
+		MNIST 6$\times$100 & 99\% & 90\% & 33\% & 35\% & 40\%   \\
+		$\epsilon = 0.026$ &  &  & 6.9s &  18.9s &  1026s  \\  \hline
+		MNIST 6$\times$200 & 99\%  & 96\%  & 46\%  & 49\%  & 50\%   \\ 
+		$\epsilon = 0.015$ & &  & 6.5s &  16.6s &  930s  \\  \hline
+		MNIST 9$\times$100 & 97\%  & 86\%  & 23\%  & 28\%  & 28\%   \\
+		$\epsilon = 0.026$ &  &  & 7.2s &  20.1s &  930s  \\  \hline
+		MNIST 9$\times$200 & 97\%  & 91\%  & 35\%  & 36\%  & 37\%   \\ 
+		$\epsilon = 0.015$ & &  & 6.8s &  18.2s &  1083s  \\  \hline
+		MNIST 6$\times$500 & 100\%  & 94\%  & 41\%  & 43\%  & 44\%   \\ 
+		$\epsilon = 0.035$ & &  & 6.4s &  16.4s &  1003s  \\  \hline
+		CIFAR CNN-B-adv & 78\%  & 62\%  &  34\% & 40\%  & 42\%   \\
+		$\epsilon = 2/255$&  &  & 4.3s & 8.7s & 373s  \\ \hline \hline
+		CIFAR ResNet & 29\%  & 25\%  & 25\%  & 25\%  & 25\%   \\
+		$\epsilon = 2/255$ &  &  & 2s & 2s & 2s  \\ \hline
+	\end{tabular}
+	\caption{Images verified by $\alpha,\beta$-Crown with different time-outs (TO) on 7 DNNs, and average runtime per image. The 6 first DNNs are hard instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.}
+	\label{table_beta}
+	\vspace{-0.3cm}
+\end{table}
+
+
+
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{||l|c|c||c|c|c||}
+		\hline
+		Network &  Accuracy & Upper  & Marabou 2.0 & NNenum? &  Full MILP  \\ \hline
+		MNIST 6$\times$100 & 99\% & 90\% & 28\% & $\approx 46\%$ & 40 \%    \\
+		$\epsilon = 0.026$ & &  &6200s &  5220s & 6100s
+		  \\  \hline
+	\end{tabular}
+\caption{Complete verifiers run on the smallest of the hard DNN with TO = 10 000s. 
+%Because the instances are hard, most test time-out at the global threshold of 10.000s per image, and 
+No complete verifier could outperform $\alpha,\beta$-CROWN (40\%, 1026s), despite the much larger runtime.}
+\label{table_complete}
+\end{table}
+
+
+The size of the smallest DNN (500 hidden neurons) makes it realistic to be solved by complete verifiers such as Marabou 2.0, NNenum or a Full MILP encoding. 
+While they should theoretically be able to close the gap of undecided images,
+in practice, Table \ref{table_complete} reveals that even with a very large 10 000s time out per image, none succeds to verify any more image than $\alpha,\beta$-Crown, while the runtime is $>5$ times longer. It seemed pointless to test complete verifier on larger networks.
+
+
+
+%Eran-DeepPoly \cite{deeppoly}, Linear Programming \cite{MILP}, PRIMA \cite{prima}.
+
+%\cite{VNNcomp} reports that $\alpha,\beta$-Crown \cite{crown,xu2020fast} often surpasses in accuracy other competing techniques, even complete ones due to (even long) time-outs;  It maintains completeness for smaller DNNs \cite{xu2020fast}, and showcases impressive efficiency for larger networks, 
+
+
+%Our investigation delves into the core abstraction mechanisms integral to several prominent algorithms, such as 
+
+%Eran-DeepPoly \cite{deeppoly}, Linear Programming \cite{MILP}, PRIMA \cite{prima}, MN-BaB \cite{ferrari2022complete} and various implementations of ($\alpha$)($\beta$)-CROWN \cite{crown,xu2020fast}\footnote{\cite{VNNcomp} reports that $\alpha,\beta$-Crown \cite{crown,xu2020fast} often surpasses in accuracy other competing techniques, even complete ones due to (even long) time-outs;  It maintains completeness for smaller DNNs \cite{xu2020fast}, and showcases impressive efficiency for larger networks, benefiting from branch-and-bound based methodology \cite{cutting,BaB}.}.
+
+
+
+%Our investigation delves into the core abstraction mechanisms integral to several prominent algorithms, such as Eran-DeepPoly \cite{deeppoly}, Linear Programming \cite{MILP}, PRIMA \cite{prima}, MN-BaB \cite{ferrari2022complete} and various implementations of ($\alpha$)($\beta$)-CROWN \cite{crown,xu2020fast}\footnote{\cite{VNNcomp} reports that $\alpha,\beta$-Crown \cite{crown,xu2020fast} often surpasses in accuracy other competing techniques, even complete ones due to (even long) time-outs; It maintains completeness for smaller DNNs \cite{xu2020fast}, and showcases impressive efficiency for larger networks, benefiting from branch-and-bound based methodology \cite{cutting,BaB}.}. The high-level approach followed by all these techniques is to compute lower or/and upper bounds for the values of neurons (abstraction on values) for inputs in the considered input region, and then finally conclude based on the bounds of neurons in the output layer. These tools are thus sound but not necessarily complete, i.e., when these tools certify a DNN to be robust for a particular image $I$, then the corresponding DNN is indeed robust but it may happen that the tool is unable to certify a DNN to be robust even though it actually is, because of bounds inaccuracies. 
 	%To dig further into their incompleteness, we first remark that 
-	Notice that complete methods exist \cite{Reluplex,katz2019marabou,SDPFI}, but they time-out on hard instances. In practice, the most accurate today's results are obtained using ($\alpha$)($\beta$)-CROWN \cite{crown}.
-
-
-
+	%Notice that complete methods exist \cite{Reluplex,katz2019marabou,SDPFI}, but they time-out on hard instances. In practice, the most accurate today's results are obtained using ($\alpha$)($\beta$)-CROWN \cite{crown}.
 %As a starting point, we sought to understand properties of DNNs that make them hard to verify.
-Our key finding is a new notion of {\em compensations}, that explains why bounds are inaccurate. Formally, a {\em compensating pair of paths} $(\pi,\pi')$ between neurons $a$ and $b)$ is such that $w < 0 < w'$ for $w,w'$ the products of weights seen along $\pi$ and $\pi'$ respectively. Ignoring the (ReLU) activation functions, the weight of $b$ is loaded with 
-$(w+w') weight(a)$ by $\pi$ and $\pi'$. As $w,w'$ have opposite signs, they will compensate (partly) each other. The compensation is only partial due to the ReLU activation seen along the way of $\pi$ which can "clip" a part of $w \cdot weight(a)$, and similarly for $\pi'$. However, it is very hard to evaluate by how much without explicitly considering both phases of the ReLUs, which the efficient tools try to avoid because it is very time-consuming (combinatorial explosion as the problem is NP-hard \cite{Reluplex}).
+
+%Our key finding is a new notion of {\em compensations}, that explains why bounds are inaccurate. Formally, a {\em compensating pair of paths} $(\pi,\pi')$ between neurons $a$ and $b)$ is such that $w < 0 < w'$ for $w,w'$ the products of weights seen along $\pi$ and $\pi'$ respectively. Ignoring the (ReLU) activation functions, the weight of $b$ is loaded with $(w+w') weight(a)$ by $\pi$ and $\pi'$. As $w,w'$ have opposite signs, they will compensate (partly) each other. The compensation is only partial due to the ReLU activation seen along the way of $\pi$ which can "clip" a part of $w \cdot weight(a)$, and similarly for $\pi'$. However, it is very hard to evaluate by how much without explicitly considering both phases of the ReLUs, which the efficient tools try to avoid because it is very time-consuming (combinatorial explosion as the problem is NP-hard \cite{Reluplex}).
 %; for instance, what is a differentiating  feature between DNNs trained in natural way (i.e., without explicit concern for robustness) versus the DNNs trained to be robust. 
-Our three main contributions address the challenges of inaccuracies when verifying DNNs:
+
+
+Our three main contributions address the challenges of verifying {\em hard} DNNs efficiently:
 \begin{enumerate}
-	\item  Our first main contribution establishes, through Theorem \ref{th1}, the foundational understanding that the compensating pairs are the 	%primary 
+	\item  Our first contribution is to study LP relaxations for the complete MILP
+	encoding of ReLU-DNNs. We establish in Theorem \ref{th1} the abstraction set corresponding to the LP constraints.
+	\item This allows us to propose a measure of utility for each neuron
+	
+	foundational understanding that the compensating pairs are the 	%primary 
 	source of {\em all} inaccuracies, 
 	 as in their absence, even the simplest Box abstraction (and most abstractions under consideration) is fully accurate. This is confirmed experimentally by the fact that 
 	 DNNs easier to verified have less compensation strength than verification agnostic DNNs. 
@@ -34,6 +110,9 @@ Our three main contributions address the challenges of inaccuracies when verifyi
 
 
 \end{enumerate}
+
+We consider DNNs employing the standard ReLU activation function, though our findings potentially extend to more sophisticated architectures. 
+
 
 These theoretical and experimental results both point to compensation being a promising notion, opening up many opportunities, as discussed in Section \ref{Discussion}. 
 
