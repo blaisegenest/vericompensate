@@ -106,17 +106,21 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 
 \begin{table}[t!]	
 	\centering
-	\begin{tabular}{|c||c|c|c|}
+	\begin{tabular}{|c||c|c|c|c|}
 		\hline
-		\text{Number $K$}  &  \text{Compensate} &  \text{Incoming Weights} \cite{9211410} & \text{Random} \\ \hline
+		\text{Number $K$}  &  \text{Without ratio} &\text{With ratio} &  \text{Incoming Weights} \cite{9211410} & \text{Random} \\ \hline
 		\hline
-		0  &  1.761 & 1.761 & 1.761  \\ \hline
-		10  &  1.641 & 1.651 & 1.696  \\ \hline
-		20  &  1.517 & 1.557 & 1.619  \\ \hline
-		30  &  1.392 & 1.489 & 1.546  \\ \hline
-		40  &  1.275 & 1.447 & 1.469  \\ \hline
-		50  &  1.158 & 1.426 & 1.388  \\ \hline
-		116 (max) &  0.895 & 1.424 (max=$61$) & 0.895  \\ \hline
+		0  &   1.761  & 1.761 & 1.761 & 1.761  \\ \hline
+		5  & 1.532  & 1.533 & &   \\ \hline
+		10  & 1.371 & 1.373 & 1.651 & 1.696  \\ \hline
+		15  & 1.247 & 1.244 &   &   \\ \hline
+		20  & 1.145 & 1.136 & 1.557 & 1.619  \\ \hline
+		25  & 1.061 & 1.057 &  &   \\ \hline
+		30  & 0.989 & 1.067 & 1.489 & 1.546  \\ \hline
+		35  & 0.934 & 1.091 &  &   \\ \hline
+		40  &  & & 1.447 & 1.469  \\ \hline
+		50  &  & & 1.426 & 1.388  \\ \hline
+		116 (max) &  0.895 & 0.895 & 1.424 (max=$61$) & 0.895  \\ \hline
 	\end{tabular}
 	\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs \cite{9211410} vs random choice).}
 	\label{tab:example1}
