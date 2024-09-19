@@ -108,7 +108,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 	\centering
 	\begin{tabular}{|c||c|c|c|c|}
 		\hline
-		\text{Number $K$}  &  \text{Without ratio} &\text{With ratio} &  \text{Incoming Weights} \cite{9211410} & \text{Random} \\ \hline
+		\text{Number $K$}  &  \text{Without ratio} &\text{With ratio} &  \text{Incoming Weights} \cite{ DivideAndSlide} & \text{Random} \\ \hline
 		\hline
 		0  &   1.761  & 1.761 & 1.761 & 1.761  \\ \hline
 		5  & 1.532  & 1.533 & &   \\ \hline
@@ -122,7 +122,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 		50  &  & & 1.426 & 1.388  \\ \hline
 		116 (max) &  0.895 & 0.895 & 1.424 (max=$61$) & 0.895  \\ \hline
 	\end{tabular}
-	\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs \cite{9211410} vs random choice).}
+	\caption{Average uncertainty of $\MILP_Z$ for nodes of the third layer, for $Z$ with $K$ ReLU nodes of the 1st and 2nd layer (compensating strength vs \cite{ DivideAndSlide} vs random choice).}
 	\label{tab:example1}
 	\vspace{-0.6cm}
 \end{table}
@@ -138,7 +138,7 @@ Then, we add nodes iteratively to $Z$, starting with the highest $comp(c)=\sum_{
 Let $comp(b,b')=\sum_a \sum_{c,c' \in Z} \delta(abcd,ab'c'd) \val_{\vx}(a) \min( weight(abcd)$, $weight(ab'c'd))$ and add $b,b'$ to $Z$ with the highest $comp(b,b')$.
 We then let $comp(b)=\sum_{b' \in Z} comp(b,b') + comp(b',b)$, and iteratively select nodes $b$ (first layer) or $c$ (second layer) by selecting the heaviest $comp(b)$ or $comp(c)$. The intuition behind the formula is straightforward: $\val_{\vx}(a)weight(abcd)$ is the contribution from node $a$ to the target $d$ using $weight(abcd)$, and min of two paths is a natural value to represent the strength of compensation: if one of them is very small, the effect of compensation will also be very small.
 
-We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes from layers $1$ and $2$. We test using compensation, compared with a random choice, and also choice based on strength in \cite{9211410}, defined as $strength(c) = (UB(n)-LB(n))\cdot W_{cd}$. It is however limited to choosing ReLU in the previous layer 2. This choice is fine for few nodes (10,20), as there is a high correlation between $comp(c)$ being high and $W_{cd}$ being high. However, as soon as many nodes can be chosen in $Z$, compensate becomes much more accurate. Even random becomes more accurate as the number of nodes grows, as \cite{9211410} only has access to nodes $c$ in layer 2, and not to nodes $b$ in layer 1.
+We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes from layers $1$ and $2$. We test using compensation, compared with a random choice, and also choice based on strength in \cite{ DivideAndSlide}, defined as $strength(c) = (UB(n)-LB(n))\cdot W_{cd}$. It is however limited to choosing ReLU in the previous layer 2. This choice is fine for few nodes (10,20), as there is a high correlation between $comp(c)$ being high and $W_{cd}$ being high. However, as soon as many nodes can be chosen in $Z$, compensate becomes much more accurate. Even random becomes more accurate as the number of nodes grows, as \cite{ DivideAndSlide} only has access to nodes $c$ in layer 2, and not to nodes $b$ in layer 1.
 For comparison, compensate is the most accurate, from 30 nodes, experimentally validating that compensating strength is the important factor to consider. 
 
 \iffalse
@@ -147,10 +147,10 @@ also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosi
 Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier because the trade-off of accuracy vs evaluating the compensating strength of such paths is unclear.
 
 {\color{red} We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly from layers $1$ and $2$. 
-	Moreover, we also compare choosing nodes in the second layer only (using method in paper \cite{9211410}) with choosing nodes in both the first and second layer.
+	Moreover, we also compare choosing nodes in the second layer only (using method in paper \cite{ DivideAndSlide}) with choosing nodes in both the first and second layer.
 	
 	
-		The method in paper \cite{9211410} use a formula to value different nodes in a layer, and then choose nodes by their values. We can use the same formula in this comparison experiments. Because we only have $\ReLU$ function, that formula can be simplified to: $$V(n) = (UB(n)-LB(n))\cdot W_{nm}.$$ In this formula, $m$ is the target node, and $n$ is one of source nodes in one layer before. We sort all nodes $n$ by their $V(n)$ values, and choose the nodes with larger values. 
+		The method in paper \cite{ DivideAndSlide} use a formula to value different nodes in a layer, and then choose nodes by their values. We can use the same formula in this comparison experiments. Because we only have $\ReLU$ function, that formula can be simplified to: $$V(n) = (UB(n)-LB(n))\cdot W_{nm}.$$ In this formula, $m$ is the target node, and $n$ is one of source nodes in one layer before. We sort all nodes $n$ by their $V(n)$ values, and choose the nodes with larger values. 
 	
 	
 	
