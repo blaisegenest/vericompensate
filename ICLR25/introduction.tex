@@ -3,15 +3,13 @@ For the past 5 years, VNNcomp has focused on rather easy instances, that can be 
 and 5th, 2sd and 3rd  of the VNNcomp'23 \cite{VNNcomp24}; MnBAB \cite{ferrari2022complete}, 2sd in VNNcomp'22 \cite{VNNcomp22}, built upon ERAN \cite{deeppoly} and PRIMA \cite{prima}; and importantly, $\alpha,\beta$-CROWN \cite{crown,xu2020fast}, the winner of the last 4 VNNcomp, benefiting from branch-and-bound based methodology \cite{cutting,BaB}.
 We will thus focus in the following mostly on $\alpha,\beta$-CROWN.
 
-Easy instances does not mean small DNNs: for instance, a ResNet architecture for CIFAR10 (with tens of thousands of neurons) has been fully checked by $\alpha,\beta$-CROWN \cite{crown}, each instance taking only a couple of seconds to either certify that there is no robustness attack, or finding a very close neighbour with a different decision. One issue is however that easy instances are trained specifically to be easier to verified
+Easy instances does not mean small DNNs: for instance, a ResNet architecture for CIFAR10 (with tens of thousands of neurons) has been fully checked by $\alpha,\beta$-CROWN \cite{crown}, each instance taking only a couple of seconds to either certify that there is no robustness attack, or finding a very close neighbour with a different decision. One issue is however that easy instances are trained specifically to be easier to verify
 e.g. using DiffAI \cite{DiffAI} or PGD \cite{PGD}, which can impact the accuracy of the network, i.e. answering correctly to an unperturbed input. For instance, this ResNet was trained using Wong, and only $29\%$ of its answers are correct (the other $71\%$ are thus not even tested by $\alpha,\beta$-CROWN). While more accurate trainers for verification have been recently developped \cite{TrainingforVerification}, they can only simplify one given verification specification by a limited amount before hurting accuracy, turning e.g. very hard verification instances into hard verification instances.
 Also, verification questions intrinsically harder than local robustness, such as 
 bounding on Lipschitz constants \cite{lipshitz} globally or asking several specification at once, makes the instance particularly harder. Last, there are many situation (workflow, no access to the dataset...) where using specific trainers to learn easy to verify DNN is simply not possible ({\em verification-agnostic} networks \cite{SDPFI}). The bottom line is, one cannot expect only easy verification instances: hard verification instances need to be explored as well.
 
-In this paper, we focused on 6 {\em hard} ReLU-DNNs that have been previously tested in one or several of \cite{prima},\cite{SDPFI},\cite{crown}, and with a large gap ($>20\%$) between images that can be certified and the upper bound when we remove those which can be falsified. In turns, hard instances does not necessarily mean very large DNNs, the smallest of the DNN considered having only 500 hidden neurons, namely 5x100 for MNIST. We first dwelve into the scaling of $\alpha,\beta$- Crown, to understand how longer Time-Out (TO) affects the number of undecided images and the runtime. Table \ref{table_beta} reveals that even allowing for 200 times longer time outs only improves the verification from 2\% to 8\%, leaving a considerable $20\%-50\%$ gap of undecided images, while necessitating vastly longer runtime (300s-1000s in average per instance).
 
-
-
+In this paper, we focused on 6 {\em hard} ReLU-DNNs that have been previously tested in one or both of \cite{SDPFI},\cite{crown}, and with a large gap ($>20\%$) between images that can be certified and the upper bound when we remove those which can be falsified. In turns, hard instances does not necessarily mean very large DNNs, the smallest of the DNN considered having only 500 hidden neurons, namely 5x100 for MNIST. We first dwelve into the scaling of $\alpha,\beta$- Crown, to understand how longer Time-Out (TO) affects the number of undecided images and the runtime. Table \ref{table_beta} reveals that even allowing for 200 times longer time outs only improves the verification from 2\% to 8\%, leaving a considerable $20\%-50\%$ gap of undecided images, while necessitating vastly longer runtime (300s-1000s in average per instance).
 
 
 \begin{table}[t!]
@@ -50,6 +48,8 @@ In this paper, we focused on 6 {\em hard} ReLU-DNNs that have been previously te
 		MNIST 6$\times$100 & 99\% & 90\% & 28\% & $\approx 46\%$ & 40 \%    \\
 		$\epsilon = 0.026$ & &  &6200s &  5220s & 6100s
 		  \\  \hline
+		  MNIST 6$\times$100 & 99\% & 90\% & 28\% & $40\%$ & 37 \%    \\
+		  TO=2000s & &  & 1250s  & 1343s & 1466s \\  \hline	
 	\end{tabular}
 \caption{Complete verifiers run on the smallest of the hard DNN with TO = 10 000s. 
 %Because the instances are hard, most test time-out at the global threshold of 10.000s per image, and 
@@ -58,10 +58,10 @@ No complete verifier could outperform $\alpha,\beta$-CROWN (40\%, 1026s), despit
 \end{table}
 
 
+
 The size of the smallest DNN (500 hidden neurons) makes it realistic to be solved by complete verifiers such as Marabou 2.0, NNenum or a Full MILP encoding. 
 While they should theoretically be able to close the gap of undecided images,
 in practice, Table \ref{table_complete} reveals that even with a very large 10 000s time out per image, none succeds to verify any more image than $\alpha,\beta$-Crown, while the runtime is $>5$ times longer. It seemed pointless to test complete verifier on larger networks.
-
 
 
 %Eran-DeepPoly \cite{deeppoly}, Linear Programming \cite{MILP}, PRIMA \cite{prima}.
@@ -86,36 +86,19 @@ in practice, Table \ref{table_complete} reveals that even with a very large 10 0
 
 Our three main contributions address the challenges of verifying {\em hard} DNNs efficiently:
 \begin{enumerate}
-	\item  Our first contribution is to study LP relaxations for the complete MILP
-	encoding of ReLU-DNNs. We establish in Theorem \ref{th1} the abstraction set corresponding to the LP constraints.
-	\item This allows us to propose a measure of utility for each neuron
-	
-	foundational understanding that the compensating pairs are the 	%primary 
-	source of {\em all} inaccuracies, 
-	 as in their absence, even the simplest Box abstraction (and most abstractions under consideration) is fully accurate. This is confirmed experimentally by the fact that 
-	 DNNs easier to verified have less compensation strength than verification agnostic DNNs. 
-	This revelation, while theoretically pivotal, has limited practical applicability as most networks inherently possess compensating pairs. Nonetheless, this insight lays the groundwork for our innovative approach, {\em relaxing} the usual but inefficient Mixed Integer Linear Program (MILP) formulation encoding exactly DNNs \cite{MILP}. To compute bounds for $z$, we encode as binary variables only ReLU nodes on {\em compensating paths with target $z$}; other nodes, in particular those on compensating paths to neurons before $z$ are encoded using the much faster linear relaxation. To take into account indirectly the compensating paths to previous nodes, we inductively compute bounds for every neuron layer by layer, and use these bounds of previous neurons in the MILP encoding for $z$. This is more efficient, as the number of binary nodes is strongly reduced. However, the question remains how accurate is it?
-	
-\item  Our second main contribution, delineated in Theorem \ref{th2}, answers this question, showing that this abstraction is fully accurate, in that the bounds computed in such a way for neuron $z$ correspond exactly to the minimal and maximal values reachable by inputs of the DNN. Again, the prevalence of compensating paths in actual DNNs renders this algorithm computationally intensive because the number of binary variables is still high.
+	\item  Our first contribution is to study the LP relaxation for the complete MILP
+	encoding of ReLU-DNNs. We establish in Proposition \ref{LP} an explicit abstraction set corresponding to the LP constraints.
+	\item This allows us to propose a measure of utility for each neuron, providing an upper bound on the improvement on accuracy made if we treat this neuron with an integer variable instead of the LP relaxation. Choosing the neurons with the top utility and encoding them with integer variables gives rise to a partial MILP which is much more efficient than previous attempts \cite{9211410}, necessitating much less integer variables for the same accuracy.
 
-
-\item Our third main contribution is to experimentally confirm that focusing on compensations {\em does} improve accuracy: we introduce {\CMP} (Algorithm \ref{algo1}), building on our theoretical insights. This method prioritizes ReLU nodes based on the weights of their associated compensating paths and differentiates their treatment in the MILP model, employing binary constraints for heavier nodes and linear constraints for lighter ones. Our empirical evaluation (refer to Table \ref{tab:example}) reveals {\CMP} achieves a beneficial balance between accuracy and completeness compared to prevailing methods. It reduces the proportion of undecided inputs from 17.6\% (as seen with $\beta$-Crown \cite{crown}) to 10.4\% on the DNN architecture of $8 \times 200$. Moreover, it verifies over 20\% more images than $\alpha,\beta$-CROWN \cite{xu2020fast} (or PRIMA \cite{prima}, MN-BaB \cite{ferrari2022complete}) on the larger $6 \times 500$ DNN.
-
-
+\item We then propose a new verifier, called Hybrid MILP, invoking first 
+$\alpha,\beta$-CROWN with short time-out to settle the easy instances. On those (hard) instances which are neither certified nor falsified, we call our partial MILP with few neurons encoded as integer variables. Experimental evaluation reveals that Hybrid MILP achieves a beneficial balance between accuracy and completeness compared to prevailing methods. It reduces the proportion of undecided inputs from $20-58\%$ ($\alpha,\beta$-CROWN with 2000s TO) to $8-15\%$, while taking a reasonable average time per instance (46-420s). It scale to fairly large networks such as CNN-B-Adv \cite{SDPFI} for the CIFAR10 benchmark, with more than 20.000 neurons.
 %We verify experimentally that the algorithm offers interesting trade-offs, by testing on local robustness for DNNs trained "naturally" (and thus difficult to verify).
-
 %KSM: I think this is a distraction in intro, so I suggest moving to later part
 % Overall, the worst case complexity of algorithm \ref{algo1} is lower than $O(N 2^K LP(N))$, where $N$ is the number of nodes of the DNN, $K$ the number of ReLU nodes selected as binary variable, and $LP(N)$ is the (polynomial time) complexity of solving a linear program representing a DNN with $N$ nodes. This complexity is an upper bound, as e.g. Gurobi is fairly efficient and never need to consider all of the $2^K$ ReLU configurations to compute the bounds. Keeping $K$ reasonably low thus provides an efficient algorithm. 
 %By design, it will never run into a complexity wall (unlike the full MILP encoding), although it can take a while on large networks because of the linear factor $N$ in the number of nodes.
-
-
 \end{enumerate}
 
-We consider DNNs employing the standard ReLU activation function, though our findings potentially extend to more sophisticated architectures. 
-
-
-These theoretical and experimental results both point to compensation being a promising notion, opening up many opportunities, as discussed in Section \ref{Discussion}. 
-
+Limitation: We consider DNNs employing the standard ReLU activation function, though our findings should extend to other activation functions, following similar extention by \cite{??}. 
 
 
 
