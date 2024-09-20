@@ -120,7 +120,7 @@ $\UB(b),\LB(b)$:
 
 %To estimate Improve\_max$_a^z$ , 
 Indeed, if $W_{bz}\leq0$, then the LP solver sets $sol(\hat{b})$ to the lowest possible value to maximize $z$, which happens to be $ReLU(b)$ according to Proposition \ref{LP}.
-If $sol(b) < 0$, then we have a clip at $sol(\hat{b})=ReLU(b)=0$ and opening $a$ does not help. If $sol(b) > 0$, then we have $sol(\hat{b})=ReLU(b)=b$ and every change from 
+If $sol(b) < 0$, then we have a clip at $sol(\hat{b})=ReLU(b)=0$ and opening $a$ does not help. If $sol(b) > 0$, then we have $sol(\hat{b})=ReLU(b)=sol(b)$ and every change from 
 $a$ is reflected with a coefficient $W_{ab}$ on $\hat{b}$. 
 Last, if $W_{bz}>0$, then according to Proposition \ref{LP}, the LP solver
 sets $sol(\hat{b}) = sol(b) \frac{\UB(b)}{\UB(b)-\LB(b)}$ to maximize $z$.
