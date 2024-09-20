@@ -133,8 +133,7 @@ We conducted our evaluation on the neural networks tested in \cite{crown},
 which display a large gap ($\geq 20\%$) between images that can be certified by $\alpha,\beta$-CROWN and the upper bound when we remove those which can be falsified.
 
 Namely, these are 6 {\em hard} ReLU-DNNs: 5 MNIST DNN from the ERAN GitHub (\url{https://github.com/eth-sri/eran}, the 4th to the 8th DNNs provided) as well as 1 CIFAR CNN from 
-\cite{AdversarialTrainingAndProvableDefenses}, also see \cite{SDPFI}. 
-For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark.
+\cite{AdversarialTrainingAndProvableDefenses}, also see \cite{SDPFI}, with the same $\epsilon$ setting. For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark, the exact same setting and DNNs as used in Table \ref{table_beta}.
 
 
 \begin{table}[t!]
@@ -168,8 +167,45 @@ Compared with $\alpha,\beta$-Crown with a time-out of TO=30s, the accuracy gap i
 
 Last, compared with refined $\beta$-Crown, we can observe three patterns: on the shallowest DNNs (5x100, 5x200), refined $\beta$-Crown can run full MILP on almost all nodes, reaching almost the same accuracy than our Hybrid MILP, but with longer runtime (up to 2x on 5x100). On intermediate DNNs (8x100,8x200), full MILP invoked by refined $\beta$-Crown can only be run on a fraction of the neurons, and the accuracy is not as good as Hybrid MILP, with $6\%-8\%$ more undecided images, while having longer runtime. Last, refined $\beta$-Crown cannot scale to larger instances (6x500, CNN-B-Adv), while Hybrid MILP can.
 
-\iffalse
 
+\subsection{Finer Grain evaluation of Accuracy}
+
+In order to evaluate the accuracy of Hybrid MILP in a finer way, showcasing 
+the capabilities to have a very accurate and efficient verifier, we consider
+a quantitative questions for each image, rather than a pure yes (verified)/ no (not verified) question. Namely, we compute the $\epsilon$ for which the verifier can certify local-robustness around a given image, which makes sense as there is little rationale in setting a particular $\epsilon$ (which is however the usual local-robustness setting).
+
+For that, we considered the DNN 6x500, and the 20 first images from the MNIST benchmark.
+We first run the attack from $\alpha,\beta$-Crown for varying $\epsilon$, using a binary search, to set up an upper bound on $\epsilon$ (the initialization is $\epsilon \in [0,1]$).
+Then we run binary search with a global time out of $10 000s$, initialized from $0$ to this upper bound, where each call is either to $\alpha,\beta$-Crown with TO=2000s, or Hybrid MILP.
+We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown and by Hybrid MILP) for each image. We report the results in Fig. \ref{fig2}
+
+\begin{figure}[t!]
+	\begin{centering}
+\includegraphics[scale=0.5]{epsilon.png}.
+\caption{$\epsilon$-robustness proved after $10 000s$ for each of the 20 first images of MNIST.}
+\label{fig2}
+	\end{centering}
+\end{figure}
+
+Analysis: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10 and 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so it is possible the upper bound did not find a close attack to robustness.
+
+Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper bound, but for 2 cases where $\alpha,\beta$-CROWN is already very close to the upper bond. On average, the $\epsilon$ gap to upper bound is $0.014$ for Hybrid MILP, and $0.42$ for 
+$\alpha,\beta$-CROWN.
+
+
+
+\subsection{Comparison with other Verifiers?}
+
+We volontarily limited the comparison to $\alpha,\beta$-Crown because it is the most efficient verifier available to date, and it enabled us to consider much finer parameter choice without too much cluter. 
+
+Notice that several other verifiers were already reported \cite{crown} on these same DNNs, with defavorable comparison towards $\alpha,\beta$-CROWN (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc). Further, we reported accuracy of complete verifiers, NNenum \cite{nnenum}, Marabou \cite{Marabou, Marabou2}, respectively 4th, 3rd 
+of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on hard instances either, even on the smallest hard DNN. Concerning MnBAB \cite{ferrari2022complete}, it compares slightly defavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv \cite{ferrari2022complete}, and we also run it for the MNIST DNNs, and it was slightly slower and less accurate than $\alpha,\beta$-CROWN at several time-out settings. 
+Last, Pyrat code is not open source, which made running it impossible.
+
+
+
+
+\iffalse
 
 These verification-agnostic DNNs have varying sizes: $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$ and $6 \times 500$. We selected the 4 first because they have been tested in both \cite{prima} and \cite{crown}, they have good accuracy ($>94\%$ \cite{prima}), 
 and depite their small sizes there is still a large portion ($12\%$ to $20\%$) of images which are {\em undetermined} by these SOTA methods, that is images neither verified nor for which an attack has been found  \cite{attack}. Hence more accurate methods are useful. 
