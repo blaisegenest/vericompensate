@@ -49,7 +49,7 @@
 \newcommand{\CMP}{{\textrm{CMP}}\ }
 
 
-\newcommand{\toolname}{\CMP}
+\newcommand{\toolname}{Hybrid MILP}
 
 
 
@@ -117,7 +117,7 @@ $\alpha,\beta$-CROWN has won the last 4 VNNcomp(etitions), as the DNN verifier w
 trade-off between accuracy vs computational time. VNNcomp however is focusing on relatively easy verification instances (network, inputs (images)), 
 with few {\em unstable nodes}. In this paper, we consider harder verification instances. On such instances, $\alpha,\beta$-CROWN displays a large gap ($20-58\%$) between instances that can be verified, and instances with an explicit attack. Enabling much larger time-outs for $\alpha,\beta$-CROWN only improves verification rate by few percents, leaving a large gap of undecided instances while already taking a considerable amount of time. Resorting to other techniques, such as complete verifiers, does not fare better even with very large time-outs: They would theoretically be able to close the gap, but with an untractable runtime on all but small {\em hard} instances.
 
-In this paper, we study the MILP encoding of ReLU-DNNs, and provide new deep insights in the LP relaxation. This allows us to carefully craft a {\em partial MILP} solution which selects automatically few neurons encoded as integer variables, the rest using the LP relaxation. Compared with previous attempts, we can reduce the number of integer variables by around 4 times while maintaining the same level of accuracy. This gives rise to a very efficient yet accurate algorithm. Implemented in {\em Hybrid MILP (hMILP)}, calling first $\alpha,\beta$-CROWN with a short time-out to solve easier instances, and then partial MILP for those for which $\alpha,\beta$-CROWN fails, produces a very accurate yet efficient verifier, reducing tremendously the gap of undecided instances ($8-15\%$), while keeping a reasonable runtime ($<500s$ on average per instance).
+In this paper, we study the MILP encoding of ReLU-DNNs, and provide new deep insights in the LP relaxation. This allows us to carefully craft a {\em partial MILP} solution which selects automatically few neurons encoded as integer variables, the rest using the LP relaxation. Compared with previous attempts, we can reduce the number of integer variables by around 4 times while maintaining the same level of accuracy. Implemented in {\em Hybrid MILP}, calling first $\alpha,\beta$-CROWN with a short time-out to solve easier instances, and then partial MILP for those for which $\alpha,\beta$-CROWN fails, produces a very accurate yet efficient verifier, reducing tremendously the gap of undecided instances ($8\%$-$15\%$), while keeping a reasonable runtime ($46s$-$417s$ on average per instance).
 \end{abstract}
 
 
@@ -221,26 +221,6 @@ In this paper, we consider $L^{\infty}$ norm the max value of distance of each d
 
 \input{experiments}
 
-\begin{table}
-	\centering
-	\begin{tabular}{||l||c|c|c|c||c||}
-		\hline \hline
-		 & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & Refined & Hybrid \\ 
-		 Network & TO=10s & TO=30s & TO=2000s & $\beta$-Crown & MILP \\ 
-		\hline
-		MNIST 6$\times$100 & 57\% (6.9s) & 55\% (18.9s) & 50\% (1026s) & 13\% 
-		(92s) & 13\% \bf (46s) \\ \hline
-		MNIST 6$\times$200 & 50\% (6.5s) & 47\% (17s) & 46\% (930s) & 9\% (80s) & \bf 8\% (71s) \\ \hline
-		MNIST 9$\times$100 & 63\% (7.2s) & 58\% (20s) & 58\% (1163s) & 21\% (102s) & \bf 15\% (61s) \\ \hline
-		MNIST 9$\times$200 & 56\% (6.8s) & 55\% (18s) & 54\% (1083s) & 16\% (83s) & \bf 8\% (78s) \\ \hline
-		MNIST 6$\times$500 & 53\% (6.4s) & 51\% (16s) & 50\% (1002s) & N/A & 
-		\bf 10\% (402s) \\ \hline
-		CIFAR CNN-B-adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & N/A & \bf 11\% (417s) \\ \hline \hline
-		CIFAR Resnet & 0\% (2s) & 0\% (2s) & 0\% (2s) & N/A & 0\% (2s) \\ \hline \hline
-	\end{tabular}
-	\caption{Gap $\%$ between attackable images and verifiable images ({\em lower is better}), as certified by $\alpha,\beta$-Crown, refined $\beta$-Crown and Hybrid MILP, run on 7 DNNs (average runtime per image in second). The 6 first DNNs are hard instances, while the last one (ResNet) is an easy instance (it is trained to be easy to verify using Wong, but with a very low accuracy level), provided for reference.}
-	\label{table_hybrid}
-	\end{table}
 
 
 

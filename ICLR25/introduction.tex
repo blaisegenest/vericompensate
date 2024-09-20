@@ -9,7 +9,8 @@ Also, verification questions intrinsically harder than local robustness, such as
 bounding on Lipschitz constants \cite{lipshitz} globally or asking several specification at once, makes the instance particularly harder. Last, there are many situation (workflow, no access to the dataset...) where using specific trainers to learn easy to verify DNN is simply not possible ({\em verification-agnostic} networks \cite{SDPFI}). The bottom line is, one cannot expect only easy verification instances: hard verification instances need to be explored as well.
 
 
-In this paper, we focused on 6 {\em hard} ReLU-DNNs that have been previously tested in one or both of \cite{SDPFI},\cite{crown}, and with a large gap ($>20\%$) between images that can be certified and the upper bound when we remove those which can be falsified. In turns, hard instances does not necessarily mean very large DNNs, the smallest of the DNN considered having only 500 hidden neurons, namely 5x100 for MNIST. We first dwelve into the scaling of $\alpha,\beta$- Crown, to understand how longer Time-Out (TO) affects the number of undecided images and the runtime. Table \ref{table_beta} reveals that even allowing for 200 times longer time outs only improves the verification from 2\% to 8\%, leaving a considerable $20\%-50\%$ gap of undecided images, while necessitating vastly longer runtime (300s-1000s in average per instance).
+In this paper, we focused on the 6 {\em hard} ReLU-DNNs that have been previously tested in \cite{crown}, which display a large gap ($>20\%$) between images that can be certified 
+by $\alpha,\beta$-CROWN and the upper bound when we remove those which can be falsified. In turns, hard instances does not necessarily mean very large DNNs, the smallest of these hard DNNs having only 500 hidden neurons, namely 5x100 for MNIST. We first dwelve into the scaling of $\alpha,\beta$- Crown, to understand how longer Time-Out (TO) affects the number of undecided images and the runtime. Table \ref{table_beta} reveals that even allowing for 200 times longer time outs only improves the verification from 2\% to 8\%, leaving a considerable $20\%-50\%$ gap of undecided images, while necessitating vastly longer runtime (300s-1000s in average per instance).
 
 
 \begin{table}[t!]
@@ -18,13 +19,13 @@ In this paper, we focused on 6 {\em hard} ReLU-DNNs that have been previously te
 		\hline
 		Network & Accuracy & Upper  & $\alpha,\beta$-Crown& $\alpha,\beta$-Crown & $\alpha,\beta$-Crown \\ 
 		Perturbation &   & Bound & TO=10s & TO=30s & TO=2000s\\ \hline
-		MNIST 6$\times$100 & 99\% & 90\% & 33\% & 35\% & 40\%   \\
+		MNIST 5$\times$100 & 99\% & 90\% & 33\% & 35\% & 40\%   \\
 		$\epsilon = 0.026$ &  &  & 6.9s &  18.9s &  1026s  \\  \hline
-		MNIST 6$\times$200 & 99\%  & 96\%  & 46\%  & 49\%  & 50\%   \\ 
+		MNIST 5$\times$200 & 99\%  & 96\%  & 46\%  & 49\%  & 50\%   \\ 
 		$\epsilon = 0.015$ & &  & 6.5s &  16.6s &  930s  \\  \hline
-		MNIST 9$\times$100 & 97\%  & 86\%  & 23\%  & 28\%  & 28\%   \\
+		MNIST 8$\times$100 & 97\%  & 86\%  & 23\%  & 28\%  & 28\%   \\
 		$\epsilon = 0.026$ &  &  & 7.2s &  20.1s &  930s  \\  \hline
-		MNIST 9$\times$200 & 97\%  & 91\%  & 35\%  & 36\%  & 37\%   \\ 
+		MNIST 8$\times$200 & 97\%  & 91\%  & 35\%  & 36\%  & 37\%   \\ 
 		$\epsilon = 0.015$ & &  & 6.8s &  18.2s &  1083s  \\  \hline
 		MNIST 6$\times$500 & 100\%  & 94\%  & 41\%  & 43\%  & 44\%   \\ 
 		$\epsilon = 0.035$ & &  & 6.4s &  16.4s &  1003s  \\  \hline
@@ -45,10 +46,10 @@ In this paper, we focused on 6 {\em hard} ReLU-DNNs that have been previously te
 	\begin{tabular}{||l|c|c||c|c|c||}
 		\hline
 		Network &  Accuracy & Upper  & Marabou 2.0 & NNenum? &  Full MILP  \\ \hline
-		MNIST 6$\times$100 & 99\% & 90\% & 28\% & $\approx 46\%$ & 40 \%    \\
+		MNIST 5$\times$100 & 99\% & 90\% & 28\% & $\approx 46\%$ & 40 \%    \\
 		$\epsilon = 0.026$ & &  &6200s &  5220s & 6100s
 		  \\  \hline
-		  MNIST 6$\times$100 & 99\% & 90\% & 28\% & $40\%$ & 37 \%    \\
+		  MNIST 5$\times$100 & 99\% & 90\% & 28\% & $40\%$ & 37 \%    \\
 		  TO=2000s & &  & 1250s  & 1343s & 1466s \\  \hline	
 	\end{tabular}
 \caption{Complete verifiers run on the smallest of the hard DNN with TO = 10 000s. 
