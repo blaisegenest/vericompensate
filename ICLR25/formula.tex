@@ -1,6 +1,6 @@
 \section{Important neurons for accuracy and Utility function.}
 
-In this section, we evaluate how each neuron would impact the accuracy of encoding this neuron with an integer (actually binary) or a linear variable. We will say we open a node when this node is selected with a binary variable. We denote by $X$ a choice of set of open nodes, and by $\mathcal{M}_X$ the MILP model where variables from $X$ are encoded with binary variables, and other variables are using the LP linear relaxation.
+In this section, we evaluate how each neuron would impact the accuracy of encoding this neuron with an integer (actually binary) or a linear variable. We will say we open a neuron when this neuron is selected with a binary variable. We denote by $X$ a choice of set of open neurons, and by $\mathcal{M}_X$ the MILP model where variables from $X$ are encoded with binary variables, and other variables are using the LP linear relaxation.
 
 Let $z$ be a neuron of the DNN we want to evaluate, for instance computing an upper bound on the value it can take. We denote by $n< z$ the fact that a neuron appears on a layer before the layer of $z$, and $n \leq z$ if it can also be $z$.
 Let us denote (Sol\_max$_X^z(n))_{n \leq z})$ is a solution of $\mathcal{M}_X$ 
@@ -27,30 +27,30 @@ Instead, we focus on the following upper bounding of Improve\_max$_a^z$, thanks 
 
 %Our observation (by experiments) is that \begin{align}
 %	I_X \approx \sum_{b\in X} I_b.
-%\end{align} Especially, if all nodes in $X$ are from one layer before $a$, then in %experiments, we observe that 
+%\end{align} Especially, if all neurons in $X$ are from one layer before $a$, then in %experiments, we observe that 
 
 \iffalse
 \begin{align*}
 	|(I_X - \sum_{b\in X} I_b)/I_X| < 1\%. \ (\text{in experiments})
-\end{align*} Even $X$ contains nodes from 3 layers before the target layer, in experiments, $I_X$ is still close to $\sum_{b\in X} I_b$.
+\end{align*} Even $X$ contains neurons from 3 layers before the target layer, in experiments, $I_X$ is still close to $\sum_{b\in X} I_b$.
 
-Therefore, based on this observation, the question to choose $X$ is converted to compute $I_b$ for nodes $b$ in layers before the target layer. Our formula is to estimate the improvement of different individual nodes in different layers. For different layers, the formula will be different.  However, neither the observation in this subsection nor the formula in the next subsection has solid theoretical proof to show that they are very accurate. They are all based on experiments. 
-
-
-In our algorithm, we will open nodes at most 3 layer3 before the target layer. So the formula will consists of three parts.
+Therefore, based on this observation, the question to choose $X$ is converted to compute $I_b$ for neurons $b$ in layers before the target layer. Our formula is to estimate the improvement of different individual neurons in different layers. For different layers, the formula will be different.  However, neither the observation in this subsection nor the formula in the next subsection has solid theoretical proof to show that they are very accurate. They are all based on experiments. 
 
 
-\subsubsection*{Compute the improvement of a single node}
+In our algorithm, we will open neurons at most 3 layer3 before the target layer. So the formula will consists of three parts.
+
+
+\subsubsection*{Compute the improvement of a single neuron}
 \fi
 
 \subsection*{One Layer before $z$}
 
 %For one layer before the target layer, the formula is simple and most accurate. 
-Suppose $a$ is a node in one layer before $z$. To estimate Improve\_max$_a^z$:
+Suppose $a$ is a neuron in one layer before $z$. To estimate Improve\_max$_a^z$:
 %we first need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
 
 \begin{definition}
-	For all nodes $n$, let $sol(n)=$Sol\_max$_\emptyset^z(n)$ be the value of node $a$
+	For all neurons $n$, let $sol(n)=$Sol\_max$_\emptyset^z(n)$ be the value of neuron $a$
 	in the solution of the LP instance Sol\_max$_\emptyset^z$ to maximize $z$.
 	
 	We define : 
@@ -58,7 +58,7 @@ Suppose $a$ is a node in one layer before $z$. To estimate Improve\_max$_a^z$:
 		Utility\_max^z(a) = W_{az} \times (sol(\hat{a})- \ReLU(sol(a))).
 	\end{align}
 	
-	%In particular, if $v(\hat{a})=\ReLU(v(a))$, then we will have 
+	%In particular, if $sol(\hat{a})=\ReLU(sol(a))$, then we will have 
 	%\begin{align*}
 %		Utility^z(a) = 0.
 %	\end{align*}
@@ -74,9 +74,9 @@ Indeed, consider $(sol'(n))_{n \leq z})_{n \leq z})$ with
 $sol'(n)=sol(n)$ for all $n \notin \{z,\hat{a}\}$.
 In particular,  $sol'(a) = sol(a)$.
 
-Now, define $sol'(\hat{a}) = \ReLU(v(a))$. 
+Now, define $sol'(\hat{a}) = \ReLU(sol(a))$. 
 That is,  
-sol'$(\hat{a})$ is the correct value for $\hat{a}$ (obtained if we open node $a$), 
+sol'$(\hat{a})$ is the correct value for $\hat{a}$ (obtained if we open neuron $a$), 
 compared to the LP abstraction for $sol(\hat{a})$.
 
 Last, we define $sol'(z)=sol(z) + W_{az} \times (\ReLU(sol(a)) - sol(\hat{a})) = sol(z) - Utility\_max_z(a)$.
@@ -92,69 +92,71 @@ $Improve\_max^z(a) \leq Utility\_\max^z(a)$.
 
 
 	
-	
-	Similarly, let $v(b)$ be the value of $b$ in the LP solution of lower bound of $a$, and $v(\hat{b})$ be the value of $\hat{b}$. Then the formula to estimate improvement of lower bound of $b$ is: \begin{align*}
-		I_b \approx -W_{ba}(v(\hat{b})-\ReLU(v(b))).
-	\end{align*}
+%	
+%	Similarly, let $sol(b)$ be the value of $b$ in the LP solution of lower bound of $a$, and $sol(\hat{b})$ be the value of $\hat{b}$. Then the formula to estimate improvement of lower bound of $b$ is: \begin{align*}
+%		Improve\_min^z(b) \approx -W_{ba}(sol(\hat{b})-\ReLU(sol(b))).
+%	\end{align*}
 	
 \end{definition}
 
-To explain the formula, we use upper bound and the case that $W_{ba} > 0$ as an example. To compute the upper bound of $a$, $\hat{b}$ should be as large as possible. In the LP model, for fixed $v(b)$, the upper bound of $\hat{b}$ may be larger than $\ReLU(v(b))$. This is because in LP model, the upper bound of $v(\hat{b})$ is decided by the linear approximation rather than $\ReLU$ function. So, when node $b$ is open, if $v(b)$ do not change, then the upper bound of $a$ will be improved because the value of $v(\hat{b})$ will be lower to $\ReLU(v(b))$.
- 			
-Of course changing other variables may also effect the upper bound, but our experiments show that, the change from $v(\hat{b})$ to $\ReLU(v(b))$ is the major part of improvement. 
+%To explain the formula, we use upper bound and the case that $W_{ba} > 0$ as an example. To compute the upper bound of $a$, $\hat{b}$ should be as large as possible. In the LP model, for fixed $sol(b)$, the upper bound of $\hat{b}$ may be larger than $\ReLU(sol(b))$. This is because in LP model, the upper bound of $sol(\hat{b})$ is decided by the linear approximation rather than $\ReLU$ function. So, when neuron $b$ is open, if $sol(b)$ do not change, then the upper bound of $a$ will be improved because the value of $sol(\hat{b})$ will be lower to $\ReLU(sol(b))$.
+% 			
+%Of course changing other variables may also effect the upper bound, but our experiments show that, the change from $sol(\hat{b})$ to $\ReLU(sol(b))$ is the major part of improvement. 
 
 
 
 
-\subsubsection*{Two layers before the target layer}
+\subsubsection*{Two Layer before $z$}
 
-For earlier layers, the formula will be more complex and less accurate. We will still focus on the source $v(\hat{b})-\ReLU(v(b))$. Basically, we hope to use $\sum_c W_{ca}W_{bc}$ to replace the coefficient $W_{bc}$ in last subsection. However, directly using $\sum_c W_{ca}W_{bc}$ will lose too much accuracy. So we try to improve the accuracy by considering more details from the LP solutions.
+Suppose $a$ is a neuron in two layers before $z$, we use $b$ to denote neurons in the layer between $a$ and $z$. 
 
-For nodes $c$ in the layer between $a$ and $b$, according to the LP solution, we may check $v(c)$ is positive or negative, which is the following definition. 
+In this case, the formula will be more complex and less accurate. We will still focus on the source $sol(\hat{a})-\ReLU(sol(a))$. Basically, we hope to use $\sum_b W_{bz}W_{ab}$ to replace the coefficient $W_{az}$ in last subsection. However, directly using $\sum_b W_{bz}W_{ab}$ will lose too much accuracy. So we try to improve the accuracy by considering more details from the LP solutions.
+
+To estimate Improve\_max$_a^z$ , we consider the following help function:
 
 \begin{definition} \label{2layer}
-	Suppose we have a fixed target node $a$, and a fixed source node $b$ in two layers before $a$. Let $\UB,\LB$ be the function of precomputed upper and lower bound before the layer of $a$, and let $v$ be the function of values of nodes in the LP solution of upper bound of $a$. 
-	To compute the improvement of of upper bound of $a$ by $b$, we define the following function $k$ for nodes $c$ in one layer before $a$:
+	Let $\UB,\LB$ be the function of precomputed upper and lower bound before the layer of $z$.
+	We define the following function $k$ for neurons $b$ in one layer before $z$:
 	\begin{align}
-		k(c) =
+		k(b) =
 		\begin{cases}
-			1, & \text{if } v(c) > 0 \text{ and } W_{ca} < 0\\
-			0, & \text{if } v(c) \leq 0 \text{ and } W_{ca} < 0\\
-			\frac{\UB(c)}{\UB(c)-\LB(c)}, & \text{if }W_{ca} > 0
+			1, & \text{if } sol(b) > 0 \text{ and } W_{bz} < 0\\
+			0, & \text{if } sol(b) \leq 0 \text{ and } W_{bz} < 0\\
+			\frac{\UB(b)}{\UB(b)-\LB(b)}, & \text{if }W_{bz} > 0
 		\end{cases}
 	\end{align} 
 \end{definition} 
 
 We may use the following formula to estimate the improvement:  \begin{align*}
-	I_b \approx (v(\hat{b})-\ReLU(v(b)))\sum_c W_{bc}W_{ca}k(c).
-\end{align*}However, the error is still too large. This is because the improved value of a node $c$ can not exceed its precomputed upper and lower bound. Considering this, we can update our formula.
+	Improve\_max^z(a) \approx (sol(\hat{a})-\ReLU(sol(a)))\sum_b W_{bz}W_{ab}k(b).
+\end{align*}However, the error is still too large. This is because the improved value of a neuron $b$ can not exceed its precomputed upper and lower bound. Considering this, we can update our formula.
 
 \begin{definition}
-	Continue the assumption in Definition \ref{2layer}. To compute the improvement of of upper bound of $a$ by $b$, we define a distance function $D$:
+	Continue the assumption in Definition \ref{2layer}. To compute the improvement of of upper bound of $z$ by $a$, we define a distance function $D$:
 	\begin{align}
-		&D(b) = \ReLU(v(b))-v(\hat{b})\\
-			&D(c) =
+		&D(a) = \ReLU(sol(a))-sol(\hat{a})\\
+			&D(b) =
 		\begin{cases}
-			\max(\LB(c), 0, v(c)+D(b)k(c)W_{bc})-v(\hat{c}), & \text{if }W_{ca} < 0\\
-			\min(\UB(c), v(\hat{c})+D(b)k(c)W_{bc})-v(\hat{c}), & \text{if }  W_{ca} > 0
+			\max(\LB(b), 0, sol(b)+D(a)k(b)W_{ab})-sol(\hat{b}), & \text{if }W_{bz} < 0\\
+			\min(\UB(b), sol(\hat{b})+D(a)k(b)W_{ab})-sol(\hat{b}), & \text{if }  W_{bz} > 0
 		\end{cases}\\
-		&D(a) = \sum_c D(c)W_{ca}
+		&D(z) = \sum_b D(b)W_{bz}\\
+		&Utility\_max^z(a) = -D(z)
 	\end{align}
 \end{definition}
+ This is the formula to compute improvement of neurons two layers before.
 
-Then $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$. For the lower bound, we can compute $D(a)$ by the same formula with the function $v$ from lower bound LP solution and negative $-W_{ca}$ instead. This is the formula to compute improvement of nodes two layers before.
 
-
-\subsubsection*{Formula for nodes in 3 layers before} 
+\subsubsection*{Three Layer before $z$} 
 
 This formula is based on previous subsection but more complex. In some network, running this formula may cost too much time. 
 
-The key problem is how to compute the coefficient $k$ for nodes in two layers before the target layer. To do this, we may use the values in the solution of LP model as follows:
+The key problem is how to compute the coefficient $k$ for neurons in two layers before the target layer. To do this, we may use the values in the solution of LP model as follows:
 
 \begin{definition}\label{3layer}
-	Suppose we have a fixed target node $a$ and a fixed source node $b$ in three layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bounds used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model; then we define the following function $h$ for all nodes $c$ in 2 layers before the target node $a$ as follows:
+	Suppose we have a fixed target neuron $a$ and a fixed source neuron $b$ in three layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bounds used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model; then we define the following function $h$ for all neurons $c$ in 2 layers before the target neuron $a$ as follows:
 	\begin{align}
-		&v_0 = v(\hat{c}), v_1 = \ReLU(v(c)), v_2 = \frac{\UB(c)v(c)-\UB(c)\LB(c)}{\UB(c)-\LB(c)}\\
+		&v_0 = sol(\hat{c}), v_1 = \ReLU(sol(c)), v_2 = \frac{\UB(c)sol(c)-\UB(c)\LB(c)}{\UB(c)-\LB(c)}\\
 		&h(c) =
 		\begin{cases}
 			\frac{v_0-v_1}{v_2-v_1}, & \text{if } v_2-v_1 > 0\\
@@ -166,28 +168,28 @@ The key problem is how to compute the coefficient $k$ for nodes in two layers be
 \begin{definition}
 	Continue the assumption in Definition \ref{3layer}. To compute the improvement of of upper bound of $a$ by $b$, we define function $D$ layer by layer.
 	
-	First, $D(b) = \ReLU(v(b))-v(\hat{b})$.
+	First, $D(b) = \ReLU(sol(b))-sol(\hat{b})$.
 	
-To compute $D(c)$ for nodes $c$ in two layer before $a$, we define \begin{align}
-	&u_0 = \max(\LB(c),\min(\UB(c),  v(c)+D(b)W_{bc}))\\
+To compute $D(c)$ for neurons $c$ in two layer before $a$, we define \begin{align}
+	&u_0 = \max(\LB(c),\min(\UB(c),  sol(c)+D(b)W_{bc}))\\
 	&u_1 = \begin{cases}
 		\ReLU(u_0)+h(c)(\frac{\UB(c)u_0-\UB(c)\LB(c)}{\UB(c)-\LB(c)}-\ReLU(u_0)), & \text{if }\LB(c) < 0\\
 	u_0, & \text{if }  \LB(c) \geq 0
 	\end{cases}\\
-	&D(c) = u_1-v(\hat{c})
+	&D(c) = u_1-sol(\hat{c})
 \end{align}
 	
-	To compute $D(d)$ for nodes $d$ in one layer before $a$, we define 
+	To compute $D(d)$ for neurons $d$ in one layer before $a$, we define 
 	\begin{align}
 		&w_0 = \sum_c D(c)W_{cd}\\
-		&w_1 = \min(\UB(d),v(d)+w_0)\\		
+		&w_1 = \min(\UB(d),sol(d)+w_0)\\		
 		&D(d) =
 		\begin{cases}
-			w_1-v({d}), & \text{if }W_{da} > 0 \text{ and } \LB(d)\geq 0\\
-		k(d)(w_1-v({d})), & \text{if }W_{da} > 0 \text{ and } \LB(d)< 0\\
-		\ReLU(w_1)-v(\hat{d})	, & \text{if }  W_{da} < 0
+			w_1-sol({d}), & \text{if }W_{da} > 0 \text{ and } \LB(d)\geq 0\\
+		k(d)(w_1-sol({d})), & \text{if }W_{da} > 0 \text{ and } \LB(d)< 0\\
+		\ReLU(w_1)-sol(\hat{d})	, & \text{if }  W_{da} < 0
 		\end{cases}\\
 		&D(a) = \sum_d D(d)W_{da}
 	\end{align}
-\end{definition} $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening node $b$.  For the lower bound, we can compute $D(a)$ by the same formula with the function $v$ from lower bound LP solution and negative $-W_{da}$  instead.
+\end{definition} $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening neuron $b$.  For the lower bound, we can compute $D(a)$ by the same formula with the function $v$ from lower bound LP solution and negative $-W_{da}$  instead.
 		
