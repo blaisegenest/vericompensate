@@ -3,19 +3,21 @@
 In this section, we evaluate how each neuron would impact the accuracy of encoding this neuron with an integer (actually binary) or a linear variable. We will say we open a neuron when this neuron is selected with a binary variable. We denote by $X$ a choice of set of open neurons, and by $\mathcal{M}_X$ the MILP model where variables from $X$ are encoded with binary variables, and other variables are using the LP linear relaxation.
 
 Let $z$ be a neuron of the DNN we want to evaluate, for instance computing an upper bound on the value it can take. We denote by $n< z$ the fact that a neuron appears on a layer before the layer of $z$, and $n \leq z$ if it can also be $z$.
-Let us denote (Sol\_max$_X^z(n))_{n \leq z})$ is a solution of $\mathcal{M}_X$ 
+Let us denote (Sol\_max$_X^z(n))_{n \leq z}$ is a solution of $\mathcal{M}_X$ 
 maximizing $z$. In particular, Sol\_max$_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
 
-Consider (Sol\_max$_\emptyset^z(n))_{n \leq z})$ (this is obtained by {\em one} call to an LP solver, so can be obtained very efficiently).
+Consider (Sol\_max$_\emptyset^z(n))_{n \leq z}$ (this is obtained by {\em one} call to an LP solver, so can be obtained very efficiently).
 An accurate utility function is to evaluate 
 Improve\_max$^z(a)=$ Sol\_max$_\emptyset^z(z) -$ Sol\_max$_{\{a\}}^z(z)$, 
 representing how much opening neuron $a < z$ reduces the maximum computed for $z$
 compared with using only LP. 
-Similarly, we define (Sol\_min$_\emptyset^z(n))_{n \leq z})$ and 
+We have Improve\_max$^z(a)\geq 0$ as Sol\_max$_{\{a\}}^z$ fullfils all the constraints of 
+$\mathcal{M}_\emptyset$, so Sol\_max$_{\{a\}}^z(z) \leq$ Sol\_max$_\emptyset^z(z)$.
+
+Similarly, we define (Sol\_min$_\emptyset^z(n))_{n \leq z}$ and 
 Improve\_min$_a^z$. Calling MILP on $\mathcal{M}_{\{a\}}$ for each neuron $a \leq z$
 would however be very time consuming when the number of neurons $a$ to evaluate is large.
-
-Instead, we focus on the following upper bounding of Improve\_max$_a^z$, thanks to Proposition \ref{LP}.
+Instead, we focus on the following upper bounding of Improve\_max$_a^z$.
 
 
 
@@ -41,21 +43,21 @@ In our algorithm, we will open neurons at most 3 layer3 before the target layer.
 
 
 \subsubsection*{Compute the improvement of a single neuron}
-\fi
 
 \subsection*{One Layer before $z$}
 
+\fi
+
+For all neurons $n$, let $sol(n)=$Sol\_max$_\emptyset^z(n)$ be the value of neuron $a$
+in the solution of the LP instance Sol\_max$_\emptyset^z$ to maximize $z$.
+
+
 %For one layer before the target layer, the formula is simple and most accurate. 
-Suppose $a$ is a neuron in one layer before $z$. To estimate Improve\_max$_a^z$:
+To estimate Improve\_max$_a^z$, we define Utility\_max$^z(a)$, first for neurons $a$ one layer before $z$:
 %we first need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
 
-\begin{definition}
-	For all neurons $n$, let $sol(n)=$Sol\_max$_\emptyset^z(n)$ be the value of neuron $a$
-	in the solution of the LP instance Sol\_max$_\emptyset^z$ to maximize $z$.
-	
-	We define : 
 	\begin{align}
-		Utility\_max^z(a) = W_{az} \times (sol(\hat{a})- \ReLU(sol(a))).
+		Utility\_max^z(a) = |W_{az} \times (sol(\hat{a})- \ReLU(sol(a)))|.
 	\end{align}
 	
 	%In particular, if $sol(\hat{a})=\ReLU(sol(a))$, then we will have 
@@ -70,7 +72,7 @@ $0 \leq Improve\_max^z(a) \leq Utility\_\max^z(a)$.
 \end{proposition}
 
 \begin{proof}
-Indeed, consider $(sol'(n))_{n \leq z})_{n \leq z})$ with
+Consider $(sol'(n))_{n \leq z})_{n \leq z})$ with
 $sol'(n)=sol(n)$ for all $n \notin \{z,\hat{a}\}$.
 In particular,  $sol'(a) = sol(a)$.
 
@@ -89,7 +91,13 @@ $sol(z)-sol'(z) \geq sol(z) -$ Sol\_max$_{\{a\}}^z(z)$, i.e.
 $Improve\_max^z(a) \leq Utility\_\max^z(a)$.
 \end{proof}
 
-
+Thus, Utility\_max$^z(a)$ can be used to approximate 
+Improve\_max$^z(a)$. In particular, consider a very frequent case where $W_{az}<0$.
+In this case, to maximize $z$, the LP engine sets $sol(\hat{a})$ to its minimal value\dots which happens to be $sol(\hat{a})=ReLU(a)$, thanks to Proposition \ref{LP}. 
+In this frequent case, we have Utility\_max$^z(a)=0$, and thus Improve\_max$^z(a)=0$. 
+In particular, this node will have the smallest utility (thus will not get picked in the open nodes $X$), and indeed it is not having any impact on  Sol\_max$_{\{a\}}^z(z)$. 
+This is one stricking difference (but not the only one) with choosing utility based on 
+$|W_{az}|$ \cite{DivideAndSlide}.
 
 	
 %	
@@ -97,56 +105,52 @@ $Improve\_max^z(a) \leq Utility\_\max^z(a)$.
 %		Improve\_min^z(b) \approx -W_{ba}(sol(\hat{b})-\ReLU(sol(b))).
 %	\end{align*}
 	
-\end{definition}
-
 %To explain the formula, we use upper bound and the case that $W_{ba} > 0$ as an example. To compute the upper bound of $a$, $\hat{b}$ should be as large as possible. In the LP model, for fixed $sol(b)$, the upper bound of $\hat{b}$ may be larger than $\ReLU(sol(b))$. This is because in LP model, the upper bound of $sol(\hat{b})$ is decided by the linear approximation rather than $\ReLU$ function. So, when neuron $b$ is open, if $sol(b)$ do not change, then the upper bound of $a$ will be improved because the value of $sol(\hat{b})$ will be lower to $\ReLU(sol(b))$.
 % 			
 %Of course changing other variables may also effect the upper bound, but our experiments show that, the change from $sol(\hat{b})$ to $\ReLU(sol(b))$ is the major part of improvement. 
 
+\medskip
 
+Now, consider neurons $a$ two layers before $z$. We use $b$ to denote neurons in the layer between $a$ and $z$. If we open $a$, then the change in the weight of $a$ will still be $sol(\hat{a})-\ReLU(sol(a))$ as above. Its impact on $z$ is no more direct with $W_{az}$, but it is through all the $b$ in the intermediate layer. 
+Based on Proposition \ref{LP}, we can evaluate how opening $a$ impacts each value of 
+$\hat{b}$, through coefficient $k(\hat{b})$, by using the upper and lower bound
+$\UB(b),\LB(b)$:
+\begin{itemize}
+ \item If $W_{bz}\leq0$, then $k(\hat{b})=W_{ab}$ if $sol(b) > 0$, and $k(\hat{b})=0$ if $sol(b) < 0$
+ \item If $W_{bz}>0$, then $k(\hat{b})=W_{ab} \frac{\UB(b)}{\UB(b)-\LB(b)}$
+\end{itemize}
+%$\sum_b W_{bz}W_{ab}$ to replace the coefficient $W_{az}$ in last subsection. 
 
+%To estimate Improve\_max$_a^z$ , 
+Indeed, if $W_{bz}\leq0$, then the LP solver sets $sol(\hat{b})$ to the lowest possible value to maximize $z$, which happens to be $ReLU(b)$ according to Proposition \ref{LP}.
+If $sol(b) < 0$, then we have a clip at $sol(\hat{b})=ReLU(b)=0$ and opening $a$ does not help. If $sol(b) > 0$, then we have $sol(\hat{b})=ReLU(b)=b$ and every change from 
+$a$ is reflected with a coefficient $W_{ab}$ on $b$. 
+Last, if $W_{bz}>0$, then according to Proposition \ref{LP}, the LP solver
+sets $sol(\hat{b}) = sol(b) \frac{\UB(b)}{\UB(b)-\LB(b)}$ to maximize $z$.
 
-\subsubsection*{Two Layer before $z$}
+%We then define 
+%\begin{align*}
+%	Utility\_max^z(a) = (sol(\hat{a})-\ReLU(sol(a)))\sum_b k(b).
+%\end{align*}
 
-Suppose $a$ is a neuron in two layers before $z$, we use $b$ to denote neurons in the layer between $a$ and $z$. 
-
-In this case, the formula will be more complex and less accurate. We will still focus on the source $sol(\hat{a})-\ReLU(sol(a))$. Basically, we hope to use $\sum_b W_{bz}W_{ab}$ to replace the coefficient $W_{az}$ in last subsection. However, directly using $\sum_b W_{bz}W_{ab}$ will lose too much accuracy. So we try to improve the accuracy by considering more details from the LP solutions.
-
-To estimate Improve\_max$_a^z$ , we consider the following help function:
-
-\begin{definition} \label{2layer}
-	Let $\UB,\LB$ be the function of precomputed upper and lower bound before the layer of $z$.
-	We define the following function $k$ for neurons $b$ in one layer before $z$:
-	\begin{align}
-		k(b) =
+We define a distance $D$ to account for the fact that a neuron $b$ 
+can not exceed $\LB(b),\UB(b)$:
+	\begin{align*}
+		&D(\hat{a}) = sol(\hat{a}) - \ReLU(sol(a)) \geq 0\\
+			&D(\hat{b}) =
 		\begin{cases}
-			1, & \text{if } sol(b) > 0 \text{ and } W_{bz} < 0\\
-			0, & \text{if } sol(b) \leq 0 \text{ and } W_{bz} < 0\\
-			\frac{\UB(b)}{\UB(b)-\LB(b)}, & \text{if }W_{bz} > 0
+			sol(\hat{b}) - \min(\UB(b), sol(\hat{b}) - D(\hat{a}) k(\hat{b})), & \text{if }  W_{bz} > 0 \\
+			sol(\hat{b}) - \max(\LB(b), 0, sol(\hat{b}) -D(\hat{a}) k(\hat{b})), & \text{if }W_{bz} < 0\\
 		\end{cases}
-	\end{align} 
-\end{definition} 
+		\end{align*}
 
-We may use the following formula to estimate the improvement:  \begin{align*}
-	Improve\_max^z(a) \approx (sol(\hat{a})-\ReLU(sol(a)))\sum_b W_{bz}W_{ab}k(b).
-\end{align*}However, the error is still too large. This is because the improved value of a neuron $b$ can not exceed its precomputed upper and lower bound. Considering this, we can update our formula.
+We can now set 
 
-\begin{definition}
-	Continue the assumption in Definition \ref{2layer}. To compute the improvement of of upper bound of $z$ by $a$, we define a distance function $D$:
-	\begin{align}
-		&D(a) = \ReLU(sol(a))-sol(\hat{a})\\
-			&D(b) =
-		\begin{cases}
-			\max(\LB(b), 0, sol(b)+D(a)k(b)W_{ab})-sol(\hat{b}), & \text{if }W_{bz} < 0\\
-			\min(\UB(b), sol(\hat{b})+D(a)k(b)W_{ab})-sol(\hat{b}), & \text{if }  W_{bz} > 0
-		\end{cases}\\
-		&D(z) = \sum_b D(b)W_{bz}\\
-		&Utility\_max^z(a) = -D(z)
-	\end{align}
-\end{definition}
- This is the formula to compute improvement of neurons two layers before.
+$$ Utility\_max^z(a) = \sum_b W_{bz} D(\hat{b})$$
+ 
+We proceed inductively in the same way to define Utility$\_max^z(a)$ for deeper neuron $a$.
 
-
+\iffalse
 \subsubsection*{Three Layer before  $z$} 
 
 This formula is based on previous subsection but more complex. In some network, running this formula may cost too much time. 
@@ -193,3 +197,4 @@ To compute $D(c)$ for neurons $c$ in two layer before $a$, we define \begin{alig
 	\end{align}
 \end{definition} $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening neuron $b$.  For the lower bound, we can compute $D(a)$ by the same formula with the function $v$ from lower bound LP solution and negative $-W_{da}$  instead.
 		
+\fi
