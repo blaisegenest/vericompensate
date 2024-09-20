@@ -153,15 +153,17 @@ We proceed inductively in the same way to define Utility$\_max^z(a)$ for deeper 
 \iffalse
 \subsubsection*{Three Layer before  $z$} 
 
+Suppose $a$ is a neuron in three layers before $z$, we use $b$ to denote neurons in two layer before $z$ and $c$ to denote neurons in one layer before $z$ and. 
+
 This formula is based on previous subsection but more complex. In some network, running this formula may cost too much time. 
 
 The key problem is how to compute the coefficient $k$ for neurons in two layers before the target layer. To do this, we may use the values in the solution of LP model as follows:
 
 \begin{definition}\label{3layer}
-	Suppose we have a fixed target neuron $a$ and a fixed source neuron $b$ in three layers before $a$. Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bounds used in building MILP models. To compute the improvement of of upper bound of $a$ by $b$, let $v$ be the function of solutions of LP model; then we define the following function $h$ for all neurons $c$ in 2 layers before the target neuron $a$ as follows:
+Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bounds used in building MILP models. We define the following function $h$ for all neurons $b$ in two layers before the target neuron $z$ as follows:
 	\begin{align}
-		&v_0 = sol(\hat{c}), v_1 = \ReLU(sol(c)), v_2 = \frac{\UB(c)sol(c)-\UB(c)\LB(c)}{\UB(c)-\LB(c)}\\
-		&h(c) =
+		&v_0 = sol(\hat{b}), v_1 = \ReLU(sol(b)), v_2 = \frac{\UB(b)sol(b)-\UB(b)\LB(b)}{\UB(b)-\LB(b)}\\
+		&h(b) =
 		\begin{cases}
 			\frac{v_0-v_1}{v_2-v_1}, & \text{if } v_2-v_1 > 0\\
 			0.5, & \text{otherwise.}
@@ -170,31 +172,32 @@ The key problem is how to compute the coefficient $k$ for neurons in two layers 
 \end{definition} 
 
 \begin{definition}
-	Continue the assumption in Definition \ref{3layer}. To compute the improvement of of upper bound of $a$ by $b$, we define function $D$ layer by layer.
+	Continue the assumption in Definition \ref{3layer}. We define function $D$ layer by layer.
 	
-	First, $D(b) = \ReLU(sol(b))-sol(\hat{b})$.
+	First, $D(a) = \ReLU(sol(a))-sol(\hat{a})$.
 	
-To compute $D(c)$ for neurons $c$ in two layer before $a$, we define \begin{align}
-	&u_0 = \max(\LB(c),\min(\UB(c),  sol(c)+D(b)W_{bc}))\\
+To compute $D(b)$ for neurons $b$ in two layer before $z$, we define \begin{align}
+	&u_0 = \max(\LB(b),\min(\UB(b),  sol(b)+D(a)W_{ab}))\\
 	&u_1 = \begin{cases}
-		\ReLU(u_0)+h(c)(\frac{\UB(c)u_0-\UB(c)\LB(c)}{\UB(c)-\LB(c)}-\ReLU(u_0)), & \text{if }\LB(c) < 0\\
-	u_0, & \text{if }  \LB(c) \geq 0
+		\ReLU(u_0)+h(b)(\frac{\UB(c)u_0-\UB(b)\LB(b)}{\UB(b)-\LB(b)}-\ReLU(u_0)), & \text{if }\LB(b) < 0\\
+	u_0, & \text{if }  \LB(b) \geq 0
 	\end{cases}\\
-	&D(c) = u_1-sol(\hat{c})
+	&D(b) = u_1-sol(\hat{b})
 \end{align}
 	
-	To compute $D(d)$ for neurons $d$ in one layer before $a$, we define 
+	To compute $D(c)$ for neurons $c$ in one layer before $z$, we define 
 	\begin{align}
-		&w_0 = \sum_c D(c)W_{cd}\\
-		&w_1 = \min(\UB(d),sol(d)+w_0)\\		
-		&D(d) =
+		&w_0 = \sum_b D(b)W_{bc}\\
+		&w_1 = \min(\UB(c),sol(c)+w_0)\\		
+		&D(c) =
 		\begin{cases}
-			w_1-sol({d}), & \text{if }W_{da} > 0 \text{ and } \LB(d)\geq 0\\
-		k(d)(w_1-sol({d})), & \text{if }W_{da} > 0 \text{ and } \LB(d)< 0\\
-		\ReLU(w_1)-sol(\hat{d})	, & \text{if }  W_{da} < 0
+			w_1-sol({c}), & \text{if }W_{cz} > 0 \text{ and } \LB(c)\geq 0\\
+		k(c)(w_1-sol({c})), & \text{if }W_{cz} > 0 \text{ and } \LB(c)< 0\\
+		\ReLU(w_1)-sol(\hat{c})	, & \text{if }  W_{cz} < 0
 		\end{cases}\\
-		&D(a) = \sum_d D(d)W_{da}
+		&D(z) = \sum_c D(c)W_{cz}\\
+		&Utility\_max^z(a) = -D(z)
 	\end{align}
-\end{definition} $-D(a)$ is the estimation of improvement of upper bound of $a$ by opening neuron $b$.  For the lower bound, we can compute $D(a)$ by the same formula with the function $v$ from lower bound LP solution and negative $-W_{da}$  instead.
+\end{definition}
 		
 \fi
