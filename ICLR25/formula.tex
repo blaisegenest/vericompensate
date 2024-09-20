@@ -13,7 +13,6 @@ representing how much opening neuron $a < z$ reduces the maximum computed for $z
 compared with using only LP. 
 We have Improve\_max$^z(a)\geq 0$ as Sol\_max$_{\{a\}}^z$ fullfils all the constraints of 
 $\mathcal{M}_\emptyset$, so Sol\_max$_{\{a\}}^z(z) \leq$ Sol\_max$_\emptyset^z(z)$.
-
 Similarly, we define (Sol\_min$_\emptyset^z(n))_{n \leq z}$ and 
 Improve\_min$_a^z$. Calling MILP on $\mathcal{M}_{\{a\}}$ for each neuron $a \leq z$
 would however be very time consuming when the number of neurons $a$ to evaluate is large.
@@ -50,8 +49,6 @@ In our algorithm, we will open neurons at most 3 layer3 before the target layer.
 
 For all neurons $n$, let $sol(n)=$Sol\_max$_\emptyset^z(n)$ be the value of neuron $a$
 in the solution of the LP instance Sol\_max$_\emptyset^z$ to maximize $z$.
-
-
 %For one layer before the target layer, the formula is simple and most accurate. 
 To estimate Improve\_max$_a^z$, we define Utility\_max$^z(a)$, first for neurons $a$ one layer before $z$:
 %we first need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
