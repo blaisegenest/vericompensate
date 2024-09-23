@@ -91,7 +91,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 
 
 We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer. The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. We report in Table \ref{tab:example1} the average uncertainty of $\MILP_X$ following the choice of the $K$ heaviest neurons for our utility function, vs choosing $K$ nodes from layers $1$ and $2$. We compared with a random choice in the first two layers, and also choice based on strength in \cite{DivideAndSlide}, defined as 
-$strength(n) = (UB(n)-LB(n))\cdot |W_{cd}|$, which is thus limited to the previous (2sd hidden layer). 
+$strength(n) = (\UB(n)-\LB(n))\cdot |W_{cd}|$, which is thus limited to the previous (2sd hidden layer). 
 
 The Utility function reveals to select very important nodes: already with 35 out of 116 nodes, the accuracy is improved by $95\%$ what can be done if all 116 nodes are opened compared with LP (K=0). It is also much more accurate than using Incoming weights: already with 5 (resp. 10) nodes chosen by our utility function is more accurate than $20$ (resp. $40$) nodes chosen by Incoming weights. That is more than 4 reduction in the number of nodes necessary for similar accuracy.  Random is even worst Strength up to 30 nodes, then selecting in earlier layers appear to be more useful as there are not so many nodes to open in the previous layer.
 

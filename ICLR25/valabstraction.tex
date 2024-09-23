@@ -135,7 +135,7 @@ for a set of unstable neurons $X$, we denote by MILP$_X$ the MILP encoding where
 To further limit the number of binary variables needed for a given accuracy, we devise the same iterative approach as the box abstraction or DeepPoly \cite{deeppoly}, computing lower 
 and upper bounds $\LB(n),\UB(n)$ for neurons $n$ of a layer, that are used when computing values of the next layer, thus necessitating less variables from previous layers. 
 
-The crucial factor in such an approach is to {\em select} few opened neurons in $X$ which are the most important for the accuracy. An extreme strategy was adopted in \cite{DivideAndSlide}, where only nodes of the immediate previous layer could be opened, and the measure to choose a neuron $a$ to open to compute the values for neuron $b$ was to consider $|W_{ab}| (UB(a)-LB(a))$. To obtain a more accurate measure, that can also scale to deeper layers and is not limited to open nodes from the immediate previous layer, we first study the LP abstraction.
+The crucial factor in such an approach is to {\em select} few opened neurons in $X$ which are the most important for the accuracy. An extreme strategy was adopted in \cite{DivideAndSlide}, where only nodes of the immediate previous layer could be opened, and the measure to choose a neuron $a$ to open to compute the values for neuron $b$ was to consider $|W_{ab}| (\UB(a)-\LB(a))$. To obtain a more accurate measure, that can also scale to deeper layers and is not limited to open nodes from the immediate previous layer, we first study the LP abstraction.
 
 Consider an unstable neuron $n$, that is $\LB(n) < 0 < \UB(n)$. 
 Let $x$ represent the input value of $n$, hence with 
