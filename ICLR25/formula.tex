@@ -8,15 +8,15 @@ maximizing $z$. In particular, Sol\_max$_X^z(z)$ is the maximum of $z$ under $\m
 
 Consider (Sol\_max$_\emptyset^z(n))_{n \leq z}$ (this is obtained by {\em one} call to an LP solver, so can be obtained very efficiently).
 An accurate utility function is to evaluate 
-Improve\_max$^z(a)=$ Sol\_max$_\emptyset^z(z) -$ Sol\_max$_{\{a\}}^z(z)$, 
+$\Improve\_max^z(a)=$ Sol\_max$_\emptyset^z(z) -$ Sol\_max$_{\{a\}}^z(z)$, 
 representing how much opening neuron $a < z$ reduces the maximum computed for $z$
 compared with using only LP. 
-We have Improve\_max$^z(a)\geq 0$ as Sol\_max$_{\{a\}}^z$ fullfils all the constraints of 
+We have $\Improve\_max^z(a)\geq 0$ as Sol\_max$_{\{a\}}^z$ fullfils all the constraints of 
 $\mathcal{M}_\emptyset$, so Sol\_max$_{\{a\}}^z(z) \leq$ Sol\_max$_\emptyset^z(z)$.
 Similarly, we define (Sol\_min$_\emptyset^z(n))_{n \leq z}$ and 
-Improve\_min$_a^z$. Calling MILP on $\mathcal{M}_{\{a\}}$ for each neuron $a \leq z$
+$\Improve\_min_a^z$. Calling MILP on $\mathcal{M}_{\{a\}}$ for each neuron $a \leq z$
 would however be very time consuming when the number of neurons $a$ to evaluate is large.
-Instead, we focus on the following upper bounding of Improve\_max$_a^z$.
+Instead, we focus on the following upper bounding of $\Improve\_max_a^z$.
 
 
 
@@ -50,11 +50,11 @@ In our algorithm, we will open neurons at most 3 layer3 before the target layer.
 For all neurons $n$, let $sol(n)=$Sol\_max$_\emptyset^z(n)$ be the value of neuron $a$
 in the solution of the LP instance Sol\_max$_\emptyset^z$ to maximize $z$.
 %For one layer before the target layer, the formula is simple and most accurate. 
-To estimate Improve\_max$_a^z$, we define Utility\_max$^z(a)$, first for neurons $a$ one layer before $z$:
+To estimate $\Improve\_max_a^z$, we define $\Utility$\_max$^z(a)$, first for neurons $a$ one layer before $z$:
 %we first need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
 
 	\begin{align}
-		Utility\_max^z(a) = |W_{az} \times (sol(\hat{a})- \ReLU(sol(a)))|.
+		\Utility\_max^z(a) = |W_{az} \times (sol(\hat{a})- \ReLU(sol(a)))|.
 	\end{align}
 	
 	%In particular, if $sol(\hat{a})=\ReLU(sol(a))$, then we will have 
@@ -65,7 +65,7 @@ To estimate Improve\_max$_a^z$, we define Utility\_max$^z(a)$, first for neurons
 We have that :
 
 \begin{proposition}
-$0 \leq Improve\_max^z(a) \leq Utility\_\max^z(a)$. 
+$0 \leq \Improve\_max^z(a) \leq \Utility\_\max^z(a)$. 
 \end{proposition}
 
 \begin{proof}
@@ -85,13 +85,13 @@ $\mathcal{M}_{\{a\}}$, as openning $a$ changes the value of $\hat{a}$ from
 $sol(\hat{a})$ to $\ReLU(sol(a))$, and the contribution from $a$ to $z$ is 
 $W_{az}$. As $sol'(z)$ is a solution of $\mathcal{M}_{\{a\}}$, it is smaller or equal to the maximal solution: $sol'(z) \leq$ Sol\_max$_{\{a\}}^z(z)$. That is, 
 $sol(z)-sol'(z) \geq sol(z) -$ Sol\_max$_{\{a\}}^z(z)$, i.e. 
-$Improve\_max^z(a) \leq Utility\_\max^z(a)$.
+$\Improve\_max^z(a) \leq Utility\_\max^z(a)$.
 \end{proof}
 
 Thus, Utility\_max$^z(a)$ can be used to approximate 
-Improve\_max$^z(a)$. In particular, consider a very frequent case where $W_{az}<0$.
-In this case, to maximize $z$, the LP engine sets $sol(\hat{a})$ to its minimal value\dots which happens to be $sol(\hat{a})=ReLU(a)$, thanks to Proposition \ref{LP}. 
-In this frequent case, we have Utility\_max$^z(a)=0$, and thus Improve\_max$^z(a)=0$. 
+$\Improve\_max^z(a)$. In particular, consider a very frequent case where $W_{az}<0$.
+In this case, to maximize $z$, the LP engine sets $sol(\hat{a})$ to its minimal value\dots which happens to be $sol(\hat{a})=\ReLU(a)$, thanks to Proposition \ref{LP}. 
+In this frequent case, we have Utility\_max$^z(a)=0$, and thus $\Improve\_max^z(a)=0$. 
 In particular, this node will have the smallest utility (thus will not get picked in the open nodes $X$), and indeed it is not having any impact on  Sol\_max$_{\{a\}}^z(z)$. 
 This is one stricking difference (but not the only one) with choosing utility based on 
 $|W_{az}|$ \cite{DivideAndSlide}.
@@ -118,9 +118,9 @@ $\UB(b),\LB(b)$:
 \end{itemize}
 %$\sum_b W_{bz}W_{ab}$ to replace the coefficient $W_{az}$ in last subsection. 
 
-%To estimate Improve\_max$_a^z$ , 
-Indeed, if $W_{bz}\leq0$, then the LP solver sets $sol(\hat{b})$ to the lowest possible value to maximize $z$, which happens to be $ReLU(b)$ according to Proposition \ref{LP}.
-If $sol(b) < 0$, then we have a clip at $sol(\hat{b})=ReLU(b)=0$ and opening $a$ does not help. If $sol(b) > 0$, then we have $sol(\hat{b})=ReLU(b)=sol(b)$ and every change from 
+%To estimate $\Improve\_max_a^z$ , 
+Indeed, if $W_{bz}\leq0$, then the LP solver sets $sol(\hat{b})$ to the lowest possible value to maximize $z$, which happens to be $\ReLU(b)$ according to Proposition \ref{LP}.
+If $sol(b) < 0$, then we have a clip at $sol(\hat{b})=\ReLU(b)=0$ and opening $a$ does not help. If $sol(b) > 0$, then we have $sol(\hat{b})=\ReLU(b)=sol(b)$ and every change from 
 $a$ is reflected with a coefficient $W_{ab}$ on $\hat{b}$. 
 Last, if $W_{bz}>0$, then according to Proposition \ref{LP}, the LP solver
 sets $sol(\hat{b}) = sol(b) \frac{\UB(b)}{\UB(b)-\LB(b)}$ to maximize $z$.
@@ -130,22 +130,22 @@ sets $sol(\hat{b}) = sol(b) \frac{\UB(b)}{\UB(b)-\LB(b)}$ to maximize $z$.
 %	Utility\_max^z(a) = (sol(\hat{a})-\ReLU(sol(a)))\sum_b k(b).
 %\end{align*}
 
-We define a distance $D$ to account for the fact that a neuron $b$ 
+We define a difference $\Delta$ to account for the fact that a neuron $b$ 
 can not exceed $\LB(b),\UB(b)$:
 	\begin{align*}
-		&D(\hat{a}) = sol(\hat{a}) - \ReLU(sol(a)) \geq 0\\
-			&D(\hat{b}) =
+		&\Delta(\hat{a}) = sol(\hat{a}) - \ReLU(sol(a)) \geq 0\\
+			&\Delta(\hat{b}) =
 		\begin{cases}
-			sol(\hat{b}) - \min(\UB(b), sol(\hat{b}) - D(\hat{a}) k(\hat{b})), & \text{if }  W_{bz} > 0 \\
-			sol(\hat{b}) - \max(\LB(b), 0, sol(\hat{b}) -D(\hat{a}) k(\hat{b})), & \text{if }W_{bz} < 0\\
+			sol(\hat{b}) - \min(\UB(b), sol(\hat{b}) - \Delta(\hat{a}) k(\hat{b})), & \text{if }  W_{bz} > 0 \\
+			sol(\hat{b}) - \max(\LB(b), 0, sol(\hat{b}) -\Delta(\hat{a}) k(\hat{b})), & \text{if }W_{bz} < 0\\
 		\end{cases}
 		\end{align*}
 
 We can now set 
 
-$$ Utility\_max^z(a) = \sum_b W_{bz} D(\hat{b})$$
+$$ \Utility\_max^z(a) = \sum_b W_{bz} \Delta(\hat{b})$$
  
-We proceed inductively in the same way to define Utility$\_max^z(a)$ for deeper neuron $a$.
+We proceed inductively in the same way to define $\Utility\_max^z(a)$ for deeper neuron $a$.
 
 \iffalse
 \subsubsection*{Three Layer before  $z$} 
@@ -171,29 +171,29 @@ Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bounds used in
 \begin{definition}
 	Continue the assumption in Definition \ref{3layer}. We define function $D$ layer by layer.
 	
-	First, $D(a) = \ReLU(sol(a))-sol(\hat{a})$.
+	First, $\Delta(a) = \ReLU(sol(a))-sol(\hat{a})$.
 	
-To compute $D(b)$ for neurons $b$ in two layer before $z$, we define \begin{align}
-	&u_0 = \max(\LB(b),\min(\UB(b),  sol(b)+D(a)W_{ab}))\\
+To compute $\Delta(b)$ for neurons $b$ in two layer before $z$, we define \begin{align}
+	&u_0 = \max(\LB(b),\min(\UB(b),  sol(b)+\Delta(a)W_{ab}))\\
 	&u_1 = \begin{cases}
 		\ReLU(u_0)+h(b)(\frac{\UB(c)u_0-\UB(b)\LB(b)}{\UB(b)-\LB(b)}-\ReLU(u_0)), & \text{if }\LB(b) < 0\\
 	u_0, & \text{if }  \LB(b) \geq 0
 	\end{cases}\\
-	&D(b) = u_1-sol(\hat{b})
+	&\Delta(b) = u_1-sol(\hat{b})
 \end{align}
 	
-	To compute $D(c)$ for neurons $c$ in one layer before $z$, we define 
+	To compute $\Delta(c)$ for neurons $c$ in one layer before $z$, we define 
 	\begin{align}
-		&w_0 = \sum_b D(b)W_{bc}\\
+		&w_0 = \sum_b \Delta(b)W_{bc}\\
 		&w_1 = \min(\UB(c),sol(c)+w_0)\\		
-		&D(c) =
+		&\Delta(c) =
 		\begin{cases}
 			w_1-sol({c}), & \text{if }W_{cz} > 0 \text{ and } \LB(c)\geq 0\\
 		k(c)(w_1-sol({c})), & \text{if }W_{cz} > 0 \text{ and } \LB(c)< 0\\
 		\ReLU(w_1)-sol(\hat{c})	, & \text{if }  W_{cz} < 0
 		\end{cases}\\
-		&D(z) = \sum_c D(c)W_{cz}\\
-		&Utility\_max^z(a) = -D(z)
+		&\Delta(z) = \sum_c \Delta(c)W_{cz}\\
+		&\Utility\_max^z(a) = -\Delta(z)
 	\end{align}
 \end{definition}
 		
