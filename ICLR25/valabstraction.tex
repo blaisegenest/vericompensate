@@ -145,9 +145,9 @@ Then we have:
 
 \begin{proposition}
 	\label{LP}
-	The LP relaxation on $\hat{x}$ is equivalent with the following system of constraints:
+	The LP relaxation on $\hat{x}$ is equivalent with:
 	\begin{align}
-		\hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0 \quad \wedge \quad \hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)} \label{eq:deeppoly}
+		\ReLU(x) \leq \hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)} \label{eq:deeppoly}
 		%& \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, \quad a \in [0,1]  \label{eq:lp}\\
 	\end{align} 
 \end{proposition}
@@ -155,11 +155,11 @@ Then we have:
 
 
 \begin{proof}
-We need to show that the three constraints 
-$\hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, \quad a \in [0,1]$ translates to $\hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)}$. 
-To this end, we focus on the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ is upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. Furthermore, 
-	The function $\min(\beta \cdot a, x - \alpha (1-a))$ attains its maximum when $\beta \cdot a = x - \alpha (1-a)$, leading to the equation $(\beta - \alpha) a = x - \alpha$ and consequently $a = \frac{x - \alpha}{\beta-\alpha}$. This results in an upper bound of $\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$ \qed
+The lower bound on $\hat{x}$ is simple, as $\hat{x} \geq 0 \wedge \hat{x} \geq x$ is immediatly equivalent with $\hat{x} \geq \ReLU(x)$.
+
+We now show that the three constraints 
+$\hat{x} \leq \UB(n) \cdot a \, \wedge \, \hat{x} \leq x-\LB(n) \cdot (1-a) \, \wedge \, a \in [0,1]$ translates into $\hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)}$. 
+We have $\hat{x}$ is upper bounded by $max_{a \in [0,1]} (min(\UB(n) \cdot a, x - \LB(n) (1-a)))$, and this bound can be reached. Furthermore, using standard function analysis tools (derivative...), we can show that the function $a \mapsto \min(\UB(n) \cdot a, x - \LB(n) (1-a))$ attains its maximum when $\UB(n) \cdot a = x - \LB(n) (1-a)$, leading to the equation $(\UB(n) - \UB(n)) a = x - \LB(n)$ and consequently $a = \frac{x - \LB(n)}{\UB(n)-\LB(n)}$. This results in an upper bound $\hat{x} \leq \UB(n) \frac{x - \LB(n)}{\UB(n)-\LB(n)}$, which can be reached, hence the equivalence.
 \end{proof}
 
-Notice that this is close to the DeepPoly abstractions \cite{deeppoly}, but LP simultaneous considers the two linear lower bounding functions for the ReLU operation, namely $ReLU(x) \geq 0$ and $ReLU(x) \geq x$, while the DeepPoly abstraction restricts itself to the application of a single one of these linear bounding functions.
-
+Notice that this is close to the DeepPoly abstractions \cite{deeppoly}, but LP simultaneous considers the two linear lower bounding functions for the ReLU operation, namely $\ReLU(x) \geq 0$ and $\ReLU(x) \geq x$, while the DeepPoly abstraction restricts itself to the application of a single one of these linear bounding functions.

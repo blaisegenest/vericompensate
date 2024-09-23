@@ -49,12 +49,13 @@ by $\alpha,\beta$-CROWN and the upper bound when we remove those which can be fa
 		MNIST 5$\times$100 & 99\% & 90\% & 28\% & $49\%$ & 40 \%    \\
 		$\epsilon = 0.026$ & &  &6200s &  4995s & 6100s
 		  \\  \hline
-		  MNIST 5$\times$100 & 99\% & 90\% & 28\% & $46\%$ & 37 \%    \\
-		  TO=2000s & &  & 1250s  & 1194s & 1466s \\  \hline	
+		%  MNIST 5$\times$100 & 99\% & 90\% & 28\% & $46\%$ & 37 \%    \\
+		%  TO=2000s & &  & 1250s  & 1194s & 1466s \\  \hline	
 	\end{tabular}
 \caption{Complete verifiers run on the smallest of the hard DNN with TO = 10 000s. 
 %Because the instances are hard, most test time-out at the global threshold of 10.000s per image, and 
-No complete verifier could outperform $\alpha,\beta$-CROWN (40\%, 1026s), despite the much larger runtime.}
+Complete verifier barely outperform $\alpha,\beta$-CROWN (40\%, 1026s), despite the much larger runtime, 
+still very far from the upper bound.}
 \label{table_complete}
 \end{table}
 
