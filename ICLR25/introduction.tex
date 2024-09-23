@@ -89,6 +89,7 @@ Our three main contributions address the challenges of verifying {\em hard} DNNs
 \begin{enumerate}
 	\item  Our first contribution is to study the LP relaxation for the complete MILP
 	encoding of ReLU-DNNs. We establish in Proposition \ref{LP} an explicit abstraction set corresponding to the LP constraints.
+	
 	\item This allows us to propose a measure of utility for each neuron, providing an upper bound on the improvement on accuracy made if we treat this neuron with an integer variable instead of the LP relaxation. Choosing the neurons with the top utility and encoding them with integer variables gives rise to a partial MILP which is much more efficient than previous attempts \cite{DivideAndSlide}, necessitating much less integer variables for the same accuracy.
 
 \item We then propose a new verifier, called Hybrid MILP, invoking first 
