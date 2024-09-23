@@ -137,21 +137,29 @@ and upper bounds $\LB(n),\UB(n)$ for neurons $n$ of a layer, that are used when 
 
 The crucial factor in such an approach is to {\em select} few opened neurons in $X$ which are the most important for the accuracy. An extreme strategy was adopted in \cite{DivideAndSlide}, where only nodes of the immediate previous layer could be opened, and the measure to choose a neuron $a$ to open to compute the values for neuron $b$ was to consider $|W_{ab}| (UB(a)-LB(a))$. To obtain a more accurate measure, that can also scale to deeper layers and is not limited to open nodes from the immediate previous layer, we first study the LP abstraction.
 
-The following proposition shows that the LP abstraction refines the DeepPoly abstraction. 
-The difference between the LP and the DeepPoly abstractions is that LP simultaneous considers the two linear lower bounding functions for the ReLU operation, namely $ReLU(x) \geq 0$ and $ReLU(x) \geq x$, while the DeepPoly abstraction restricts itself to the application of a single one of these linear bounding functions.
- 
+Consider an unstable neuron $n$, that is $\LB(n) < 0 < \UB(n)$. 
+Let $x$ represent the input value of $n$, hence with 
+$\LB(n) < x < \UB(n)$, and $\hat{x}$ representing $ReLU(x)$. 
+Then we have:
+
 
 \begin{proposition}
 	\label{LP}
-	Given $x \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems of constraints (1) for LP and (2) for DeepPoly with both lower bounds, are equivalent:
+	The LP relaxation on $\hat{x}$ is equivalent with the following system of constraints:
 	\begin{align}
-& \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, \quad a \in [0,1]  \label{eq:lp}\\
-&\hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0 \quad \wedge \quad \hat{x} \leq \beta \frac{x-\alpha}{\beta-\alpha} \label{eq:deeppoly}
+		\hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0 \quad \wedge \quad \hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)} \label{eq:deeppoly}
+		%& \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, \quad a \in [0,1]  \label{eq:lp}\\
 	\end{align} 
 \end{proposition}
+ 
+
 
 \begin{proof}
-We need to show that the two upper bound constraints on $\hat{x}$ in (1) are equivalent to the upper bound in (2). To this end, we focus on the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ in Eq~\ref{eq:lp} is upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. Furthermore, 
+We need to show that the three constraints 
+$\hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, \quad a \in [0,1]$ translates to $\hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)}$. 
+To this end, we focus on the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ is upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. Furthermore, 
 	The function $\min(\beta \cdot a, x - \alpha (1-a))$ attains its maximum when $\beta \cdot a = x - \alpha (1-a)$, leading to the equation $(\beta - \alpha) a = x - \alpha$ and consequently $a = \frac{x - \alpha}{\beta-\alpha}$. This results in an upper bound of $\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$ \qed
 \end{proof}
+
+Notice that this is close to the DeepPoly abstractions \cite{deeppoly}, but LP simultaneous considers the two linear lower bounding functions for the ReLU operation, namely $ReLU(x) \geq 0$ and $ReLU(x) \geq x$, while the DeepPoly abstraction restricts itself to the application of a single one of these linear bounding functions.
 
