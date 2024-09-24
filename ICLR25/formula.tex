@@ -53,9 +53,7 @@ To estimate $\Improve\_\max^z(a)$, we define $\Utility\_\max^z(a)$, first for ne
 and other values remain the same - in particular, $value(\hat{a})=\ReLU(sol(a))$. We define:
 %we first need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
 
-	\begin{align}
-		\Utility\_\max\nolimits^z(a) = W_{az} \times (\sol(\hat{a})- \ReLU(\sol(a))).
-	\end{align}
+	$$\Utility\_\max\nolimits^z(a) = W_{az} \times (\sol(\hat{a})- \ReLU(\sol(a)))$$
 	
 	%In particular, if $\sol(\hat{a})=\ReLU(\sol(a))$, then we will have 
 	%\begin{align*}
@@ -139,7 +137,7 @@ $$ \Utility\_\max\nolimits^z(a) = -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})$$
 	are respected.
 	As $\sol'(z)$ is a solution of $\mathcal{M}_{\{a\}}$, it is smaller or equal to the maximal solution: $\sol'(z) \leq$ $\Sol\_\max_{\{a\}}^z(z)$. That is, 
 	$\sol(z)-\sol'(z) \geq \sol(z) -$ $\Sol\_\max_{\{a\}}^z(z)$, i.e. 
-	$\Improve\_\max^z(a) \leq \Utility\_\max^z(a)$.
+	$ \Utility\_\max^z(a) \geq \Improve\_\max^z(a)$.
 	In particular, we have that $\Utility\_\max^z(a) \geq 0$, which was not obvious from the definition.
 	\end{proof}
 	
