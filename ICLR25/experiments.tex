@@ -159,7 +159,7 @@ The exact same DNNs and $\epsilon$ are used in Tables \ref{table_beta} and \ref{
 		MNIST 6$\times$500 & 53\% (6.4s) & 51\% (16s) & 50\% (1002s) & N/A & 
 		\bf 10\% (402s) \\ \hline
 		CIFAR CNN-B-adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & N/A & \bf 11\% (417s) \\ \hline \hline
-		CIFAR Resnet & 0\% (2s) & 0\% (2s) & 0\% (2s) & N/A & 0\% (2s) \\ \hline \hline
+		CIFAR ResNet & 0\% (2s) & 0\% (2s) & 0\% (2s) & N/A & 0\% (2s) \\ \hline \hline
 	\end{tabular}
 	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown, refined $\beta$-Crown and Hybrid MILP, run on 7 DNNs (average runtime per image in second). The 6 first DNNs are hard instances, while the last one (ResNet) is an easy instance (it is trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.}
 	\label{table_hybrid}
@@ -183,9 +183,8 @@ In order to evaluate the accuracy of Hybrid MILP in a finer way, showcasing
 the capabilities to have a very accurate and efficient verifier, we consider
 a quantitative questions for each image, rather than a pure yes (verified)/ no (not verified) question. Namely, we compute the $\epsilon$ for which the verifier can certify local-robustness around a given image, which makes sense as there is little rationale in setting a particular $\epsilon$ (which is however the usual local-robustness setting).
 
-For that, we considered the DNN 6x500, and the 20 first images from the MNIST benchmark.
-We first run the attack from $\alpha,\beta$-Crown for varying $\epsilon$, using a binary search, to set up an upper bound on $\epsilon$ (the initialization is $\epsilon \in [0,1]$).
-Then we run binary search with a global time out of $10 000s$, initialized from $0$ to this upper bound, where each call is either to $\alpha,\beta$-Crown with TO=2000s, or Hybrid MILP.
+For that, we considered the challenging DNN MNIST $6 \times 500$, and the 20 first images from the MNIST benchmark. We first run the attack from $\alpha,\beta$-Crown for varying $\epsilon$, using a binary search, to set up an upper bound on $\epsilon$ (the initialization is $\epsilon \in [0,1]$).
+Then we run binary search with a global time-out of $10 000s$, initialized from $0$ to this upper bound, where each call is either to $\alpha,\beta$-Crown with TO=2000s, or Hybrid MILP.
 We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown and by Hybrid MILP) for each image. We report the results in Fig. \ref{fig2}
 
 \begin{figure}[t!]
@@ -196,10 +195,9 @@ We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown 
 	\end{centering}
 \end{figure}
 
-{\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10 and 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so it is possible the upper bound did not find a close attack to robustness.
+{\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10 and 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so it is possible that the falsifier missed a closer attack to robustness.
 
-Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper bound, except for 2 cases where $\alpha,\beta$-CROWN is already very close to the upper bound. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, and $0.042$ for 
-$\alpha,\beta$-CROWN.
+Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper bound, except for 2 cases (images 8 and 18) where $\alpha,\beta$-CROWN is already very close to the upper bound. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, and $0.042$ for $\alpha,\beta$-CROWN.
 
 
 
