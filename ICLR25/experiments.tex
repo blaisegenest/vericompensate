@@ -69,20 +69,20 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 
 \begin{table}[b!]	
 	\centering
-	\begin{tabular}{|c||c|c|c|}
+	\begin{tabular}{|c||c|c|c|c|c|}
 		\hline
-		\text{Number $K$}  &  \bf Utility&  \text{Strength} \cite{ DivideAndSlide} & \text{Random} \\ \hline
+		\text{Number $K$}  &  \bf Utility& Utility& \text{Strength} \cite{ DivideAndSlide} & \text{Random} &\text{Random}\\ \hline
 		\hline
-		0  &   1.761  & 1.761 & 1.761  \\ \hline
-		5  & \bf 1.532  & 1.704 &   \\ \hline
-		10  & \bf 1.371  & 1.651 & 1.696  \\ \hline
-		15  & \bf 1.247  &  1.599 &   \\ \hline
-		20  & \bf 1.145  & 1.557 & 1.619  \\ \hline
-		25  & \bf 1.061  & 1.519 &   \\ \hline
-		30  & \bf 0.989  & 1.489 & 1.546  \\ \hline
-		35  & \bf 0.934  & 1.465 &   \\ \hline
-		40  & \bf 0.921 & 1.447 & 1.469  \\ \hline
-		116 (max) &  0.895 & 1.424 (max=$61$) & 0.895  \\ \hline
+		0  &   1.761  && 1.761 & 1.761  &\\ \hline
+		5  & \bf 1.532  && 1.704 &  1.729& \\ \hline
+		10  & \bf 1.371  && 1.651 & 1.696 & \\ \hline
+		15  & \bf 1.247  &&  1.599 &  1.653& \\ \hline
+		20  & \bf 1.145  && 1.557 & 1.619 & \\ \hline
+		25  & \bf 1.061  && 1.519 &  1.586 &\\ \hline
+		30  & \bf 0.989  && 1.489 & 1.546 & \\ \hline
+		35  & \bf 0.934  && 1.465 & 1.502 &\\ \hline
+		40  & \bf 0.921 && 1.447 & 1.469 & \\ \hline
+		116 (max) &  0.895 &1.424& 1.424 (max=$61$) & 0.895 &1.424  \\ \hline
 	\end{tabular}
 	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the 1st and 2nd layer (our utility function vs \cite{ DivideAndSlide} vs random choice).}
 	\label{tab:example1}
@@ -133,7 +133,7 @@ We conducted our evaluation on the neural networks tested in \cite{crown},
 which display a large gap ($\geq 20\%$) between images that can be certified by $\alpha,\beta$-CROWN and the upper bound when we remove those which can be falsified.
 
 Namely, these are 6 {\em hard} ReLU-DNNs: 5 MNIST DNN from the ERAN GitHub (\url{https://github.com/eth-sri/eran}, the 4th to the 8th DNNs provided) as well as 1 CIFAR CNN from 
-\cite{AdversarialTrainingAndProvableDefenses}, also see \cite{SDPFI}, with the same $\epsilon$ setting. For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark, the exact same setting and DNNs as used in Table \ref{table_beta}.
+\cite{AdversarialTrainingAndProvableDefenses} (the network file we use is from \url{https://github.com/Verified-Intelligence/alpha-beta-CROWN}), also see \cite{SDPFI}, with the same $\epsilon$ setting. For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark, the exact same setting and DNNs as used in Table \ref{table_beta}.
 
 
 \begin{table}[t!]
