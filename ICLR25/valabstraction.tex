@@ -121,10 +121,13 @@ $x_3=2$ implies $x_1=x_2=1$ and $x_4=2$ implies $x_2=-1$ (and $x_1=1$), a contra
 \subsection{MILP, LP and partial MILP encodings for DNNs}
 
 At the other end of the spectrum, we find the Mixed Integer Linear Programming (MILP) value abstraction, which is a complete (but inefficient) method. 
-Consider an unstable neuron $n \in[\UB,\LB]$. The value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one integer (actually even binary) variable $a$ valued in $\{0,1\}$, using constants $(\UB,\LB)$ with 4 constraints \cite{MILP}:
-$\quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \LB \cdot a \quad \wedge \quad \hat{x} \leq x-\UB \cdot (1-a)$.
+Consider an unstable neuron $n$, whose value $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$.
+The value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one 
+integer (actually even binary) variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
 
-For all $x \in [\UB,\LB] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. Here, $a$ is 0 if $x < 0$, 1 if $x>0$, and can be either if $x=0$~\cite{MILP}. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
+$$\quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \LB(n) \cdot a \quad \wedge \quad \hat{x} \leq x-\UB(n) \cdot (1-a)$$
+
+For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
 
 MILP instances can be linearly relaxed into LP over-abstraction, where variables originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}.
 
@@ -137,8 +140,8 @@ The crucial factor in such an approach is to {\em select} few opened neurons in 
 
 Consider an unstable neuron $n$, that is $\LB(n) < 0 < \UB(n)$. 
 Let $x$ represent the input value of $n$, hence with 
-$\LB(n) < x < \UB(n)$, and $\hat{x}$ representing $ReLU(x)$. 
-Then we have:
+$\LB(n) < x < \UB(n)$, and $\hat{x}$ representing $\ReLU(x)$. 
+We have:
 
 
 \begin{proposition}
