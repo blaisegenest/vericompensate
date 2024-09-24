@@ -236,7 +236,7 @@ In this paper, we studied the LP relaxation of the exact MILP encoding of ReLU-D
 It allowed us to accurately assess when the relaxation of a node impacts very little 
 the accuracy, and when it impacts the accuracy importantly, in which case representing it with a binary/integer variable is preferable. This allows us to select a small set of important neurons to encode as a binary variables, improving accuracy drastically. Our automated choice of opened neurons necessitates $>4$x less integer variables than previous proposals \cite{DivideAndSlide} for the same accuracy. Our empirical studies revealed that Hybrid MILP, can yield highly accurate results, verifying up to 40\% more images than the SOTA ($\alpha,\beta$-Crown, winner of the 4 last VNNComp), with the same runtime. 
 The reason is that $\alpha,\beta$-Crown can scale to large easy DNNs, but does not scale to 
-hard even small DNNs: it hits a complexity wall, similarly as other compeating solutions. This opens a lot of perspectives, among which: verifying efficiently other hard instances; certifying $\epsilon$-robustness of images for $\epsilon$ as large as possible; 
+hard even small DNNs: it hits a complexity barrier, similarly as other compeating solutions. This opens a lot of perspectives, among which: verifying efficiently other hard instances; certifying $\epsilon$-robustness of images for $\epsilon$ as large as possible; 
 verifying global rather than local properties \cite{lipshitz}.
 
 \newpage

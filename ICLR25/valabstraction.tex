@@ -5,7 +5,7 @@ In this section, we describe different value (over-)abstractions on $\vz$ that a
 \subsection{The Box Abstractions}
 
 
-%\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
+\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
 
 
 
@@ -18,11 +18,11 @@ Firstly, it's important to note that weighted sums represent a linear function, 
 	\centering
 	\begin{tikzpicture}
 		
-		\node[circle, draw= black, thick, minimum width = 20,
+		\node[circle, draw= applegreen, thick, minimum width = 20,
 		minimum height = 20] (input1) {$n_1$};
 
 		
-		\node[circle, draw= black, thick, minimum width = 20,
+		\node[circle, draw= applegreen, thick, minimum width = 20,
 		minimum height = 20] (input2) at ($(input1) + (0,-1.5)$) {$n_2$};
 		
 		% Hidden layers
@@ -36,27 +36,25 @@ Firstly, it's important to note that weighted sums represent a linear function, 
 		\node (hidden60) at ($(input1) + (7.5,-1.5-0.6)$) {$1.5$};
 		
 		
-		\node[circle, draw= black, thick, minimum width = 20,
+		\node[circle, draw= blue, thick, minimum width = 20,
 		minimum height = 20] (hidden1) at ($(input1) + (2.5,0)$) {$n_3$};
-		\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$n_4$};
+		\node[circle, draw= blue, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$n_4$};
 		
-		\node[circle, draw= black, thick, minimum width = 20,
+		\node[circle, draw= blue, thick, minimum width = 20,
 		minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$\hat{n}_3$};
-		\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$\hat{n}_4$};
+		\node[circle, draw= blue, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$\hat{n}_4$};
 		
 		
-		\node[circle, draw= black, thick, minimum width = 20,
+		\node[circle, draw= red, thick, minimum width = 20,
 		minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$n_5$};
-		\node[circle, draw= black, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$n_6$};
-		
-		
+		\node[circle, draw= blue, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$n_6$};
 		
 		
 		% Output layer
-		\node[circle, draw= black, thick, minimum width = 20,
+		\node[circle, draw= blue, thick, minimum width = 20,
 		minimum height = 20] (output1) at ($(input1) + (10,0)$){$\hat{n}_5$};
 		
-		\node[circle, draw= black, thick, minimum width = 20,
+		\node[circle, draw= blue, thick, minimum width = 20,
 		minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$\hat{n}_{6}$};
 		
 		
