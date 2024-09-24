@@ -185,19 +185,19 @@ a quantitative questions for each image, rather than a pure yes (verified)/ no (
 
 For that, we considered the challenging DNN MNIST $6 \times 500$, and the 20 first images from the MNIST benchmark. We first run the attack from $\alpha,\beta$-Crown for varying $\epsilon$, using a binary search, to set up an upper bound on $\epsilon$ (the initialization is $\epsilon \in [0,1]$).
 Then we run binary search with a global time-out of $10 000s$, initialized from $0$ to this upper bound, where each call is either to $\alpha,\beta$-Crown with TO=2000s, or Hybrid MILP.
-We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown and by Hybrid MILP) for each image. We report the results in Fig. \ref{fig2}
+We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown and by Hybrid MILP) for each image. We report the results in Fig. \ref{fig2}.
 
 \begin{figure}[t!]
 	\begin{centering}
 \includegraphics[scale=0.5]{epsilon.png}.
-\caption{$\epsilon$-robustness proved after $10 000s$ for each of the 20 first images of MNIST.}
+\caption{$\epsilon$-robustness proved after $10 000s$ for $6 \times 500$ on each of the 20 first images of MNIST.}
 \label{fig2}
 	\end{centering}
 \end{figure}
 
 {\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10 and 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so it is possible that the falsifier missed a closer attack to robustness.
 
-Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper bound, except for 2 cases (images 8 and 18) where $\alpha,\beta$-CROWN is already very close to the upper bound. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, and $0.042$ for $\alpha,\beta$-CROWN.
+Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper bound, except for 2 cases (images 8 and 18) where $\alpha,\beta$-CROWN is already very close to the upper bound. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, 3 times smaller than the $0.042$ gap for $\alpha,\beta$-CROWN.
 
 
 
