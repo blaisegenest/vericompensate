@@ -52,10 +52,10 @@ by $\alpha,\beta$-CROWN and the upper bound when we remove those which can be fa
 		%  MNIST 5$\times$100 & 99\% & 90\% & 28\% & $46\%$ & 37 \%    \\
 		%  TO=2000s & &  & 1250s  & 1194s & 1466s \\  \hline	
 	\end{tabular}
-\caption{Complete verifiers run on the smallest of the hard DNN with TO = 10 000s. 
+\caption{Result of complete verifiers on the hard 5x100 with TO = 10 000s. 
 %Because the instances are hard, most test time-out at the global threshold of 10.000s per image, and 
-Complete verifier barely outperform $\alpha,\beta$-CROWN (40\%, 1026s), despite the much larger runtime, 
-still very far from the upper bound.}
+Complete verifier barely (9\% out of 50\%) 
+outperform $\alpha,\beta$-CROWN (40\%, 1026s), despite much larger runtime.}
 \label{table_complete}
 \end{table}
 
@@ -63,8 +63,7 @@ still very far from the upper bound.}
 
 The size of the smallest DNN (500 hidden neurons) makes it realistic to be solved by complete verifiers such as Marabou 2.0, NNenum or a Full MILP encoding. 
 While they should theoretically be able to close the gap of undecided images,
-in practice, Table \ref{table_complete} reveals that even with a very large 10 000s time out per image, none succeds to verify any more image than $\alpha,\beta$-Crown, while the runtime is $>5$ times longer. It seemed pointless to test complete verifier on larger networks.
-
+in practice, Table \ref{table_complete} reveals that only NNenum succeds to verify 9\% more images out of the 50\% undecided images by $\alpha,\beta$-Crown, and with a very large runtime of almost 5000s per image. It seemed pointless to test complete verifiers on larger networks.
 
 %Eran-DeepPoly \cite{deeppoly}, Linear Programming \cite{MILP}, PRIMA \cite{prima}.
 
@@ -90,6 +89,7 @@ Our three main contributions address the challenges of verifying {\em hard} DNNs
 \begin{enumerate}
 	\item  Our first contribution is to study the LP relaxation for the complete MILP
 	encoding of ReLU-DNNs. We establish in Proposition \ref{LP} an explicit abstraction set corresponding to the LP constraints.
+	
 	\item This allows us to propose a measure of utility for each neuron, providing an upper bound on the improvement on accuracy made if we treat this neuron with an integer variable instead of the LP relaxation. Choosing the neurons with the top utility and encoding them with integer variables gives rise to a partial MILP which is much more efficient than previous attempts \cite{DivideAndSlide}, necessitating much less integer variables for the same accuracy.
 
 \item We then propose a new verifier, called Hybrid MILP, invoking first 

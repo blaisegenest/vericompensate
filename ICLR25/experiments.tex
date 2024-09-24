@@ -160,12 +160,12 @@ Namely, these are 6 {\em hard} ReLU-DNNs: 5 MNIST DNN from the ERAN GitHub (\url
 Interpretation: on easy instances, Hybrid MILP is virtually similar to $\alpha,\beta$-CROWN, 
 as it is called first and it is sufficient to have $0\%$ undecided images, as shown even on the very large ResNet.
 
-On hard instances (the 6 first DNNs tested), Hybrid MILP is very accurate, only leaving $8\%$-$15\%$ of images undecided, with runtime taking less than $500s$ in average per image, 10 times less even on smaller DNNs. It can scale up to quite large hard CNN instances, such as CNN-B-Adv with 2M parameters and 20K activations.
+On hard instances (the 6 first DNNs tested), Hybrid MILP is very accurate, only leaving $8\%$-$15\%$ of images undecided, with runtime taking less than $500s$ in average per image, and even 10 times less on smaller DNNs. It can scale up to quite large hard DNNs, such as CNN-B-Adv with 2M parameters and 20K activations.
 
 Compared with $\alpha,\beta$-Crown with a time-out of TO=2000s, it is much more accurate, with a reduction of undecided images by $9\%$-$43\%$ wrt $\alpha,\beta$-Crown with TO of 2000s. It is also from 20x faster on smaller networks to similar time on the largest DNN.
 Compared with $\alpha,\beta$-Crown with a time-out of TO=30s, the accuracy gap is even larger (e.g. $11\%$ for CNN-B-Adv, i.e. half undecided images), although the average runtime is also obviously larger (solving hard istances takes longer than solving easy instances).
 
-Last, compared with refined $\beta$-Crown, we can observe three patterns: on the shallowest DNNs (5x100, 5x200), refined $\beta$-Crown can run full MILP on almost all nodes, reaching almost the same accuracy than our Hybrid MILP, but with longer runtime (up to 2x on 5x100). On intermediate DNNs (8x100,8x200), full MILP invoked by refined $\beta$-Crown can only be run on a fraction of the neurons, and the accuracy is not as good as Hybrid MILP, with $6\%-8\%$ more undecided images, while having longer runtime. Last, refined $\beta$-Crown cannot scale to larger instances (6x500, CNN-B-Adv), while Hybrid MILP can.
+Last, compared with refined $\beta$-Crown, we can observe three patterns: on the shallowest DNNs (5x100, 5x200), refined $\beta$-Crown can run full MILP on almost all nodes, reaching almost the same accuracy than  Hybrid MILP, but with longer runtime (up to 2x on 5x100). On intermediate DNNs (8x100,8x200), full MILP invoked by refined $\beta$-Crown can only be run on a fraction of the neurons, and the accuracy is not as good as Hybrid MILP, with $6\%-8\%$ more undecided images, while having longer runtime. Last, refined $\beta$-Crown cannot scale to larger instances (6x500, CNN-B-Adv), while Hybrid MILP can.
 
 
 \subsection{Finer Grain evaluation of Accuracy}
@@ -198,9 +198,9 @@ $\alpha,\beta$-CROWN.
 
 We volontarily limited the comparison to $\alpha,\beta$-Crown because it is the most efficient verifier available to date, and it enabled us to consider much finer parameter choice without too much cluter. 
 
-Notice that several other verifiers were already reported \cite{crown} on these same DNNs, with defavorable comparison towards $\alpha,\beta$-CROWN (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc). Further, we reported accuracy of complete verifiers, NNenum \cite{nnenum}, Marabou \cite{Marabou, Marabou2}, respectively 4th, 3rd 
+Notice that results for several other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported on these DNNs \cite{crown}, with defavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of complete verifiers, NNenum \cite{nnenum}, Marabou \cite{Marabou, Marabou2}, respectively 4th, 3rd 
 of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on hard instances either, even on the smallest hard DNN. Concerning MnBAB \cite{ferrari2022complete}, it compares slightly defavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv \cite{ferrari2022complete}, and we also run it for the MNIST DNNs, and it was slightly slower and less accurate than $\alpha,\beta$-CROWN at several time-out settings. 
-Last, Pyrat code is not open source, which made running it impossible.
+Last, Pyrat code (2sd in the latest VNNComp) is not open source, which made running it impossible.
 
 
 
