@@ -134,10 +134,15 @@ We define a difference $\Delta$ to account for the fact that a neuron $b$
 can not exceed $\LB(b),\UB(b)$:
 	\begin{align*}
 		&\Delta(\hat{a}) = \sol(\hat{a}) - \ReLU(\sol(a)) \geq 0\\
+		&\Delta(b) = \begin{cases}
+			\max(W_{ab}\Delta(\hat{a}),\LB(b)-\sol(b)),  &\text{ if }  W_{ab} < 0 \\
+			\min(W_{ab}\Delta(\hat{a}),\UB(b)-\sol(b)),  &\text{ if }  W_{ab} > 0 \\
+		\end{cases}\\
 			&\Delta(\hat{b}) =
 		\begin{cases}
-			\sol(\hat{b}) - \min(\UB(b), \sol(\hat{b}) - \Delta(\hat{a}) k(\hat{b})), & \text{if }  W_{bz} > 0 \\
-			\sol(\hat{b}) - \max(\LB(b), 0, \sol(\hat{b}) -\Delta(\hat{a}) k(\hat{b})), & \text{if }W_{bz} < 0\\
+			\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bz} > 0 \text{ and } \sol(b)\geq0\\
+				\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bz} > 0 \text{ and } \sol(b)<0\\
+		 \frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bz} < 0\\
 		\end{cases}
 		\end{align*}
 
