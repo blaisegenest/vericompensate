@@ -110,15 +110,9 @@ $|W_{az}|$ \cite{DivideAndSlide}.
 
 Now, consider neurons $a$ two layers before $z$. We use $b$ to denote neurons in the layer between $a$ and $z$. If we open $a$, then the change in the weight of $a$ will still be $\sol(\hat{a})-\ReLU(\sol(a))$ as above. Its impact on $z$ is no more direct with $W_{az}$, but it is through all the $b$ in the intermediate layer. 
 Based on Proposition \ref{LP}, we can evaluate how opening $a$ impacts each value of 
-$\hat{b}$, through coefficient $k(\hat{b})$, by using the upper and lower bound
-$\UB(b),\LB(b)$:
-\begin{itemize}
- \item If $W_{bz}\leq0$, then $k(\hat{b})=W_{ab}$ if $\sol(b) > 0$, and $k(\hat{b})=0$ if $\sol(b) < 0$
- \item If $W_{bz}>0$, then $k(\hat{b})=W_{ab} \frac{\UB(b)}{\UB(b)-\LB(b)}$
-\end{itemize}
-%$\sum_b W_{bz}W_{ab}$ to replace the coefficient $W_{az}$ in last subsection. 
+$\hat{b}$,  by using the upper and lower bound
+$\UB(b),\LB(b)$.
 
-%To estimate $\Improve\_\max_a^z$ , 
 Indeed, if $W_{bz}\leq0$, then the LP solver sets $\sol(\hat{b})$ to the lowest possible value to maximize $z$, which happens to be $\ReLU(b)$ according to Proposition \ref{LP}.
 If $\sol(b) < 0$, then we have a clip at $\sol(\hat{b})=\ReLU(b)=0$ and opening $a$ does not help. If $\sol(b) > 0$, then we have $\sol(\hat{b})=\ReLU(b)=\sol(b)$ and every change from 
 $a$ is reflected with a coefficient $W_{ab}$ on $\hat{b}$. 
@@ -147,8 +141,7 @@ can not exceed $\LB(b),\UB(b)$:
 		\end{align*}
 
 We can now set 
-
-$$ \Utility\_\max\nolimits^z(a) = \sum_b W_{bz} \Delta(\hat{b})$$
+$$ \Utility\_\max\nolimits^z(a) = \sum_b W_{bz} \Delta(\hat{b}).$$
  
 We proceed inductively in the same way to define $\Utility\_\max^z(a)$ for deeper neuron $a$.
 
