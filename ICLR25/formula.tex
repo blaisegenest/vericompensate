@@ -82,8 +82,8 @@ $|W_{az}|$ \cite{DivideAndSlide}.
 \medskip
 
 Now, consider neurons $a$ two layers before $z$. We use $b$ to denote neurons in the layer $\ell$ between $a$ and $z$. 
-If we open $a$, then the change $\Delta(a)$ in the weight of $a$ is 
-$\Delta(a)=\ReLU(\sol(a)) - \sol(\hat{a}) \leq 0$ as above. Its impact on $z$ is no more direct with $W_{az}$, but it is through all the $b \in \ell$. 
+If we open $a$ without changing its value $\sol(a)$, then the change $\Delta(\hat{a})$ in the weight of $\hat{a}$ is 
+$\Delta(\hat{a})=\ReLU(\sol(a)) - \sol(\hat{a}) \leq 0$ as above. Its impact on $z$ is no more direct with $W_{az}$, but it is through all the $b \in \ell$. 
 We let $\Delta(b) = W_{ab}\Delta(\hat{a})$.
 Based on Proposition \ref{LP}, we can evaluate the impact 
 $\Delta(\hat{b})$ of opening $a$ on each value of $\hat{b}$, by using the upper and lower bound $\UB(b),\LB(b)$:
