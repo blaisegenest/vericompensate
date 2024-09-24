@@ -18,7 +18,7 @@ To measure the impact of the utility function to select nodes to open, we focuse
 To measure the accuracy, we measure the uncertainty of all nodes in a layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
 We then average the uncertainty among all the nodes of the layer.
-Formally, the uncertainty of a node $n$ with bounds $[\alpha,\beta]$ is $unc(a) = \beta - \alpha$. The average uncertainty of layer $\ell$ is $\dfrac{\sum_{a\in l} unc(a)}{size(\ell)}.$
+Formally, the uncertainty of a node $a$ with bounds $[\LB,\UB]$ is $unc(a) = \UB - \LB$. The average uncertainty of layer $\ell$ is $\dfrac{\sum_{a\in l} unc(a)}{size(\ell)}.$
 
 
 
@@ -125,7 +125,7 @@ Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier becaus
 
 
 
-\subsection{Comparison with $\alpha,\beta$ Crown}
+\subsection{Comparison with $\alpha,\beta$-Crown}
 
 
 
