@@ -11,41 +11,50 @@ We list some tables and figures comparing $\alpha,\beta$-Crown with other method
 
 PRIMA is one of ERAN's major verifier. Basically, PRIMA is slightly less accuracy and slower than $\alpha,\beta$-Crown for several networks we considered. Here, we directly use the tables from $\alpha,\beta$-Crown's paper:
 
-\begin{figure*}[h]
+
+We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer. The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. We report in Table \ref{tab:example1} the average uncertainty of $\MILP_X$ following the choice of the $K$ heaviest neurons for our {\bf Utility} function, compared with a random choice, both for nodes exclusively from the previous Layer 2 or from both Layers 1 and 2. We compared with choosing based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$ \cite{DivideAndSlide}, which is limited to the previous Layer 2.
+
+
+\begin{table}[h!]
 	\centering
-	\caption{Tables from \cite{crown} to compare $\alpha,\beta$-Crown with earlier verifiers}
-	\includegraphics[scale=0.32]{Cronw_PRIMA.png}
-\end{figure*}
+	\begin{tabular}{||l||c|c||c||}
+		\hline \hline
+		Network & $\alpha,\beta$-Crown & Refined $\beta$-Crown & Prima \\ 		  
+		\hline
+		MNIST 5$\times$100 & N/A & 14.3\% (102s) & 33.2\% (159s)\\ \hline
+		MNIST 5$\times$200 & N/A & 13.7\% (86s) & 21.1\% (224s) \\ \hline
+		MNIST 8$\times$100 & N/A & 20.0\% (103s) & 39.2\% (301s)   \\ \hline
+		MNIST 8$\times$200 & N/A & 17.6\% (95s) & 28.7\% (395s)  \\ \hline
+		MNIST 6$\times$500 & 51\% (16s) & N/A & 59.5\% (116s) \\ \hline
+		CIFAR CNN-B-adv & 18.5\% (32s) & N/A & 27\% (344s)\\ \hline \hline
+		CIFAR ResNet & 0\% (2s) & N/A & 0\% (2s) \\ \hline \hline
+	\end{tabular}
+	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown, refined $\beta$-Crown and Hybrid MILP, run on 7 DNNs (average runtime per image in second). The 6 first DNNs are hard instances, while the last one (ResNet) is an easy instance (it is trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.}
+	\end{table}
+
 
 
 \subsubsection*{MN-BaB} 
 
 
-Basically, MN-BaB's performance is close to $\alpha,\beta$-Crown on several benchmarks. Here we put a table from their paper.
-\begin{figure}[h]
-	\centering
-	\caption{A Table from \cite{ferrari2022complete} to compare MN-BaB with $\alpha,\beta$-Crown and other verifiers}
-	\includegraphics[scale=0.32]{ToMNBAB.png}
-\end{figure}
+Basically, MN-BaB's performance is close to $\alpha,\beta$-Crown on several benchmarks. 
 
 However, the experiments section in their paper does not include those network we focus on. So we run MN-BaB on several networks on our device. The comparison is as follows:
 
-\begin{table}[h]
+
+\begin{table}[h!]
 	\centering
-	\begin{tabular}{||l|c|c||c|c||}
+	\begin{tabular}{||l||c|c||c|c||}
+		\hline \hline
+		 & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & MN-BAB & MN-BAB \\ 
+		 Network & TO=30s & TO=2000s &  TO=30s & TO=2000s \\ 
 		\hline
-		Network &  Accuracy & Upper   & MN-BaB &  $\alpha,\beta$-Crown  \\ \hline
-		MNIST 6$\times$500 & 99\% & 90\% & $49\%$ & 40 \%    \\
-		$\epsilon = 0.035$ & &  &  4995s & 6100s
-		\\  \hline
-		CIFAR CNN-B-ADV & 99\% & 90\% & $49\%$ & 40 \%    \\
-		$\epsilon = 2/255$ & &  &  4995s & 6100s
-		\\  \hline
+		MNIST 5$\times$100 & 51\% (18.4s) & 48.5\%(954s) &  & \\ \hline
+		MNIST 6$\times$500 & 51\% (16s) & 50\% (1002s) & 52\% (18s) & 52\% (1036s) \\ \hline
+		CIFAR CNN-B-adv & 28\% (4.3s) & 22\% (8.7s) &  & \\ \hline 
 	\end{tabular}
-	\caption{}
-\end{table}
-
-
+	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown, refined $\beta$-Crown and Hybrid MILP, run on 7 DNNs (average runtime per image in second). The 6 first DNNs are hard instances, while the last one (ResNet) is an easy instance (it is trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.}
+	\end{table}
 
 
 
