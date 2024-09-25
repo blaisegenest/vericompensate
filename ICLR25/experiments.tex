@@ -11,14 +11,15 @@ The  objectives of our evaluation was to answer the following  questions:
 	\item How accurate is Hybrid MILP, and how efficient is it?
 \end{enumerate}
 
-\subsection{Evaluation of the Utility function to choose nodes to open}
+
+\subsection{Evaluation of the Utility function to choose neurons to open}
 
 %The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes,  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
-To measure the impact of the utility function to select nodes to open, we focused on a small hard DNN, namely $5\times 100$, so as to obtain exact bounds for the first few layers using a full MILP encoding of the DNN. We tested over the $\vx=59$th image in the MNIST dataset, as it has a large number of unstable ReLU nodes in the first few layers ($61$ in the first and $55$ in the second layer), so we can experiment with a larger choice of values) for $K$.
+To measure the impact of the utility function to select neurons to open, we focused on a small hard DNN, namely $5\times 100$, so as to be able to compute exact bounds for the first few layers using a full MILP encoding of the DNN for comparison purpose. We tested over the $\vx=59$th image in the MNIST dataset, as it has a large number of unstable ReLU nodes in the first few layers ($61$ in the first and $55$ in the second layer), so we can experiment with a larger choice of values) for $K=|X|$ the size of set $X$.
 To measure the accuracy, we measure the uncertainty of all nodes in a layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
 We then average the uncertainty among all the nodes of the layer.
-Formally, the uncertainty of a node $a$ with bounds $[\LB,\UB]$ is $unc(a) = \UB - \LB$. The average uncertainty of layer $\ell$ is $\dfrac{\sum_{a\in l} unc(a)}{size(\ell)}.$
+Formally, the uncertainty of a node $a$ with bounds $[\LB,\UB]$ is uncert$(a) = \UB - \LB$. The average uncertainty of layer $\ell$ is $\dfrac{\sum_{a\in l} \text{uncert}(a)}{size(\ell)}.$
 
 
 
@@ -67,34 +68,36 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 \fi
 
 
-\begin{table}[b!]	
+We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer. The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. We report in Table \ref{tab:example1} the average uncertainty of $\MILP_X$ following the choice of the $K$ heaviest neurons for our {\bf Utility} function, compared with a random choice, both for nodes exclusively from the previous Layer 2 or from both Layers 1 and 2. We compared with choosing based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$ \cite{DivideAndSlide}, which is limited to the previous Layer 2.
+
+\begin{table}[h!]	
 	\centering
-	\begin{tabular}{|c||c|c|c|c|c|}
+	\begin{tabular}{|c||c|c|c||c|c|}
 		\hline
-			&\multicolumn{3}{c|}{Neurons in Layer 2}&\multicolumn{2}{c|}{Neurons in Layer 1 and 2}\\\cline{2-6}
-		\text{Number $K$}  & \text{Random} & \cite{ DivideAndSlide} & \bf Utility& \text{Random} &\bf Utility\\ \hline
+			&\multicolumn{3}{c||}{$X \subseteq$ Layer 2, max $=61$}&\multicolumn{2}{c|}{$X \subseteq$ Layers 1\&2, max $=116$}\\\cline{2-6}
+		\text{$|X|$}  & \text{Random} & \cite{ DivideAndSlide} & \bf Utility& \text{Random} &\bf Utility\\ \hline
 		\hline
-		0  &   1.761  &1.761& 1.761 & 1.761  & 1.761\\ \hline
-		5  & \bf   1.729&1.704 & 1.603&  1.729&  1.532 \\ \hline
-		10  & \bf  1.701 &  1.651 &1.517& 1.696 & 1.371\\ \hline
-		15  & \bf  1.671 &  1.599 &1.466&  1.653& 1.247\\ \hline
-		20  & \bf  1.635 & 1.557&1.438 & 1.619 & 1.145\\ \hline
-		25  & \bf  1.601 & 1.519 &1.427&  1.586 &1.061\\ \hline
-		30  & \bf 1.574 & 1.489 &1.425& 1.546 & 0.989 \\ \hline
-		35  & \bf  1.542 & 1.465&1.424 & 1.502 &0.934 \\ \hline
-		40  & \bf 1.512 & 1.447 &1.424& 1.469 &0.921 \\ \hline
-		116 (max) & 1.424  &1.424& 1.424 (max=$61$) & 0.895 &0.895   \\ \hline
+		0  (LP) &   1.761  &1.761& 1.761 & 1.761  & 1.761\\ \hline \hline
+		5  &   1.729&1.704 & 1.603&  1.729&  \bf 1.532 \\ \hline
+		10  &  1.701 &  1.651 &1.517& 1.696 & \bf  1.371\\ \hline
+		15  & 1.671 &  1.599 &1.466&  1.653& \bf  1.247\\ \hline
+		20  &  1.635 & 1.557&1.438 & 1.619 & \bf  1.145\\ \hline
+		25  &  1.601 & 1.519 &1.427&  1.586 & \bf 1.061\\ \hline
+		30  & 1.574 & 1.489 &1.425& 1.546 & \bf  0.989 \\ \hline
+		35  &  1.542 & 1.465&1.424 & 1.502 & \bf 0.934 \\ \hline
+		40  & 1.512 & 1.447 &1.424& 1.469 & \bf 0.921 \\ \hline \hline
+		max & 1.424  &1.424& 1.424 & 0.895 & 0.895   \\ \hline
 	\end{tabular}
-	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the 1st and 2nd layer (our utility function vs \cite{ DivideAndSlide} vs random choice).}
+	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the 1st and 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs random choice.}
 	\label{tab:example1}
-	\vspace{-0.6cm}
+	%\vspace{-0.6cm}
 \end{table}
 
 
-We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer. The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. We report in Table \ref{tab:example1} the average uncertainty of $\MILP_X$ following the choice of the $K$ heaviest neurons for our utility function, vs choosing $K$ nodes from layers $1$ and $2$. We compared with a random choice in the first two layers, and also choice based on strength in \cite{DivideAndSlide}, defined as 
-$strength(n) = (\UB(n)-\LB(n))\cdot |W_{cd}|$, which is thus limited to the previous (2sd hidden layer). 
 
-The Utility function reveals to select very important nodes: already with 35 out of 116 nodes, the accuracy is improved by $95\%$ what can be done if all 116 nodes are opened compared with LP (K=0). It is also much more accurate than using Incoming weights: already with 5 (resp. 10) nodes chosen by our utility function is more accurate than $20$ (resp. $40$) nodes chosen by Incoming weights. That is more than 4 reduction in the number of nodes necessary for similar accuracy.  Random is even worst Strength up to 30 nodes, then selecting in earlier layers appear to be more useful as there are not so many nodes to open in the previous layer.
+The Utility function selects very important neurons:
+ to achieve the same accuracy than \cite{DivideAndSlide}, $2.5$ time fewer nodes (10 vs 25) are necessary when picking in the same previous Layer 2. The ability from {\bf Utility} to compare neurons from different layers enables even better frugality: $4$ time fewer nodes (5 vs 20, 10 vs 40) are necessary to reach the same accuracy than \cite{DivideAndSlide}.
+Overall, choosing 35 neurons by {\bf Utility} improves accuracy by $95\%$ of what can be done if all $|X|=116$ nodes are opened compared with LP (corresponding to $|X|=0$).
 
 \iffalse
 Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
@@ -130,19 +133,23 @@ Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier becaus
 
 
 
-We conducted our evaluation on the neural networks tested in \cite{crown},
-which display a large gap ($\geq 20\%$) between images that can be certified by $\alpha,\beta$-CROWN and the upper bound when we remove those which can be falsified.
-
-Namely, these are 6 {\em hard} ReLU-DNNs: 5 MNIST DNN from the ERAN GitHub (\url{https://github.com/eth-sri/eran}, the 4th to the 8th DNNs provided) as well as 1 CIFAR CNN from 
-\cite{AdversarialTrainingAndProvableDefenses} (the network file we use is from \url{https://github.com/Verified-Intelligence/alpha-beta-CROWN}), also see \cite{SDPFI}, with the same $\epsilon$ setting. For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark, the exact same setting and DNNs as used in Table \ref{table_beta}.
+We conducted our evaluation on the neural networks tested in \cite{crown}
+which display a large number ($\geq 20\%$) of images undecided  by $\alpha,\beta$-Crown. That is, these DNNs are {\em hard} to verify. Namely, these are 6 ReLU-DNNs: 5 MNIST DNN that can be found in the \href{https://github.com/eth-sri/eran}{ERAN GitHub} 
+(the 4th to the 8th DNNs provided) as well as 1 CIFAR CNN from 
+\cite{AdversarialTrainingAndProvableDefenses}, see also \cite{SDPFI}, 
+which can be downloaded from the \href{https://github.com/Verified-Intelligence/alpha-beta-CROWN}{$\alpha,\beta$-Crown GitHub}. 
+We commit to the same $\epsilon$ settings as in \cite{crown}, that are recalled in Table \ref{table_beta}. 
+For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. 
+We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark. 
+The exact same DNNs and $\epsilon$ are used in Tables \ref{table_beta} and \ref{table_hybrid}.
 
 
 \begin{table}[t!]
 	\centering
-	\begin{tabular}{||l||c|c|c|c||c||}
+	\begin{tabular}{||l||c|c|c||c||c||}
 		\hline \hline
-		 & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & Refined & Hybrid \\ 
-		 Network & TO=10s & TO=30s & TO=2000s & $\beta$-Crown & MILP \\ 
+		 & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & Refined & \bf Hybrid \\ 
+		 Network & TO=10s & TO=30s & TO=2000s & $\beta$-Crown & \bf MILP \\ 
 		\hline
 		MNIST 5$\times$100 & 57\% (6.9s) & 55\% (18.9s) & 50\% (1026s) & 13\% 
 		(92s) & 13\% \bf (46s) \\ \hline
@@ -152,21 +159,22 @@ Namely, these are 6 {\em hard} ReLU-DNNs: 5 MNIST DNN from the ERAN GitHub (\url
 		MNIST 6$\times$500 & 53\% (6.4s) & 51\% (16s) & 50\% (1002s) & N/A & 
 		\bf 10\% (402s) \\ \hline
 		CIFAR CNN-B-adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & N/A & \bf 11\% (417s) \\ \hline \hline
-		CIFAR Resnet & 0\% (2s) & 0\% (2s) & 0\% (2s) & N/A & 0\% (2s) \\ \hline \hline
+		CIFAR ResNet & 0\% (2s) & 0\% (2s) & 0\% (2s) & N/A & 0\% (2s) \\ \hline \hline
 	\end{tabular}
 	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown, refined $\beta$-Crown and Hybrid MILP, run on 7 DNNs (average runtime per image in second). The 6 first DNNs are hard instances, while the last one (ResNet) is an easy instance (it is trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.}
 	\label{table_hybrid}
 	\end{table}
 
-Interpretation: on easy instances, Hybrid MILP is virtually similar to $\alpha,\beta$-CROWN, 
+{\em Analysis}: on easy instances, Hybrid MILP is virtually similar to $\alpha,\beta$-CROWN, 
 as it is called first and it is sufficient to have $0\%$ undecided images, as shown even on the very large ResNet.
 
 On hard instances (the 6 first DNNs tested), Hybrid MILP is very accurate, only leaving $8\%$-$15\%$ of images undecided, with runtime taking less than $500s$ in average per image, and even 10 times less on smaller DNNs. It can scale up to quite large hard DNNs, such as CNN-B-Adv with 2M parameters and 20K activations.
 
-Compared with $\alpha,\beta$-Crown with a time-out of TO=2000s, it is much more accurate, with a reduction of undecided images by $9\%$-$43\%$ wrt $\alpha,\beta$-Crown with TO of 2000s. It is also from 20x faster on smaller networks to similar time on the largest DNN.
+Compared with $\alpha,\beta$-Crown with a time-out of TO=2000s, it is much more accurate, with a reduction of undecided images by $9\%-43\%$. 
+It is also from 20x faster on smaller networks to similar time on the largest DNN.
 Compared with $\alpha,\beta$-Crown with a time-out of TO=30s, the accuracy gap is even larger (e.g. $11\%$ for CNN-B-Adv, i.e. half undecided images), although the average runtime is also obviously larger (solving hard istances takes longer than solving easy instances).
 
-Last, compared with refined $\beta$-Crown, we can observe three patterns: on the shallowest DNNs (5x100, 5x200), refined $\beta$-Crown can run full MILP on almost all nodes, reaching almost the same accuracy than  Hybrid MILP, but with longer runtime (up to 2x on 5x100). On intermediate DNNs (8x100,8x200), full MILP invoked by refined $\beta$-Crown can only be run on a fraction of the neurons, and the accuracy is not as good as Hybrid MILP, with $6\%-8\%$ more undecided images, while having longer runtime. Last, refined $\beta$-Crown cannot scale to larger instances (6x500, CNN-B-Adv), while Hybrid MILP can.
+Last, compared with {\em Refined} $\beta$-Crown, we can observe three patterns: on the shallowest DNNs (5$\times$100, 5$\times$200), Refined $\beta$-Crown can run full MILP on almost all nodes, reaching almost the same accuracy than  Hybrid MILP, but with longer runtime (up to 2 times on 5$\times$100). On intermediate DNNs (8$\times$100, 8$\times$200), full MILP invoked by Refined $\beta$-Crown can only be run on a fraction of the neurons, and the accuracy is not as good as Hybrid MILP, with $6\%-8\%$ more undecided images (that is double on 8$\times$200), while having longer runtime. Last but not least, Refined $\beta$-Crown cannot scale to larger instances (6$\times$500, CNN-B-Adv), while Hybrid MILP can.
 
 
 \subsection{Finer Grain evaluation of Accuracy}
@@ -175,29 +183,27 @@ In order to evaluate the accuracy of Hybrid MILP in a finer way, showcasing
 the capabilities to have a very accurate and efficient verifier, we consider
 a quantitative questions for each image, rather than a pure yes (verified)/ no (not verified) question. Namely, we compute the $\epsilon$ for which the verifier can certify local-robustness around a given image, which makes sense as there is little rationale in setting a particular $\epsilon$ (which is however the usual local-robustness setting).
 
-For that, we considered the DNN 6x500, and the 20 first images from the MNIST benchmark.
-We first run the attack from $\alpha,\beta$-Crown for varying $\epsilon$, using a binary search, to set up an upper bound on $\epsilon$ (the initialization is $\epsilon \in [0,1]$).
-Then we run binary search with a global time out of $10 000s$, initialized from $0$ to this upper bound, where each call is either to $\alpha,\beta$-Crown with TO=2000s, or Hybrid MILP.
-We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown and by Hybrid MILP) for each image. We report the results in Fig. \ref{fig2}
+For that, we considered the challenging DNN MNIST $6 \times 500$, and the 20 first images from the MNIST benchmark. We first run the attack from $\alpha,\beta$-Crown for varying $\epsilon$, using a binary search, to set up an upper bound on $\epsilon$ (the initialization is $\epsilon \in [0,1]$).
+Then we run binary search with a global time-out of $10 000s$, initialized from $0$ to this upper bound, where each call is either to $\alpha,\beta$-Crown with TO=2000s, or Hybrid MILP.
+We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown and by Hybrid MILP) for each image. We report the results in Fig. \ref{fig2}.
 
 \begin{figure}[t!]
 	\begin{centering}
 \includegraphics[scale=0.5]{epsilon.png}.
-\caption{$\epsilon$-robustness proved after $10 000s$ for each of the 20 first images of MNIST.}
+\caption{$\epsilon$-robustness proved after $10 000s$ for $6 \times 500$ on each of the 20 first images of MNIST.}
 \label{fig2}
 	\end{centering}
 \end{figure}
 
-Analysis: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10 and 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so it is possible the upper bound did not find a close attack to robustness.
+{\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10 and 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so it is possible that the falsifier missed a closer attack to robustness.
 
-Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper bound, but for 2 cases where $\alpha,\beta$-CROWN is already very close to the upper bond. On average, the $\epsilon$ gap to upper bound is $0.014$ for Hybrid MILP, and $0.42$ for 
-$\alpha,\beta$-CROWN.
+Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper bound, except for 2 cases (images 8 and 18) where $\alpha,\beta$-CROWN is already very close to the upper bound. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, 3 times smaller than the $0.042$ gap for $\alpha,\beta$-CROWN.
 
 
 
 \subsection{Comparison with other Verifiers?}
 
-We volontarily limited the comparison to $\alpha,\beta$-Crown because it is the most efficient verifier available to date, and it enabled us to consider much finer parameter choice without too much cluter. 
+We volontarily limited the comparison to $\alpha,\beta$-Crown because it is the most efficient verifier available to date, and it enabled us to consider a spectre of parameters to understand $\alpha,\beta$-Crown scaling without too much cluter.
 
 Notice that results for several other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported on these DNNs \cite{crown}, with defavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of complete verifiers, NNenum \cite{nnenum}, Marabou \cite{Marabou, Marabou2}, respectively 4th, 3rd 
 of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on hard instances either, even on the smallest hard DNN. Concerning MnBAB \cite{ferrari2022complete}, it compares slightly defavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv \cite{ferrari2022complete}, and we also run it for the MNIST DNNs, and it was slightly slower and less accurate than $\alpha,\beta$-CROWN at several time-out settings. 

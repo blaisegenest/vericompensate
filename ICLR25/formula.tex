@@ -53,18 +53,16 @@ To estimate $\Improve\_\max^z(a)$, we define $\Utility\_\max^z(a)$, first for ne
 and other values remain the same - in particular, $value(\hat{a})=\ReLU(sol(a))$. We define:
 %we first need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
 
-	\begin{align}
-		\Utility\_\max\nolimits^z(a) = W_{az} \times (\sol(\hat{a})- \ReLU(\sol(a))).
-	\end{align}
+	$$\Utility\_\max\nolimits^z(a) = W_{az} \times (\sol(\hat{a})- \ReLU(\sol(a)))$$
 	
 	%In particular, if $\sol(\hat{a})=\ReLU(\sol(a))$, then we will have 
 	%\begin{align*}
 %		Utility^z(a) = 0.
 %	\end{align*}
 
-In the case $W_{az}<0$, to maximize $z$, the LP engine sets $\sol(\hat{a})$ to its minimal value, which is $\sol(\hat{a})=\ReLU(a)$ thanks to Proposition \ref{LP}. In this case, we have $\Utility\_\max^z(a)=0$.
+In the case $W_{az}<0$, to maximize $z$, the LP engine sets $\sol(\hat{a})$ to its minimal value, which is $\sol(\hat{a})=\ReLU(\sol(a))$ thanks to Prop.~\ref{LP}. In this case, we have $\Utility\_\max^z(a)=0$.
 Thus, we have $\Utility\_\max^z(a) \geq 0$ in all cases
-as $\sol(\hat{a}) \geq \ReLU(a)$. 
+as $\sol(\hat{a}) \geq \ReLU(\sol(a))$ by Prop.~\ref{LP}. 
 We will show with a more general definition that $0 \leq \Improve\_\max^z(a) \leq \Utility\_\max^z(a)$ in Prop.~\ref{prop2}. Thus, $\Utility\_\max^z(a)$ can be used to approximate $\Improve\_\max^z(a)$. In particular, for all nodes $a$ with $W_{az}< 0$,
 this node will have the smallest $\Utility\_\max\nolimits^z(a)=0$ (thus will not get picked in the open nodes $X$), and indeed it is not having any impact on  $\Sol\_\max_{\{a\}}^z(z)$. This is one stricking difference (but not the only one) with choosing utility based on 
 $|W_{az}|$ \cite{DivideAndSlide}.
@@ -81,12 +79,12 @@ $|W_{az}|$ \cite{DivideAndSlide}.
 
 \medskip
 
-Now, consider neurons $a$ two layers before $z$. We use $b$ to denote neurons in the layer $\ell$ between $a$ and $z$. 
-If we open $a$, then the change $\Delta(a)$ in the weight of $a$ is 
-$\Delta(a)=\ReLU(\sol(a)) - \sol(\hat{a}) \leq 0$ as above. Its impact on $z$ is no more direct with $W_{az}$, but it is through all the $b \in \ell$. 
-We let $\Delta(b) = W_{ab}\Delta(\hat{a})$.
+Now, consider neuron a $a$ two layers before $z$. We use $b$ to denote neurons in the layer $\ell$ between $a$ and $z$. 
+If we open $a$ without changing its value $\sol(a)$, then the change $\Delta(\hat{a})$ in the weight of $\hat{a}$ is 
+$\Delta(\hat{a})=\ReLU(\sol(a)) - \sol(\hat{a}) \leq 0$ as above. Its impact on $z$ is no more direct with $W_{az}$, but it is through $\ell$. 
+We let $\Delta(b) = W_{ab}\Delta(\hat{a})$ for all $b \in \ell$.
 Based on Proposition \ref{LP}, we can evaluate the impact 
-$\Delta(\hat{b})$ of opening $a$ on each value of $\hat{b}$, by using the upper and lower bound $\UB(b),\LB(b)$:
+$\Delta(\hat{b})$ of opening $a$ on the value of each $\hat{b}$, by using the upper and lower bound $\UB(b),\LB(b)$:
 
 	\begin{align*}
 		&\Delta(\hat{b}) =
@@ -139,7 +137,7 @@ $$ \Utility\_\max\nolimits^z(a) = -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})$$
 	are respected.
 	As $\sol'(z)$ is a solution of $\mathcal{M}_{\{a\}}$, it is smaller or equal to the maximal solution: $\sol'(z) \leq$ $\Sol\_\max_{\{a\}}^z(z)$. That is, 
 	$\sol(z)-\sol'(z) \geq \sol(z) -$ $\Sol\_\max_{\{a\}}^z(z)$, i.e. 
-	$\Improve\_\max^z(a) \leq \Utility\_\max^z(a)$.
+	$ \Utility\_\max^z(a) \geq \Improve\_\max^z(a)$.
 	In particular, we have that $\Utility\_\max^z(a) \geq 0$, which was not obvious from the definition.
 	\end{proof}
 	
