@@ -25,7 +25,23 @@ Basically, MnBAB's performance is close to $\alpha,\beta$-Crown with several kin
 \begin{figure}[h]
 	\includegraphics[scale=0.32]{ToMNBAB.png}
 \end{figure}
-However, their paper did not show those network we focus on. So we run MnBAB on several networks that we considered on our device. The comparison is as follows:
+
+However, the experiments section in their paper does not include those network we focus on. So we run MnBAB on several networks on our device. The comparison is as follows:
+
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{||l|c|c||c|c||}
+		\hline
+		Network &  Accuracy & Upper   & MNBaB &  $\alpha,\beta$-Crown  \\ \hline
+		MNIST 6$\times$500 & 99\% & 90\% & $49\%$ & 40 \%    \\
+		$\epsilon = 0.035$ & &  &  4995s & 6100s
+		\\  \hline
+		CIFAR CNN-B-ADV & 99\% & 90\% & $49\%$ & 40 \%    \\
+		$\epsilon = 2/255$ & &  &  4995s & 6100s
+		\\  \hline
+	\end{tabular}
+	\caption{}
+\end{table}
 
 
 
@@ -35,7 +51,7 @@ However, their paper did not show those network we focus on. So we run MnBAB on 
 
 \subsubsection*{NNenum} 
 
-We meet some trouble when running CIFAR-CNN-B-Adv and MNIST-6$\times$500.
+Similarly, the experiments section in NNenum's paper does not include those network we focus on. So we run NNenum on several networks on our device. 
 
 %As a first step to prove Theorems \ref{th1} and \ref{th2}, 
 %we will relax the compensating pairs notion to allows pairs of paths having nodes in common.
