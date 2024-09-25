@@ -88,7 +88,7 @@ We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the 
 		40  & 1.512 & 1.447 &1.424& 1.469 & \bf 0.921 \\ \hline \hline
 		max & 1.424  &1.424& 1.424 & 0.895 & 0.895   \\ \hline
 	\end{tabular}
-	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the 1st and 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs random choice.}
+	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs random choice.}
 	\label{tab:example1}
 	%\vspace{-0.6cm}
 \end{table}
@@ -156,12 +156,12 @@ The exact same DNNs and $\epsilon$ are used in Tables \ref{table_beta} and \ref{
 		MNIST 5$\times$200 & 50\% (6.5s) & 47\% (17s) & 46\% (930s) & 9\% (80s) & \bf 8\% (71s) \\ \hline
 		MNIST 8$\times$100 & 63\% (7.2s) & 58\% (20s) & 58\% (1163s) & 21\% (102s) & \bf 15\% (61s) \\ \hline
 		MNIST 8$\times$200 & 56\% (6.8s) & 55\% (18s) & 54\% (1083s) & 16\% (83s) & \bf 8\% (78s) \\ \hline
-		MNIST 6$\times$500 & 53\% (6.4s) & 51\% (16s) & 50\% (1002s) & N/A & 
+		MNIST 6$\times$500 & 53\% (6.4s) & 51\% (16s) & 50\% (1002s) & $-$ & 
 		\bf 10\% (402s) \\ \hline
-		CIFAR CNN-B-adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & N/A & \bf 11\% (417s) \\ \hline \hline
-		CIFAR ResNet & 0\% (2s) & 0\% (2s) & 0\% (2s) & N/A & 0\% (2s) \\ \hline \hline
+		CIFAR CNN-B-adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & $-$ & \bf 11\% (417s) \\ \hline \hline
+		CIFAR ResNet & 0\% (2s) & 0\% (2s) & 0\% (2s) & $-$ & 0\% (2s) \\ \hline \hline
 	\end{tabular}
-	\caption{Undecided images ($\%$, {\em lower is better}), TO UPDATE.}
+	\caption{Undecided images ($\%$, {\em lower is better}) as computed by $\alpha,\beta$-Crown, Refined $\beta$-Crown and Hybrid MILP on 7 DNNs (average runtime per image). The 6 first DNNs are hard instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.}
 	\label{table_hybrid}
 	\end{table}
 
@@ -203,11 +203,10 @@ Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper boun
 
 \subsection{Comparison with other Verifiers?}
 
-We volontarily limited the comparison to $\alpha,\beta$-Crown because it is the most efficient verifier available to date, and it enabled us to consider a spectre of parameters to understand $\alpha,\beta$-Crown scaling without too much cluter.
+We voluntarily limited the comparison to $\alpha,\beta$-Crown because it is the most efficient verifier available to date, and it enabled us to consider a spectre of parameters to understand $\alpha,\beta$-Crown scaling without too much clutter.
 
-Notice that results for several other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported on these DNNs \cite{crown}, with defavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of complete verifiers, NNenum \cite{nnenum}, Marabou \cite{Marabou, Marabou2}, respectively 4th, 3rd 
-of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on hard instances either, even on the smallest hard DNN. Concerning MnBAB \cite{ferrari2022complete}, it compares slightly defavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv \cite{ferrari2022complete}, and we also run it for the MNIST DNNs, and it was slightly slower and less accurate than $\alpha,\beta$-CROWN at several time-out settings. 
-Last, Pyrat code (2sd in the latest VNNComp) is not open source, which made running it impossible.
+Notice that results for several other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported on these DNNs \cite{crown}, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of complete verifiers, NNenum \cite{nnenum}, Marabou \cite{Marabou, Marabou2}, respectively 4th, 3rd 
+of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on hard instances either, even on the smallest hard DNN. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em hard} MNIST DNNs at several time-out settings. Last, Pyrat code (2sd in the latest VNNComp) is not open source, which made running it impossible.
 
 
 

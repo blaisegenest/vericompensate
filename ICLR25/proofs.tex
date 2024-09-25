@@ -1,54 +1,69 @@
 \section*{Appendix}
 
 Settings for Hybrid MILP (for Fully Connected DNN, and for CNNs): TO for $\alpha,\beta$-Crown
-and number of opens nodes in different layers.
+and number of opens nodes in different layers. 20 threads in parallel vs GPU vs 16 threads.
 
+\subsection*{Comparison with PRIMA}
 
-PRIMA is one of ERAN's major verifier. We put a table to compare $\alpha,\beta$-Crown and PRIMA by data from literature. 
+PRIMA \cite{prima} is a major verifier in the ERAN toolkit. In Table \ref{table9}, we report the comparison between PRIMA and $\alpha,\beta$-Crown, mainly from \cite{crown}. The setting is mainly similar from ours, but numbers are not perfectly comparable as the images tested are not  exactly the same (1000 first or 200 first images for CNN-B-Adv), vs 100 first in Tables \ref{table_hybrid}, \ref{table_beta}. Also, time-out and hardware are slightly different.
 
 \begin{table}[h!]
 	\centering
-	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown (pure BaB or refined) and PRIMA. }
 	\begin{tabular}{||l||c|c||c||}
 		\hline \hline
 		Network & $\alpha,\beta$-Crown & Refined $\beta$-Crown & PRIMA \\ 		  
 		\hline
-		MNIST 5$\times$100 & N/A  & 14.3\% (102s) & 33.2\% (159s)\\ \hline
-		MNIST 5$\times$200 & N/A & 13.7\% (86s) & 21.1\% (224s) \\ \hline
-		MNIST 8$\times$100 & N/A  & 20.0\% (103s) & 39.2\% (301s)   \\ \hline
-		MNIST 8$\times$200 & N/A & 17.6\% (95s) & 28.7\% (395s)  \\ \hline
-		MNIST 6$\times$500 $^*$ & 51\% (16s) & N/A & 59.5\% (116s) \\ \hline
-		CIFAR CNN-B-adv $^{**}$& 18.5\% (32s) & N/A & 27\% (344s)\\ \hline \hline
-		CIFAR ResNet & 0\% (2s) & N/A & 0\% (2s) \\ \hline \hline
+		MNIST $5 \times 100$ & N/A  & 14.3\% (102s) & 33.2\% (159s)\\ \hline
+		MNIST $5 \times 200$ & N/A & 13.7\% (86s) & 21.1\% (224s) \\ \hline
+		MNIST $8 \times 100$ & N/A  & 20.0\% (103s) & 39.2\% (301s)   \\ \hline
+		MNIST $8 \times 200$ & N/A & 17.6\% (95s) & 28.7\% (395s)  \\ \hline
+		MNIST $6 \times 500$ & 51\% (16s) & $-$ & 59.5\% (116s) \\ \hline
+		CIFAR CNN-B-adv $^{**}$& 18.5\% (32s) & $-$ & 27\% (344s)\\ \hline \hline
+		CIFAR ResNet & 0\% (2s) & $-$ & 0\% (2s) \\ \hline \hline
 	\end{tabular}
-	\begin{tablenotes}
-		\footnotesize
-		\item Most data is directly from \cite{crown}. N/A means no data either in \cite{crown} or by our running.
-		\item  $^*$ The data in this row is from our own running on first 100 images of the MNIST dataset.
-		\item  $^{**}$ The data is from \cite{crown} on first 200 images of the CIFAR10 dataset.
-	\end{tablenotes}
+	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown, Refined $\beta$-Crown, and PRIMA, as reported in \cite{crown}, except for $6 \times 500$ that we run ourselves. N/A means that \cite{crown} did not report the numbers, while $-$ means that Refined $\beta$-Crown cannot be run on these DNNs.}
+	\label{table9}
+	%\begin{tablenotes}
+	%	\footnotesize
+%		\item Most data is directly from \cite{crown}. N/A means no data either in \cite{crown} or by our running.
+%		\item  $^*$ The data in this row is from our own running on first 100 images of the MNIST dataset.
+%		\item  $^{**}$ The data is from \cite{crown} on first 200 images of the CIFAR10 dataset.
+%	\end{tablenotes}
 	\end{table}
-As shown in above table, PRIMA is usually less accurate and slower than $\alpha,\beta$-Crown on above networks.
 
+Analysis: On the 4 smallest MNIST networks, PRIMA uses a refined path comparable with the Refined $\beta$-Crown. However, it is slower and less accurate than Refined $\beta$-Crown.
+On larger {\em hard} networks, PRIMA has also more undecided images than $\alpha,\beta$-Crown, while the runtime is $>5$ times larger.
 
-MN-BaB's is a verifier with performance close to $\alpha,\beta$-Crown on several benchmarks. However, the experiments section in their paper does not include network we focus on. So we run MN-BaB on those networks on our device. The comparison is as follows:
+\subsection*{Comparison with MN-BaB}
+
+MN-BaB \cite{ferrari2022complete} is an improvement built over PRIMA, using a similar Branch and Bound technique as used in $\alpha,\beta$-Crown. Results in \cite{ferrari2022complete}
+are close to those of $\alpha,\beta$-Crown. However, none of the {\em hard} networks from \cite{crown} that we consider have been tested. We thus tested three representative {\em hard} DNNS (first 100 images) to understand how MN-BaB fairs on such hard instances, and report the numbers in Table \ref{table10}. Results are directly comparable with Table \ref{table_hybrid}.
 
 
 \begin{table}[h!]
 	\centering
-		\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown, and MN-BaB}
 	\begin{tabular}{||l||c|c||c|c||}
 		\hline \hline
-		 & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & MN-BAB & MN-BAB \\ 
+		 & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & MN-BaB & MN-BaB \\ 
 		 Network & TO=30s & TO=2000s &  TO=30s & TO=2000s \\ 
 		\hline
-		MNIST 5$\times$100 & 51\% (18.4s) & 48.5\%(954s) &  & \\ \hline
-		MNIST 6$\times$500 & 51\% (16s) & 50\% (1002s) & 58\% (18s) & 55\% (1036s) \\ \hline
-		CIFAR CNN-B-adv & 22\% (8.7s) & 20\% (373s) & 43 (13.7s) & 24\% (575.8s) \\ \hline 
+		MNIST $5 \times 100$ & 55\% (19s) & 50\%(1026s) &  & \\ \hline
+		MNIST $6 \times 500$ & 51\% (16s) & 50\% (1002s) & 58\% (18s) & 55\% (1036s) \\ \hline
+		CIFAR CNN-B-adv & 22\% (8.7s) & 20\% (373s) & 43\% (14s) & 24\% (576s) \\ \hline 
 	\end{tabular}
-	\end{table}
+	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown, and MN-BaB}
+	\label{table10}
+\end{table}
+
+Analysis: results reveal that MN-BaB is slightly slower and slightly less accurate than $\alpha,\beta$-Crown. Notice the specially high number of undecided images for CNN-B-Adv with TO=30s, probably meaning that 30s is too small for MN-BaB on this large DNN.
+
+	\subsection*{Comparison with NNenum}
+
+NNenum \cite{nnenum} is a complete verifier with good performance according to VNNcomp.
+It was the only complete verifier tested in Table \ref{table_complete} to verify more images than $\alpha,\beta$-Crown. The experiments section in \cite{nnenum} does not report
+the {\em hard} DNNs we are considering. We tried to experiment it on the same MNIST 
+$6 \times 500$ and CIFAR CNN-B-adv as we did in Table \ref{table10} for MN-BaB. Unfortunately, on $6 \times 500$, buffer overflow were reported.
+On CIFAR CNN-B-adv, NNenum could not interpret the onnx file we provided.
 
 
-
-NNenum is another new verifier with good performance. However, the experiments section in NNenum's paper does not include network we focus on. So we run NNenum on those networks on our device. 
 
