@@ -1,7 +1,25 @@
 \section*{Appendix}
 
-Settings for Hybrid MILP (for Fully Connected DNN, and for CNNs): TO for $\alpha,\beta$-Crown
-and number of opens nodes in different layers. 20 threads in parallel vs GPU vs 16 threads.
+Settings for Hybrid MILP (for Fully Connected DNN, and for CNNs). 20 threads in parallel vs GPU vs 16 threads.
+
+In the following table, the list {\bf Open numbers} mean that from the first hidden layer to the output layer, how many neurons will be set to be binary variables in each each layer.
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{||l||c|c|c|}
+		\hline \hline
+		Network & TO for $\alpha,\beta$-Crown  & Open numbers &  \\ 		  
+		\hline
+		MNIST $5 \times 100$ & 10s  & [48,21,11,6,14] & \\ \hline
+		MNIST $5 \times 200$ & 10s & [48,21,11,6,14] &  \\ \hline
+		MNIST $8 \times 100$ & 10s  & [48,21,11,6,3,2,1,14] & \\ \hline
+		MNIST $8 \times 200$ & 10s & [48,21,11,6,3,2,1,14] & \\ \hline
+		MNIST $6 \times 500$ & 30s & [48,21,11,6,3,14] &\\ \hline
+		CIFAR CNN-B-adv & 30s & [All, 0, 200] &\\ \hline \hline
+	\end{tabular}
+	\caption{Settings of Hybrid MILP for different networks}
+	\end{table}
+
+
 
 \subsection*{Comparison with PRIMA}
 
