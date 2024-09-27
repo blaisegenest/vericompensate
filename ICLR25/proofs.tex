@@ -33,6 +33,7 @@ PRIMA \cite{prima} is a major verifier in the ERAN toolkit. In Table \ref{table9
 
 Analysis: On the 4 smallest MNIST networks, PRIMA uses a refined path comparable with the Refined $\beta$-Crown. However, it is slower and less accurate than Refined $\beta$-Crown.
 On larger {\em hard} networks, PRIMA has also more undecided images than $\alpha,\beta$-Crown, while the runtime is $>5$ times larger.
+Hence, Hybrid MILP is more accurate than Prima with similar runtime or faster.
 
 Notice that kPoly \cite{kpoly}, OptC2V \cite{optC2V}, SDP-FO \cite{SDPFI} numbers were also reported in \cite{crown} on these networks, with even more unfavorable results.
 
@@ -58,6 +59,7 @@ are close to those of $\alpha,\beta$-Crown. However, none of the {\em hard} netw
 \end{table}
 
 Analysis: results reveal that MN-BaB is slightly slower and slightly less accurate than $\alpha,\beta$-Crown. Notice the specially high number of undecided images for CNN-B-Adv with TO=30s, probably meaning that 30s is too small for MN-BaB on this large DNN.
+Hence, Hybrid MILP is more accurate than MN-BaB with similar runtime or faster.
 
 	\subsection*{Comparison with NNenum}
 
@@ -65,7 +67,24 @@ NNenum \cite{nnenum} is a complete verifier with good performance according to V
 It was the only complete verifier tested in Table \ref{table_complete} to verify more images than $\alpha,\beta$-Crown. The experiments section in \cite{nnenum} does not report
 the {\em hard} DNNs we are considering. We tried to experiment it on the same MNIST 
 $6 \times 500$ and CIFAR CNN-B-adv as we did in Table \ref{table10} for MN-BaB. Unfortunately, on $6 \times 500$, buffer overflow were reported.
-On CIFAR CNN-B-adv, NNenum could not interpret the onnx file we provided.
+We report in Table \ref{table11} experiments with the same 2000s Time-out (it was $10 000s$ in Table \ref{table_complete})  for a fair comparison with $\alpha,\beta$-Crown, on both 
+MNIST $5 \times 100$ and CIFAR CNN-B-Adv. 
+On MNIST $5 \times 100$, NNenum is slightly more accurate than $\alpha,\beta$-Crown, but far from the accuracy Hybrid MILP.
+On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and thus of Hybrid MILP. In both test, the runtime of NNenum was also much longer than for Hybrid MILP.
 
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{||l||c||c|c||c||}
+		\hline \hline
+		 & $\alpha,\beta$-Crown & NNenum & Hybrid\\ 
+		 Network & TO=2000s &  TO=2000s & MILP\\ 
+		\hline
+		MNIST $5 \times 100$ & 50\%(1026s) & 44\% (1046s) & \bf 13\% (46s)\\ \hline
+		CIFAR CNN-B-adv & 20\% (373s) & 37\% (917s) & \bf 11\% (417s)\\ \hline 
+	\end{tabular}
+	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown and NNenum with 2000s time-out, and Hybrid MILP}.
+	\label{table11}
+\end{table}
 
 
