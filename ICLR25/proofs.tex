@@ -5,18 +5,23 @@ Settings for Hybrid MILP (for Fully Connected DNN, and for CNNs). 20 threads in 
 In the following table, the list {\bf Open numbers} mean that from the first hidden layer to the output layer, how many neurons will be set to be binary variables in each each layer.
 \begin{table}[h!]
 	\centering
+	\caption{Settings of Hybrid MILP for different networks}
 	\begin{tabular}{||l||c|c|c|}
 		\hline \hline
 		Network & TO for $\alpha,\beta$-Crown  & Open numbers &  \\ 		  
 		\hline
-		MNIST $5 \times 100$ & 10s  & [48,21,11,6,14] & \\ \hline
-		MNIST $5 \times 200$ & 10s & [48,21,11,6,14] &  \\ \hline
-		MNIST $8 \times 100$ & 10s  & [48,21,11,6,3,2,1,14] & \\ \hline
-		MNIST $8 \times 200$ & 10s & [48,21,11,6,3,2,1,14] & \\ \hline
-		MNIST $6 \times 500$ & 30s & [48,21,11,6,3,14] &\\ \hline
-		CIFAR CNN-B-adv & 30s & [All, 0, 200] &\\ \hline \hline
+		MNIST $5 \times 100$ & 10s  & [48,21,11,6,14] $^*$ & \\ \hline
+		MNIST $5 \times 200$ & 10s & [48,21,11,6,14] $^*$ &  \\ \hline
+		MNIST $8 \times 100$ & 10s  & [48,21,11,6,3,2,1,14] $^*$& \\ \hline
+		MNIST $8 \times 200$ & 10s & [48,21,11,6,3,2,1,14] $^*$& \\ \hline
+		MNIST $6 \times 500$ & 30s & [48,21,11,6,3,14]$^*$ &\\ \hline
+		CIFAR CNN-B-adv & 30s & [200, 0, 200]$^{**}$ &\\ \hline \hline
 	\end{tabular}
-	\caption{Settings of Hybrid MILP for different networks}
+	\begin{tablenotes}
+		\footnotesize
+		\item[1] $*$ From the second hidden layer, it may set up to 3 more neurons than the number in the list to be binary depending on their utility values. 
+		\item[2] $**$ The open number of the output layer is actually 40+160: 160 in the first hidden layer, and 40 in the rest two layers.
+	\end{tablenotes}
 	\end{table}
 
 
