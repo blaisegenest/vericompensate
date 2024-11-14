@@ -1027,5 +1027,52 @@
   url           = {https://pyrat-analyzer.com/}
 }
 
+@Article{10.1145/3656377,
+  author     = {Banerjee, Debangshu and Xu, Changming and Singh, Gagandeep},
+  journal    = {Proc. ACM Program. Lang.},
+  title      = {Input-Relational Verification of Deep Neural Networks},
+  year       = {2024},
+  month      = jun,
+  number     = {PLDI},
+  volume     = {8},
+  abstract   = {We consider the verification of input-relational properties defined over deep neural networks (DNNs) such as robustness against universal adversarial perturbations, monotonicity, etc. Precise verification of these properties requires reasoning about multiple executions of the same DNN. We introduce a novel concept of difference tracking to compute the difference between the outputs of two executions of the same DNN at all layers. We design a new abstract domain, DiffPoly for efficient difference tracking that can scale large DNNs. DiffPoly is equipped with custom abstract transformers for common activation functions (ReLU, Tanh, Sigmoid, etc.) and affine layers and can create precise linear cross-execution constraints. We implement an input-relational verifier for DNNs called RaVeN which uses DiffPoly and linear program formulations to handle a wide range of input-relational properties. Our experimental results on challenging benchmarks show that by leveraging precise linear constraints defined over multiple executions of the DNN, RaVeN gains substantial precision over baselines on a wide range of datasets, networks, and input-relational properties.},
+  address    = {New York, NY, USA},
+  articleno  = {147},
+  doi        = {10.1145/3656377},
+  issue_date = {June 2024},
+  keywords   = {Abstract Interpretation, Deep Learning, Relational Verification},
+  numpages   = {27},
+  publisher  = {Association for Computing Machinery},
+  url        = {https://doi.org/10.1145/3656377},
+}
+
+@InProceedings{DBLP_Ehlers17,
+  author    = {R{\"{u}}diger Ehlers},
+  booktitle = {Automated Technology for Verification and Analysis - 15th International Symposium, {ATVA} 2017, Pune, India, October 3-6, 2017, Proceedings},
+  title     = {Formal Verification of Piece-Wise Linear Feed-Forward Neural Networks},
+  year      = {2017},
+  editor    = {Deepak D'Souza and K. Narayan Kumar},
+  pages     = {269--286},
+  publisher = {Springer},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {10482},
+  bibsource = {dblp computer science bibliography, https://dblp.org},
+  biburl    = {https://dblp.org/rec/conf/atva/Ehlers17.bib},
+  doi       = {10.1007/978-3-319-68167-2\_19},
+  timestamp = {Tue, 21 Mar 2023 20:59:41 +0100},
+  url       = {https://doi.org/10.1007/978-3-319-68167-2\_19},
+}
+
+@InBook{10.5555/3454287.3455169,
+  author    = {Salman, Hadi and Yang, Greg and Zhang, Huan and Hsieh, Cho-Jui and Zhang, Pengchuan},
+  publisher = {Curran Associates Inc.},
+  title     = {A convex relaxation barrier to tight robustness verification of neural networks},
+  year      = {2019},
+  address   = {Red Hook, NY, USA},
+  abstract  = {Verification of neural networks enables us to gauge their robustness against adversarial attacks. Verification algorithms fall into two categories: exact verifiers that run in exponential time and relaxed verifiers that are efficient but incomplete. In this paper, we unify all existing LP-relaxed verifiers, to the best of our knowledge, under a general convex relaxation framework. This framework works for neural networks with diverse architectures and nonlinearities and covers both primal and dual views of neural network verification. Next, we perform large-scale experiments, amounting to more than 22 CPU-years, to obtain exact solution to the convex-relaxed problem that is optimal within our framework for ReLU networks. We find the exact solution does not significantly improve upon the gap between PGD and existing relaxed verifiers for various networks trained normally or robustly on MNIST and CIFAR datasets. Our results suggest there is an inherent barrier to tight verification for the large class of methods captured by our framework. We discuss possible causes of this barrier and potential future directions for bypassing it. Our code and trained models are available at http://github.com/Hadisalman/robust-verify-benchmark2.},
+  articleno = {882},
+  booktitle = {Proceedings of the 33rd International Conference on Neural Information Processing Systems},
+  numpages  = {12},
+}
 
 @Comment{jabref-meta: databaseType:bibtex;}
