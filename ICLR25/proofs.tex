@@ -128,7 +128,7 @@ On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and
 \end{table}
 
 
-
+\subsubsection*{Comparison for layer 7}	
 
 \begin{table}[h!]
 	\centering
@@ -137,7 +137,7 @@ On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and
 		Time & Uncertainty\\ 
 	\hline	14 & 3.233021901\\
 \hline	15.2 & 3.140309921\\
-\hline	17.21, & 3.059083103\\
+\hline	17.21 & 3.059083103\\
 \hline	17.4 & 2.986166762\\
 \hline	19.2 & 2.856229765\\
 \hline	20.9 & 2.799248232\\
@@ -147,7 +147,7 @@ On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and
 	
 	
 	\end{tabular}
-	\caption{}
+	\caption{pMILP}
 	\label{table12}
 	\end{table}
 	
@@ -160,7 +160,7 @@ On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and
 			Time & Uncertainty\\ 
 			\hline	21.1 & 3.348236261\\
 			\hline	27.6 & 3.24604282\\
-			\hline	38.2, & 3.196640184\\
+			\hline	38.2 & 3.196640184\\
 			\hline	47.1 & 3.164298172\\
 			\hline	56.7 & 3.146913614\\
 			\hline	106.7 & 3.108035223\\
@@ -170,7 +170,7 @@ On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and
 			
 			
 		\end{tabular}
-		\caption{}
+		\caption{full MILP}
 		\label{table13}
 	\end{table}
 	
@@ -186,6 +186,63 @@ On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and
 			\label{fig3}
 	\end{figure}
 	
+,
+8,
+,
+,
+,
+,
+,
+
+	
+	
+\subsubsection*{Comparison for layer 3}	
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		Time & Uncertainty\\ 
+		\hline	5.9 & 1.702986873\\
+		\hline	9.0 & 1.65469034\\
+		\hline	10.6 & 1.612137282\\
+		\hline	11.6 & 1.571001109\\
+		\hline	12.92 & 1.531925404\\
+		\hline	12.98 & 1.49535638\\
+		\hline	13.6 & 1.46189314\\
+		\hline	14.4 & 1.429953534\\
+		\hline
+		
+		
+	\end{tabular}
+	\caption{When the first layer is MILP}
+	\label{table14}
+\end{table}
+
+
+
+
+
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		Time & Uncertainty\\ 
+		\hline	9.3 & 3.247378853\\
+		\hline	10.6 & 3.022145891\\
+		\hline	11.9 & 2.823833569\\
+		\hline	13.1 & 2.638627159\\
+		\hline	16.0 & 2.47324218\\
+		\hline	28.3 & 2.327935601\\
+		\hline	48.1 & 2.195061671\\
+		\hline	89.4 & 2.071075926\\	
+		\hline
+
+	\end{tabular}
+	\caption{When the first layer is LP}
+	\label{table15}
+\end{table}
 	
 	
 		\begin{figure}[h]\hspace*{-1cm}
