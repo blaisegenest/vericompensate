@@ -128,7 +128,99 @@ On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and
 \end{table}
 
 
-\subsubsection*{Comparison for layer 7}	
+
+
+
+\subsection*{Ablation studies}	
+
+In this section, we consider ablation studies to understand how each feature enables the efficiency of pMILP.
+
+\subsubsection*{Time scaling with open nodes}	
+
+First, we explore the time scaling with different number of open nodes, for our full Utility function using nodes in the last two layers (Layer 1 and 2), providing finer details than in Table 3, with the same setting, i.e. previous layer being computing with full MILP.
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		$|X|$ & Time & Uncertainty\\ 
+		\hline	0 & 5.9 & 1.702986873\\
+		\hline	1 & 9.0 & 1.65469034\\
+		\hline	2 & 10.6 & 1.612137282\\
+		\hline	3 & 11.6 & 1.571001109\\
+		\hline	4 & 12.92 & 1.531925404\\
+		\hline	5 & 12.98 & 1.49535638\\
+		\hline	6 & 13.6 & 1.46189314\\
+		\hline	7 & 14.4 & 1.429953534\\
+		\hline max=116 & 3300 & 0.895\\ 
+		\hline
+		
+	\end{tabular}
+	\caption{Time scaling with number of nodes. {\bf please complete the table above 7!}}
+	\label{table14}
+\end{table}
+
+
+Please make a graph with just this Table. 
+X axis = accuracy (big to small, can use - accuracy to get that), Y = time.
+
+The exponential complexity with the number of nodes is obvious. 
+Computing with $|X| \in$ 21-24, which is what is used by pMILP for this layer, is a good trade off between time and accuracy.
+
+\subsubsection*{Usefulness of computing previous layers accurately}	
+
+Then, we explore the usefulness of computing accurately each layer inductively.
+For that, we keep the setting of Table 3 and Table \ref{table14}, but computing the previous layer with LP rather than with full MILP.
+
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		$|X|$ & Time &  Uncertainty with LP for layer 2 (resp. MILP for layer 2)\\ 
+		\hline	5 & 9.3 & 3.247378853 (1.532)\\
+		\hline	10 & 10.6 & 3.022145891 (1.371)\\
+		\hline	15 & 11.9 & 2.823833569 (1.247)\\
+		\hline	20 & 13.1 & 2.638627159 (1.145)\\
+		\hline	25 & 16.0 & 2.47324218V (1.061)\\
+		\hline	30 & 28.3 & 2.327935601 (0.989)\\
+		\hline	35 & 48.1 & 2.195061671 (0.934))\\
+		\hline	40 & 89.4 & 2.071075926 (0.921)\\	
+		\hline
+
+	\end{tabular}
+	\caption{Comparison of accuracy in layer 3 from computing layer 2 inaccurately using LP vs (from computing layer 2 accurately using MILP)}
+	\label{table15}
+\end{table}
+	
+This experiment explains the rationale to use divide and conquer protocol, using many calls
+(one for each neuron) with relatively small number $|X|$ of open nodes rather than fewer call to MILP with larger number $|X|$ of open nodes. This is clear already with only 1 layer before.
+
+
+	
+%		\begin{figure}[h]\hspace*{-1cm}
+%		\includegraphics[scale=0.6]{Layzr3_comparison.png}.
+%		\caption{Comparison of layer3 when layer 1 is MILP or LP}
+%\label{fig4}
+%	\end{figure}
+
+
+
+
+\subsubsection*{restricting open nodes vs time-outs}	
+
+Running full MILP till a small MIP-Gap (typically 0.001) is reached is extremely time inefficient.
+
+Instead, the standard strategy is to set a reasonable time-out and use whatever bound has been generated. We compare this standard strategy with the pMILP strategy of setting a priori a number of open nodes.
+
+Place the two following tables side by side.
+
+% https://tex.stackexchange.com/questions/2832/how-can-i-have-two-tables-side-by-side
+
+ADD THE NUMBER OF NODES FOR pMILP.
+
+
+
 
 \begin{table}[h!]
 	\centering
@@ -176,71 +268,18 @@ On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and
 		\label{table13}
 	\end{table}
 	
-	
-	
-	
-	
+
+pMILP obtains 2.8 accuracy in <21 seconds (with 7 open nodes), while full MILP needs 400 seconds to obtain it, a 19x speed up. For 2.7 accuracy, the speedup is >>22.
+
+This shows that choosing nodes is much more efficient for time/accuracy trade-off than setting time outs and use full MILP. And this is for the smallest DNN we considered (500 hidden neurons, far from the biggest 20k neuron DNN we experimented with)
 	
 	
 	\begin{figure}[h]\hspace*{-0.8cm}
 			\includegraphics[scale=0.4]{Layer7_comparison.png}.
-			\caption{Comparison of full MILP and pMILP on layer7}
+			\caption{Comparison of uncertainty at layer 7 for full MILP with different time-outs vs pMILP with different number of open nodes}
 			\label{fig3}
 	\end{figure}
 	
+Can we have STRAIGHT LINES between points, not this bad connection?
 
-	
-\subsubsection*{Comparison for layer 3}	
-
-\begin{table}[h!]
-	\centering
-	\begin{tabular}{|c|c|}
-		\hline
-		Time & Uncertainty\\ 
-		\hline	5.9 & 1.702986873\\
-		\hline	9.0 & 1.65469034\\
-		\hline	10.6 & 1.612137282\\
-		\hline	11.6 & 1.571001109\\
-		\hline	12.92 & 1.531925404\\
-		\hline	12.98 & 1.49535638\\
-		\hline	13.6 & 1.46189314\\
-		\hline	14.4 & 1.429953534\\
-		\hline
-		
-		
-	\end{tabular}
-	\caption{When the first layer is MILP}
-	\label{table14}
-\end{table}
-
-
-
-
-
-
-\begin{table}[h!]
-	\centering
-	\begin{tabular}{|c|c|}
-		\hline
-		Time & Uncertainty\\ 
-		\hline	9.3 & 3.247378853\\
-		\hline	10.6 & 3.022145891\\
-		\hline	11.9 & 2.823833569\\
-		\hline	13.1 & 2.638627159\\
-		\hline	16.0 & 2.47324218\\
-		\hline	28.3 & 2.327935601\\
-		\hline	48.1 & 2.195061671\\
-		\hline	89.4 & 2.071075926\\	
-		\hline
-
-	\end{tabular}
-	\caption{When the first layer is LP}
-	\label{table15}
-\end{table}
-	
-	
-		\begin{figure}[h]\hspace*{-1cm}
-		\includegraphics[scale=0.6]{Layer3_comparison.png}.
-		\caption{Comparison of layer3 when layer 1 is MILP or LP}
-		\label{fig4}
-	\end{figure}
+May be log scale for time too.
