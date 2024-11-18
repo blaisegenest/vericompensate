@@ -285,3 +285,17 @@ Can we have STRAIGHT LINES between points, not this bad connection?
 May be log scale for time too.
 
 Also, the caption colors are wrong. You inversed orange and blue.
+
+
+
+\begin{align*}
+	\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})\\
+	\Delta_0(b) &= \sum_{b} W_{bc}\Delta(\hat{b})\\
+	\Delta(c) &= \min(\max((\sol(c)+\Delta_0(c),\LB(c))),\UB(c))-\sol(c)\\
+	\Delta(\hat{c}) &=
+	\begin{cases}
+		\Delta(c)\frac{\LB(c) - \sol(\hat{c})}{\LB(c) - \sol(c)},  &\text{if } \LB(c)< \sol(c) < 0\\
+		\Delta(c)\frac{\UB(c) - \sol(\hat{c})}{\UB(c) - \sol(c)},  &\text{if }  0< \sol(c) < \UB(c)\\
+		\Delta(c),  &\text{else } 	 
+	\end{cases}
+\end{align*}
