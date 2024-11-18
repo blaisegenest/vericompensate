@@ -144,6 +144,20 @@ $$ \Utility\_\max\nolimits^z(a) = -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})$$
 
 We can proceed inductively in the same way to define $\Utility\_\max^z(a)$ for deeper neurons $a$.
 
+We use the following formula for general cases, i.e. possibly more than 3 layers. We use $a$ to denote the source node, and use $b,c$ to denote that $b$ is in one layer before $c$. 
+
+\begin{align*}
+	\Delta(a) &= \ReLU(\sol(a))-\sol(\hat{a})\\
+		\Delta(b) &= \min(\max((\sol(b)+\Delta_0(b),\LB(b))),\UB(b))-\sol(b)\\
+		\Delta(\hat{b}) &=
+		\begin{cases}
+		\Delta(b)\frac{\LB(b) - \sol(\hat{b})}{\LB(b) - \sol(b)},  &\text{if } \LB(b)< sol(b) < 0\\
+		\Delta(b)\frac{\UB(b) - \sol(\hat{b})}{\UB(b) - \sol(b)},  &\text{if }  0< \sol(b) < \UB(b)\\
+			\Delta(b),  &\text{else } 	 
+		\end{cases}\\
+	\Delta_0(c) &= \Sigma_{b} W_{bc}\Delta(\hat{b})
+\end{align*}
+
 
 \iffalse
 \subsubsection*{Three Layer before  $z$} 
