@@ -142,11 +142,12 @@ First, we explore the time scaling with different number of open nodes, for our 
 
 
 \begin{table}[h!]
-	\centering
+	\begin{subtable}[b]{0.45\textwidth}
+		\centering
 	\begin{tabular}{|c|c|c|}
 		\hline
 		$|X|$ & Time & Uncertainty\\ 
-		\hline	0 & 2.6 & 1.7609461289905561\\
+		\hline	0 & 2.6 & 1.760946128\\
 		\hline	1 & 7.3 & 1.702986873\\
 		\hline	2 & 11.1 & 1.65469034\\
 		\hline	3 & 16.3 & 1.612137282\\
@@ -182,6 +183,27 @@ First, we explore the time scaling with different number of open nodes, for our 
 	\end{tabular}
 	\caption{Time scaling with number of nodes. {\bf please complete the table above 7!}}
 	\label{table14}
+	\end{subtable}
+	\begin{subtable}[b]{0.45\textwidth}
+			\centering
+		\begin{tabular}{|c|c|c|}
+			\hline
+			$|X|$ & Time &  Uncertainty with LP for layer 2 \\ 
+			& & (resp. MILP for layer 2)\\
+			\hline	5 & 9.3 & 3.24737 (1.532)\\
+			\hline	10 & 10.6 & 3.02214 (1.371)\\
+			\hline	15 & 11.9 & 2.82383 (1.247)\\
+			\hline	20 & 13.1 & 2.63862 (1.145)\\
+			\hline	25 & 16.0 & 2.47324 (1.061)\\
+			\hline	30 & 28.3 & 2.32793 (0.989)\\
+			\hline	35 & 48.1 & 2.19506 (0.934))\\
+			\hline	40 & 89.4 & 2.07107 (0.921)\\	
+			\hline
+			
+		\end{tabular}
+		\caption{Comparison of accuracy in layer 3 from computing layer 2 inaccurately using LP vs (from computing layer 2 accurately using MILP)}
+		\label{table15}
+	\end{subtable}
 \end{table}
 
 
@@ -206,26 +228,6 @@ Computing with $|X| \in$ 21-24, which is what is used by pMILP for this layer, i
 Then, we explore the usefulness of computing accurately each layer inductively.
 For that, we keep the setting of Table 3 and Table \ref{table14}, but computing the previous layer with LP rather than with full MILP.
 
-
-\begin{table}[h!]
-	\centering
-	\begin{tabular}{|c|c|c|}
-		\hline
-		$|X|$ & Time &  Uncertainty with LP for layer 2 (resp. MILP for layer 2)\\ 
-		\hline	5 & 9.3 & 3.247378853 (1.532)\\
-		\hline	10 & 10.6 & 3.022145891 (1.371)\\
-		\hline	15 & 11.9 & 2.823833569 (1.247)\\
-		\hline	20 & 13.1 & 2.638627159 (1.145)\\
-		\hline	25 & 16.0 & 2.47324218V (1.061)\\
-		\hline	30 & 28.3 & 2.327935601 (0.989)\\
-		\hline	35 & 48.1 & 2.195061671 (0.934))\\
-		\hline	40 & 89.4 & 2.071075926 (0.921)\\	
-		\hline
-
-	\end{tabular}
-	\caption{Comparison of accuracy in layer 3 from computing layer 2 inaccurately using LP vs (from computing layer 2 accurately using MILP)}
-	\label{table15}
-\end{table}
 	
 This experiment explains the rationale to use divide and conquer protocol, using many calls
 (one for each neuron) with relatively small number $|X|$ of open nodes rather than fewer call to MILP with larger number $|X|$ of open nodes. This is clear already with only 1 layer before.
@@ -258,7 +260,9 @@ ADD THE NUMBER OF NODES FOR pMILP.
 
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{|c|c|}
+	\hspace*{4ex}
+\begin{subtable}[b]{0.45\textwidth}
+		\begin{tabular}{|c|c|}
 	\hline
 		Time & Uncertainty\\ 
 	\hline	14 & 3.233021901\\
@@ -270,37 +274,34 @@ ADD THE NUMBER OF NODES FOR pMILP.
 \hline	23.7 & 2.746167245\\
 \hline	26.6 & 2.69485246\\	
 	\hline
-	
-	
 	\end{tabular}
 	\caption{pMILP}
+\end{subtable}
+\hfill
+\begin{subtable}[b]{0.45\textwidth}
+		\begin{tabular}{|c|c|}
+		\hline
+		Time & Uncertainty\\ 
+		\hline	21.1 & 3.348236261\\
+		\hline	27.6 & 3.24604282\\
+		\hline	38.2 & 3.196640184\\
+		\hline	47.1 & 3.164298172\\
+		\hline	56.7 & 3.146913614\\
+		\hline	106.7 & 3.108035223\\
+		\hline	156.3 & 2.900438725\\
+		\hline	205.8 & 2.848648426\\	
+		\hline	406.7 & 2.800268264 \\	
+		\hline	606.1 & 2.737064255\\	
+		\hline
+	\end{tabular}
+		\caption{full MILP}
+\end{subtable}
+	\caption{comparison of pMILP and full MILP}
 	\label{table12}
 	\end{table}
-	
 
 	
-	\begin{table}[h!]
-		\centering
-		\begin{tabular}{|c|c|}
-			\hline
-			Time & Uncertainty\\ 
-			\hline	21.1 & 3.348236261\\
-			\hline	27.6 & 3.24604282\\
-			\hline	38.2 & 3.196640184\\
-			\hline	47.1 & 3.164298172\\
-			\hline	56.7 & 3.146913614\\
-			\hline	106.7 & 3.108035223\\
-			\hline	156.3 & 2.900438725\\
-			\hline	205.8 & 2.848648426\\	
-			\hline	406.7 & 2.800268264 \\	
-			\hline	606.1 & 2.737064255\\	
-			\hline
-			
-			
-		\end{tabular}
-		\caption{full MILP}
-		\label{table13}
-	\end{table}
+
 	
 
 pMILP obtains 2.8 accuracy in <21 seconds (with 7 open nodes), while full MILP needs 400 seconds to obtain it, a 19x speed up. For 2.7 accuracy, the speedup is $>>$ 22.
