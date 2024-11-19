@@ -140,8 +140,6 @@ In this section, we consider ablation studies to understand how each feature ena
 First, we explore the time scaling with different number of open nodes, for our full Utility function using nodes in the last two layers (Layer 1 and 2), providing finer details than in Table 3, with the same setting, i.e. previous layer being computing with full MILP.
 
 
- , , , , , ,, , , , , , , , , , ,, , , 
-
 
 \begin{table}[h!]
 	\centering
@@ -330,12 +328,22 @@ May be log scale for time too.
 
 Also, the caption colors are wrong. You inversed orange and blue.
 
+As usual, for nodes $a,b,c$, we use $\Delta(a),\Delta(b),\Delta(c)$ to denote the changes of those variable before ReLU functions, and use $\Delta(\hat{a}), \Delta(\hat{b}), \Delta(\hat{c})$ to denote variable after ReLU functions. $a$ means the source node, and $b$ means nodes one layer after $a$, and $c,d$ means that $c$ is one layer before $d$.
 
+\vspace*{20ex}
+
+test end.
 
 \begin{align*}
 	\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})\\
-	\Delta_0(b) &= \sum_{b} W_{bc}\Delta(\hat{b})\\
-	\Delta(c) &= \min(\max((\sol(c)+\Delta_0(c),\LB(c))),\UB(c))-\sol(c)\\
+	\Delta(\hat{b}) &= W_{ab}\Delta(\hat{a})\\
+	\Delta(\hat{b}) &=
+	\begin{cases}
+		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bz} > 0\\
+		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)\geq0\\
+		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)<0		 
+	\end{cases}\\
+	\Delta(c) &=\sum_{b} W_{bc}\Delta(\hat{b})\\
 	\Delta(\hat{c}) &=
 	\begin{cases}
 		\Delta(c)\frac{\LB(c) - \sol(\hat{c})}{\LB(c) - \sol(c)},  &\text{if } \LB(c)< \sol(c) < 0\\
@@ -343,3 +351,5 @@ Also, the caption colors are wrong. You inversed orange and blue.
 		\Delta(c),  &\text{else } 	 
 	\end{cases}
 \end{align*}
+
+test end.
