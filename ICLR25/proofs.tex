@@ -130,21 +130,24 @@ On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and
 
 
 
-
 \subsection*{Ablation studies}	
 
 In this section, we consider ablation studies to understand how each feature enables the efficiency of pMILP.
 
 \subsubsection*{Time scaling with open nodes}	
 
-First, we explore the time scaling with different number of open nodes, for our full Utility function using nodes in the last two layers (Layer 1 and 2), providing finer details than in Table 3, with the same setting, i.e. previous layer being computing with full MILP.
+
+First, we explore the time scaling with different number of open nodes, for our full Utility function using nodes in the last two layers (Layer 1 and 2), providing finer details than in Table 3, with the same setting, i.e. previous layer being computed with full MILP.
+
+
 
 
 
 \begin{table}[h!]
-	\begin{subtable}[b]{0.45\textwidth}
 		\centering
-	\begin{tabular}{|c|c|c|}
+		\hspace*{4ex}
+		\begin{subtable}[b]{0.45\textwidth}
+		\begin{tabular}{|c|c|c|}
 		\hline
 		$|X|$ & Time & Uncertainty\\ 
 		\hline	0 & 2.6 & 1.760946128\\
@@ -163,6 +166,14 @@ First, we explore the time scaling with different number of open nodes, for our 
 		\hline	13 & 28.7 & 1.2938690\\
 		\hline	14 & 29.6 & 1.2690507\\
 		\hline	15 & 24.5 & 1.2475106\\
+		\hline
+	  \end{tabular}
+	\end{subtable}
+	\hfill
+	\begin{subtable}[b]{0.45\textwidth}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			$|X|$ & Time & Uncertainty\\ 
 		\hline	16 & 31.9 & 1.2243065\\
 		\hline	17 & 28.6 & 1.2031791\\
 		\hline	18 & 30.4 & 1.1839474\\
@@ -178,58 +189,60 @@ First, we explore the time scaling with different number of open nodes, for our 
 		\hline	28 & 211.3 & 1.016058\\
 		\hline	29 & 373.1 & 1.001374\\
 		\hline max=116 & 3300 & 0.895\\ 
-		\hline
-		
-	\end{tabular}
-	\caption{Time scaling with number of nodes. {\bf please complete the table above 7!}}
-	\label{table14}
-	\end{subtable}
-	\begin{subtable}[b]{0.45\textwidth}
-			\centering
-		\begin{tabular}{|c|c|c|}
-			\hline
-			$|X|$ & Time &  Uncertainty with LP for layer 2 \\ 
-			& & (resp. MILP for layer 2)\\
-			\hline	5 & 9.3 & 3.24737 (1.532)\\
-			\hline	10 & 10.6 & 3.02214 (1.371)\\
-			\hline	15 & 11.9 & 2.82383 (1.247)\\
-			\hline	20 & 13.1 & 2.63862 (1.145)\\
-			\hline	25 & 16.0 & 2.47324 (1.061)\\
-			\hline	30 & 28.3 & 2.32793 (0.989)\\
-			\hline	35 & 48.1 & 2.19506 (0.934))\\
-			\hline	40 & 89.4 & 2.07107 (0.921)\\	
-			\hline
-			
-		\end{tabular}
-		\caption{Based on LP}
-		\label{table15}
-	\end{subtable}
-		\caption{Comparison of accuracy in layer 3 from computing layer 2 inaccurately using LP vs (from computing layer 2 accurately using MILP)}
+		\hline		
+	  \end{tabular}
+     \end{subtable}
+	  \caption{Time and uncertainty scaling of pMILP with number of nodes.}
+    	\label{table14}
 \end{table}
 
 
-Please make a graph with just this Table. 
+The exponential complexity with the number of nodes is obvious, as shown on Figure \ref{fig3}, where time is represented using logarithmic scale. 
+Notice that when certifying, pMILP uses $|X| \in$ 21-24, which is is a good trade off between time and accuracy.
 
-		\begin{figure}[h]\hspace*{-0.8cm}
+
+\begin{figure}[h!]
+	\hspace*{-0.8cm}
 	\includegraphics[scale=0.4]{Layer3_comparison}.
-	\caption{Plot of time scaling with number of nodes.}
-	\label{fig4}
+	\caption{Time and uncertainty scaling of pMILP with number of nodes.
+	Time is using logscale.
+	USE STRAIGHT LINES. DO NOT WRITE A TITLE OF GRAPH IN THE PNG (plot of method). CHANGE THE AWFUL LEGEND TO "pMILP". GRAPHS HAS COUPLE OF PROBLEMATIC POINTS LOWER than previous  (TYPOS?)
+	ADD LOGSCALE AFTER "(seconds, logscale)". USE SAME COLOR FOR pMILP THAN IN FIGURE 4}
+	\label{fig3}
 \end{figure}
 
 
-
-
-X axis = accuracy (big to small, can use - accuracy to get that), Y = time.
-
-The exponential complexity with the number of nodes is obvious. 
-Computing with $|X| \in$ 21-24, which is what is used by pMILP for this layer, is a good trade off between time and accuracy.
 
 \subsubsection*{Usefulness of computing previous layers accurately}	
 
 Then, we explore the usefulness of computing accurately each layer inductively.
 For that, we keep the setting of Table 3 and Table \ref{table14}, but computing the previous layer with LP rather than with full MILP.
 
+
+
+
+\begin{table}[h!]
+	\centering
+\begin{tabular}{|c|c|c|}
+	\hline
+	$|X|$ & Time &  Uncertainty with LP for layer 2 \\ 
+	& & (resp. MILP for layer 2)\\
+	\hline	5 & 9.3 & 3.24737 (1.532)\\
+	\hline	10 & 10.6 & 3.02214 (1.371)\\
+	\hline	15 & 11.9 & 2.82383 (1.247)\\
+	\hline	20 & 13.1 & 2.63862 (1.145)\\
+	\hline	25 & 16.0 & 2.47324 (1.061)\\
+	\hline	30 & 28.3 & 2.32793 (0.989)\\
+	\hline	35 & 48.1 & 2.19506 (0.934))\\
+	\hline	40 & 89.4 & 2.07107 (0.921)\\	
+	\hline
 	
+\end{tabular}
+\caption{Comparison of accuracy in layer 3 from computing layer 2 inaccurately using LP vs (from computing layer 2 accurately using MILP)}
+\label{table15}
+\end{table}
+
+
 This experiment explains the rationale to use divide and conquer protocol, using many calls
 (one for each neuron) with relatively small number $|X|$ of open nodes rather than fewer call to MILP with larger number $|X|$ of open nodes. This is clear already with only 1 layer before.
 
@@ -243,6 +256,7 @@ This experiment explains the rationale to use divide and conquer protocol, using
 
 
 
+ \newpage
 
 \subsubsection*{restricting open nodes vs time-outs}	
 
@@ -250,11 +264,6 @@ Running full MILP till a small MIP-Gap (typically 0.001) is reached is extremely
 
 Instead, the standard strategy is to set a reasonable time-out and use whatever bound has been generated. We compare this standard strategy with the pMILP strategy of setting a priori a number of open nodes.
 
-Place the two following tables side by side.
-
-% https://tex.stackexchange.com/questions/2832/how-can-i-have-two-tables-side-by-side
-
-ADD THE NUMBER OF NODES FOR pMILP.
 
 
 
@@ -263,23 +272,25 @@ ADD THE NUMBER OF NODES FOR pMILP.
 	\centering
 	\hspace*{4ex}
 \begin{subtable}[b]{0.45\textwidth}
-		\begin{tabular}{|c|c|}
+	\centering
+		\begin{tabular}{|c|c|c|}
 	\hline
-		Time & Uncertainty\\ 
-	\hline	14 & 3.233021901\\
-\hline	15.2 & 3.140309921\\
-\hline	17.21 & 3.059083103\\
-\hline	17.4 & 2.986166762\\
-\hline	19.2 & 2.856229765\\
-\hline	20.9 & 2.799248232\\
-\hline	23.7 & 2.746167245\\
-\hline	26.6 & 2.69485246\\	
+		$|X|$ & Time & Uncertainty\\ 
+	\hline1 &	14 & 3.233021901\\
+\hline	2 & 15.2 & 3.140309921\\
+\hline	3 & 17.21 & 3.059083103\\
+\hline 4 &	17.4 & 2.986166762\\
+\hline	5 &19.2 & 2.856229765\\
+\hline	6 &20.9 & 2.799248232\\
+\hline	7 &23.7 & 2.746167245\\
+\hline	8 &26.6 & 2.69485246\\	
 	\hline
 	\end{tabular}
 	\caption{pMILP}
 \end{subtable}
 \hfill
 \begin{subtable}[b]{0.45\textwidth}
+	\centering
 		\begin{tabular}{|c|c|}
 		\hline
 		Time & Uncertainty\\ 
@@ -297,7 +308,8 @@ ADD THE NUMBER OF NODES FOR pMILP.
 	\end{tabular}
 		\caption{full MILP}
 \end{subtable}
-	\caption{comparison of pMILP and full MILP}
+	\caption{Comparison of bounding the number of nodes for pMILP and 
+	using different time outs for full MILP. In both settings, lower and upper bounds of previous layers are the same (computed by pMILP).}
 	\label{table12}
 	\end{table}
 
@@ -305,53 +317,47 @@ ADD THE NUMBER OF NODES FOR pMILP.
 
 	
 
-pMILP obtains 2.8 accuracy in <21 seconds (with 7 open nodes), while full MILP needs 400 seconds to obtain it, a 19x speed up. For 2.7 accuracy, the speedup is $>>$ 22.
+pMILP obtains 2.8 accuracy in $<21$ seconds (with 7 open nodes), while full MILP needs 400 seconds to obtain it, a 19x speed up. For 2.7 accuracy, the speedup is $>>$ 22.
 
-This shows that choosing nodes is much more efficient for time/accuracy trade-off than setting time outs and use full MILP. And this is for the smallest DNN we considered (500 hidden neurons, far from the biggest 20k neuron DNN we experimented with)
+
+\begin{figure}[h]\hspace*{-0.8cm}
+	\includegraphics[scale=0.4]{Layer7_comparison.png}.
+	\caption{Comparison of uncertainty at layer 7 for full MILP with different time-outs vs pMILP with different number of open nodes. Time is using logscale.
+	USE THE EXACT SAME REPRESENTATION THAN IN FIGURE 3 (e.g. time (second, logscale), no title of graph, time is Y axis}
+	\label{fig4}
+\end{figure}
+
+
+Figure \ref{fig4} shows that choosing nodes is much more efficient for time/accuracy trade-off than setting time outs and use full MILP. And this is for the smallest DNN we considered (500 hidden neurons, far from the biggest 20k neuron DNN we experimented with)
 	
 	
-	\begin{figure}[h]\hspace*{-0.8cm}
-			\includegraphics[scale=0.4]{Layer7_comparison.png}.
-			\caption{Comparison of uncertainty at layer 7 for full MILP with different time-outs vs pMILP with different number of open nodes}
-			\label{fig3}
-	\end{figure}
 	
+		
 	
-		\begin{figure}[h]\hspace*{-0.8cm}
-		\includegraphics[scale=0.4]{Layer7_comparison_notlog.png}.
-		\caption{Comparison of uncertainty at layer 7 for full MILP with different time-outs vs pMILP with different number of open nodes}
-		\label{fig5}
-	\end{figure}
-	
-	
-Can we have STRAIGHT LINES between points, not this bad connection?
 
-May be log scale for time too.
 
-Also, the caption colors are wrong. You inversed orange and blue.
 
-As usual, for nodes $a,b,c$, we use $\Delta(a),\Delta(b),\Delta(c)$ to denote the changes of those variable before ReLU functions, and use $\Delta(\hat{a}), \Delta(\hat{b}), \Delta(\hat{c})$ to denote variable after ReLU functions. $a$ means the source node, and $b$ means nodes one layer after $a$, and $c,d$ means that $c$ is one layer before $d$.
 
-\vspace*{20ex}
+\section*{Formula for Utility}
 
-test end.
+
+Recall that for nodes $a,b$, we use 
+$\hat{a}, \hat{b}$ to denote variable after ReLU functions, and
+$\Delta(a),\Delta(\hat{a}),\Delta(b),\Delta(\hat{b})$ to denote the changes of those variables. $a$ means the source node, and $b$ means nodes one layer after $a$, and $z$ is 2 layers after $a$ and one after $b$.
+
+The utility function for a node $a$ wrt neuron $z$ is defined inductively as follows:
+
 
 \begin{align*}
 	\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})\\
-	\Delta(\hat{b}) &= W_{ab}\Delta(\hat{a})\\
+	\Delta(b) &= W_{ab}\Delta(\hat{a})\\
 	\Delta(\hat{b}) &=
 	\begin{cases}
 		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bz} > 0\\
 		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)\geq0\\
 		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)<0		 
 	\end{cases}\\
-	\Delta(c) &=\sum_{b} W_{bc}\Delta(\hat{b})\\
-	\Delta(\hat{c}) &=
-	\begin{cases}
-		\Delta(c)\frac{\LB(c) - \sol(\hat{c})}{\LB(c) - \sol(c)},  &\text{if } \LB(c)< \sol(c) < 0\\
-		\Delta(c)\frac{\UB(c) - \sol(\hat{c})}{\UB(c) - \sol(c)},  &\text{if }  0< \sol(c) < \UB(c)\\
-		\Delta(c),  &\text{else } 	 
-	\end{cases}
+	\Utility\_\max\nolimits^z(a) &= -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})
 \end{align*}
 
-test end.
+CHECK.
