@@ -139,19 +139,45 @@ In this section, we consider ablation studies to understand how each feature ena
 
 First, we explore the time scaling with different number of open nodes, for our full Utility function using nodes in the last two layers (Layer 1 and 2), providing finer details than in Table 3, with the same setting, i.e. previous layer being computing with full MILP.
 
+
+[2.610717535018921, 7.311721324920654, 11.122488260269165, 16.3245050907135, 15.57492995262146, 15.755412340164185, 15.795860290527344, 16.393956184387207, 15.824714183807373, 17.181022882461548, 22.523089170455933, 27.278773069381714, 21.60754108428955, 28.682990550994873, 29.584508419036865, 24.55262804031372, 31.89635181427002, 28.636857509613037, 30.416080236434937, 34.00505447387695, 42.14221262931824, 47.62732434272766, 62.65820622444153, 70.0696325302124, 70.75616240501404, 139.88561010360718, 154.16487455368042, 213.14934086799622, 211.30311036109924]
+
+
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{|c|c|c|}
 		\hline
 		$|X|$ & Time & Uncertainty\\ 
-		\hline	0 & 5.9 & 1.702986873\\
-		\hline	1 & 9.0 & 1.65469034\\
-		\hline	2 & 10.6 & 1.612137282\\
-		\hline	3 & 11.6 & 1.571001109\\
-		\hline	4 & 12.92 & 1.531925404\\
-		\hline	5 & 12.98 & 1.49535638\\
-		\hline	6 & 13.6 & 1.46189314\\
-		\hline	7 & 14.4 & 1.429953534\\
+		\hline	0 & 2.6 & 1.7609461289905561\\
+		\hline	1 & 7.3 & 1.702986873\\
+		\hline	2 & 11.1 & 1.65469034\\
+		\hline	3 & 16.3 & 1.612137282\\
+		\hline	4 & 15.5 & 1.571001109\\
+		\hline	5 & 15.7 & 1.531925404\\
+		\hline	6 & 15.8 & 1.49535638\\
+		\hline	7 & 16.4 & 1.46189314\\
+		\hline	8 &  15.8 & 1.46189314\\
+		\hline	9 &  17.2 & 1.46189314\\
+		\hline	10 & 22.5 & 1.46189314\\
+		\hline	11 & 27.2 & 1.46189314\\
+		\hline	12 & 21.6 & 1.46189314\\
+		\hline	13 & 28.7 & 1.46189314\\
+		\hline	14 & 29.6 & 1.46189314\\
+		\hline	15 & 24.5 & 1.46189314\\
+		\hline	16 & 31.9 & 1.46189314\\
+		\hline	17 & 28.6 & 1.46189314\\
+		\hline	18 & 30.4 & 1.46189314\\
+		\hline	19 & 34.0 & 1.46189314\\
+		\hline	20 & 42.1 & 1.46189314\\
+		\hline	21 & 47.6 & 1.46189314\\
+		\hline	22 & 62.7 & 1.46189314\\
+		\hline	23 & 70.0 & 1.46189314\\
+		\hline	24 & 70.8 & 1.46189314\\
+		\hline	25 & 139.9 & 1.46189314\\
+		\hline	26 & 154.2 & 1.46189314\\
+		\hline	27 & 213.1 & 1.46189314\\
+		\hline	28 & 211.3 & 1.46189314\\
+		\hline	29 & 373.1 & 1.46189314\\
 		\hline max=116 & 3300 & 0.895\\ 
 		\hline
 		
@@ -164,7 +190,7 @@ First, we explore the time scaling with different number of open nodes, for our 
 Please make a graph with just this Table. 
 
 		\begin{figure}[h]\hspace*{-0.8cm}
-	\includegraphics[scale=0.4]{Layer7_comparison_notlog.png}.
+	\includegraphics[scale=0.4]{Layer3_comparison}.
 	\caption{Plot of time scaling with number of nodes.}
 	\label{fig4}
 \end{figure}
