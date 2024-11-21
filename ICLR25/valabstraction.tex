@@ -108,12 +108,20 @@ Firstly, it's important to note that weighted sums represent a linear function, 
 
 
 
-Consider the simpler abstraction, termed ``Box abstraction" \cite{deeppoly}: it inductively computes the bounds for each neuron in the subsequent layer independently. This is achieved by considering the weighted sum of the bounds from the previous layer, followed by clipping the lower bound at $\max(0,$ lower bound$)$ to represent the ReLU function, and so forth. 
+Consider the simpler abstraction, termed ``Box abstraction", {\color{blue} recalled e.g. in \cite{deeppoly}}: it inductively computes the bounds for each neuron in the subsequent layer independently. This is achieved by considering the weighted sum of the bounds from the previous layer, followed by clipping the lower bound at $\max(0,$ lower bound$)$ to represent the ReLU function, and so forth. 
 For all $i \geq 3$, define $x_i=\val_{\vx}(n_i)$, where $\vx=(x_1,x_2)$.
 Taking the DNN example from Fig \ref{fig1}, assume $x_1,x_2 \in [-1,1]$. This implies that $x_3,x_4 \in [-2,2]$. After applying the ReLU function, $\hat{x}_3,\hat{x}_4$ are constrained to $[0,2]$, leading to $x_5 \in [0,6]$ and $x_6 \in [0,2]$. 
 The bounds for $n_1, \ldots, n_4$ are exact, meaning for every $\alpha$ within the range, an input $\vy$ can be found such that $\val_{\vy}(n_i)=\alpha$. However, this precision is lost from the next layer (beginning with $n_5, n_6$) due to potential dependencies among preceding neurons. For example, it is impossible for $x_5=\Val_{\vx}(n_5)$ to reach $6$, as it would necessitate both $x_3=2$ and $x_4=2$, which is not possible at the same time as 
 $x_3=2$ implies $x_1=x_2=1$ and $x_4=2$ implies $x_2=-1$ (and $x_1=1$), a contradiction.
 
+{\color{blue} In \cite{DBLP_Ehlers17, deeppoly} and others, the {\em triangular abstraction} was proposed:
+\begin{align}
+	\ReLU(x) = max (0,x) \leq \hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)} 
+	\label{eq:deeppoly}
+\end{align} 
+It has two lower bounds (the 0 and identity functions), and one upper bound. 
+DeepPoly \cite{deeppoly} chooses one of the two lower bounds for each neuron $x$, giving rise to a greedy quadratic-time algorithm to compute very fast an abstraction of the value of $\hat{x}$ (but not that accurately).
+}
 
 
 \subsection{MILP, LP and partial MILP encodings for DNNs}
@@ -123,7 +131,10 @@ Consider an unstable neuron $n$, whose value $x \in [\LB(n),\UB(n)]$ with $\LB(n
 The value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one 
 integer (actually even binary) variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
 
-$$\quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \LB(n) \cdot a \quad \wedge \quad \hat{x} \leq x-\UB(n) \cdot (1-a)$$
+\vspace{-0.4cm}
+\begin{equation}\quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \LB(n) \cdot a \quad \wedge \quad \hat{x} \leq x-\UB(n) \cdot (1-a)
+\label{eq11}
+\end{equation}
 
 For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
 
@@ -134,30 +145,28 @@ for a set of unstable neurons $X$, we denote by MILP$_X$ the MILP encoding where
 To further limit the number of binary variables needed for a given accuracy, we devise the same iterative approach as the box abstraction or DeepPoly \cite{deeppoly}, computing lower 
 and upper bounds $\LB(n),\UB(n)$ for neurons $n$ of a layer, that are used when computing values of the next layer, thus necessitating less variables from previous layers. 
 
-The crucial factor in such an approach is to {\em select} few opened neurons in $X$ which are the most important for the accuracy. An extreme strategy was adopted in \cite{DivideAndSlide}, where only nodes of the immediate previous layer could be opened, and the measure to choose a neuron $a$ to open to compute the values for neuron $b$ was to consider $|W_{ab}| (\UB(a)-\LB(a))$. To obtain a more accurate measure, that can also scale to deeper layers and is not limited to open nodes from the immediate previous layer, we first study the LP abstraction.
+The crucial factor in such an approach is to {\em select} few opened neurons in $X$ which are the most important for the accuracy. An extreme strategy was adopted in \cite{DivideAndSlide}, where only nodes of the immediate previous layer could be opened, and the measure to choose a neuron $a$ to open to compute the values for neuron $b$ was to consider $|W_{ab}| (\UB(a)-\LB(a))$. To obtain a more accurate measure, that can also scale to deeper layers and is not limited to open nodes from the immediate previous layer, we first study the LP relaxation of (\ref{eq11}). We obtain:
 
-Consider an unstable neuron $n$, that is $\LB(n) < 0 < \UB(n)$. 
-Let $x$ represent the input value of $n$, hence with 
-$\LB(n) < x < \UB(n)$, and $\hat{x}$ representing $\ReLU(x)$. 
-We have:
+%Consider an unstable neuron $n$, that is $\LB(n) < 0 < \UB(n)$. 
+%Let $x$ represent the input value of $n$, hence with 
+%$\LB(n) < x < \UB(n)$, and $\hat{x}$ representing $\ReLU(x)$. 
+%We have:
 
 
 \begin{proposition}
 	\label{LP}
-	The LP relaxation on $\hat{x}$ is equivalent with:
-	\begin{align}
-		\ReLU(x) \leq \hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)} \label{eq:deeppoly}
-	\end{align} 
+	{\color{blue} The LP relaxation of (\ref{eq11}) is equivalent with the triangular abstraction 	(\ref{eq:deeppoly}).}
 \end{proposition}
  
+{\color{blue}
+To the best of our knowledge, we could not find such an equivalence stated in the bibliography, although the proof is simple. This result will be instrumental for our Utility function (Section \ref{sec4}).}
 
 
 \begin{proof}
+	Consider an unstable neuron $n$, that is $\LB(n) < 0 < \UB(n)$.
 The lower bound on $\hat{x}$ is simple, as $\hat{x} \geq 0 \wedge \hat{x} \geq x$ is immediatly equivalent with $\hat{x} \geq \ReLU(x)$.
 
 We now show that the three constraints 
 $\hat{x} \leq \UB(n) \cdot a \, \wedge \, \hat{x} \leq x-\LB(n) \cdot (1-a) \, \wedge \, a \in [0,1]$ translates into $\hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)}$. 
 We have $\hat{x}$ is upper bounded by $max_{a \in [0,1]} (min(\UB(n) \cdot a, x - \LB(n) (1-a)))$, and this bound can be reached. Furthermore, using standard function analysis tools (derivative...), we can show that the function $a \mapsto \min(\UB(n) \cdot a, x - \LB(n) (1-a))$ attains its maximum when $\UB(n) \cdot a = x - \LB(n) (1-a)$, leading to the equation $(\UB(n) - \LB(n)) a = x - \LB(n)$ and consequently $a = \frac{x - \LB(n)}{\UB(n)-\LB(n)}$. This results in an upper bound $\hat{x} \leq \UB(n) \frac{x - \LB(n)}{\UB(n)-\LB(n)}$, which can be reached, hence the equivalence.
 \end{proof}
-
-Notice that this is close to the DeepPoly abstractions \cite{deeppoly}, but LP simultaneous considers the two linear lower bounding functions for the ReLU operation, namely $\ReLU(x) \geq 0$ and $\ReLU(x) \geq x$, while the DeepPoly abstraction restricts itself to the application of a single one of these linear bounding functions.
