@@ -2,7 +2,7 @@
 
 In this section, we evaluate how each neuron would impact the accuracy of encoding this neuron with an integer (actually binary) or a linear variable. We will say we open a neuron when this neuron is selected with a binary variable. We denote by $X$ a choice of set of open neurons, and by $\mathcal{M}_X$ the MILP model where variables from $X$ are encoded with binary variables, and other variables are using the LP linear relaxation.
 
-Let $z$ be a neuron of the DNN we want to evaluate, for instance computing an upper bound on the value it can take. We denote by $n < z$ the fact that a neuron $n$appears on a layer before the layer of $z$, and $n \leq z$ if it can also be $z$.
+Let $z$ be a neuron of the DNN we want to evaluate, for instance computing an upper bound on the value it can take. We denote by $n < z$ the fact that a neuron $n$ appears on a layer before the layer of $z$, and $n \leq z$ if it can also be $z$.
 Let us denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ 
 maximizing $z$. In particular, $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
 
