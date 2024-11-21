@@ -21,7 +21,7 @@ would however be very time consuming when the number of neurons $a$ to evaluate 
 {\color{blue} 
 That's why as far as we know, in competing heuristics to rank important nodes (e.g. \cite{huang2017safety,crown}), no call to solvers are made.
 %Instead, we focus on the following $\Utility\_\max\nolimits^z(n)$ function upper bounding $\Improve\_\max^z(n)$. 
-The novelty of our Utility function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, which is very efficient and negligible wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes, as hinted by Proposition \ref{prop2}.
+The novelty of our Utility function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, which is very efficient and negligible wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes, see Table \ref{tab:example1} and Proposition \ref{prop2} later.
 
 
 
@@ -99,7 +99,7 @@ we define:
 %We will show with a more general definition that $0 \leq \Improve\_\max^z(a) \leq \Utility\_\max^z(a)$ in Prop.~\ref{prop2}. 
 
 Informally, $\Delta(\hat{a}), \Delta(b), \Delta(\hat{b})$ approximate the improvement on the accuracy of $\hat{a}, b, \hat{b}$ when computing $\ReLU(a)$ 
-using the exact MILP encoding instead of LP. Using Prop. \ref{LP}, we show:
+using the exact MILP encoding instead of LP. Using Proposition \ref{LP}, we show:
 
 \begin{proposition}
 	\label{prop2}
