@@ -325,7 +325,41 @@ pMILP obtains 2.8 accuracy in $<21$ seconds (with 7 open nodes), while full MILP
 
 
 Figure \ref{fig4} shows that choosing nodes is much more efficient for time/accuracy trade-off than setting time outs and use full MILP. And this is for the smallest DNN we considered (500 hidden neurons, far from the biggest 20k neuron DNN we experimented with)
-	
+
+
+\subsection*{Formula for ResNet}
+
+Consider a ResNet, like ResNet4b, we list the formula for an Add layer.
+
+Suppose we are dealing with an Add layer $l$, target node $z$, with previous layer $l_1$ and shortcut connection previous layer $l_2$, starting from a layer $l_0$, that is:
+\begin{align*}
+	l &= l_1+l_2\\
+	l_2 &= Conv_{W_2}(\ReLU(l_0))\\
+	l_1' &= Conv_{W'_1}(\ReLU(l_0))\\
+	l_1 &= Conv_{W_1}(\ReLU(l'_{1}))
+\end{align*}The paths are $$l_0\rightarrow \ReLU(l_0)\rightarrow l_2\rightarrow l,$$ and $$l_0\rightarrow \ReLU(l_0)\rightarrow l'_1\rightarrow \ReLU(l_1')\rightarrow l_1\rightarrow l.$$
+
+So, for nodes in layer $l_1'$, we can use the same formula as previous section, i.e., the formula at the end of page 6: for a node $b$ in $l_1'$, suppose $z=x+y$ for $x$ in layer $l_1$ and $y$ in $l_2$, 
+\begin{align*}
+\Utility\_\max\nolimits^x(b) &= W_{bx} \times (\sol(\hat{b})- \ReLU(\sol(b)))\\
+\Utility\_\max\nolimits^z(b) &= \Utility\_\max\nolimits^x(b)
+\end{align*}
+
+For nodes in layer $l_0$, the simple idea is to consider both paths, and sum up the utilities of two paths. For a node $a$ in $l_0$, suppose $z=x+y$ for $x$ in layer $l_1$ and $y$ in $l_2$ ,
+\begin{align*}
+		\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})\\
+		\Utility_\_\max\nolimits^y(a) &= -W_{ay} \Delta(\hat{a})\\
+	\forall b \in \ell, \Delta(b) &= W_{ab}\Delta(\hat{a})\\
+	\forall b \in \ell, \Delta(\hat{b}) &=
+	\begin{cases}
+		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bx} > 0\\
+		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bx} < 0 \text{ and } \sol(b)\geq0\\
+		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bx} < 0 \text{ and } \sol(b)<0		 
+	\end{cases}\\
+	\Utility\_\max\nolimits^x(a) &= -\sum_{b \in \ell} W_{bx} \Delta(\hat{b})\\
+	\Utility\_\max\nolimits^z(a) &= \Utility\_\max\nolimits^x(a)+\Utility\_\max\nolimits^y(a)
+\end{align*}
+
 	
 	
 		
