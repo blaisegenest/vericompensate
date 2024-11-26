@@ -2,7 +2,15 @@
 
 \label{sec4}
 
-In this section, we evaluate how each neuron would impact the accuracy of encoding this neuron with a binary or a linear variable, using Proposition \ref{LP}. A neuron is {\em open} when it is represented as a binary variable. For $X$ a set of open neurons, we denote by $\mathcal{M}_X$ the MILP model where variables from $X$ are encoded with binary variables, and other variables are using the LP linear relaxation.
+In this section, we evaluate how each ReLU would impact the accuracy if encoded as a binary or a linear variable, using Proposition \ref{LP}. A ReLU is said {\em open} when it is represented as a binary variable. For $X$ a set of open ReLUs, we denote by $\mathcal{M}_X$ the MILP model where variables from $X$ are encoded with binary variables, and other variables are using the LP linear relaxation.
+
+{\color{blue} 
+Usually, heuristics to choose $X$ are based on evaluating the {\em sensitivity} of a neuron $z$ wrt the ReLU nodes,
+that is how much a ReLU value impacts the value of $z$, and rank the ReLU nodes accordingly. This is the case of \cite{DivideAndSlide}, but also more generally of heuristics for BaB \cite{BaB,ferrari2022complete}, such as SR and FSB. %Our Utility function does not follow this approach. 
+Instead, Utility considers the {\em improvement} from opening a neuron $n$, that is the difference for the value of $z$ between considering $\ReLU(n)$ exactly or using its LP relaxation $\LP(n)$. Indeed, it is not rare that 
+$z$ is sensitive to ReLU node $n$, and yet $\LP(n)$ already provides an accurate approximation of $\ReLU(n)$.
+In this case, usual heuristics would open $n$, while it would only improve the value of $z$ in a limited way.
+}
 
 Assume that we want to compute an upper bound for neuron $z$ on layer $\ell_z$.
 We write $n < z$ if neuron {\color{blue} $n$ is} on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$. We denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ maximizing $z$. In particular, $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
@@ -16,12 +24,18 @@ compared with using only LP.
 We have $\Improve\_\max^z(n)\geq 0$ as $\Sol\_\max_{\{n\}}^z$ fulfills all the constraints of 
 $\mathcal{M}_\emptyset$, so $\Sol\_\max_{\{n\}}^z(z) \leq \sol(z)$.
 Similarly, we define ($\Sol\_\min_\emptyset^z(n))_{n \leq z}$ and 
-$\Improve\_\min^z(n)$. Calling MILP on $\mathcal{M}_{\{n\}}$ for each neuron $n \leq z$
+$\Improve\_\min^z(n)$. Calling MILP on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$
 would however be very time consuming when the number of neurons $a$ to evaluate is large.
 {\color{blue} 
-That's why as far as we know, in competing heuristics to rank important nodes (e.g. \cite{huang2017safety,crown}), no call to solvers are made.
+The main novelty of our Utility function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes (Table \ref{tab:example1}).
+
+
+\iffalse
+That's why as far as we know, in competing heuristics to rank important nodes (e.g. \cite{BaB,huang2017safety,ferrari2022complete}), no call to solvers are made.
 %Instead, we focus on the following $\Utility\_\max\nolimits^z(n)$ function upper bounding $\Improve\_\max^z(n)$. 
-The novelty of our Utility function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, which is very efficient and negligible wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes, see Table \ref{tab:example1} and Proposition \ref{prop2} later.
+\fi
+
+
 
 
 
@@ -57,12 +71,15 @@ In our algorithm, we will open neurons at most 3 layer3 before the target layer.
 %For one layer before the target layer, the formula is simple and most accurate. 
 %To estimate $\Improve\_\max^z(a)$, 
 
-For a neuron $b$ on the layer before the layer $\ell_z$, we define:
 
 
 %we define $\Utility\_\max^z(a)$, first for neurons $a$ one layer before $z$, by computing by how much the value of $z$ will change if $a$ is opened
 %and other values remain the same - in particular, $value(\hat{a})=\ReLU(sol(a))$. We define:
 %we first need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
+
+For a neuron $b$ on the layer before the layer $\ell_z$, we define:
+
+
 \vspace{-0.4cm}
 	$$\Utility\_\max\nolimits^z(b) = W_{bz} \times (\sol(\hat{b})- \ReLU(\sol(b)))$$
 \vspace{-0.4cm}
@@ -72,11 +89,10 @@ For a neuron $b$ on the layer before the layer $\ell_z$, we define:
 %		Utility^z(a) = 0.
 %	\end{align*}
 
-Notice that if $W_{bz}<0$, the LP engine sets $\sol(\hat{b})$ to its minimal value
-to maximize $z$, which is $\sol(\hat{b})=\ReLU(\sol(b))$ thanks to Proposition~\ref{LP}. 
-In this case, we have $\Utility\_\max^z(b)=0$.
-Thus, we have $\Utility\_\max^z(b) \geq 0$ in all cases
-as $\sol(\hat{b}) \geq \ReLU(\sol(b))$ by Proposition~\ref{LP}. 
+Consider $b$ with $W_{bz}<0$: to maximize $z$, the value of $\sol(\hat{b})$ is minimized, 
+which is $\sol(\hat{b})=\ReLU(\sol(b))$ thanks to Proposition~\ref{LP}. 
+Even if $z$ is sensitive to this ReLU $b$, the improvement of $b$ is 0.
+Utility does not open it as $\Utility\_\max^z(b)=0$, whereas usual heuristics would.
 
 For a neuron a $a$ two layers before $\ell_z$, 
 $b$ denoting neurons in the layer $\ell$ just before $\ell_z$, 
@@ -100,6 +116,7 @@ we define:
 
 Informally, $\Delta(\hat{a}), \Delta(b), \Delta(\hat{b})$ approximate the improvement on the accuracy of $\hat{a}, b, \hat{b}$ when computing $\ReLU(a)$ 
 using the exact MILP encoding instead of LP. Using Proposition \ref{LP}, we show:
+}
 
 \begin{proposition}
 	\label{prop2}
@@ -162,7 +179,7 @@ $\sol(\hat{b})=\ReLU(\sol(b))=\sol(b)$, and the change to $\hat{b}$ will be
 the full $\Delta(b)$, unless $\Delta(b) < -\sol(b) < 0$ in which case it is 
 $-\sol(b)$.
 		\end{proof}
-	}
+
 
 	\iffalse
 

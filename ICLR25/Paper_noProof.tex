@@ -125,7 +125,7 @@ trade-off between accuracy and runtime. VNNcomp however is focusing on relativel
 In this paper, {\color{blue}
 %we study the MILP encoding of ReLU-DNNs.
 %, and provide new insights in the LP relaxation. 
-we propose a novel Utility function that selects neurons to be encoded with accurate but costly integer variables in a {\em partial MILP} problem. The novelty resides in the use of 
+we propose a novel Utility function that selects few neurons to be encoded with accurate but costly integer variables in a {\em partial MILP} problem. The novelty resides in the use of 
 the solution of {\em one} (efficient LP) solver to accurately compute a selection $\varepsilon$-optimal for a given input. }
 %This allows us to carefully craft a {\em partial MILP} solution which selects automatically few neurons encoded as integer variables, the rest using the LP relaxation. 
 Compared with previous attempts, we can reduce the number of integer variables by around 4 times while maintaining the same level of accuracy. Implemented in {\em Hybrid MILP}, calling first $\alpha,\beta$-Crown with a short time-out to solve easier instances, and then partial MILP for those for which $\alpha,\beta$-Crown fails, produces a very accurate yet efficient verifier, reducing tremendously the number of undecided instances ($8-15\%$), while keeping a reasonable runtime ($46s-417s$ on average per instance).
@@ -237,12 +237,10 @@ In this paper, we consider $L^{\infty}$ norm the max value of distance of each d
 
 
 \section{Conclusion}
-
-In this paper, we studied the LP relaxation of the exact MILP encoding of ReLU-DNNs.
-It allowed us to accurately assess when the relaxation of a node impacts very little 
-the accuracy, and when it impacts the accuracy importantly, in which case representing it with a binary/integer variable is preferable. This allows us to select a small set of important neurons to encode as a binary variables, improving accuracy drastically. Our automated choice of opened neurons necessitates $>4$x less integer variables than previous proposals \cite{DivideAndSlide} for the same accuracy. Our empirical studies revealed that Hybrid MILP, can yield highly accurate results, verifying up to 40\% more images than the SOTA ($\alpha,\beta$-Crown, winner of the 4 last VNNComp), with the same runtime. 
-The reason is that $\alpha,\beta$-Crown can scale to large easy DNNs, but does not scale to 
-hard even small DNNs: it hits a complexity barrier, similarly as other compeating solutions. This opens a lot of perspectives, among which: verifying efficiently other hard instances; certifying $\epsilon$-robustness of images for $\epsilon$ as large as possible; 
+{\color{blue}
+In this paper, we developed a novel Utility function to select few ReLU nodes to consider with binary variables to compute accurately bounds on neurons of DNNs. The novelties are that it focuses on {\em improvement} wrt a given input, rather than on generic {\em sensitivity} of a neuron wrt to a ReLU node, and it uses the solution of one call to an (efficient LP) solver to evaluate this improvement. This makes the choice particularly efficient, necessitating $\approx4$x less integer variables than previous proposals \cite{DivideAndSlide} for the same accuracy.} 
+Our empirical studies revealed that this can yield highly accurate results, verifying up to 40\% more images than the SOTA ($\alpha,\beta$-Crown, winner of the 4 last VNNComp), with the same runtime, for DNNs with up to 20 000 neurons. 
+The reason is that $\alpha,\beta$-Crown hits a complexity barrier, similarly as other competing solutions, when considering hard (even small) DNNs. This opens a lot of perspectives, among which: verifying efficiently other hard instances; certifying $\epsilon$-robustness of images for $\epsilon$ as large as possible; 
 verifying global rather than local properties \cite{lipshitz}.
 
 

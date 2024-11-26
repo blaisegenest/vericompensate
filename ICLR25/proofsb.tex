@@ -192,9 +192,8 @@ The exponential complexity with the number of nodes can be seen on Figure \ref{f
 
 
 We also provide in Table \ref{tab:example1} the raw numbers used to produce Figure \ref{fig_table3}.
-Further, we tested with the SR  and FSB heuristics \cite{BaB} to choose important nodes for BaB (Branch and Bound).
-SR and FSB result in particularly low accuracy, even worse than \cite{DivideAndSlide} which only focus on neurons one layer before, and far away from Utility. FSB is also performing worse than SR when choosing nodes for pMILP, while for BaB, it is the opposite situation.
-This means that the heuristic to choose nodes important for BaB is not adapted to choose nodes for pMILP, although \cite{DivideAndSlide} heuristic is also choosing neurons based on importance of neurons for the consider ReLU.
+Further, we tested with the SR and FSB heuristics \cite{BaB}, that chooses nodes to branch on for BaB (Branch and Bound). When used instead to open nodes for pMILP, SR and FSB result in particularly low accuracy:
+even though SR, FSB and \cite{DivideAndSlide} heuristic are all choosing ReLUs based on sensitivity of the target neuron $z$, SR and FSB are worse than \cite{DivideAndSlide} which only opens neurons one layer before, and far away from Utility. Further, FSB is performing worse than SR when choosing nodes for pMILP, while to choose nodes to branch on for BaB, it is the opposite situation. This likely means that the heuristic to choose nodes to branch for BaB is not adapted to choose nodes to open for pMILP.
 
 \begin{table}[h!]	
 	\centering
@@ -484,9 +483,8 @@ Notice that DNN 6$\times$ 500 and $\epsilon=0.1$ is a very hard instance as bein
 For CNN-B-Adv, the very long maximum time for a MILP call is an outlier: it happens only for one output layer, for which the number $K$ of open nodes is particularly large (around 200 out of 20000 neurons) to certify this hard image 76. Indeed, the average time is at $1s$. Notice that this does not lead to a runtime of 20.000s, as 20 threads are used by pMILP 
 in parallel (similar to competing solutions, except $\alpha,\beta$-CROWN which uses $>4096$ GPU cores).
 
+
 }
-
-
 
 \end{document}
 
