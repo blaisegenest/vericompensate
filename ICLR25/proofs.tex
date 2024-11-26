@@ -452,6 +452,22 @@ in parallel (similar to competing solutions, except $\alpha,\beta$-CROWN which u
 }
 
 
+Here we cite the formula of BaBSR from paper \cite{BaB}.
+
+\begin{align*}
+	\nu_{n+1} &= -1&\\
+	\hat{\nu}_k &= W^T_kv_{k+1}, k = n,\cdots,1 &\\
+	\nu_{k,j} &= \begin{cases}
+		0  &\text{ if }u_{k[j]}<0 \hspace*{2ex}(j\in\mathcal{I}^-_k)\\
+		\hat{\nu}_{k[j]} &\text{ if }l_{k[j]}>0 \hspace*{2.5ex}(j\in\mathcal{I}^-_k)\\
+		\frac{u_{k[j]}}{u_{k[j]}-l_{k[j]}}[\hat{\nu}_{k[j]}]_+-\frac{u_{k[j]}}{u_{k[j]}-l_{k[j]}}[\hat{\nu}_{k[j]}]_-  &\text{ otherwise } \hspace*{3ex}(j\in\mathcal{I}_k)\\ 
+	\end{cases}\\
+	&\hspace*{22ex}\text{for } k = n,\cdots,2&
+\end{align*}and\begin{align*}
+	s_{i[j]} = |\max(v_{i[j]}b_{i-1[j]},(v_{i[j]}-1)b_{i-1[j]})-\frac{u_{k[j]}}{u_{k[j]}-l_{k[j]}}[\hat{\nu}_{k[j]}]_+|
+\end{align*}
+
+
 \begin{figure}[b!]
 	\hspace*{-0.8cm}
 	\includegraphics[scale=0.6]{Plot for table 3}.
