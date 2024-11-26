@@ -69,6 +69,9 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 
 We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer. The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. We report in Table \ref{tab:example1} the average uncertainty of $\MILP_X$ following the choice of the $K$ heaviest neurons for our {\bf Utility} function, compared with a random choice, both for nodes exclusively from the previous Layer 2 or from both Layers 1 and 2. We compared with choosing based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$ \cite{DivideAndSlide}, which is limited to the previous Layer 2.
 
+
+
+\iffalse
 \begin{table}[h!]	
 	\centering
 	\begin{tabular}{|c||c|c|c||c|c|c|}
@@ -91,12 +94,22 @@ We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the 
 	\label{tab:example1}
 	%\vspace{-0.6cm}
 \end{table}
-
+\fi
 
 
 The Utility function selects very important neurons:
  to achieve the same accuracy than \cite{DivideAndSlide}, $2.5$ time fewer nodes (10 vs 25) are necessary when picking in the same previous Layer 2. The ability from {\bf Utility} to compare neurons from different layers enables even better frugality: $4$ time fewer nodes (5 vs 20, 10 vs 40) are necessary to reach the same accuracy than \cite{DivideAndSlide}.
 Overall, choosing 35 neurons by {\bf Utility} improves accuracy by $95\%$ of what can be done if all $|X|=116$ nodes are opened compared with LP (corresponding to $|X|=0$).
+
+\begin{figure}[h!]
+	\centering
+	\vspace*{-0.5cm}
+	\includegraphics[height=6cm]{Plot for table 3b}.
+	\vspace*{-0.4cm}
+	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs random choice.}
+	\label{fig_table3}
+\end{figure}
+
 
 \iffalse
 Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
