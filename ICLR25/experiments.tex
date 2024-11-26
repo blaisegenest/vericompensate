@@ -71,21 +71,21 @@ We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the 
 
 \begin{table}[h!]	
 	\centering
-	\begin{tabular}{|c||c|c|c||c|c|}
+	\begin{tabular}{|c||c|c|c||c|c|c|}
 		\hline
-			&\multicolumn{3}{c||}{$X \subseteq$ Layer 2, max $=55$}&\multicolumn{2}{c|}{$X \subseteq$ Layers 1\&2, max $=116$}\\\cline{2-6}
-		\text{$|X|$}  & \text{Random} & \cite{ DivideAndSlide} & \bf Utility& \text{Random} &\bf Utility\\ \hline
+			&\multicolumn{3}{c||}{$X \subseteq$ Layer 2, max $=55$}&\multicolumn{3}{c|}{$X \subseteq$ Layers 1\&2, max $=116$}\\\cline{2-7}
+		\text{$|X|$}  & \text{Random} & Huang & \bf Utility& \text{Random} &BSR &\bf Utility\\ \hline
 		\hline
-		0  (LP) &   1.761  &1.761& 1.761 & 1.761  & 1.761\\ \hline \hline
-		5  &   1.729&1.704 & 1.603&  1.729&  \bf 1.532 \\ \hline
-		10  &  1.701 &  1.651 &1.517& 1.696 & \bf  1.371\\ \hline
-		15  & 1.671 &  1.599 &1.466&  1.653& \bf  1.247\\ \hline
-		20  &  1.635 & 1.557&1.438 & 1.619 & \bf  1.145\\ \hline
-		25  &  1.601 & 1.519 &1.427&  1.586 & \bf 1.061\\ \hline
-		30  & 1.574 & 1.489 &1.425& 1.546 & \bf  0.989 \\ \hline
-		35  &  1.542 & 1.465&1.424 & 1.502 & \bf 0.934 \\ \hline
-		40  & 1.512 & 1.447 &1.424& 1.469 & \bf 0.921 \\ \hline \hline
-		max & 1.424  &1.424& 1.424 & 0.895 & 0.895   \\ \hline
+		0  (LP) &   1.761  &1.761& 1.761 & 1.761  &  1.761& 1.761\\ \hline \hline
+		5  &   1.729&1.704 & 1.603&  1.729& 1.7138 &  \bf 1.532 \\ \hline
+		10  &  1.701 &  1.651 &1.517& 1.696 & 1.6775& \bf  1.371\\ \hline
+		15  & 1.671 &  1.599 &1.466&  1.653& 1.6392& \bf  1.247\\ \hline
+		20  &  1.635 & 1.557&1.438 & 1.619 &1.5938 & \bf  1.145\\ \hline
+		25  &  1.601 & 1.519 &1.427&  1.586 &1.5534 & \bf 1.061\\ \hline
+		30  & 1.574 & 1.489 &1.425& 1.546 & 1.5166& \bf  0.989 \\ \hline
+		35  &  1.542 & 1.465&1.424 & 1.502 & 1.4788 & \bf 0.934 \\ \hline
+		40  & 1.512 & 1.447 &1.424& 1.469 & 1.4395& \bf 0.921 \\ \hline \hline
+		max & 1.424  &1.424& 1.424 & 0.895 & 0.895 & 0.895   \\ \hline
 	\end{tabular}
 	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs random choice.}
 	\label{tab:example1}
