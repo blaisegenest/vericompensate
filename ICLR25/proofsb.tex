@@ -1,4 +1,4 @@
-\newpage 
+\vspace{-0.6cm}
 
 \section*{Appendix}
 
@@ -69,8 +69,6 @@ Last, for Gurobi, we use a custom MIP-Gap (from $0.001$ to $0.1$) and time-out p
 
 \section{Pseudocode and Complexity Analysis}	
 
-We first provide the pseudo code for pMILP in Algorithm \ref{algo1}.
-
 \SetKwInput{KwInput}{Input}
 \SetKwInput{KwOutput}{Output}
 
@@ -94,6 +92,7 @@ We first provide the pseudo code for pMILP in Algorithm \ref{algo1}.
 %We then analyse its complexity.
 %First, notice that the complexity to rnu Utility is negligible wrt the Run MILP$_X$.
 
+We provide the pseudo code for pMILP in Algorithm \ref{algo1}.
 pMILP($K$) has a worst case complexity bounded by $O(N \cdot \MILP(N,K))$, 
 where $N$ is the number of nodes of the DNN, and $\MILP(N,K)$ is the complexity of solving a MILP program with $K$ integer variables and $N$ linear variables.
 We have $\MILP(N,K) \leq 2^K \LP(N)$ where $\LP(N)$ is the Polynomial time to solve a Linear Program with $N$ variables, $2^K$ being an upper bound. Solvers like Gurobi are quite adept and usually do not need to evaluate all $2^K$ ReLU configurations to deduce the bounds.
@@ -119,7 +118,6 @@ For comparison, refined $\beta$-Crown and refined Prima used all the nodes up to
 In this section, we consider ablation studies to understand how each feature enables the efficiency of pMILP.
 
 \subsection*{Time scaling with open nodes}	
-
 
 First, we explore the time scaling with different number of open nodes, for our full Utility function using nodes in the last two layers (Layer 1 and 2), providing finer details than in Table 3, with the same setting, i.e. previous layer being computed with full MILP.
 
@@ -193,21 +191,62 @@ First, we explore the time scaling with different number of open nodes, for our 
 The exponential complexity with the number of nodes can be seen on Figure \ref{fig3}, where time is represented using logarithmic scale. The flat area in the middle is Gurobi having good heuristic to avoid considering all $2^K$ cases when $K<21$ is not too large, but not working so well for $K>25$. Notice that when certifying, pMILP uses $|X| \in$ 21-24, which is a good trade off between time and accuracy.
 
 
+We also provide in Table \ref{tab:example1} the raw numbers used to produce Figure \ref{fig_table3}.
+Further, we tested with the SR  and FSB heuristics \cite{BaB} to choose important nodes for BaB (Branch and Bound).
+SR and FSB result in particularly low accuracy, even worse than \cite{DivideAndSlide} which only focus on neurons one layer before, and far away from Utility. FSB is also performing worse than SR when choosing nodes for pMILP, while for BaB, it is the opposite situation.
+This means that the heuristic to choose nodes important for BaB is not adapted to choose nodes for pMILP, although \cite{DivideAndSlide} heuristic is also choosing neurons based on importance of neurons for the consider ReLU.
+
+\begin{table}[h!]	
+	\centering
+	\begin{tabular}{|c||c|c|c||c|c|c|c|}
+		\hline
+			&\multicolumn{3}{c||}{$X \subseteq$ Layer 2, max $=55$}&\multicolumn{4}{c|}{$X \subseteq$ Layers 1\&2, max $=116$} \\\cline{2-8}
+		\text{$|X|$}  & \text{Random} & Huang & \bf Utility& \text{Random} & SR & FSB &\bf Utility\\ \hline
+		\hline
+		0  (LP) &   1.761  &1.761& 1.761 & 1.761  &  1.761& 1.761 & 1.761\\ \hline \hline
+		5  &   1.729&1.704 & 1.603&  1.729& 1.7138 & 1.7182 & \bf 1.532 \\ \hline
+		10  &  1.701 &  1.651 &1.517& 1.696 & 1.6775& 1.6803 & \bf  1.371\\ \hline
+		15  & 1.671 &  1.599 &1.466&  1.653& 1.6392& 1.6475 & \bf  1.247\\ \hline
+		20  &  1.635 & 1.557&1.438 & 1.619 &1.5938 & 1.6174 & \bf  1.145\\ \hline
+		25  &  1.601 & 1.519 &1.427&  1.586 &1.5534 & 1.5788 & \bf 1.061\\ \hline
+		30  & 1.574 & 1.489 &1.425& 1.546 & 1.5166& 1.5413 & \bf  0.989 \\ \hline
+		35  &  1.542 & 1.465&1.424 & 1.502 & 1.4788 & 1.4972 & \bf 0.934 \\ \hline
+		40  & 1.512 & 1.447 &1.424& 1.469 & 1.4395& 1.4514 & \bf 0.921 \\ \hline \hline
+		max & 1.424  &1.424& 1.424 & 0.895 & 0.895 & 0.895 & 0.895   \\ \hline
+	\end{tabular}
+	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs SR vs FSB vs random choice.}
+	\label{tab:example1}
+	%\vspace{-0.6cm}
+\end{table}
+
+
+	
+
+
+
+
+\newpage
 
 \subsubsection*{Usefulness of computing previous layers accurately}	
 
+
 Then, we explore the usefulness of computing accurately each layer inductively.
-For that, we keep the setting of Table 3 and Table \ref{table14}, but computing the previous layer with LP rather than with full MILP.
+For that, we keep the setting of Figure \ref{fig3} / Table \ref{table14}, but computing the previous layer with LP rather than with full MILP.
 
 
-
-\begin{figure}[t!]
+\begin{figure}[h!]
 	\hspace*{-0.8cm}
 	\includegraphics[scale=0.6]{Layer3_comparison_LP}.
-	\caption{Time and uncertainty scaling of table \ref{table15}.
-		Time is using logscale.}
+	\caption{Comparison of accuracy in layer 3 when layer 2 is computed inaccurately using LP vs when layer 2 computed accurately using MILP.
+	Time is using logscale.}
 	\label{fig3LP}
 \end{figure}
+
+
+
+
+
+
 
 
 \begin{table}[h!]
@@ -223,10 +262,9 @@ For that, we keep the setting of Table 3 and Table \ref{table14}, but computing 
 	\hline	30 & 28.3 & 2.32793  &0.989\\
 	\hline	35 & 48.1 & 2.19506 & 0.934\\
 	\hline	40 & 89.4 & 2.07107 & 0.921\\	
-	\hline
-	
+	\hline	
 \end{tabular}
-\caption{Comparison of accuracy in layer 3 from computing layer 2 inaccurately using LP vs (from computing layer 2 accurately using MILP)}
+\caption{Comparison of accuracy in layer 3 when layer 2 is computed inaccurately using LP vs when layer 2 computed accurately using MILP.}
 \label{table15}
 \end{table}
 
@@ -244,6 +282,7 @@ This experiment explains the rationale to use divide and conquer protocol, using
 %	\end{figure}
 
 
+\newpage
 
 \subsubsection*{restricting number of open nodes (pMILP) vs setting time-outs (full MILP)}	
 
@@ -251,7 +290,7 @@ Running full MILP till a small MIP-Gap (typically 0.001) is reached is extremely
 
 Instead, the standard strategy is to set a reasonable time-out and use whatever bound has been generated. We compare this standard strategy with the pMILP strategy of setting a priori a number of open nodes.
 
-\begin{figure}[t]\hspace*{-0.8cm}
+\begin{figure}[h!]\hspace*{-0.8cm}
 	\includegraphics[scale=0.6]{Layer7_comparison.png}.
 	\caption{Comparison of uncertainty at layer 7 for full MILP with different time-outs vs pMILP with different number of open nodes. Time is using logscale.}
 	\label{fig4}
@@ -312,40 +351,7 @@ pMILP obtains 2.8 accuracy in $<21$ seconds (with 7 open nodes), while full MILP
 
 
 
-
 Figure \ref{fig4} shows that choosing nodes is much more efficient for time/accuracy trade-off than setting time outs and use full MILP. And this is for the smallest DNN we considered (500 hidden neurons, far from the biggest 20k neuron DNN we experimented with)
-
-
-}
-
-
-\subsection{Table for Figure \ref{fig_table3}}
-
-Finall, we provide the table corresponding to the Figure \ref{fig_table3}
-
-\begin{table}[h!]	
-	\centering
-	\begin{tabular}{|c||c|c|c||c|c|c|}
-		\hline
-			&\multicolumn{3}{c||}{$X \subseteq$ Layer 2, max $=55$}&\multicolumn{3}{c|}{$X \subseteq$ Layers 1\&2, max $=116$}\\\cline{2-7}
-		\text{$|X|$}  & \text{Random} & Huang & \bf Utility& \text{Random} &BSR &\bf Utility\\ \hline
-		\hline
-		0  (LP) &   1.761  &1.761& 1.761 & 1.761  &  1.761& 1.761\\ \hline \hline
-		5  &   1.729&1.704 & 1.603&  1.729& 1.7138 &  \bf 1.532 \\ \hline
-		10  &  1.701 &  1.651 &1.517& 1.696 & 1.6775& \bf  1.371\\ \hline
-		15  & 1.671 &  1.599 &1.466&  1.653& 1.6392& \bf  1.247\\ \hline
-		20  &  1.635 & 1.557&1.438 & 1.619 &1.5938 & \bf  1.145\\ \hline
-		25  &  1.601 & 1.519 &1.427&  1.586 &1.5534 & \bf 1.061\\ \hline
-		30  & 1.574 & 1.489 &1.425& 1.546 & 1.5166& \bf  0.989 \\ \hline
-		35  &  1.542 & 1.465&1.424 & 1.502 & 1.4788 & \bf 0.934 \\ \hline
-		40  & 1.512 & 1.447 &1.424& 1.469 & 1.4395& \bf 0.921 \\ \hline \hline
-		max & 1.424  &1.424& 1.424 & 0.895 & 0.895 & 0.895   \\ \hline
-	\end{tabular}
-	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs random choice.}
-	\label{tab:example1}
-	%\vspace{-0.6cm}
-\end{table}
-
 
 
 \section{Comparison with other DNN verifiers}
@@ -480,6 +486,11 @@ in parallel (similar to competing solutions, except $\alpha,\beta$-CROWN which u
 
 }
 
+
+
+\end{document}
+
+
 \section{SR Heuristic for choosing nodes}
 
 Here we provide the formula of BaB-SR from paper \cite{BaB}.
@@ -498,8 +509,41 @@ Here we provide the formula of BaB-SR from paper \cite{BaB}.
 \end{align*}
 
 
+\begin{figure}[b!]
+	\hspace*{-0.8cm}
+	\includegraphics[scale=0.6]{Plot for table 3}.
+	\caption{Plot for table 3}
+	\label{fig_table3}
+\end{figure}
+
+
+\begin{table}[h!]	
+	\centering
+	\begin{tabular}{|c||c|c|c|c|}
+		\hline
+		&\multicolumn{3}{c|}{$X \subseteq$ Layers 1\&2, max $=116$}\\\cline{2-5}
+		\text{$|X|$} & \text{Random} &BSR &FSB &\bf Utility\\ \hline
+		0  (LP) & 1.761  &  1.761& 1.761&1.761\\ \hline \hline
+		5  & 1.729& 1.7138 & 1.7182 &\bf 1.532 \\ \hline
+		10  & 1.696 & 1.6775&  1.6803&\bf  1.371\\ \hline
+		15  &   1.653& 1.6392& 1.6475&\bf  1.247\\ \hline
+		20  &   1.619 &1.5938 & 1.6174&\bf  1.145\\ \hline
+		25  &    1.586 &1.5534 &1.5788 &\bf 1.061\\ \hline
+		30  &  1.546 & 1.5166& 1.5413&\bf  0.989 \\ \hline
+		35  &   1.502 & 1.4788 &1.4972 &\bf 0.934 \\ \hline
+		40  &  1.469 & 1.4395& 1.4514&\bf 0.921 \\ \hline \hline
+		max &  0.895 & 0.895 &0.895 &0.895   \\ \hline
+	\end{tabular}
+	\caption{BSR and FSB}
+	\label{BSRandFSB}
+	%\vspace{-0.6cm}
+\end{table}
+
+
 
 \end{document}
+
+
 
 
 \subsection*{Formula for ResNet}
