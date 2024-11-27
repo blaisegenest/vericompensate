@@ -414,10 +414,8 @@ It will compute the bound in the same way in $D$, hence we get $\beta=\max(z)$ f
 \subsection{The CMP algorithm}
 
 
-Theorem \ref{th2} theoretically computes accurate bounds by iteratively applying MILP$_{X_n}$ to each node $n$, layer by layer. Practically, however, the set $X_n$ includes a substantial portion of the nodes from all preceding layers up to layer $k-1$ for a given node $n$ in layer $k$. Instead, an interesting trade off between speed and accuracy is to set a threshold on the strength of compensation. Paths falling below this threshold are deemed to not warrant an individual integer variable due to insufficient compensatory strength. We denote the resultant subset of nodes situated on paths with substantial compensation as $Z_n$. In practical applications, one might consider selecting the $K$ nodes that are involved in the most significant compensating paths to construct the set $Z_n$, with $K$ being a relatively small integer. This strategy effectively provides a trade-off between the algorithm's performance and the precision of the results. The pseudo-code for \CMP is presented in Algorithm \ref{algo1}.
-
-
-
+pMILP computes accurate bounds by iteratively calling itself to each node $n$, 
+layer by layer, as presented in Algorithm \ref{algo1}.
 
 
 \SetKwInput{KwInput}{Input}
@@ -444,7 +442,7 @@ Theorem \ref{th2} theoretically computes accurate bounds by iteratively applying
 
 
 
-CMP($K$) has a worst case complexity bounded by $O(N \cdot \MILP(N,K))$, 
+pMILP($K$) has a worst case complexity bounded by $O(N \cdot \MILP(N,K))$, 
 where $N$ is the number of nodes of the DNN, 
 and $\MILP(N,K)$ is the complexity of solving a MILP program with $K$ integer variables and $N$ linear variables.
 We have $\MILP(N,K) \leq 2^K \LP(N)$ where $\LP(N)$ is the Polynomial time to solve a Linear Program with $N$ variables, $2^K$ being an upper bound. Solvers like Gurobi are quite adept and usually do not need to evaluate all $2^K$ ReLU configurations to deduce the bounds.
