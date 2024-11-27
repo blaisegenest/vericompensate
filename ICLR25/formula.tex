@@ -6,7 +6,7 @@ In this section, we evaluate how each ReLU would impact the accuracy if encoded 
 
 {\color{blue} 
 Usually, heuristics to choose $X$ are based on evaluating the {\em sensitivity} of a neuron $z$ wrt the ReLU nodes,
-that is how much a ReLU value impacts the value of $z$, and rank the ReLU nodes accordingly. This is the case of \cite{DivideAndSlide}, but also more generally of heuristics for BaB \cite{BaB,ferrari2022complete}, such as SR and FSB. %Our Utility function does not follow this approach. 
+that is how much a ReLU value impacts the value of $z$, and rank the ReLU nodes accordingly. This is the case of \cite{DivideAndSlide}, but also more generally of heuristics for BaB, such as SR \cite{BaB} and FSB \cite{FSB}. %Our Utility function does not follow this approach. 
 Instead, Utility considers the {\em improvement} from opening a neuron $n$, that is the difference for the value of $z$ between considering $\ReLU(n)$ exactly or using its LP relaxation $\LP(n)$. Indeed, it is not rare that 
 $z$ is sensitive to ReLU node $n$, and yet $\LP(n)$ already provides an accurate approximation of $\ReLU(n)$.
 In this case, usual heuristics would open $n$, while it would only improve the value of $z$ in a limited way.
