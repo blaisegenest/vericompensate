@@ -193,7 +193,7 @@ The exponential complexity with the number of nodes can be seen on Figure \ref{f
 
 We also provide in Table \ref{tab:example1} the raw numbers used to produce Figure \ref{fig_table3}.
 Further, we tested with the SR and FSB heuristics \cite{BaB}, that chooses nodes to branch on for BaB (Branch and Bound). When used instead to open nodes for pMILP, SR and FSB result in particularly low accuracy:
-even though SR, FSB and \cite{DivideAndSlide} heuristic are all choosing ReLUs based on sensitivity of the target neuron $z$, SR and FSB are worse than \cite{DivideAndSlide} which only opens neurons one layer before, and far away from Utility. Further, FSB is performing worse than SR when choosing nodes for pMILP, while to choose nodes to branch on for BaB, it is the opposite situation. This likely means that the heuristic to choose nodes to branch for BaB is not adapted to choose nodes to open for pMILP.
+even though SR, FSB and \cite{DivideAndSlide} heuristic are all choosing ReLUs based on sensitivity of the target neuron $z$, SR and FSB are worse than \cite{DivideAndSlide} which only opens neurons one layer before (except when all ReLUs of the previous layers are open), and far worse than Utility. Further, FSB is performing worse than SR when choosing nodes for pMILP, while to choose nodes to branch on for BaB, it is the opposite. This likely means that the heuristic to choose nodes to branch for BaB is not adapted to choose nodes to open for pMILP.
 
 \begin{table}[h!]	
 	\centering
@@ -219,12 +219,13 @@ even though SR, FSB and \cite{DivideAndSlide} heuristic are all choosing ReLUs b
 \end{table}
 
 
+
 	\begin{figure}[h!]
 		\centering
 		\vspace*{-0.3cm}
 		\includegraphics[height=9cm]{New Plot for table 3}.
 		\vspace*{-0.4cm}
-		\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs random choice.}
+		\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, with ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{DivideAndSlide} vs vs SR vs FSB vs random.}
 		\label{fig_table3_new}
 	\end{figure}
 
