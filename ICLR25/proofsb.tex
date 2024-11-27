@@ -197,21 +197,21 @@ even though SR, FSB and \cite{DivideAndSlide} heuristic are all choosing ReLUs b
 
 \begin{table}[h!]	
 	\centering
-	\begin{tabular}{|c||c|c|c||c|c|c|c|}
+	\begin{tabular}{|c||c|c|c|c|c||c|c|c|c|}
 		\hline
-			&\multicolumn{3}{c||}{$X \subseteq$ Layer 2, max $=55$}&\multicolumn{4}{c|}{$X \subseteq$ Layers 1\&2, max $=116$} \\\cline{2-8}
-		\text{$|X|$}  & \text{Random} & Huang & \bf Utility& \text{Random} & SR & FSB &\bf Utility\\ \hline
+			&\multicolumn{5}{c||}{$X \subseteq$ Layer 2, max $=55$}&\multicolumn{4}{c|}{$X \subseteq$ Layers 1\&2, max $=116$} \\\cline{2-10}
+		\text{$|X|$}  & \text{Random} & Huang &SR&FSB& \bf Utility& \text{Random} & SR & FSB &\bf Utility\\ \hline
 		\hline
-		0  (LP) &   1.761  &1.761& 1.761 & 1.761  &  1.761& 1.761 & 1.761\\ \hline \hline
-		5  &   1.729&1.704 & 1.603&  1.729& 1.7133 & 1.7149 & \bf 1.532 \\ \hline
-		10  &  1.701 &  1.651 &1.517& 1.696 & 1.6674& 1.6714 & \bf  1.371\\ \hline
-		15  & 1.671 &  1.599 &1.466&  1.653& 1.6230& 1.6251 & \bf  1.247\\ \hline
-		20  &  1.635 & 1.557&1.438 & 1.619 &1.5764 & 1.5812 & \bf  1.145\\ \hline
-		25  &  1.601 & 1.519 &1.427&  1.586 &1.5322 & 1.5388 & \bf 1.061\\ \hline
-		30  & 1.574 & 1.489 &1.425& 1.546 &  1.4914& 1.4982 & \bf  0.989 \\ \hline
-		35  &  1.542 & 1.465&1.424 & 1.502 & 1.4481 & 1.4600 & \bf 0.934 \\ \hline
-		40  & 1.512 & 1.447 &1.424& 1.469 & 1.4070& 1.4187 & \bf 0.921 \\ \hline \hline
-		max & 1.424  &1.424& 1.424 & 0.895 & 0.895 & 0.895 & 0.895   \\ \hline
+		0  (LP) &   1.761  &1.761&1.761&1.761& 1.761 & 1.761  &  1.761& 1.761 & 1.761\\ \hline \hline
+		5  &   1.729&1.704 &1.7200&1.7197& 1.603&  1.729& 1.7133 & 1.7149 & \bf 1.532 \\ \hline
+		10  &  1.701 &  1.651 &1.6840&1.6851&1.517& 1.696 & 1.6674& 1.6714 & \bf  1.371\\ \hline
+		15  & 1.671 &  1.599 &1.6502& 1.6516&1.466&  1.653& 1.6230& 1.6251 & \bf  1.247\\ \hline
+		20  &  1.635 & 1.557&1.6190&1.6199&1.438 & 1.619 &1.5764 & 1.5812 & \bf  1.145\\ \hline
+		25  &  1.601 & 1.519 &1.5887&1.5886&1.427&  1.586 &1.5322 & 1.5388 & \bf 1.061\\ \hline
+		30  & 1.574 & 1.489 &1.5584&1.5604&1.425& 1.546 &  1.4914& 1.4982 & \bf  0.989 \\ \hline
+		35  &  1.542 & 1.465&1.5289&1.5305&1.424 & 1.502 & 1.4481 & 1.4600 & \bf 0.934 \\ \hline
+		40  & 1.512 & 1.447 &1.4985&1.5001&1.424& 1.469 & 1.4070& 1.4187 & \bf 0.921 \\ \hline \hline
+		max & 1.424  &1.424&1.424&1.424& 1.424 & 0.895 & 0.895 & 0.895 & 0.895   \\ \hline
 	\end{tabular}
 	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs SR vs FSB vs random choice.}
 	\label{tab:example1}
