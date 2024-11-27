@@ -192,8 +192,7 @@ The exponential complexity with the number of nodes can be seen on Figure \ref{f
 
 
 We also provide in Table \ref{tab:example1} the raw numbers used to produce Figure \ref{fig_table3}.
-Further, we tested with the SR and FSB heuristics \cite{BaB}, that chooses nodes to branch on for BaB (Branch and Bound). When used instead to open nodes for pMILP, SR and FSB result in particularly low accuracy:
-even though SR, FSB and \cite{DivideAndSlide} heuristic are all choosing ReLUs based on sensitivity of the target neuron $z$, SR and FSB are worse than \cite{DivideAndSlide} which only opens neurons one layer before (except when all ReLUs of the previous layers are open), and far worse than Utility. Further, FSB is performing worse than SR when choosing nodes for pMILP, while to choose nodes to branch on for BaB, it is the opposite. This likely means that the heuristic to choose nodes to branch for BaB is not adapted to choose nodes to open for pMILP.
+Further, we tested with the SR and FSB heuristics \cite{BaB}, that chooses nodes to branch on for BaB (Branch and Bound). When SE and FSR are used to choose open nodes for pMILP, the accuracy is low as shown on Fig. \ref{fig_table3_new}: SR and FSB are worse than \cite{DivideAndSlide} for $<35$ oepn ReLU nodes, although unlike the latter, the former can rank ReLU nodes in several layer before (which helps them a bit), and far worse than Utility. Further, FSB is performing worse than SR when choosing nodes for pMILP, while to choose nodes to branch on for BaB, it is the opposite. This likely means that the heuristic to choose nodes to branch for BaB is not adapted to choose nodes to open for pMILP.
 
 \begin{table}[h!]	
 	\centering
@@ -213,7 +212,7 @@ even though SR, FSB and \cite{DivideAndSlide} heuristic are all choosing ReLUs b
 		40  & 1.512 & 1.447 &1.4985&1.5001&1.424& 1.469 & 1.4070& 1.4187 & \bf 0.921 \\ \hline \hline
 		max & 1.424  &1.424&1.424&1.424& 1.424 & 0.895 & 0.895 & 0.895 & 0.895   \\ \hline
 	\end{tabular}
-	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs SR vs FSB vs random choice.}
+	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, with ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{DivideAndSlide} vs vs SR vs FSB vs random.}
 	\label{tab:example1}
 	%\vspace{-0.6cm}
 \end{table}
