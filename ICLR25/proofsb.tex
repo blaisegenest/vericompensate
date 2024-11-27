@@ -192,7 +192,7 @@ The exponential complexity with the number of nodes can be seen on Figure \ref{f
 
 
 We also provide in Table \ref{tab:example1} the raw numbers used to produce Figure \ref{fig_table3}.
-Further, we tested with the SR and FSB heuristics \cite{BaB}, that chooses nodes to branch on for BaB (Branch and Bound). When SE and FSR are used to choose open nodes for pMILP, the accuracy is low as shown on Fig. \ref{fig_table3_new}: SR and FSB are worse than \cite{DivideAndSlide} for $<35$ oepn ReLU nodes, although unlike the latter, the former can rank ReLU nodes in several layer before (which helps them a bit), and far worse than Utility. Further, FSB is performing worse than SR when choosing nodes for pMILP, while to choose nodes to branch on for BaB, it is the opposite. This likely means that the heuristic to choose nodes to branch for BaB is not adapted to choose nodes to open for pMILP. 
+Further, we tested with the SR \cite{BaB} and FSB heuristics \cite{FSB}, that chooses nodes to branch on for BaB (Branch and Bound). When SE and FSR are used to choose open nodes for pMILP, the accuracy is low as shown on Fig. \ref{fig_table3_new}: SR and FSB are worse than \cite{DivideAndSlide} for $<35$ oepn ReLU nodes, although unlike the latter, the former can rank ReLU nodes in several layer before (which helps them a bit), and far worse than Utility. Further, FSB is performing worse than SR when choosing nodes for pMILP, while to choose nodes to branch on for BaB, it is the opposite. This likely means that the heuristic to choose nodes to branch for BaB is not adapted to choose nodes to open for pMILP. 
 
 \begin{table}[h!]	
 	\centering
