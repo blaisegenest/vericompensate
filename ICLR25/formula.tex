@@ -103,7 +103,8 @@ we define:
 	\forall b \in \ell, \Delta(b) &= W_{ab}\Delta(\hat{a})\\
 	\forall b \in \ell, \Delta(\hat{b}) &=
 	\begin{cases}
-		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bz} > 0\\
+		\textcolor{red}{\Delta(b)},  & \textcolor{red}{\text{if } W_{bz} > 0 \text{ and } \LB(b)\geq 0}\\
+		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bz} > 0 \text{ and } \LB(b)<0\\
 		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)\geq0\\
 		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)<0		 
 	\end{cases}\\
