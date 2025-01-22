@@ -1,0 +1,265 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{iclr2025_conference,times}
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+\usepackage{hyperref}
+\usepackage{url}
+\pagestyle{plain}
+\usepackage{threeparttable}
+
+
+%\usepackage[latin9]{inputenc}
+%\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\captionsetup{compatibility=false}
+% \usepackage{esint}
+\usepackage{array}
+\usepackage{epstopdf}
+\usepackage{placeins}
+\usepackage{pgfplots}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage{array}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usetikzlibrary{positioning, arrows.meta,calc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\vW}{\boldsymbol{W}}
+
+\newcommand{\val}{{\textrm{value}}}
+\newcommand{\Val}{{\textrm{value}}}
+\newcommand{\MILP}{{\textrm{MILP}}}
+\newcommand{\LP}{{\textrm{LP}}}
+\newcommand{\Improve}{\mathrm{Improve}}
+\newcommand{\Utility}{\mathrm{Utility}}
+\newcommand{\Sol}{\mathrm{Sol}}
+\newcommand{\sol}{\mathrm{sol}}
+
+\newcommand{\UB}{\mathrm{UB}}
+\newcommand{\LB}{\mathrm{LB}}
+\newcommand{\ub}{\mathrm{ub}}
+\newcommand{\lb}{\mathrm{lb}}
+\newcommand{\B}{\mathrm{B}}
+
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+
+
+\newcommand{\toolname}{Hybrid MILP}
+
+
+
+
+
+
+\usepackage{amsmath, amsthm, amssymb, amsfonts}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+
+
+\newcommand{\ReLU}{\mathrm{ReLU}}
+
+\title{Hybrid MILP to efficiently and accuratly \\  solve hard DNN verification instances}
+
+% Authors must not appear in the submitted version. They should be hidden
+% as long as the \iclrfinalcopy macro remains commented out below.
+% Non-anonymous submissions will be rejected without review.
+
+\author{Antiquus S.~Hippocampus, Natalia Cerebro \& Amelie P. Amygdale \thanks{ Use footnote for providing further information
+about author (webpage, alternative address)---\emph{not} for acknowledging
+funding agencies.  Funding acknowledgements go at the end of the paper.} \\
+Department of Computer Science\\
+Cranberry-Lemon University\\
+Pittsburgh, PA 15213, USA \\
+\texttt{\{hippo,brain,jen\}@cs.cranberry-lemon.edu} \\
+\And
+Ji Q. Ren \& Yevgeny LeNet \\
+Department of Computational Neuroscience \\
+University of the Witwatersrand \\
+Joburg, South Africa \\
+\texttt{\{robot,net\}@wits.ac.za} \\
+\AND
+Coauthor \\
+Affiliation \\
+Address \\
+\texttt{email}
+}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+%\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+$\alpha,\beta$-CROWN has won the last 4 VNNcomp(etitions), as the DNN verifier with the best 
+trade-off between accuracy and runtime. VNNcomp however is focusing on relatively easy verification instances. In this paper, we consider {\em harder} verification instances, on which $\alpha,\beta$-Crown displays a large number ($20-58\%$) of undecided instances, that is, instances that can neither be verified, nor an explicit attack can be found. Enabling larger time-outs for $\alpha,\beta$-Crown only improves verification rate by few percents, leaving a large gap of undecided instances while already taking a considerable amount of time. Resorting to slow complete verifiers, does not fare better even with very large time-outs: They would theoretically be able to close the gap, but with an untractable runtime on all but small {\em hard} instances.
+
+In this paper, {\color{blue}
+%we study the MILP encoding of ReLU-DNNs.
+%, and provide new insights in the LP relaxation. 
+we propose a novel Utility function that selects few neurons to be encoded with accurate but costly integer variables in a {\em partial MILP} problem. The novelty resides in the use of 
+the solution of {\em one} (efficient LP) solver to accurately compute a selection $\varepsilon$-optimal for a given input. }
+%This allows us to carefully craft a {\em partial MILP} solution which selects automatically few neurons encoded as integer variables, the rest using the LP relaxation. 
+Compared with previous attempts, we can reduce the number of integer variables by around 4 times while maintaining the same level of accuracy. Implemented in {\em Hybrid MILP}, calling first $\alpha,\beta$-Crown with a short time-out to solve easier instances, and then partial MILP for those for which $\alpha,\beta$-Crown fails, produces a very accurate yet efficient verifier, reducing tremendously the number of undecided instances ($8-15\%$), while keeping a reasonable runtime ($46s-417s$ on average per instance).
+\end{abstract}
+
+
+
+
+
+
+
+
+
+
+
+
+	\section{Introduction}
+
+\input{introduction}
+%
+\input{relatedwork}
+
+\section{Notations and Preliminaries}
+
+In this paper, we will use lower case latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
+capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \textcolor{blue}{\cite{crown}}.
+To simplify the notations, we restrict the presentation to feed-forward, 
+fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
+$ReLU(x)=x$ for $x \geq 0$ and $ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
+
+%In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
+
+%\subsection{Neural Network and Verification}
+
+
+% testtesttesttest
+An $\ell$-layer DNN is provided by $\ell$ weight matrices 
+$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
+and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
+We call $d_i$ the number of neurons of hidden layer $i \in \{1, \ldots, \ell-1\}$,
+$d_0$ the input dimension, and $d_\ell$ the output dimension.
+
+Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
+denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
+\begin{align*}
+	\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i \qquad \, \qquad
+	\hat{\boldsymbol{z}}^{i} = ReLU({\boldsymbol{z}}^i).
+\end{align*} 
+
+The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
+$\boldsymbol{z}$ is called pre-activation values, 
+and $\boldsymbol{z}^{i}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
+For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, pre- and post-activation neurons are called \emph{nodes}, and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$. A path $\pi$ is a sequence $\pi=(a_i)_{k \leq  i \leq k'}$ of neurons in consecutive layers, and the weight of $\pi$ is 
+$weight(\pi)=W_{a_k,a_{k+1}} \times \cdots \times  W_{a_{k'-1},a_{k'}}$.
+
+
+
+\iffalse
+and the $i$-th hidden layer is a vector in $\mathbb{R}^{d_i}$, 
+and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. 
+The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight 
+$\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, 
+the bias is a vector $\vb^i$ in $\mathbb{R}^{d_i}$, and the activation function 
+is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, 
+then the value of $i$-th layer is computed by: 
+\begin{align*}
+	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \vb^i\\
+	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)).
+\end{align*} The vector $\hat{\boldsymbol{z}}$ is called post-activation values, and $\boldsymbol{z}$ is called pre-activation values, and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
+\fi
+
+\medskip
+
+Concerning the verification problem, we focus on the well studied local-robustness question. Local robustness asks to determine whether the output of a neural network will be affected under small perturbations to the input. 
+Formally, for an input $\vx$ perturbed by $\varepsilon >0$ under distance $d$, then the DNN is locally $\varepsilon$-robust in $\vx$ whenever:
+\begin{align*}
+	\forall \boldsymbol{x'} \text{ s.t. } d(\vx,\vx')\leq \varepsilon, \text{ we have }  
+	argmax_i (f(\boldsymbol{x'})[i]) = argmax_i(f(\boldsymbol{x})[i])
+\end{align*} 
+
+\iffalse
+In some cases, the output is a vector but the aim to get the label of dimension with the minimal value. In this case, the problem can be written as:\begin{align*}
+	\forall \boldsymbol{x} \in\mathcal{D} \  \min f(\boldsymbol{x}) = \min f(\boldsymbol{x}_0)
+\end{align*}
+
+If so, the question of verification can turn to the following optimization question: \begin{align*}
+	\min f(\boldsymbol{x}) \ s.t. {\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ b^i\\
+	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)), \boldsymbol{x}\in\mathcal{D}.
+\end{align*}
+
+In this paper, we only consider $\ReLU$ function as the activation function: $\sigma(a)=\ReLU(a)=\max(0,a)$. 
+
+In this paper, we consider $L^{\infty}$ norm the max value of distance of each dimension, that is $d(\vx,\boldsymbol{x}_0)=\max |\boldsymbol{x}(n)-\boldsymbol{x}_0(n)|$. 
+\fi
+
+
+
+\input{valabstraction}
+
+\input{formula}
+
+
+	
+
+\input{experiments}
+
+
+
+
+
+\section{Conclusion}
+{\color{blue}
+In this paper, we developed a novel Utility function to select few ReLU nodes to consider with binary variables to compute accurately bounds on neurons of DNNs. The novelties are that it focuses on {\em improvement} wrt a given input, rather than on generic {\em sensitivity} of a neuron wrt to a ReLU node, and it uses the solution of one call to an (efficient LP) solver to evaluate this improvement. This makes the choice particularly efficient, necessitating $\approx4$x less integer variables than previous proposals \cite{DivideAndSlide} for the same accuracy.} 
+Our empirical studies revealed that this can yield highly accurate results, verifying up to 40\% more images than the SOTA ($\alpha,\beta$-Crown, winner of the 4 last VNNComp), with the same runtime, for DNNs with up to 20 000 neurons. 
+The reason is that $\alpha,\beta$-Crown hits a complexity barrier, similarly as other competing solutions, when considering hard (even small) DNNs. This opens a lot of perspectives, among which: verifying efficiently other hard instances; certifying $\epsilon$-robustness of images for $\epsilon$ as large as possible; 
+verifying global rather than local properties \cite{lipshitz}.
+
+
+{\bf Reproducibility Statement:} 
+We tested twice outlier results to confirm them, making sure of reproducibility on the given hardware. Precise details on the settings used are provided in the appendix.
+Additional results {\color{blue}(e.g. ablation studies)} are also provided in the appendix.
+Tested DNNs as well as MNIST and CIFAR10 DataSet are freely available.
+The source code of Hybrid MILP will be provided on GitHub after acceptance (needing Gurobi as well as $\alpha,\beta$-Crown).
+
+\newpage
+
+\bibliography{references}
+\bibliographystyle{iclr2025_conference}
+
+\bigskip
+
+\appendix
+
+\input{proofsb}
+
+\end{document}
+
