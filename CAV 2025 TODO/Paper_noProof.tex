@@ -1,13 +1,10 @@
-\documentclass{article} % For LaTeX2e
-\usepackage{iclr2025_conference,times}
-% Optional math commands from https://github.com/goodfeli/dlbook_notation.
-\input{math_commands.tex}
+\documentclass{llncs}
 
 \usepackage{hyperref}
 \usepackage{url}
 \pagestyle{plain}
 \usepackage{threeparttable}
-
+\input{math_commands.tex}
 
 %\usepackage[latin9]{inputenc}
 %\usepackage[T1]{fontenc}
@@ -51,6 +48,10 @@
 \newcommand{\ub}{\mathrm{ub}}
 \newcommand{\lb}{\mathrm{lb}}
 \newcommand{\B}{\mathrm{B}}
+\usepackage{amsmath, amssymb, amsfonts}
+
+
+\newcommand{\ReLU}{\mathrm{ReLU}}
 
 \newcommand{\CMP}{{\textrm{CMP}}\ }
 
@@ -58,91 +59,14 @@
 \newcommand{\toolname}{Hybrid MILP}
 
 
+\title{I Compensate, therefore I Am \\ (accurate for DNN verification)}
+\date{}
 
-
-
-
-\usepackage{amsmath, amsthm, amssymb, amsfonts}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
-\newtheorem{proposition}{Proposition}
-\newtheorem{corollary}{Corollary}
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\newtheorem{example}{Example}
-
-
-
-\newcommand{\ReLU}{\mathrm{ReLU}}
-
-\title{Hybrid MILP to efficiently and accuratly \\  solve hard DNN verification instances}
-
-% Authors must not appear in the submitted version. They should be hidden
-% as long as the \iclrfinalcopy macro remains commented out below.
-% Non-anonymous submissions will be rejected without review.
-
-\author{Antiquus S.~Hippocampus, Natalia Cerebro \& Amelie P. Amygdale \thanks{ Use footnote for providing further information
-about author (webpage, alternative address)---\emph{not} for acknowledging
-funding agencies.  Funding acknowledgements go at the end of the paper.} \\
-Department of Computer Science\\
-Cranberry-Lemon University\\
-Pittsburgh, PA 15213, USA \\
-\texttt{\{hippo,brain,jen\}@cs.cranberry-lemon.edu} \\
-\And
-Ji Q. Ren \& Yevgeny LeNet \\
-Department of Computational Neuroscience \\
-University of the Witwatersrand \\
-Joburg, South Africa \\
-\texttt{\{robot,net\}@wits.ac.za} \\
-\AND
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email}
-}
-
-% The \author macro works with any number of authors. There are two commands
-% used to separate the names and addresses of multiple authors: \And and \AND.
-%
-% Using \And between authors leaves it to \LaTeX{} to determine where to break
-% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
-% puts 3 of 4 authors names on the first line, and the last on the second
-% line, try using \AND instead of \And before the third author name.
-
-\newcommand{\fix}{\marginpar{FIX}}
-\newcommand{\new}{\marginpar{NEW}}
-
-%\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
+	
 
 
-\maketitle
-
-\begin{abstract}
-$\alpha,\beta$-CROWN has won the last 4 VNNcomp(etitions), as the DNN verifier with the best 
-trade-off between accuracy and runtime. VNNcomp however is focusing on relatively easy verification instances. In this paper, we consider {\em harder} verification instances, on which $\alpha,\beta$-Crown displays a large number ($20-58\%$) of undecided instances, that is, instances that can neither be verified, nor an explicit attack can be found. Enabling larger time-outs for $\alpha,\beta$-Crown only improves verification rate by few percents, leaving a large gap of undecided instances while already taking a considerable amount of time. Resorting to slow complete verifiers, does not fare better even with very large time-outs: They would theoretically be able to close the gap, but with an untractable runtime on all but small {\em hard} instances.
-
-In this paper, {\color{blue}
-%we study the MILP encoding of ReLU-DNNs.
-%, and provide new insights in the LP relaxation. 
-we propose a novel Utility function that selects few neurons to be encoded with accurate but costly integer variables in a {\em partial MILP} problem. The novelty resides in the use of 
-the solution of {\em one} (efficient LP) solver to accurately compute a selection $\varepsilon$-optimal for a given input. }
-%This allows us to carefully craft a {\em partial MILP} solution which selects automatically few neurons encoded as integer variables, the rest using the LP relaxation. 
-Compared with previous attempts, we can reduce the number of integer variables by around 4 times while maintaining the same level of accuracy. Implemented in {\em Hybrid MILP}, calling first $\alpha,\beta$-Crown with a short time-out to solve easier instances, and then partial MILP for those for which $\alpha,\beta$-Crown fails, produces a very accurate yet efficient verifier, reducing tremendously the number of undecided instances ($8-15\%$), while keeping a reasonable runtime ($46s-417s$ on average per instance).
-\end{abstract}
-
-
-
-
-
-
-
-
-
-
-
-
-	\section{Introduction}
+\section{Introduction}
 
 \input{introduction}
 %
@@ -223,12 +147,12 @@ In this paper, we consider $L^{\infty}$ norm the max value of distance of each d
 
 
 
-\input{valabstraction}
+%\input{valabstraction}
 
 \input{formula}
 
 
-	
+
 
 \input{experiments}
 
@@ -238,7 +162,7 @@ In this paper, we consider $L^{\infty}$ norm the max value of distance of each d
 
 \section{Conclusion}
 {\color{blue}
-In this paper, we developed a novel Utility function to select few ReLU nodes to consider with binary variables to compute accurately bounds on neurons of DNNs. The novelties are that it focuses on {\em improvement} wrt a given input, rather than on generic {\em sensitivity} of a neuron wrt to a ReLU node, and it uses the solution of one call to an (efficient LP) solver to evaluate this improvement. This makes the choice particularly efficient, necessitating $\approx4$x less integer variables than previous proposals \cite{DivideAndSlide} for the same accuracy.} 
+	In this paper, we developed a novel Utility function to select few ReLU nodes to consider with binary variables to compute accurately bounds on neurons of DNNs. The novelties are that it focuses on {\em improvement} wrt a given input, rather than on generic {\em sensitivity} of a neuron wrt to a ReLU node, and it uses the solution of one call to an (efficient LP) solver to evaluate this improvement. This makes the choice particularly efficient, necessitating $\approx4$x less integer variables than previous proposals \cite{DivideAndSlide} for the same accuracy.} 
 Our empirical studies revealed that this can yield highly accurate results, verifying up to 40\% more images than the SOTA ($\alpha,\beta$-Crown, winner of the 4 last VNNComp), with the same runtime, for DNNs with up to 20 000 neurons. 
 The reason is that $\alpha,\beta$-Crown hits a complexity barrier, similarly as other competing solutions, when considering hard (even small) DNNs. This opens a lot of perspectives, among which: verifying efficiently other hard instances; certifying $\epsilon$-robustness of images for $\epsilon$ as large as possible; 
 verifying global rather than local properties \cite{lipshitz}.
@@ -253,7 +177,7 @@ The source code of Hybrid MILP will be provided on GitHub after acceptance (need
 \newpage
 
 \bibliography{references}
-\bibliographystyle{iclr2025_conference}
+\bibliographystyle{plain}
 
 \bigskip
 
@@ -262,4 +186,5 @@ The source code of Hybrid MILP will be provided on GitHub after acceptance (need
 \input{proofsb}
 
 \end{document}
+
 
