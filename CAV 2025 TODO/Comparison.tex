@@ -1,5 +1,108 @@
 \section{Comparison of methods.}
 
+\label{sec4p5}
+
+Here we use the FSB formula from the paper {Improved Branch and Bound for Neural Network
+Verification via Lagrangian Decomposition}
+
+\begin{align*}
+	\bm{\bar{\lambda}}_{n-1} =& -W^T_n\bm{1},  	\bm{\bar{\lambda}}_{k-1} = W^T_k\big(\dfrac{[\hat{\bm{u}_k}]_+}{[\hat{\bm{u}_k}]_+-[\hat{\bm{l}_k}]_-}\odot\bm{\bar{\lambda}}_{k}\big) &k\in [2,n-1]\\
+	\bm{s}_{SR} =& \lvert\max\{0,\bm{\bar{\lambda}}_{k}\odot\bm{b}_{k}\}-\frac{\hat{\bm{u}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}}_k\odot\bm{\bar{\lambda}}_{k}\odot\bm{{b}}_{k}+\frac{\hat{\bm{u}}_k\odot\hat{\bm{l}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}_k}\odot[\bm{\bar{\lambda}}_{k}]_+\rvert &\\
+	&\odot\bm{1}_{\hat{\bm{u}}_k>0,\hat{\bm{l}}_k<0}&k\in [1,n-1]\\
+	\bm{s}_{FSB} =& \lvert\min\{0,\bm{\bar{\lambda}}_{k}\odot\bm{b}_{k}\}-\frac{\hat{\bm{u}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}}_k\odot\bm{\bar{\lambda}}_{k}\odot\bm{{b}}_{k}+\frac{\hat{\bm{u}}_k\odot\hat{\bm{l}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}_k}\odot[\bm{\bar{\lambda}}_{k}]_+\rvert &\\
+	&\odot\bm{1}_{\hat{\bm{u}}_k>0,\hat{\bm{l}}_k<0}&k\in [1,n-1]\\
+\end{align*}
+
+
+
+\begin{figure}[t!]
+	\centering
+	\begin{tikzpicture}
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (input1) {$n_1$};
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (input2) at ($(input1) + (0,-1.5)$) {$n_2$};
+		
+		
+		% Hidden layers
+		
+		\node (hidden10) at ($(input1) + (2.5,0.6)$) {$0$};
+		
+		\node (hidden20) at ($(input1) + (2.5,-1.5-0.6)$) {$0$};
+		
+		\node (hidden50) at ($(input1) + (7.5,0.6)$) {$0$};
+		
+		\node (hidden60) at ($(input1) + (7.5,-1.5-0.6)$) {$1.5$};
+		
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (hidden1) at ($(input1) + (2.5,0)$) {$n_3$};
+		\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$n_4$};
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$\hat{n}_3$};
+		\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$\hat{n}_4$};
+		
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$n_5$};
+		\node[circle, draw= black, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$n_6$};
+		
+		
+		
+		
+		% Output layer
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (output1) at ($(input1) + (10,0)$){$\hat{n}_5$};
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$\hat{n}_{6}$};
+		
+		
+		% Connections
+		
+		\draw[->,thick] ($(input1) + (-1.5,0)$) -- (input1) node[midway, above] {$[-1,1]$};
+		
+		\draw[->,thick] ($(input1) + (-1.5,-1.5)$) -- (input2) node[midway, above] {$[-1,1]$};
+		
+		
+		
+		\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$1$};
+		\draw[->,thick] (input1) -- (hidden2)node[near start, above] {$1$};
+		
+		\draw[->,thick] (input2) -- (hidden1) node[near start, below] {$1$};
+		\draw[->, thick] (input2) -- (hidden2)node[near start, below] {$-1$};
+		
+		
+		
+		
+		
+		\draw[->, thick] (hidden1) -- (hidden3) node[midway, above] {$\max(n_1,0)$};
+		\draw[->, thick] (hidden2) -- (hidden4) node[midway, above] {$\max(n_2,0)$};
+		
+		
+		
+		
+		
+		\draw[->, thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
+		\draw[->,thick] (hidden3) -- (hidden6) node[near start, above] {$0$};
+		
+		\draw[->,thick] (hidden4) -- (hidden5)node[near start, below] {$2$};
+		\draw[->,thick] (hidden4) -- (hidden6)node[near start, below] {$1$};
+		
+		
+		
+		
+		\draw[->,thick] (hidden5) -- (output1) node[midway, above] {$\max(n_5,0)$};
+		\draw[->,thick] (hidden6) -- (output2) node[midway, above] {$\max(n_6,0)$};
+		
+		
+	\end{tikzpicture}
+	\caption{}
+\end{figure}
+
 
 
 \begin{tikzpicture}[scale=1, >=stealth]
@@ -11,7 +114,7 @@
 	% Draw ReLU function
 	\draw[line width=0.4mm, blue] (-3,0) -- (0,0);
 	\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(0.5,-0.4)}] {$y = \ReLU(x)$};
-	\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-0.5,0.4)}] {$y = \frac{\UB}{\UB-\LB} x-\frac{\UB\LB}{\UB-\LB}$};
+	\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-0.5,0.2)}] {$y = \frac{\UB}{\UB-\LB} x-\frac{\UB\LB}{\UB-\LB}$};
 	
 %	% Add labels
 %	\draw[dashed] (2,0) -- (2,2) -- (0,2); % Optional grid
