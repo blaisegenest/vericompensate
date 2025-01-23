@@ -5,7 +5,7 @@
 Here we list the FSB formula from the paper \cite{FSB}:
 
 \begin{align*}
-	\bm{\bar{\lambda}}_{n-1} =& -W^T_n\bm{1},  	\bm{\bar{\lambda}}_{k-1} = W^T_k\big(\dfrac{[\hat{\bm{u}_k}]_+}{[\hat{\bm{u}_k}]_+-[\hat{\bm{l}_k}]_-}\odot\bm{\bar{\lambda}}_{k}\big) &k\in [2,n-1]\\
+	\bm{\bar{\lambda}}_{n-1} =& -W^T_n\bm{1}, \hspace*{10ex}  	\bm{\bar{\lambda}}_{k-1} = W^T_k\big(\dfrac{[\hat{\bm{u}_k}]_+}{[\hat{\bm{u}_k}]_+-[\hat{\bm{l}_k}]_-}\odot\bm{\bar{\lambda}}_{k}\big) \hspace*{-10ex}  &k\in [2,n-1]\\
 	\bm{s}_{SR} =& \lvert\max\{0,\bm{\bar{\lambda}}_{k}\odot\bm{b}_{k}\}-\frac{\hat{\bm{u}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}}_k\odot\bm{\bar{\lambda}}_{k}\odot\bm{{b}}_{k}+\frac{\hat{\bm{u}}_k\odot\hat{\bm{l}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}_k}\odot[\bm{\bar{\lambda}}_{k}]_+\rvert &\\
 	&\odot\bm{1}_{\hat{\bm{u}}_k>0,\hat{\bm{l}}_k<0}&k\in [1,n-1]\\
 	\bm{s}_{FSB} =& \lvert\min\{0,\bm{\bar{\lambda}}_{k}\odot\bm{b}_{k}\}-\frac{\hat{\bm{u}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}}_k\odot\bm{\bar{\lambda}}_{k}\odot\bm{{b}}_{k}+\frac{\hat{\bm{u}}_k\odot\hat{\bm{l}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}_k}\odot[\bm{\bar{\lambda}}_{k}]_+\rvert &\\
