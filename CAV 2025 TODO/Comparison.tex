@@ -1,0 +1,27 @@
+\section{Comparison of methods.}
+
+
+
+\begin{tikzpicture}[scale=1, >=stealth]
+	
+	% Draw axes
+	\draw[->] (-5,0) -- (4,0) node[right] {$x$};
+	\draw[->] (0,-1) -- (0,3) node[above] {$y$};
+	
+	% Draw ReLU function
+	\draw[line width=0.4mm, blue] (-3,0) -- (0,0);
+	\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(0.5,-0.4)}] {$y = \ReLU(x)$};
+	\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-0.5,0.4)}] {$y = \frac{\UB}{\UB-\LB} x-\frac{\UB\LB}{\UB-\LB}$};
+	
+%	% Add labels
+%	\draw[dashed] (2,0) -- (2,2) -- (0,2); % Optional grid
+%	\node[below left] at (0,0) {$0$};
+%	
+%	% Add tick marks
+%	\foreach \x in {1,2}
+%	\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {\x};
+%	\foreach \y in {1,2}
+%	\draw[shift={(0,\y)}] (0.1,0) -- (-0.1,0) node[left] {\y};
+	
+\end{tikzpicture}
+
