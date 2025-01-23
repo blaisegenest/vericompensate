@@ -116,15 +116,19 @@ Verification via Lagrangian Decomposition}
 	\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(0.5,-0.4)}] {$y = \ReLU(x)$};
 	\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-0.5,0.2)}] {$y = \frac{\UB}{\UB-\LB} x-\frac{\UB\LB}{\UB-\LB}$};
 	
-%	% Add labels
-%	\draw[dashed] (2,0) -- (2,2) -- (0,2); % Optional grid
-%	\node[below left] at (0,0) {$0$};
-%	
-%	% Add tick marks
-%	\foreach \x in {1,2}
-%	\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {\x};
-%	\foreach \y in {1,2}
-%	\draw[shift={(0,\y)}] (0.1,0) -- (-0.1,0) node[left] {\y};
+	% Add labels
+	\draw[dashed] (2.5,0) -- (2.5,2.5) -- (0,2.5); % Optional grid
+	\node[below left] at (0,0) {$0$};
+	
+	% Add tick marks
+	
+	\foreach \x in {2.5}
+	\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\UB$};
+	\foreach \x in {-3}
+	\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\LB$};
+
+	\foreach \y in {2.5}
+	\draw[shift={(0,\y)}] (0.1,0) -- (-0.1,0) node[left] {$\UB$};
 	
 \end{tikzpicture}
 
