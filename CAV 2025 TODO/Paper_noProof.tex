@@ -59,7 +59,8 @@
 \newcommand{\toolname}{Hybrid MILP}
 
 
-\title{Hybrid MILP to efficiently and accuratly \\  solve hard DNN verification instances}
+\title{Solution-aware vs global ReLU ranking: \\
+partial MILP strikes back for DNN verification}
 \date{}
 
 %\author{Antiquus S.~Hippocampus, Natalia Cerebro \& Amelie P. Amygdale \thanks{ Use footnote for providing further information
@@ -87,14 +88,17 @@
 	\maketitle
 	
 	\begin{abstract}
-		$\alpha,\beta$-CROWN has won the last 4 VNNcomp(etitions), as the DNN verifier with the best 
-		trade-off between accuracy and runtime. VNNcomp however is focusing on relatively easy verification instances. In this paper, we consider {\em harder} verification instances, on which $\alpha,\beta$-Crown displays a large number ($20-58\%$) of undecided instances, that is, instances that can neither be verified, nor an explicit attack can be found. Enabling larger time-outs for $\alpha,\beta$-Crown only improves verification rate by few percents, leaving a large gap of undecided instances while already taking a considerable amount of time. Resorting to slow complete verifiers, does not fare better even with very large time-outs: They would theoretically be able to close the gap, but with an untractable runtime on all but small {\em hard} instances.
+		$\alpha,\beta$-CROWN has won the last 4 VNNcomp(etitions), 
+		as the DNN verifier with the best trade-off between accuracy and runtime. 
+		VNNcomp however is focusing on relatively easy verification problems.
+		There are many problems however which are much harder to verify, and for which
+		$\alpha,\beta$-Crown does not scale, even by enlarging tremendously the time-outs.
+		Other techniques do not scale either.
 		
-		In this paper, {\color{blue}
-			%we study the MILP encoding of ReLU-DNNs.
-			%, and provide new insights in the LP relaxation. 
-			we propose a novel Utility function that selects few neurons to be encoded with accurate but costly integer variables in a {\em partial MILP} problem. The novelty resides in the use of 
-			the solution of {\em one} (efficient LP) solver to accurately compute a selection $\varepsilon$-optimal for a given input. }
+		In this paper, we work on a fundamental problem to enable scaling to more complex problems:
+		
+		propose a novel Utility function that selects few neurons to be encoded with accurate but costly integer variables in a {\em partial MILP} problem. The novelty resides in the use of 
+		the solution of {\em one} (efficient LP) solver to accurately compute a selection $\varepsilon$-optimal for a given input.
 		%This allows us to carefully craft a {\em partial MILP} solution which selects automatically few neurons encoded as integer variables, the rest using the LP relaxation. 
 		Compared with previous attempts, we can reduce the number of integer variables by around 4 times while maintaining the same level of accuracy. Implemented in {\em Hybrid MILP}, calling first $\alpha,\beta$-Crown with a short time-out to solve easier instances, and then partial MILP for those for which $\alpha,\beta$-Crown fails, produces a very accurate yet efficient verifier, reducing tremendously the number of undecided instances ($8-15\%$), while keeping a reasonable runtime ($46s-417s$ on average per instance).
 	\end{abstract}
