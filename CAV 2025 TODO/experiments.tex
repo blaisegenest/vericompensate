@@ -106,7 +106,7 @@ Overall, choosing 35 neurons by {\bf Utility} improves accuracy by $95\%$ of wha
 	\vspace*{-0.3cm}
 	\includegraphics[height=8cm]{Plot for table 3}.
 	\vspace*{-0.4cm}
-	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs random choice.}
+	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{DivideAndSlide} vs random choice.}
 	\label{fig_table3}
 \end{figure}
 
@@ -217,7 +217,7 @@ Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper boun
 
 We voluntarily limited the comparison to $\alpha,\beta$-Crown because it is the most efficient verifier to date, and to consider a spectre of parameters to understand $\alpha,\beta$-Crown scaling without too much clutter.
 
-Notice that results for other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported on these DNNs \cite{crown}, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of complete verifiers, NNenum \cite{nnenum}, Marabou \cite{Marabou, Marabou2}, respectively 4th, 3rd 
+Notice that results for other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported on these DNNs \cite{crown}, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of complete verifiers, NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd 
 of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on hard instances either, even on the smallest hard DNN. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em hard} MNIST DNNs at several time-out settings. 
 Last, Pyrat \cite{pyrat} (2sd in the latest VNNComp) is not open source, which made running it impossible.
 
