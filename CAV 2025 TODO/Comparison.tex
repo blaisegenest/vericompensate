@@ -19,45 +19,48 @@ Here we list the FSB formula from the paper \cite{FSB}:
 	\begin{tikzpicture}
 		
 		\node[circle, draw= black, thick, minimum width = 20,
-		minimum height = 20] (input1) {$n_1$};
+		minimum height = 20] (input1) {$n$};
 		
 		\node[circle, draw= black, thick, minimum width = 20,
-		minimum height = 20] (input2) at ($(input1) + (0,-1.5)$) {$n_2$};
+		minimum height = 20] (input2) at ($(input1) + (0,-1.5)$) {$n'$};
 		
 		
 		% Hidden layers
 		
-		\node (hidden10) at ($(input1) + (2.5,0.6)$) {$0$};
+		\node (hidden10) at ($(input1) + (2.5,0.6)$) {$[-1,1]$};
 		
-		\node (hidden20) at ($(input1) + (2.5,-1.5-0.6)$) {$0$};
+		\node (hidden20) at ($(input1) + (2.5,-1.5-0.6)$) {$[-10,11]$};
 		
-		\node (hidden50) at ($(input1) + (7.5,0.6)$) {$0$};
+		\node (hidden50) at ($(input1) + (7.5,0.6)$) {$[-1,0.5]$};
 		
-		\node (hidden60) at ($(input1) + (7.5,-1.5-0.6)$) {$1.5$};
-		
-		
-		\node[circle, draw= black, thick, minimum width = 20,
-		minimum height = 20] (hidden1) at ($(input1) + (2.5,0)$) {$n_3$};
-		\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$n_4$};
-		
-		\node[circle, draw= black, thick, minimum width = 20,
-		minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$\hat{n}_3$};
-		\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$\hat{n}_4$};
+		\node (hidden60) at ($(input1) + (7.5,-1.5-0.6)$) {$[0,0.5]$};
 		
 		
 		\node[circle, draw= black, thick, minimum width = 20,
-		minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$n_5$};
-		\node[circle, draw= black, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$n_6$};
+		minimum height = 20] (hidden1) at ($(input1) + (2.5,0)$) {$a$};
+		\node[circle, draw= black, thick] (hidden2) at ($(input1) + (2.5,-1.5)$) {$a'$};
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (hidden3) at ($(input1) + (5,0)$){$\hat{a}$};
+		\node[circle, draw= black, thick] (hidden4) at ($(input1) + (5,-1.5)$) {$\hat{a}'$};
+		
+		
+		\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (hidden5) at ($(input1) + (7.5,0)$){$b$};
+		\node[circle, draw= black, thick] (hidden6) at ($(input1) + (7.5,-1.5)$) {$b'$};
 		
 		
 		
 		
 		% Output layer
 		\node[circle, draw= black, thick, minimum width = 20,
-		minimum height = 20] (output1) at ($(input1) + (10,0)$){$\hat{n}_5$};
+		minimum height = 20] (output1) at ($(input1) + (10,0)$){$\hat{b}$};
 		
 		\node[circle, draw= black, thick, minimum width = 20,
-		minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$\hat{n}_{6}$};
+		minimum height = 20] (output2) at ($(input1) + (10,-1.5)$){$\hat{b}'$};
+		
+			\node[circle, draw= black, thick, minimum width = 20,
+		minimum height = 20] (output3) at ($(input1) + (12.5,0)$){$z$};
 		
 		
 		% Connections
@@ -69,41 +72,42 @@ Here we list the FSB formula from the paper \cite{FSB}:
 		
 		
 		\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$1$};
-		\draw[->,thick] (input1) -- (hidden2)node[near start, above] {$1$};
+		\draw[->,thick] (input1) -- (hidden2)node[near start, above] {$-10$};
 		
-		\draw[->,thick] (input2) -- (hidden1) node[near start, below] {$1$};
-		\draw[->, thick] (input2) -- (hidden2)node[near start, below] {$-1$};
-		
-		
+	
+		\draw[->, thick] (input2) -- (hidden2)node[near start, below] {$0.5$};
 		
 		
 		
-		\draw[->, thick] (hidden1) -- (hidden3) node[midway, above] {$\max(n_1,0)$};
-		\draw[->, thick] (hidden2) -- (hidden4) node[midway, above] {$\max(n_2,0)$};
+		
+		
+		\draw[->, thick] (hidden1) -- (hidden3);
+		\draw[->, thick] (hidden2) -- (hidden4);
 		
 		
 		
 		
 		
 		\draw[->, thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
-		\draw[->,thick] (hidden3) -- (hidden6) node[near start, above] {$0$};
-		
-		\draw[->,thick] (hidden4) -- (hidden5)node[near start, below] {$2$};
+	
+		\draw[->,thick] (hidden4) -- (hidden5)node[near start, below] {$1$};
 		\draw[->,thick] (hidden4) -- (hidden6)node[near start, below] {$1$};
 		
 		
+		\draw[->,thick] (hidden5) -- (output1);
+		\draw[->,thick] (hidden6) -- (output2);
 		
-		
-		\draw[->,thick] (hidden5) -- (output1) node[midway, above] {$\max(n_5,0)$};
-		\draw[->,thick] (hidden6) -- (output2) node[midway, above] {$\max(n_6,0)$};
+		\draw[->,thick] (output1) -- (output3)node[near start, below] {$-100$};
+		\draw[->,thick] (output2) -- (output3)node[near start, below] {$1$};
 		
 		
 	\end{tikzpicture}
 	\caption{}
+	\label{img:FSB_example}
 \end{figure}
 
 
-
+\begin{figure}[t!]
 \begin{tikzpicture}[scale=1, >=stealth]
 	
 	% Draw axes
@@ -113,7 +117,7 @@ Here we list the FSB formula from the paper \cite{FSB}:
 	% Draw ReLU function
 	\draw[line width=0.4mm, blue] (-3,0) -- (0,0);
 	\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(0.5,-0.4)}] {$y = \ReLU(x)$};
-	\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-0.5,0.2)}] {$y = \frac{\UB}{\UB-\LB} x-\frac{\UB\LB}{\UB-\LB}$};
+	\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-5,-1.5)}] {$y = \frac{\UB}{\UB-\LB} x-\frac{\UB\cdot\LB}{\UB-\LB}$};
 	
 	% Add labels
 	\draw[dashed] (2.5,0) -- (2.5,2.5) -- (0,2.5); % Optional grid
@@ -129,5 +133,36 @@ Here we list the FSB formula from the paper \cite{FSB}:
 	\foreach \y in {2.5}
 	\draw[shift={(0,\y)}] (0.1,0) -- (-0.1,0) node[left] {$\UB$};
 	
+	\draw (-1,0.1) -- (-1,-0.1) node[below] {$\sol(a)$};
+	\draw[dashed] (-1,0) -- (-1,0.9) -- (0,0.9);
+	\draw (-0.1,0.9) -- (0.1,0.9) node[right, shift={(-0.1,0.13)}] {$\sol(\hat{a})$};
+	\node at (-0.5,0.4) {$\Delta(a)$};
+	
 \end{tikzpicture}
+	\caption{}
+\label{img:Utility}
+\end{figure}
+
+\subsection*{An example when FSB is not accurate}
+
+See the figure \ref{img:FSB_example}. When the algorithm considers neurons in the layer of $a,a'$, FSB will think $a$ is important, but Utility will think it is not important (Utility value is 0).
+
+Although this example is extreme, similar situations frequently occur in practice.
+
+\subsection*{Comparison on MNIST}
+
+Here we use the network named MNIST $5\times 100$ and a hard image to compare the effect of FSB and Utility function. 
+
+We fix an intermediate bound data for layers before the third hidden layer, and use different methods based on this bound to compute the upper and lower bounds of neurons in the second and third hidden layer.
+
+The plot shows that when only considering neurons in one layer before the target layer, we are significantly better.
+
+
+\subsection*{Comparison on CIFAR10}
+
+Here we use the network named CNN-B-adv and a hard image to compare the effect of FSB and Utility function. 
+
+We fix an intermediate bound data for layers before the target layers, and use different methods based on this bound to compute the output layer.
+
+The plot shows that our Utility function is significantly better than FSB, and other methods.
 
