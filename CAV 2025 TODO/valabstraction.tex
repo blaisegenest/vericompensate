@@ -1,4 +1,4 @@
-	\section{Value Abstraction for DNN verification}
+\section{Value Abstraction for DNN verification}
 
 In this section, we describe different value (over-)abstractions on $\vz$ that are used by efficient algorithms to certify robustness around an input $\vx$. Over-abstractions of values include all values for $\vz$ in the neighbourhood of $\vx$, and thus a certificate for safety in the over-abstraction is a proof of safety for the original input $\vx$.
 
@@ -124,6 +124,8 @@ DeepPoly \cite{deeppoly} chooses one of the two lower bounds for each neuron $x$
 }
 
 
+
+
 \subsection{MILP, LP and partial MILP encodings for DNNs}
 
 At the other end of the spectrum, we find the Mixed Integer Linear Programming (MILP) value abstraction, which is a complete (but inefficient) method. 
@@ -149,7 +151,7 @@ The crucial factor in such an approach is to {\em select} few opened ReLU nodes 
 To obtain a more accurate measure, that 
 %can also scale to deeper layers and 
 is not limited to open nodes from the immediate previous layer, 
-{\color{blue} we invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof:}
+{\color{blue} we invoke a folklore result \cite{alessandro} on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof:}
 
 %Consider an unstable neuron $n$, that is $\LB(n) < 0 < \UB(n)$. 
 %Let $x$ represent the input value of $n$, hence with 
@@ -157,20 +159,26 @@ is not limited to open nodes from the immediate previous layer,
 %We have:
 
 
+
+
 \begin{proposition}
 	\label{LP}
-	{\color{blue} The LP relaxation of (\ref{eq11}) is equivalent with the triangular abstraction 	(\ref{eq:deeppoly}).}
+	The LP relaxation of (\ref{eq11}) is equivalent with the triangular abstraction 	(\ref{eq:deeppoly}).
 \end{proposition}
  
 %{\color{blue}
 %To the best of our knowledge, we could not find such an equivalence stated in the bibliography, although the proof is simple. This result will be instrumental for our Utility function (Section \ref{sec4}).}
 
 
+
+
 \begin{proof}
 	Consider an unstable neuron $n$, that is $\LB(n) < 0 < \UB(n)$.
-The lower bound on $\hat{x}$ is simple, as $\hat{x} \geq 0 \wedge \hat{x} \geq x$ is immediatly equivalent with $\hat{x} \geq \ReLU(x)$.
+The lower bound on $\hat{x}$ is simple, as $\hat{x} \geq 0 \wedge \hat{x} \geq x$ is immediately equivalent with $\hat{x} \geq \ReLU(x)$.
 
 We now show that the three constraints 
 $\hat{x} \leq \UB(n) \cdot a \, \wedge \, \hat{x} \leq x-\LB(n) \cdot (1-a) \, \wedge \, a \in [0,1]$ translates into $\hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)}$. 
 We have $\hat{x}$ is upper bounded by $max_{a \in [0,1]} (min(\UB(n) \cdot a, x - \LB(n) (1-a)))$, and this bound can be reached. Furthermore, using standard function analysis tools (derivative...), we can show that the function $a \mapsto \min(\UB(n) \cdot a, x - \LB(n) (1-a))$ attains its maximum when $\UB(n) \cdot a = x - \LB(n) (1-a)$, leading to the equation $(\UB(n) - \LB(n)) a = x - \LB(n)$ and consequently $a = \frac{x - \LB(n)}{\UB(n)-\LB(n)}$. This results in an upper bound $\hat{x} \leq \UB(n) \frac{x - \LB(n)}{\UB(n)-\LB(n)}$, which can be reached, hence the equivalence.
 \end{proof}
+
+
