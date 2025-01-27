@@ -217,8 +217,9 @@ It is worth mentioning that the "for" loop iterating over neurons $n$ in layer $
 
 If $K$ is sufficiently small, 
 %Algorithm \ref{algo1} invokes many MILP (e.g., using Gurobi) with a manageable number of %integer variables. 
-this approach is expected to be efficient. The crucial part is thus to find few neurons which are particularly important when computing neuron $n$. This is where our novel Utility function outperforms previous solutions, by using an call to an (LP) solver to obtain a solution, which is novel as far as we know. This solutions allows to optimizing the choice of open nodes for the particular input considers, and appears significantly better than previous attempts, explaining the efficiency of the method.
-
+this approach is expected to be efficient. 
+%The crucial part is thus to find few neurons which are particularly important when computing neuron $n$. 
+%This is where our novel Utility function outperforms previous solutions, by using an call to an (LP) solver to obtain a solution, which is novel as far as we know. This solutions allows to optimizing the choice of open nodes for the particular input considers, and appears significantly better than previous attempts, explaining the efficiency of the method.
 %For comparison, refined $\beta$-Crown and refined Prima used all the nodes up to a certain layer as binary variables, which is particularly inefficient, see Table \ref{table12} and Fig. \ref{fig4}. Hence, it can only be applied to small DNNs (it is implemented only up to MNNIST 8x200), while pMILP scales to at least 20.000 neurons (CNN-B-Adv).\cite{DivideAndSlide} is the closest to pMILP, also implementing a choice of nodes as binary variables. However, their choice is particularly inefficient, as revealed by Table \ref{tab:example1}, needing 4 times the number of open nodes for the same accuracy as our Utility function.
-
-The crucial factor in such an approach is to {\em select} few opened ReLU nodes in $X$ which are the most important for the accuracy. An extreme strategy was adopted in \cite{DivideAndSlide}, where only ReLU nodes of the immediate previous layer can be opened, and the measure to choose ReLU $a$ when computing the bounds for neuron $b$ was to consider $|W_{ab}| (\UB(a)-\LB(a))$. 
+The crucial factor in such an approach is to {\em select} few opened ReLU nodes in $X$ which are the most important for the accuracy. An extreme strategy was adopted in 
+\cite{DivideAndSlide}, where only ReLU nodes of the immediate previous layer can be opened, and the measure to choose ReLU $a$ when computing the bounds for neuron $b$ was to consider $|W_{ab}| (\UB(a)-\LB(a))$. 

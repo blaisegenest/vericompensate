@@ -1,20 +1,24 @@
-\section{Comparison of other methods.}
+\section{Global Ranking Functions}
 
 \label{sec4p5}
 
-Here we list the FSB formula from the paper \cite{FSB}:
+First, we adapt from the BaB-SR \cite{BaB} and FSB \cite{FSB} functions, selecting a node to branch on for BaB, global ranking (GR) functions to select nodes for pMILP. Intuitively, we extract the scoring $s_{SR}$ and $s_{FSB}$ from both BaB-SR and FSB, as the BaB bounding step is not adapted for pMILP. They both work by backpropagating gradients vectors $\bm{\bar{\lambda}}$ from the neurons under consideration in layer $n$, back to neurons to be potentially selected. To do so, they consider the rate of $\ReLU(\bm{u}_k)$ to be $r(\bm{u}_k)=\frac{\UB(\bm{u}_k)}{\UB(\bm{u}_k)-\LB(\bm{u}_k)}$.
 
 \begin{align*}
-	\bm{\bar{\lambda}}_{n-1} =& -W^T_n\bm{1}, \hspace*{10ex}  	\bm{\bar{\lambda}}_{k-1} = W^T_k\big(\dfrac{[\hat{\bm{u}_k}]_+}{[\hat{\bm{u}_k}]_+-[\hat{\bm{l}_k}]_-}\odot\bm{\bar{\lambda}}_{k}\big) \hspace*{-10ex}  &k\in [2,n-1]\\
-	\bm{s}_{SR} =& \lvert\max\{0,\bm{\bar{\lambda}}_{k}\odot\bm{b}_{k}\}-\frac{\hat{\bm{u}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}}_k\odot\bm{\bar{\lambda}}_{k}\odot\bm{{b}}_{k}+\frac{\hat{\bm{u}}_k\odot\hat{\bm{l}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}_k}\odot[\bm{\bar{\lambda}}_{k}]_+\rvert &\\
-	&\odot\bm{1}_{\hat{\bm{u}}_k>0,\hat{\bm{l}}_k<0}&k\in [1,n-1]\\
-	\bm{s}_{FSB} =& \lvert\min\{0,\bm{\bar{\lambda}}_{k}\odot\bm{b}_{k}\}-\frac{\hat{\bm{u}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}}_k\odot\bm{\bar{\lambda}}_{k}\odot\bm{{b}}_{k}+\frac{\hat{\bm{u}}_k\odot\hat{\bm{l}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}_k}\odot[\bm{\bar{\lambda}}_{k}]_+\rvert &\\
-	&\odot\bm{1}_{\hat{\bm{u}}_k>0,\hat{\bm{l}}_k<0}&k\in [1,n-1]\\
+\bm{\bar{\lambda}}_{n-1} = -W^T_n\bm{1}, \hspace*{4ex}  	\bm{\bar{\lambda}}_{k-1} = W^T_k\big(\dfrac{[\hat{\bm{u}_k}]_+}{[\hat{\bm{u}_k}]_+-[\hat{\bm{l}_k}]_-}\odot\bm{\bar{\lambda}}_{k}\big) \hspace*{4ex}  k\in [n-1,2]
+\end{align*}
+
+
+Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer $k$ are computed by approximating how each node would impact the neurons in layer $n$, by also factoring in the bias $\bm{b}_k$:
+
+\begin{align*}
+	\bm{s}_{SR}(k) =& \lvert\max\{0,\bm{\bar{\lambda}}_{k}\odot\bm{b}_{k}\}-\frac{\hat{\bm{u}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}}_k\odot\bm{\bar{\lambda}}_{k}\odot\bm{{b}}_{k}+\frac{\hat{\bm{u}}_k\odot\hat{\bm{l}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}_k}\odot[\bm{\bar{\lambda}}_{k}]_+\rvert \odot\bm{1}_{\hat{\bm{u}}_k>0,\hat{\bm{l}}_k<0} \\
+	\bm{s}_{FSB}(k) =& \lvert\min\{0,\bm{\bar{\lambda}}_{k}\odot\bm{b}_{k}\}-\frac{\hat{\bm{u}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}}_k\odot\bm{\bar{\lambda}}_{k}\odot\bm{{b}}_{k}+\frac{\hat{\bm{u}}_k\odot\hat{\bm{l}}_k}{\hat{\bm{u}}_k-\hat{\bm{l}}_k}\odot[\bm{\bar{\lambda}}_{k}]_+\rvert \odot\bm{1}_{\hat{\bm{u}}_k>0,\hat{\bm{l}}_k<0}
 \end{align*}
 
 
 
-\begin{figure}[t!]
+\begin{figure}[b!]
 	\centering
 	\begin{tikzpicture}
 		
