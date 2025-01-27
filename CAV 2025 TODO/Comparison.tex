@@ -2,10 +2,10 @@
 
 \label{sec4p5}
 
-First, we adapt from the BaB-SR \cite{BaB} and FSB \cite{FSB} functions, selecting a node to branch on for BaB, global ranking (GR) functions to select nodes for pMILP. Intuitively, we extract the scoring $s_{SR}$ and $s_{FSB}$ from both BaB-SR and FSB, as the BaB bounding step is not adapted for pMILP. They both work by backpropagating gradients vectors $\bm{\lambda}$ from the neurons under consideration in layer $n$, back to neurons to be potentially selected. To do so, they consider the rate of $\ReLU(\bm{u}_k)$ to be $r(\bm{u}_k)=\frac{\UB(\bm{u}_k)}{\UB(\bm{u}_k)-\LB(\bm{u}_k)}$.
+First, we adapt from the BaB-SR \cite{BaB} and FSB \cite{FSB} functions (replacing the symbols from the original paper with those used in our paper.), selecting a node to branch on for BaB, global ranking (GR) functions to select nodes for pMILP. Intuitively, we extract the scoring $s_{SR}$ and $s_{FSB}$ from both BaB-SR and FSB, as the BaB bounding step is not adapted for pMILP. They both work by backpropagating gradients vectors $\bm{\lambda}$ from the neurons under consideration in layer $n$, back to neurons to be potentially selected. To do so, they consider the rate of $\ReLU(\bm{u}_k)$ to be $r(\bm{u}_k)=\frac{\UB(\bm{u}_k)}{\UB(\bm{u}_k)-\LB(\bm{u}_k)}$.
 
 \begin{align*}
-\bm{\lambda}_{n-1} = -W^T_n\bm{1}, \hspace*{4ex}  	\bm{\lambda}_{k-1} = W^T_k\big(\frac{\max(0,\UB(\bm{u}_k))}{\max(0,\UB(\bm{u}_k))-\min(0,\LB(\bm{u}_k))}\odot\bm{\lambda}_{k}\big) \hspace*{4ex}  k\in [n-1,2]
+\bm{\lambda}_{n-1} = -{(\bm{W}^n)}^T\bm{1}, \hspace*{4ex}  	\bm{\lambda}_{k-1} = {(\bm{W}^k)}^T\big(\frac{\max(0,\UB(\bm{u}_k))}{\max(0,\UB(\bm{u}_k))-\min(0,\LB(\bm{u}_k))}\odot\bm{\lambda}_{k}\big) \hspace*{4ex}  k\in [n-1,2]
 \end{align*}
 
 
@@ -199,10 +199,10 @@ Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$.
 	\foreach \y in {2.5}
 	\draw[shift={(0,\y)}] (0.1,0) -- (-0.1,0) node[left] {$\UB$};
 	
-	\draw (-1,0.1) -- (-1,-0.1) node[below] {$\sol(a)$};
+	\draw (-1,0.1) -- (-1,-0.1) node[below] {$\sol(b)$};
 	\draw[dashed] (-1,0) -- (-1,0.9) -- (0,0.9);
-	\draw (-0.1,0.9) -- (0.1,0.9) node[right, shift={(-0.1,0.13)}] {$\sol(\hat{a})$};
-	\node at (-0.5,0.4) {$\Delta(a)$};
+	\draw (-0.1,0.9) -- (0.1,0.9) node[right, shift={(-0.1,0.13)}] {$\sol(\hat{b})$};
+	\node at (-0.5,0.4) {$\Delta(b)$};
 	
 \end{tikzpicture}
 	\caption{}
