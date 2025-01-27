@@ -2,10 +2,11 @@
 
 \label{sec4p5}
 
-First, we adapt from the BaB-SR \cite{BaB} and FSB \cite{FSB} functions (replacing the symbols from the original paper with those used in our paper.), selecting a node to branch on for BaB, global ranking (GR) functions to select nodes for pMILP. Intuitively, we extract the scoring $s_{SR}$ and $s_{FSB}$ from both BaB-SR and FSB, as the BaB bounding step is not adapted for pMILP. They both work by backpropagating gradients vectors $\bm{\lambda}$ from the neurons under consideration in layer $n$, back to neurons to be potentially selected. To do so, they consider the rate of $\ReLU(\bm{u}_k)$ to be $r(\bm{u}_k)=\frac{\UB(\bm{u}_k)}{\UB(\bm{u}_k)-\LB(\bm{u}_k)}$.
+First, we adapt from the BaB-SR \cite{BaB} and FSB \cite{FSB} functions (replacing the symbols from the original paper with those used in our paper.), selecting a node to branch on for BaB, global ranking (GR) functions to select nodes for pMILP. Intuitively, we extract the scoring $s_{SR}$ and $s_{FSB}$ from both BaB-SR and FSB, as the BaB bounding step is not adapted for pMILP. They both work by backpropagating gradients vectors $\bm{\lambda}$ from the neurons under consideration in layer $n$, back to neurons to be potentially selected. To do so, they consider the rate of $\ReLU(\bm{u}_k)$ to be 
+$r(\bm{u}_k)=\frac{\max(0,\UB(\bm{u}_k))}{\max(0,\UB(\bm{u}_k))-\min(0,\LB(\bm{u}_k))} \in [0,1]$.
 
 \begin{align*}
-\bm{\lambda}_{n-1} = -{(\bm{W}^n)}^T\bm{1}, \hspace*{4ex}  	\bm{\lambda}_{k-1} = {(\bm{W}^k)}^T\big(\frac{\max(0,\UB(\bm{u}_k))}{\max(0,\UB(\bm{u}_k))-\min(0,\LB(\bm{u}_k))}\odot\bm{\lambda}_{k}\big) \hspace*{4ex}  k\in [n-1,2]
+\bm{\lambda}_{n-1} = -{(\bm{W}^n)}^T\bm{1}, \hspace*{4ex}  	\bm{\lambda}_{k-1} = {(\bm{W}^k)}^T\big( r(\bm{u}_k) \odot\bm{\lambda}_{k}\big) \hspace*{4ex}  k\in [n-1,2]
 \end{align*}
 
 
@@ -25,26 +26,7 @@ In case where the bias is 0, then there is no difference between $s_{SR}$ and $s
 Then, unstable ReLU (with $\LB(u_k) < 0 < \UB(u_k)$) are ranked using these scores, to select the most important ReLUs, as stable ReLUs are linear, thus they are already treated correctly.
 
 
-Consider the example in Fig. \ref{img:FSB_example}.
-We have $\lambda(b)=d$, $\lambda(a)=\frac{cd}{2}$.
-Let us do a case analysis:
-The most favorable cases are $c < 0 < d$ and $d < 0 < c$: 
-as $cd <0$, we have $s_{FSB}(a)=\max(0,\frac{cd}{4}) = 0$.
-Now, $a$ and $\hat{a}$ need to be minimized in order to maximize $z$, because $cd <0$. 
-For the triangle approximation, having a value $sol(a)$ for $a$, the minimal value for $\hat{a}$ is $\ReLU(sol(a))$. If we open $a$, then the value for $\hat{a}$ will also be $\ReLU(sol(a))$. That is, opening this ReLU is not helping in the approximation of $z$, as correctly predicted by the score.
-
-Case $c>0,d>0$: $s_{FSB}(a)=\frac{cd}{4}$.
-Indeed, the value of $a,\hat{a},b,\hat{b}$ should be maximized to maximize the value of $z$, because $W_{bz}=d>0$ and $W_{ab}=c>0$. Hence each variation of $b$ by $\Delta(b)$ will have an impact $r(b) \cdot \Delta(b)$.
-Now, let us call $sol(a)$ the maximum value for $a$.
-Then the maximum value for $\hat{a}$ is $r(a)\cdot (sol(a)-LB(a))$ according to the triangle approximation when $\ReLU(a)$ is not opened. Now, if $\ReLU(a)$ is opened, then 
-the value of $\hat{a}$ is $\ReLU(sol(a))$: the difference is at most $r(a) \cdot LB(a) = \frac{1}{2}$. Going through $b$, the difference is at most $\frac{c}{2}$, which means a difference at most $\frac{c}{4}$ for $\hat(b)$, considering the upper bound of the triangle approximation, meaning a difference at most $\frac{cd}{4}$, which is what is computed by 
-$s_{FSB}(a)$. Of course, the difference of opening $\ReLU(a)$ could also be 0 e.g. if $\sol(a)=\LB(a)$ or $\sol(a)=\UB(a)$.
-
-The last case is the most problematic: 
-Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$.
-
-
-\begin{figure}[b!]
+\begin{figure}[t!]
 	\centering
 	\begin{tikzpicture}
 		
@@ -99,12 +81,9 @@ Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$.
 		
 		\draw[->,thick] ($(input1) + (-1.5,-1.5)$) -- (input2) node[midway, above] {$[-1,1]$};
 		
-		
-		
-		\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$c$};
+		\draw[->,thick] (input1) -- (hidden1) node[near start, above] {$1$};
 		\draw[->,thick] (input1) -- (hidden2)node[near start, below] {$-10$};
 		
-	
 		\draw[->, thick] (input2) -- (hidden2)node[near start, below] {$0.5$};
 		
 		
@@ -118,7 +97,7 @@ Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$.
 		
 		
 		
-		\draw[->, thick] (hidden3) -- (hidden5) node[near start, above] {$1$};			
+		\draw[->, thick] (hidden3) -- (hidden5) node[near start, above] {{\color{red}$c$}};			
 	
 		\draw[->,thick] (hidden4) -- (hidden5)node[near start, above] {$1$};
 		\draw[->,thick] (hidden4) -- (hidden6)node[near start, below] {$1$};
@@ -127,27 +106,58 @@ Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$.
 		\draw[->,thick] (hidden5) -- (output1);
 		\draw[->,thick] (hidden6) -- (output2);
 		
-		\draw[->,thick] (output1) -- (output3)node[near start, above] {$d$};
+		\draw[->,thick] (output1) -- (output3)node[near start, above] {{\color{red}$d$}};
 		\draw[->,thick] (output2) -- (output3)node[near start, below] {$1$};
 		
 		
 	\end{tikzpicture}
-	\caption{}
+	\caption{A simple example with parametric weights {\color{red}$c$} and {\color{red}$d$}}
 	\label{img:FSB_example}
 \end{figure}
 
 
+
+
+Consider the example in Fig. \ref{img:FSB_example}. It has no bias so $s_{SR}=s_{FSB}$.
+We have $\lambda(b)=d$, $\lambda(a)=\frac{cd}{2}$.
+Let us do a case analysis:
+The most favorable cases are $c < 0 < d$ and $d < 0 < c$: 
+as $cd <0$, we have $s_{FSB}(a)=\max(0,\frac{cd}{4}) = 0$.
+Now, $a$ and $\hat{a}$ need to be minimized in order to maximize $z$, because $cd <0$. 
+For the triangle approximation (see Fig. \ref{triangle}), having a value $sol(a)$ for $a$, the minimal value for $\hat{a}$ is $\ReLU(sol(a))$. If we open $a$, then the value for $\hat{a}$ will also be $\ReLU(sol(a))$. That is, opening this ReLU is not helping in the approximation of $z$, as correctly predicted by the score $s_{FSB}(a)= 0$.
+
+
+
+Case $c>0,d>0$: $s_{FSB}(a)=\frac{cd}{4}$.
+The value of $a,\hat{a},b,\hat{b}$ should be maximized to maximize the value of $z$, because $W_{bz}=d>0$ and $W_{ab}=c>0$. 
+%Each variation of $b$ by $\Delta(b)$ will have an impact $r(b) \cdot \Delta(b)=\frac{\Delta(b)}{2}$ on the value of $\hat{b}$, and thus $\frac{d \Delta(b)}{2}$ on $z$. 
+Now, let us call $sol(a)$ the maximum value for $a$.
+The maximum value for $\hat{a}$ is $r(a)\cdot (sol(a)-LB(a))$ according to the triangle approximation when $\ReLU(a)$ is not opened. Now, if $\ReLU(a)$ is opened, then 
+the value of $\hat{a}$ is $\ReLU(sol(a))$: the difference is at most $r(a) \cdot LB(a) = \frac{1}{2}$. The difference $\Delta(b)$ for the value of $b$ is thus at most $\frac{c}{2}$, which means a difference at most $\frac{c}{4}$ for $\hat{b}$, using the upper function of the triangle approximation of rate $r(b)$, as the value of $\hat{b}$ should be maximized.
+This means a difference of at most $\frac{cd}{4}$ on the value of $z$, which is what is computed by $s_{FSB}(a)$. Of course, the difference of opening $\ReLU(a)$ could also be 0 e.g. if $\sol(a)=\LB(a)$ or $\sol(a)=\UB(a)$.
+
+The last case is the most problematic: 
+Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$, because $cd >0$.
+As for the case of $c>0, d>0$, opening $\ReLU(a)$ will have an impact on the value of $\hat{a}$,
+at most $\frac{1}{2}$, and hence a change $\Delta(b)$ of at most $\frac{c}{4}$ on the value of $b$.
+However, as $d<0$, value of $\hat{b}$ needs to be minimized. That is, the value of $\hat{b}$ will be the value of $\ReLU(sol(b))$.
+That is, the change in $\hat{b}$ will be either 0 in case $sol(b)<0$ (phase 0 of ReLU),
+or $\Delta(b)<\frac{c}{2}$ otherwise (phase Id of ReLU), that is, $z$ will be modified by 
+either 0 or $d \Delta(b)<\frac{cd}{2}$, as compared with $s_{FSB}(a)=\frac{cd}{4}$.
+
+
+
 \begin{figure}[t!]
-	\begin{tikzpicture}[scale=1, >=stealth]
+	\begin{tikzpicture}[scale=0.8, >=stealth]
 		
 		% Draw axes
-		\draw[->] (-5,0) -- (4,0) node[right] {$b$};
-		\draw[->] (0,-1) -- (0,3) node[above] {$\hat{b}$};
+		\draw[->] (-5,0) -- (4,0) node[right] {$a$};
+		\draw[->] (0,-1) -- (0,3) node[above] {$\hat{a}$};
 		
 		% Draw ReLU function
 		\draw[line width=0.4mm, blue] (-3,0) -- (0,0);
-		\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(-1.1,-1.9)}] {$\hat{b} = \ReLU(b)$};
-		\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-6.5,-2)}] {$\hat{b} = \frac{\UB}{\UB-\LB} (b-\LB)$};
+		\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(-1.1,-1.9)}] {$\hat{a} = \ReLU(a)$};
+		\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-6.5,-2)}] {$\hat{a} = \frac{\UB}{\UB-\LB} (a-\LB)$};
 		
 		% Add labels
 		\draw[dashed] (2.5,0) -- (2.5,2.5) -- (0,2.5); % Optional grid
@@ -166,13 +176,16 @@ Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$.
 		
 	\end{tikzpicture}
 		\caption{Triangle approximation}
-	\label{img:FSB}
+	\label{triangle}
 	\end{figure}
+
+
+We call {\em global rankings} (GR) such functions $s_{FSB},s_{SR}$  because they score ReLUs as accuratly as possible, considering that they do not have access to the solution $sol(a),sol(b)$ values. This analysis already hints at our novel ranking function, that will be solution-aware to be more accurate.
 	
 
 
 
-
+\iffalse
 \begin{figure}[t!]
 \begin{tikzpicture}[scale=1, >=stealth]
 	
@@ -206,9 +219,12 @@ Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$.
 	
 \end{tikzpicture}
 	\caption{}
-\label{img:Utility2}
+\label{img:Utility}
 \end{figure}
+\fi
 
+
+\iffalse
 \subsection*{An example when FSB is not accurate}
 
 See the figure \ref{img:FSB_example}. When the algorithm considers neurons in the layer of $a,a'$, FSB will think $a$ is important, but Utility will think it is not important (Utility value is 0).
@@ -231,4 +247,4 @@ Here we use the network named CNN-B-adv and a hard image to compare the effect o
 We fix an intermediate bound data for layers before the target layers, and use different methods based on this bound to compute the output layer.
 
 The plot shows that our Utility function is significantly better than FSB, and other methods.
-
+\fi
