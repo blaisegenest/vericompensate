@@ -139,9 +139,8 @@ This means a difference of at most $\frac{cd}{4}$ on the value of $z$, which is 
 The last case is the most problematic: 
 Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$, because $cd >0$.
 As for the case of $c>0, d>0$, opening $\ReLU(a)$ will have an impact on the value of $\hat{a}$,
-at most $\frac{1}{2}$, and hence a change $\Delta(b)$ of at most $\frac{c}{4}$ on the value of $b$.
-However, as $d<0$, value of $\hat{b}$ needs to be minimized. That is, the value of $\hat{b}$ will be the value of $\ReLU(sol(b))$.
-That is, the change in $\hat{b}$ will be either 0 in case $sol(b)<0$ (phase 0 of ReLU),
+at most $\frac{1}{2}$, and hence a change $\Delta(b)$ of at most $\frac{c}{2}$ on the value of $b$.
+However, as $d<0$, value of $\hat{b}$ needs to be minimized. That is, the value of $\hat{b}$ will be the value of $\ReLU(sol(b))$, and the change in $\hat{b}$ will be either 0 in case $sol(b)<0$ (phase 0 of ReLU),
 or $\Delta(b)<\frac{c}{2}$ otherwise (phase Id of ReLU), that is, $z$ will be modified by 
 either 0 or $d \Delta(b)<\frac{cd}{2}$, as compared with $s_{FSB}(a)=\frac{cd}{4}$.
 
