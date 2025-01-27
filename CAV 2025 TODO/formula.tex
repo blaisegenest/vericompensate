@@ -1,16 +1,12 @@
-\section{Utility function choosing neurons important for accuracy.}
+\section{Solution-Aware Scoring.}
 
 \label{sec4}
 
-In this section, we evaluate how each ReLU would impact the accuracy if encoded as a binary or a linear variable, using Proposition \ref{LP}. A ReLU is said {\em open} when it is represented as a binary variable. For $X$ a set of open ReLUs, we denote by $\mathcal{M}_X$ the MILP model where variables from $X$ are encoded with binary variables, and other variables are using the LP linear relaxation.
-
-{\color{blue} 
-Usually, heuristics to choose $X$ are based on evaluating the {\em sensitivity} of a neuron $z$ wrt the ReLU nodes,
-that is how much a ReLU value impacts the value of $z$, and rank the ReLU nodes accordingly. This is the case of \cite{DivideAndSlide}, but also more generally of heuristics for BaB, such as SR \cite{BaB} and FSB \cite{FSB}. %Our Utility function does not follow this approach. 
-Instead, Utility considers the {\em improvement} from opening a neuron $n$, that is the difference for the value of $z$ between considering $\ReLU(n)$ exactly or using its LP relaxation $\LP(n)$. Indeed, it is not rare that 
-$z$ is sensitive to ReLU node $n$, and yet $\LP(n)$ already provides an accurate approximation of $\ReLU(n)$.
-In this case, usual heuristics would open $n$, while it would only improve the value of $z$ in a limited way.
-}
+In this section, we propose a novel {\em Solution-Aware Scoring} (SAS),
+to evaluate accurately how opening a ReLU impacts the accuracy.
+To do so, SAS considers explicitly the {\em difference} $\Delta(z)$ on the value of target node $z$ from opening $\ReLU(a)$, that is the difference for the value of $z$ between considering $\ReLU(a)$ exactly or using its LP relaxation $\LP(a)$, using the solution to a unique full LP call, which is resonnably fast to obtain. To compute $\Delta(z)$, intermediate $\Delta(b),\Delta(\hat{b})$ are computed inductively.
+%Indeed, it is not rare that $z$ is sensitive to ReLU node $n$, and yet $\LP(n)$ already provides an accurate approximation of $\ReLU(n)$.
+%In this case, usual heuristics would open $n$, while it would only improve the value of $z$ in a limited way.
 
 Assume that we want to compute an upper bound for neuron $z$ on layer $\ell_z$.
 We write $n < z$ if neuron {\color{blue} $n$ is} on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$. We denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ maximizing $z$. In particular, $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
@@ -27,7 +23,7 @@ Similarly, we define ($\Sol\_\min_\emptyset^z(n))_{n \leq z}$ and
 $\Improve\_\min^z(n)$. Calling MILP on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$
 would however be very time consuming when the number of neurons $a$ to evaluate is large.
 {\color{blue} 
-The main novelty of our Utility function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes (Table \ref{tab:example1}).
+The main novelty of our SAS function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes (Table \ref{tab:example1}).
 
 
 \iffalse
@@ -94,7 +90,8 @@ which is $\sol(\hat{b})=\ReLU(\sol(b))$ thanks to Proposition~\ref{LP}.
 Even if $z$ is sensitive to this ReLU $b$, the improvement of $b$ is 0.
 Utility does not open it as $\Utility\_\max^z(b)=0$, whereas usual heuristics would.
 
-For a neuron a $a$ two layers before $\ell_z$, 
+Recall the rate $r(b)=\frac{\max(0,\UB(b))}{\max(0,\UB(b))-\min(0,\LB(b))} \in [0,1]$.
+For a neuron $a$ two layers before $\ell_z$, 
 $b$ denoting neurons in the layer $\ell$ just before $\ell_z$, 
 we define:
 
@@ -103,8 +100,9 @@ we define:
 	\forall b \in \ell, \Delta(b) &= W_{ab}\Delta(\hat{a})\\
 	\forall b \in \ell, \Delta(\hat{b}) &=
 	\begin{cases}
-		\textcolor{red}{\Delta(b)},  & \textcolor{red}{\text{if } W_{bz} > 0 \text{ and } \LB(b)\geq 0}\\
-		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bz} > 0 \text{ and } \LB(b)<0\\
+		%\Delta(b),  & \text{if } W_{bz} > 0 \text{ and } \LB(b)\geq 0\\
+		r(b)\Delta(b),%\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  
+		&\text{if }W_{bz} > 0 \\ % \text{ and } \LB(b)<0\\
 		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)\geq0\\
 		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)<0		 
 	\end{cases}\\
@@ -136,8 +134,17 @@ we define:
 
 %We will show with a more general definition that $0 \leq \Improve\_\max^z(a) \leq \Utility\_\max^z(a)$ in Prop.~\ref{prop2}. 
 
-Informally, $\Delta(\hat{a}), \Delta(b), \Delta(\hat{b})$ approximate the improvement on the accuracy of $\hat{a}, b, \hat{b}$ when computing $\ReLU(a)$ 
-using the exact MILP encoding instead of LP. Using Proposition \ref{LP}, we show:
+%Informally, $\Delta(\hat{a}), \Delta(b), \Delta(\hat{b})$ approximate the improvement on the accuracy of $\hat{a}, b, \hat{b}$ when computing $\ReLU(a)$ using the exact MILP encoding instead of LP. 
+
+Notice that $\Utility$ does not need to consider bias explicitly, unlike $s_{FSB},s_{SR}$,
+as they are already accounted for in the solution considered. 
+There are two main differences with $s_{FSB}$: 
+First, $\Delta(\hat{a})$ is defined exactly, with $\ReLU(\sol(a))-\sol(\hat{a})$,
+whereas the corresponding $\Delta_{FSB}(\hat{a})$ is approximated as $\LB(a) r(a)$, 
+which is only an upper bound of $\ReLU(\sol(a))-\sol(\hat{a})$.
+More importantly, the corresponding $\Delta_{FSB}(\hat{b})$ is always $r(b) \Delta(b)$, whereas SAS adapts to the case when $W_{bz}<0$, correctly considering the 0 phase of $ReLU(b)$ when $\sol(b)\geq 0$, and the ID phase when $\sol(b)<0$.
+Assuming that the solution to maximize $z$ does not change when opening $\ReLU(a)$
+on neurons independant of $a$, then $\Utility$ is exact. This is not the case for $s_{FSB}$ because of the two previously mentionned cases. Further, even when the global solution changes, we can show that $\Utility$ is a safe overapproximation, which does not hold for $s_{FSB},s_{SR}$ (because of the case $sol(b) > 0$):
 }
 
 \begin{proposition}
@@ -146,11 +153,11 @@ using the exact MILP encoding instead of LP. Using Proposition \ref{LP}, we show
 \end{proposition}
 
 
-
 Thus, $\Utility\_\max^z(a)$ can be used to approximate $\Improve\_\max^z(a)$. 
-In particular, for all nodes $a$ with $W_{az}< 0$,
-this node will have the smallest $\Utility\_\max\nolimits^z(a)=0$ (thus will not get picked in the open nodes $X$), and indeed it is not having any impact on  $\Sol\_\max_{\{a\}}^z(z)$. This is one striking difference (but not the only one) with choosing utility based on 
-$|W_{az}|$ \cite{DivideAndSlide}.
+In particular, for all nodes $a$ with $\Utility\_\max\nolimits^z(a)=0$, 
+we are sure that this node is not having any impact on $\Sol\_\max_{\{a\}}^z(z)$. 
+%This is one striking difference (but not the only one) with choosing utility based on 
+%$|W_{az}|$ \cite{DivideAndSlide}.
 
 	
 %	
@@ -240,6 +247,10 @@ $$ \Utility\_\max\nolimits^z(a) = -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})$$
 \fi
 
 We can proceed inductively in the same way to define $\Utility\_\max^z(a)$ for deeper neurons $a$.
+
+While $\Utility$ is a priori a more accurate way to select neurons to open in partial MILP (that will be verified in Table \ref{tab:example}), global scoring functions have two advantages: first, they are faster to compute (a unique backpropagation is sufficient, while SAS needs one full LP call to recover the solution, plus a forward propagation for each node $a$). This is not an issue for selecting nodes for partial MILP, as there is a single selection step. But this would be potentially more problematic for choosing branching nodes. A trade off could be to precompute $s_{FSB}$ and only on the most promising nodes run $\Utility$. 
+The second shortcoming is the other side of the coin to consider improvement local to a solution: in the case of branching, one of the branch imposes to be far from the solution, 
+while global scoring is as (in)accurate for both branches. We will verify that using GS for ordering nodes after the SAS selection is actually more efficient, for this very reason.
 
 \iffalse
 We use the following formula for general cases, i.e. possibly more than 3 layers. We use $a$ to denote the source node, and use $b,c$ to denote that $b$ is in one layer before $c$. 
