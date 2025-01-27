@@ -114,7 +114,7 @@ Taking the DNN example from Fig \ref{fig1}, assume $x_1,x_2 \in [-1,1]$. This im
 The bounds for $n_1, \ldots, n_4$ are exact, meaning for every $\alpha$ within the range, an input $\vy$ can be found such that $\val_{\vy}(n_i)=\alpha$. However, this precision is lost from the next layer (beginning with $n_5, n_6$) due to potential dependencies among preceding neurons. For example, it is impossible for $x_5=\Val_{\vx}(n_5)$ to reach $6$, as it would necessitate both $x_3=2$ and $x_4=2$, which is not possible at the same time as 
 $x_3=2$ implies $x_1=x_2=1$ and $x_4=2$ implies $x_2=-1$ (and $x_1=1$), a contradiction.
 
-{\color{blue} In \cite{DBLP_Ehlers17, deeppoly} and others, the {\em triangular abstraction} was proposed:
+{\color{blue} In \cite{DBLP_Ehlers17,deeppoly} and others, the {\em triangular abstraction} was proposed:
 \begin{align}
 	\ReLU(x) = max (0,x) \leq \hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)} 
 	\label{eq:deeppoly}
