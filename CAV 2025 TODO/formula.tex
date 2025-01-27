@@ -9,7 +9,7 @@ To do so, SAS considers explicitly the {\em difference} $\Delta(z)$ on the value
 %In this case, usual heuristics would open $n$, while it would only improve the value of $z$ in a limited way.
 
 Assume that we want to compute an upper bound for neuron $z$ on layer $\ell_z$.
-We write $n < z$ if neuron {\color{blue} $n$ is} on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$. We denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ maximizing $z$. In particular, $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
+We write $n < z$ if neuron $n$ is on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$. We denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ maximizing $z$. In particular, $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
 
 Consider $(sol(n))_{n \leq z} = (\Sol\_\max_\emptyset^z(n))_{n \leq z}$, a solution maximizing the value for $z$ when all ReLU use the LP relaxation.
 %(this can be obtained very efficiently by {\em one} call to an LP solver).
@@ -23,7 +23,7 @@ Similarly, we define ($\Sol\_\min_\emptyset^z(n))_{n \leq z}$ and
 $\Improve\_\min^z(n)$. Calling MILP on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$
 would however be very time consuming when the number of neurons $a$ to evaluate is large.
 {\color{blue} 
-The main novelty of our SAS function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes (Table \ref{tab:example1}).
+The main novelty of our SAS function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes (Fig. \ref{fig_table3}).
 
 
 \iffalse
@@ -246,11 +246,9 @@ $-\sol(b)$. We then set:
 $$ \Utility\_\max\nolimits^z(a) = -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})$$
 \fi
 
-We can proceed inductively in the same way to define $\Utility\_\max^z(a)$ for deeper neurons $a$.
+We proceed inductively to define $\Utility\_\max^z(a)$ for deeper neurons $a$.
 
-While $\Utility$ is a priori a more accurate way to select neurons to open in partial MILP (that will be verified in Table \ref{tab:example}), global scoring functions have two advantages: first, they are faster to compute (a unique backpropagation is sufficient, while SAS needs one full LP call to recover the solution, plus a forward propagation for each node $a$). This is not an issue for selecting nodes for partial MILP, as there is a single selection step. But this would be potentially more problematic for choosing branching nodes. A trade off could be to precompute $s_{FSB}$ and only on the most promising nodes run $\Utility$. 
-The second shortcoming is the other side of the coin to consider improvement local to a solution: in the case of branching, one of the branch imposes to be far from the solution, 
-while global scoring is as (in)accurate for both branches. We will verify that using GS for ordering nodes after the SAS selection is actually more efficient, for this very reason.
+While $\Utility$ is a priori a more accurate way to select neurons to open in partial MILP (that will be verified in Fig. \ref{fig_table3}), global scoring functions have two advantages: first, they are faster to compute (a unique backpropagation is sufficient, while SAS needs one full LP call to recover the solution, plus a forward propagation for each node $a$). This is not an issue for selecting nodes for partial MILP, as there is a single selection step. This would be potentially problematic for choosing branching nodes in BaB, at each branch. A trade off could be to precompute FSB and only on the most promising nodes run $\Utility$. The second shortcoming is the other side of the coin to consider improvement local to a solution: in the case of branching, one of the branch imposes to be far from the solution and $\Utility$ is not accurate on that branch, while global scoring is as (in)accurate for both branches. We will verify that using GS for ordering nodes after the SAS selection is actually more efficient, for this very reason.
 
 \iffalse
 We use the following formula for general cases, i.e. possibly more than 3 layers. We use $a$ to denote the source node, and use $b,c$ to denote that $b$ is in one layer before $c$. 
