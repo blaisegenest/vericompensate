@@ -18,7 +18,8 @@ We tested over the $\vx=37$th image in the CIFAR dataset.
 To measure the accuracy, we measure the uncertainty of all nodes in the 4th layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
 We then average the uncertainty among all the nodes of the layer.
-Formally, the uncertainty of a node $a$ with bounds $[\LB,\UB]$ is uncert$(a) = \UB - \LB$. The average uncertainty of layer $\ell$ is $\dfrac{\sum_{a\in l} \text{uncert}(a)}{size(\ell)}.$
+Formally, the uncertainty of a node $a$ with bounds $[\LB,\UB]$ is uncert$(a) = \UB(a) - \LB(a)$. The average uncertainty of layer $\ell$ is 
+$$\dfrac{\sum_{a\in l} \text{uncert}(a)}{size(\ell)}.$$
 
 
 
@@ -110,25 +111,31 @@ choice of the $K$ heaviest neurons of SAS, compared with a random choice, with H
 
 Overall, SAS is more accurate than GS, more accurate than Huang, more accurate than random choice of variables. SAS significantly outperforms other solutions, 
 with around 3 times less binary variables for the same accuracy (10 v 30, 6 vs 16).
-Each individual node of the last layer display a similar pattern, and the pattern is similar for different images (not displayed).
+Each individual node of the last layer displays a similar pattern, and the pattern is similar for different images (not displayed).
 
-We also experimented on fixing an ordering on variable in Gurobi, with a fixed selection of nodes by SAS. Indeed, Gurobi relies on a BaB procedure to compute bounds. The standard Gurobi procedure is adaptative in each branch. We compared vs the fix order provided by SAS, as well as the fixed order provided by FSB, for both accuracy and runtime (lower is better).
+We also experimented in Table \ref{table.order} on fixing an ordering on variable in Gurobi, with a fixed selection of nodes by SAS. Indeed, Gurobi relies on a BaB procedure to compute bounds. The standard Gurobi procedure is adaptative in each branch. We compared vs the fix order provided by SAS, as well as the fixed order provided by FSB, for both accuracy and runtime (lower is better).
 
-We obtained the following:
-Gurobi order:
-30nodes : 1, 3.987387317631171, 260.4883162975311, 
-45nodes : 1, 4.015747873604205, 265.53007888793945, 
-60nodes : 1, 4.053423060042739, 262.1407461166382, 
 
-FSB order:
-30nodes : 1, 3.9879578118285317, 246.69000577926636, 
-45nodes : 1, 4.018561938508719, 247.65485453605652
-60nodes : 1, 4.032634363809192, 247.81136560440063,
 
-SAS order:
-30nodes : 1, 3.9933637922653995, 264.4269104003906, 
-45nodes : 1, 4.0307741092892035, 266.20811343193054, 
-60nodes : 1, 4.060220618788057, 262.93414759635925, 
+
+
+\begin{table}[h!]	
+	\centering
+	\begin{tabular}{|c||c c|c c|c c|}
+		\hline
+		  & \multicolumn{2}{c|}{30 open ReLUs} & \multicolumn{2}{c|}{45 open ReLUs} & \multicolumn{2}{c|}{60 open ReLUs} \\ 
+		 order & uncert & time & uncert & time & uncert & time \\
+		\hline \hline
+		Gurobi &   3.987  & 260s  & 4.016 & 266s& 4.053 & 262s\\ 
+		SAS &   3.989  & 264s  & 4.031 & 266s& 4.060 & 263s\\
+		FSB &   3.988  & {\bf 246s}  & 4.018 & {\bf 248s}& 4.033 & {\bf 248s}\\ \hline
+	\end{tabular}
+	\caption{Comparison of different ordering with selection of ReLUs by SAS.}
+	\label{table.order}
+	%\vspace{-0.6cm}
+\end{table}
+
+
 
 Here,  SAS is as efficient as Gurobi, although the ordering is fixed, meaning that the ordering compensates for the non adaptivity. However, the fixed GS ordering (with the SAS selection) is even better, with slightly better accuracy and lower runtime. As explained earlier, this is due to the fact that global ordering is preferable when branching on choices far from the optimal solution.
 
