@@ -180,6 +180,48 @@ either 0 or $d \Delta(b)<\frac{cd}{2}$, as compared with $s_{FSB}(a)=\frac{cd}{4
 	\end{figure}
 
 
+
+\begin{figure}[t!]
+	\begin{tikzpicture}[scale=1, >=stealth]
+		
+		% Draw axes
+		\draw[->] (-5,0) -- (4,0) node[right] {$b$};
+		\draw[->] (0,-1) -- (0,3) node[above] {$\hat{b}$};
+		
+		% Draw ReLU function
+		\draw[line width=0.4mm, blue] (-3,0) -- (0,0);
+		\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(-1.1,-1.9)}] {$\hat{b} = \ReLU(b)$};
+		\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-6.5,-2)}] {$\hat{b} = \frac{\UB}{\UB-\LB} (b-\LB)$};
+		
+		% Add labels
+		\draw[dashed] (2.5,0) -- (2.5,2.5) -- (0,2.5); % Optional grid
+		\node[below left] at (0,0) {$0$};
+		
+		% Add tick marks
+		
+		\foreach \x in {2.5}
+		\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\UB$};
+		\foreach \x in {-3}
+		\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\LB$};
+		
+		\foreach \y in {2.5}
+		\draw[shift={(0,\y)}] (0.1,0) -- (-0.1,0) node[left] {$\UB$};
+		
+		\draw[<->, thick] (0, 0.2) -- (1, 1.2) node[above,shift={(0.5,-0.5)}] {$case\ 2$};
+		\filldraw[black] (0.5, 0.7) circle (1.5pt);
+		
+		\draw[<->, thick] (0, 0.2) -- (-2, 0.2) node[above,shift={(0.5,0)}] {$case\ 3$};
+		\filldraw[black] (-1, 0.2) circle (1.5pt);
+		
+		
+		\draw[<->, thick] (-1, 0.75) -- (1.5, 1.9) node[above,shift={(-1,0)}] {$case\ 1$};
+		\filldraw[black] (0.2, 1.3) circle (1.5pt);
+		
+	\end{tikzpicture}
+	\caption{Different cases of node $b$}
+	\label{node:b}
+\end{figure}
+
 We call {\em global scoring} (GS) such functions $s_{FSB},s_{SR}$  because they score ReLUs as accuratly as possible, considering that they do not have access to the solution $sol(a),sol(b)$ values. This analysis already hints at our novel ranking function, that will be solution-aware to be more accurate.
 	
 
