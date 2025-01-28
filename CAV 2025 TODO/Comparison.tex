@@ -3,7 +3,8 @@
 \label{sec4p5}
 
 First, we adapt from the BaB-SR \cite{BaB} and FSB \cite{FSB} functions (replacing the symbols from the original paper with those used in our paper.), selecting a node to branch on for BaB, {\em  global scoring} (GS) functions to select nodes for pMILP. Intuitively, we extract the scoring $s_{SR}$ and $s_{FSB}$ from both BaB-SR and FSB, as the BaB bounding step is not adapted for pMILP. They both work by backpropagating gradients vectors $\bm{\lambda}$ from the neurons under consideration in layer $n$, back to neurons to be potentially selected. To do so, they consider the rate of $\ReLU(\bm{u}_k)$ to be 
-$r(\bm{u}_k)=\frac{\max(0,\UB(\bm{u}_k))}{\max(0,\UB(\bm{u}_k))-\min(0,\LB(\bm{u}_k))} \in [0,1]$.
+$r(\bm{u}_k)=\frac{\max(0,\UB(\bm{u}_k))}{\max(0,\UB(\bm{u}_k))-\min(0,\LB(\bm{u}_k))} \in [0,1]$, 
+with $r(b)=0$ iff $\UB(b)\leq 0$ and $r(b)=1$ iff $\LB(b)\geq 0$.
 
 \begin{align*}
 \bm{\lambda}_{n-1} = -{(\bm{W}^n)}^T\bm{1}, \hspace*{4ex}  	\bm{\lambda}_{k-1} = {(\bm{W}^k)}^T\big( r(\bm{u}_k) \odot\bm{\lambda}_{k}\big) \hspace*{4ex}  k\in [n-1,2]
