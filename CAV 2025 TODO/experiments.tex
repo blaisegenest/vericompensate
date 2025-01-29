@@ -20,11 +20,11 @@ To measure the accuracy, we measure the uncertainty of all nodes in the 4th laye
 the uncertainty of a node is the range between its computed lower and upper bound. 
 We then average the uncertainty among all the nodes of the layer.
 Formally, the uncertainty of a node $a$ with bounds $[\LB,\UB]$ is uncert$(a) = \UB(a) - \LB(a)$. The average uncertainty of layer $\ell$ is 
-$$\dfrac{\sum_{a\in l} \text{uncert}(a)}{size(\ell)}.$$
+$\dfrac{\sum_{a\in l} \text{uncert}(a)}{size(\ell)}.$
 
 
 
-\begin{figure}[b!]
+\begin{figure}[t!]
 	\centering
 	\vspace*{-0.3cm}
 	\includegraphics[height=7cm]{open.png}.
@@ -122,7 +122,7 @@ The test are done on the same CIFAR image 85  and CNN-B-Adv.
 
 
 
-\begin{table}[t]	
+\begin{table}[b!]	
 	\centering
 	\begin{tabular}{|c||c c|c c|c c|c c|}
 		\hline
@@ -136,7 +136,7 @@ The test are done on the same CIFAR image 85  and CNN-B-Adv.
 	\end{tabular}
 	\caption{Comparison of different orderings with selection of ReLUs by SAS.}
 	\label{table.order}
-	%\vspace{-0.6cm}
+	
 \end{table}
 
 SAS ordering is particularly counter-productive because it is static, and it is accurate only for one branch (the most complicated one), whereas Gurobi can adapt the order to each branch.
@@ -203,7 +203,8 @@ The exact same DNNs and $\epsilon$ are used in Tables \ref{table_beta} and \ref{
 		CIFAR CNN-B-adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & $-$ & \bf 11\% (417s) \\ \hline \hline
 		CIFAR ResNet & 0\% (2s) & 0\% (2s) & 0\% (2s) & $-$ & 0\% (2s) \\ \hline \hline
 	\end{tabular}
-	\caption{Undecided images ($\%$, {\em lower is better}) as computed by $\alpha,\beta$-Crown, Refined $\beta$-Crown and Hybrid MILP on 7 DNNs (average runtime per image). The 6 first DNNs are hard instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify), provided for reference.}
+	\caption{Undecided images ($\%$, {\em lower is better}) as computed by $\alpha,\beta$-Crown, Refined $\beta$-Crown and Hybrid MILP on 7 DNNs (average runtime per image). The 6 first DNNs are hard instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify), provided for reference.
+	\vspace{-1cm}}
 	\label{table_hybrid}
 	\end{table}
 
@@ -216,6 +217,34 @@ On hard instances (the 6 first DNNs tested), compared with $\alpha,\beta$-Crown 
 Compared with $\alpha,\beta$-Crown with a time-out of TO=30s, the accuracy gap is even larger (e.g. $11\%$ for CNN-B-Adv, i.e. half undecided images), although the average runtime is also obviously larger (solving hard istances takes longer than solving easy instances).
 
 Last, compared with {\em Refined} $\beta$-Crown, we can observe three patterns: on the shallowest DNNs (5$\times$100, 5$\times$200), Refined $\beta$-Crown can run full MILP on almost all nodes, reaching almost the same accuracy than  Hybrid MILP, but with longer runtime (up to 2 times on 5$\times$100). As size of DNNs grows (8$\times$100, 8$\times$200), full MILP invoked by Refined $\beta$-Crown can only be run on a fraction of the neurons, and the accuracy is not as good as Hybrid MILP, with $6\%-8\%$ more undecided images (that is double on 8$\times$200), while having longer runtime. Last but not least, Refined $\beta$-Crown cannot scale to larger instances (6$\times$500, CNN-B-Adv), while Hybrid MILP can.
+
+
+
+
+
+\subsection{Comparison with other Verifiers?}
+
+We voluntarily limited the comparison to $\alpha,\beta$-Crown because it is one of the most efficient verifier to date, which allowed us to consider a spectrum of parameters to understand $\alpha,\beta$-Crown scaling without too much clutter.
+
+Interestingly, GCP-CROWN \cite{cutting} is slightly more accurate than $\alpha,\beta$-Crown on the DNNs we tested, but necessitates IBM CPLEX solver, which is not available to us.
+We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cutting}, experimenting with different verifiers on the most interesting CIFAR CNN-B-Adv. Notice that results are not exactly comparable with ours because the testing images are not the same (ours has $62\%$ upper bound while \cite{cutting} has $65\%$ upper bound, so the image set in \cite{cutting} are slightly easier). There, GCP-CROWN is $2\%$ more accurate (with higher runtime) than $\alpha,\beta$-Crown with 90s TO, so we can deduce that Hybrid MILP, which is $9\%$ more accurate than $\alpha,\beta$-Crown with 2000s TO, is significantly more accurate than GCP-CROWN.
+
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{||c||c|c|c|c|c||}
+		\hline
+		Upper Bound & SDP-FO & PRIMA & refined $\beta$-Crown & $\beta$-Crown & GCP-Crown \\  \hline
+		65\% & 32.8\% & 38\% & 27\% & 46.5\% & 48.5\% \\
+		$\epsilon = 2/255$ & $>25$h & $344$s & $361$s & $32$s &  $58$s  \\  \hline
+	\end{tabular}
+	\caption{Images verified by different verifiers on CIFAR CNN-B-adv from \cite{cutting}.
+	Results are not directly comparable with Tables \ref{table_beta},\ref{table_hybrid}.}
+	\label{table_gcp}
+	\vspace{-0.3cm}
+\end{table}
+
+
+Results on other networks from other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported \cite{crown} on other tested DNNs, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on complex (even small) instances. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em complex} MNIST DNNs at several time-out settings. Last, Pyrat \cite{pyrat} (2sd in the latest VNNComp) is not open source, which made running it impossible. Details can be found in the appendix. Also, ablation studies showing what each feature of Hybrid MILP is bringing can be found in the appendix.
 
 
 \subsection{Finer Grain evaluation of Accuracy}
@@ -231,27 +260,12 @@ We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown 
 \begin{figure}[t!]
 	\begin{centering}
 \includegraphics[scale=0.6]{epsilon.png}.
-\caption{$\epsilon$-robustness proved after $10 000s$ for $6 \times 500$ on each of the 20 first images of MNIST.}
+\caption{$\epsilon$-robustness proved after $10 000s$ for $6 \times 500$ for the 20 first images.}
 \label{fig2}
 	\end{centering}
 \end{figure}
 
-{\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10 and 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so it is possible that the falsifier missed a closer attack to robustness.
-
-Compared with $\alpha,\beta$-CROWN, Hybrid MILP is much closer to the upper bound, except for 2 cases (images 8 and 18) where $\alpha,\beta$-CROWN is already very close to the upper bound. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, 3 times smaller than the $0.042$ gap for $\alpha,\beta$-CROWN.
-
-
-
-\subsection{Comparison with other Verifiers?}
-
-We voluntarily limited the comparison to $\alpha,\beta$-Crown because it is one of the most efficient verifier to date, which allowed us to consider a spectrum of parameters to understand $\alpha,\beta$-Crown scaling without too much clutter.
-
-Interestingly, GCP-CROWN \cite{cutting} is slightly more accurate than $\alpha,\beta$-Crown on the DNNs we tested, but necessitates IBM CPLEX solver, which is not available to us.
-We report result from \cite{cutting} pertinent to the DNNs we tested, and copy the comparison with $\alpha,\beta$-Crown. While results are similar to ours, they do not use exactly the same number of input images than in our test, and thus it is not directly comparable. 
-On CNN-B-Adv, GCP-CROWN is $2\%$ more accurate (with higher runtime) than 
-$\alpha,\beta$-Crown with 90s TO, so it is safe to consider that Hybrid MILP, which is $9\%$ more accurate than $\alpha,\beta$-Crown with 2000s TO,  is significantly more accurate than GCP-CROWN on this quite large DNN.
-
-Notice that results for other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported on these DNNs \cite{crown}, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on hard instances either, even on the smallest hard DNN. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em hard} MNIST DNNs at several time-out settings. Last, Pyrat \cite{pyrat} (2sd in the latest VNNComp) is not open source, which made running it impossible. Details can be found in the appendix. Also, ablation studies showing what each feature of Hybrid MILP is bringing can be found in the appendix.
+{\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10 and 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so it is possible that the falsifier missed a closer attack to robustness. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, 3 times smaller than the $0.042$ gap for $\alpha,\beta$-CROWN.
 
 
 \iffalse

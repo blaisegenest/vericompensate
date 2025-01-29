@@ -22,7 +22,6 @@ $\mathcal{M}_\emptyset$, so $\Sol\_\max_{\{n\}}^z(z) \leq \sol(z)$.
 Similarly, we define ($\Sol\_\min_\emptyset^z(n))_{n \leq z}$ and 
 $\Improve\_\min^z(n)$. Calling MILP on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$
 would however be very time consuming when the number of neurons $a$ to evaluate is large.
-{\color{blue} 
 The main novelty of our SAS function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes (Fig. \ref{fig_table3}).
 
 
@@ -145,7 +144,7 @@ which is only an upper bound of $\ReLU(\sol(a))-\sol(\hat{a})$.
 More importantly, the corresponding $\Delta_{FSB}(\hat{b})$ is always $r(b) \Delta(b)$, whereas SAS adapts to the case when $W_{bz}<0$, correctly considering the 0 phase of $ReLU(b)$ when $\sol(b)\geq 0$, and the ID phase when $\sol(b)<0$.
 Assuming that the solution to maximize $z$ does not change when opening $\ReLU(a)$
 on neurons independant of $a$, then $\Utility$ is exact. This is not the case for $s_{FSB}$ because of the two previously mentionned cases. Further, even when the global solution changes, we can show that $\Utility$ is a safe overapproximation, which does not hold for $s_{FSB},s_{SR}$ (because of the case $sol(b) > 0$):
-}
+
 
 \begin{proposition}
 	\label{prop2}
