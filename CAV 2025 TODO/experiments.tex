@@ -1,5 +1,16 @@
 \section{Experimental Evaluation}
 
+\begin{figure}[b!]
+	\centering
+	\vspace*{-0.3cm}
+	\includegraphics[height=7cm]{open.png}.
+	\vspace*{-0.4cm}
+	\caption{Average uncertainty of pMILP for neurons of the fourth layer of CNN-B-Adv, 
+	when opening between 0 and 30 ReLUs, chosen randomly vs Huang \cite{DivideAndSlide} vs 
+	$s_{FSB}$ vs $\Utility$ (with time-out=900s).}
+	\label{fig_table3}
+\end{figure}
+
 %
 We implemented \toolname\ in Python 3.8: it first calls $\alpha,\beta$-Crown with small time out (10s for small and 30s for larger DNNs), and then call pMILP on the undecided inputs.
 Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD Threadripper 7970X  ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. The  objectives of our evaluation was to answer the following  questions:
@@ -23,17 +34,6 @@ Formally, the uncertainty of a node $a$ with bounds $[\LB,\UB]$ is uncert$(a) = 
 $\dfrac{\sum_{a\in l} \text{uncert}(a)}{size(\ell)}.$
 
 
-
-\begin{figure}[t!]
-	\centering
-	\vspace*{-0.3cm}
-	\includegraphics[height=7cm]{open.png}.
-	\vspace*{-0.4cm}
-	\caption{Average uncertainty of pMILP for neurons of the fourth layer of CNN-B-Adv, 
-	when opening between 0 and 30 ReLUs, chosen randomly vs Huang \cite{DivideAndSlide} vs 
-	$s_{FSB}$ vs $\Utility$ (with time-out=900s).}
-	\label{fig_table3}
-\end{figure}
 
 
 
@@ -115,24 +115,24 @@ with around 3 times less binary variables for the same accuracy (10 v 30, 6 vs 1
 Each individual node of the last layer displays a similar pattern, and the pattern is similar for different images (not displayed).
 
 
-Gurobi relies on a BaB procedure to compute bounds. The standard Gurobi ordering of variables is adaptative in each branch. We report in Table \ref{table.order} experiments on changing the ordering on variables in Gurobi, when the selection of ReLUs is fixed by SAS. We compared it with the static order provided by SAS, as well as the static order provided by GS, for runtime at a fixed accuracy (MIPGAP=0.01, so $1\%$ of difference in uncertainty is possible).
-The test are done on the same CIFAR image 85  and CNN-B-Adv. 
+Gurobi relies on a BaB procedure to compute bounds. The standard Gurobi ordering of variables is adaptative in each branch. We report in Table \ref{table.order} experiments on changing the ordering on variables in Gurobi, when the selection of ReLUs is fixed by SAS. We compared it with the static order provided by SAS, as well as the static order provided by GS, for runtime at a fixed accuracy, where we report the distance to verify the image.
+The test are done on the same CIFAR image 85  and CNN-B-Adv.
 
 
 
 
 
-\begin{table}[b!]	
+\begin{table}[t!]	
 	\centering
 	\begin{tabular}{|c||c c|c c|c c|c c|}
 		\hline
 		  & \multicolumn{2}{c|}{45 open ReLUs} & \multicolumn{2}{c|}{50 open ReLUs} 
 		  & \multicolumn{2}{c|}{55 open ReLUs} & \multicolumn{2}{c|}{60 open ReLUs}\\ 
-		 order & uncert & time & uncert & time & uncert & time & uncert & time \\
+		 order & distance & time & distance & time & distance & time & distance & time \\
 		\hline \hline
-		Gurobi &  & 252s & &  & & &   & 306s  \\ 
-		SAS (static) &  & 448s & &  & & &   & 971s \\
-		GS (static) & & {\bf 251s} & &  &  & &  & {\bf 281s} \\ \hline
+		Gurobi & 0.384 & 252s & &  & & & 0.315  & 306s  \\ 
+		SAS (static) & 0.384 & 448s & &  & & & 0.355  & 971s \\
+		GS (static) & 0.384 & {\bf 251s} & &  &  & & 0.315 & {\bf 281s} \\ \hline
 	\end{tabular}
 	\caption{Comparison of different orderings with selection of ReLUs by SAS.}
 	\label{table.order}
@@ -229,7 +229,7 @@ We voluntarily limited the comparison to $\alpha,\beta$-Crown because it is one 
 Interestingly, GCP-CROWN \cite{cutting} is slightly more accurate than $\alpha,\beta$-Crown on the DNNs we tested, but necessitates IBM CPLEX solver, which is not available to us.
 We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cutting}, experimenting with different verifiers on the most interesting CIFAR CNN-B-Adv. Notice that results are not exactly comparable with ours because the testing images are not the same (ours has $62\%$ upper bound while \cite{cutting} has $65\%$ upper bound, so the image set in \cite{cutting} are slightly easier). There, GCP-CROWN is $2\%$ more accurate (with higher runtime) than $\alpha,\beta$-Crown with 90s TO, so we can deduce that Hybrid MILP, which is $9\%$ more accurate than $\alpha,\beta$-Crown with 2000s TO, is significantly more accurate than GCP-CROWN.
 
-\begin{table}[b!]
+\begin{table}[t!]
 	\centering
 	\begin{tabular}{||c||c|c|c|c|c||}
 		\hline
@@ -249,6 +249,14 @@ Results on other networks from other verifiers (PRIMA \cite{prima}, SDP-FO \cite
 
 \subsection{Finer Grain evaluation of Accuracy}
 
+\begin{figure}[b!]
+	\begin{centering}
+\includegraphics[scale=0.6]{epsilon.png}.
+\caption{$\epsilon$-robustness proved after $10 000s$ for $6 \times 500$ for the 20 first images.}
+\label{fig2}
+	\end{centering}
+\end{figure}
+
 In order to evaluate the accuracy of Hybrid MILP in a finer way, showcasing 
 the capabilities to have a very accurate and efficient verifier, we consider
 a quantitative questions for each image, rather than a pure yes (verified)/ no (not verified) question. Namely, we compute the $\epsilon$ for which the verifier can certify local-robustness around a given image, which makes sense as there is little rationale in setting a particular $\epsilon$ (which is however the usual local-robustness setting).
@@ -257,15 +265,9 @@ For that, we considered the challenging DNN MNIST $6 \times 500$, and the 20 fir
 Then we run binary search with a global time-out of $10 000s$, initialized from $0$ to this upper bound, where each call is either to $\alpha,\beta$-Crown with TO=2000s, or Hybrid MILP.
 We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown and by Hybrid MILP) for each image. We report the results in Fig. \ref{fig2}.
 
-\begin{figure}[t!]
-	\begin{centering}
-\includegraphics[scale=0.6]{epsilon.png}.
-\caption{$\epsilon$-robustness proved after $10 000s$ for $6 \times 500$ for the 20 first images.}
-\label{fig2}
-	\end{centering}
-\end{figure}
 
-{\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10 and 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so it is possible that the falsifier missed a closer attack to robustness. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, 3 times smaller than the $0.042$ gap for $\alpha,\beta$-CROWN.
+
+{\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10, 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so the falsifier may have missed a closer attack to robustness. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, 3 times smaller than the $0.042$ gap for $\alpha,\beta$-CROWN.
 
 
 \iffalse

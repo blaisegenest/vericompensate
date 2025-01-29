@@ -108,20 +108,19 @@ Firstly, it's important to note that weighted sums represent a linear function, 
 
 
 
-Consider the simpler abstraction, termed ``Box abstraction", {\color{blue} recalled e.g. in \cite{deeppoly}}: it inductively computes the bounds for each neuron in the subsequent layer independently. This is achieved by considering the weighted sum of the bounds from the previous layer, followed by clipping the lower bound at $\max(0,$ lower bound$)$ to represent the ReLU function, and so forth. 
+Consider the simpler abstraction, termed ``Box abstraction", recalled e.g. in \cite{deeppoly}: it inductively computes the bounds for each neuron in the subsequent layer independently. This is achieved by considering the weighted sum of the bounds from the previous layer, followed by clipping the lower bound at $\max(0,$ lower bound$)$ to represent the ReLU function, and so forth. 
 For all $i \geq 3$, define $x_i=\val_{\vx}(n_i)$, where $\vx=(x_1,x_2)$.
 Taking the DNN example from Fig \ref{fig1}, assume $x_1,x_2 \in [-1,1]$. This implies that $x_3,x_4 \in [-2,2]$. After applying the ReLU function, $\hat{x}_3,\hat{x}_4$ are constrained to $[0,2]$, leading to $x_5 \in [0,6]$ and $x_6 \in [0,2]$. 
 The bounds for $n_1, \ldots, n_4$ are exact, meaning for every $\alpha$ within the range, an input $\vy$ can be found such that $\val_{\vy}(n_i)=\alpha$. However, this precision is lost from the next layer (beginning with $n_5, n_6$) due to potential dependencies among preceding neurons. For example, it is impossible for $x_5=\Val_{\vx}(n_5)$ to reach $6$, as it would necessitate both $x_3=2$ and $x_4=2$, which is not possible at the same time as 
 $x_3=2$ implies $x_1=x_2=1$ and $x_4=2$ implies $x_2=-1$ (and $x_1=1$), a contradiction.
 
-{\color{blue} In \cite{DBLP_Ehlers17,deeppoly} and others, the {\em triangular abstraction} was proposed:
+In \cite{DBLP_Ehlers17,deeppoly} and others, the {\em triangular abstraction} was proposed:
 \begin{align}
 	\ReLU(x) = \max (0,x) \leq \hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)} 
 	\label{eq:deeppoly}
 \end{align} 
 It has two lower bounds (the 0 and identity functions), and one upper bound. 
 DeepPoly \cite{deeppoly} chooses one of the two lower bounds for each neuron $x$, giving rise to a greedy quadratic-time algorithm to compute very fast an abstraction of the value of $\hat{x}$ (but not that accurately).
-}
 
 
 

@@ -7,9 +7,8 @@ to evaluate accurately how opening a ReLU impacts the accuracy.
 To do so, SAS considers explicitly the {\em difference} $\Delta(z)$ on the value of target node $z$ from opening $\ReLU(a)$, that is the difference for the value of $z$ between considering $\ReLU(a)$ exactly or using its LP relaxation $\LP(a)$, using the solution to a unique full LP call, which is resonnably fast to obtain. To compute $\Delta(z)$, intermediate $\Delta(b),\Delta(\hat{b})$ are computed inductively.
 %Indeed, it is not rare that $z$ is sensitive to ReLU node $n$, and yet $\LP(n)$ already provides an accurate approximation of $\ReLU(n)$.
 %In this case, usual heuristics would open $n$, while it would only improve the value of $z$ in a limited way.
-
 Assume that we want to compute an upper bound for neuron $z$ on layer $\ell_z$.
-We write $n < z$ if neuron $n$ is on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$. We denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ maximizing $z$. In particular, $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
+We write $n < z$ if neuron $n$ is on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$. We denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ maximizing $z$: $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
 
 Consider $(sol(n))_{n \leq z} = (\Sol\_\max_\emptyset^z(n))_{n \leq z}$, a solution maximizing the value for $z$ when all ReLU use the LP relaxation.
 %(this can be obtained very efficiently by {\em one} call to an LP solver).
@@ -20,9 +19,10 @@ compared with using only LP.
 We have $\Improve\_\max^z(n)\geq 0$ as $\Sol\_\max_{\{n\}}^z$ fulfills all the constraints of 
 $\mathcal{M}_\emptyset$, so $\Sol\_\max_{\{n\}}^z(z) \leq \sol(z)$.
 Similarly, we define ($\Sol\_\min_\emptyset^z(n))_{n \leq z}$ and 
-$\Improve\_\min^z(n)$. Calling MILP on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$
+$\Improve\_\min^z(n)$. 
+Calling MILP on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$
 would however be very time consuming when the number of neurons $a$ to evaluate is large.
-The main novelty of our SAS function is that it uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes (Fig. \ref{fig_table3}).
+Instead, the SAS function uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes (Fig. \ref{fig_table3}).
 
 
 \iffalse
@@ -93,20 +93,81 @@ Recall the rate $r(b)=\frac{\max(0,\UB(b))}{\max(0,\UB(b))-\min(0,\LB(b))} \in [
 For a neuron $a$ two layers before $\ell_z$, 
 $b$ denoting neurons in the layer $\ell$ just before $\ell_z$, 
 we define:
+\vspace{-0.4cm}
 
-\begin{align*}
-	\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})\\
-	\forall b \in \ell, \Delta(b) &= W_{ab}\Delta(\hat{a})\\
-	\forall b \in \ell, \Delta(\hat{b}) &=
-	\begin{cases}
-		%\Delta(b),  & \text{if } W_{bz} > 0 \text{ and } \LB(b)\geq 0\\
-		r(b)\Delta(b),%\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  
-		&\text{if }W_{bz} > 0 \\ % \text{ and } \LB(b)<0\\
-		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)\geq0\\
-		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)<0		 
-	\end{cases}\\
-	\Utility\_\max\nolimits^z(a) &= -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})
-\end{align*}
+\begin{flalign*}
+	\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})&&\\
+	\forall b \in \ell, \Delta(b) &= W_{ab}\Delta(\hat{a})&&\\	
+\end{flalign*}
+
+\vspace{-1.2cm}
+
+\begin{subnumcases}{\forall b \in \ell, \Delta(\hat{b}) =}
+		r(b)\Delta(b), & for $W_{bz} > 0$ \\
+		\max(\Delta(b),-\sol(b)), & for $W_{bz} < 0$ and $\sol(b)\geq0$\\
+		\max(0,\Delta(b)+\sol(b)), & for $W_{bz} < 0$ and $\sol(b)<0$ \quad \, \quad \, \quad		 
+\end{subnumcases}
+\vspace{-0.4cm}
+\begin{flalign*}
+	\Utility\_\max\nolimits^z(a) &= -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})&&
+\end{flalign*}
+
+
+\begin{figure}[b!]
+	\begin{centering}
+	\begin{tikzpicture}[scale=1, >=stealth]
+		
+		% Draw axes
+		\draw[->] (-5,0) -- (4,0) node[right] {$b$};
+		\draw[->] (0,-1) -- (0,3) node[above] {$\hat{b}$};
+		
+		% Draw ReLU function
+		\draw[line width=0.4mm, blue] (-3,0) -- (0,0);
+		\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(0.35,-0.55)}] {$\hat{b} = \ReLU(b)$};
+		\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-5.7,-2)}] {$\hat{b} = r(b) (b-\LB)$};
+		
+		% Add labels
+		\draw[dashed] (2.5,0) -- (2.5,2.5) -- (0,2.5); % Optional grid
+		\node[below left] at (0,0) {};
+		
+		% Add tick marks
+		
+		\foreach \x in {2.5}
+		\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\UB$};
+		\foreach \x in {-3}
+		\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\LB$};
+		
+		\foreach \y in {2.5}
+		\draw[shift={(0,\y)}] (0.1,0) -- (-0.1,0) node[left] {$\UB$};
+		
+		\draw[<->, thick] (0.1, 0.1) -- (0.9, 0.9) node[above,shift={(0.65,-0.45)}] {$case$ (b)}
+		node[below,shift={(-0.1,-1.10)}] {$sol(b)\Delta(b)$}
+		node[above,shift={(-1.35,-0.55)}] {$\Delta(\hat{b})$};
+		\filldraw[black] (0.5, 0.5) circle (1.5pt);
+		\filldraw[black] (0.5, 0) circle (1.5pt);
+		\draw[<->, thick] (0.1, 0) -- (0.9, 0);
+		\draw[dashed] (0.5,0) -- (0.5,1.6); % Optional grid
+		
+		
+		\draw[<->, thick] (-0.5, 0) -- (-1.5, 0) node[above,shift={(0.6,0)}] {$case$ (c)}
+		node[below,shift={(0.6,-0.15)}] {$sol(b)\Delta(b)$};
+		\filldraw[black] (-1, 0) circle (1.5pt);
+		
+		
+		\draw[<->, thick] (0.1, 1.375) -- (0.9, 1.75) node[above,shift={(-0.3,0)}] {$case$ (a)}
+		node[above,shift={(-1.4,-0.45)}] {$\Delta(\hat{b})$};
+		\filldraw[black] (0.5, 1.6) circle (1.5pt);
+		
+		\draw[<->, thick] (0, 0.1) -- (0, 0.9);
+		
+		\draw[<->, thick] (0, 1.375) -- (0, 1.75);
+
+	\end{tikzpicture}
+	\caption{Different cases for $\ReLU(b)$
+	 \vspace{-0.3cm}}
+	\label{node:b}
+\end{centering}
+\end{figure}
 
 %\begin{tikzpicture}[scale=1, >=stealth]
 %	
@@ -140,10 +201,11 @@ as they are already accounted for in the solution considered.
 There are two main differences with $s_{FSB}$: 
 First, $\Delta(\hat{a})$ is defined exactly, with $\ReLU(\sol(a))-\sol(\hat{a})$,
 whereas the corresponding $\Delta_{FSB}(\hat{a})$ is approximated as $\LB(a) r(a)$, 
-which is only an upper bound of $\ReLU(\sol(a))-\sol(\hat{a})$.
-More importantly, the corresponding $\Delta_{FSB}(\hat{b})$ is always $r(b) \Delta(b)$, whereas SAS adapts to the case when $W_{bz}<0$, correctly considering the 0 phase of $ReLU(b)$ when $\sol(b)\geq 0$, and the ID phase when $\sol(b)<0$.
+which is only an upper bound. %of $\ReLU(\sol(a))-\sol(\hat{a})$.
+More importantly, the corresponding $\Delta_{FSB}(\hat{b})$ is always $r(b) \Delta(b)$, whereas SAS adapts to the 3 cases (see Fig. \ref{node:b}), correctly considering the 0 phase of $ReLU(b)$ when $\sol(b)\geq 0$, and the ID phase when $\sol(b)<0$.
 Assuming that the solution to maximize $z$ does not change when opening $\ReLU(a)$
-on neurons independant of $a$, then $\Utility$ is exact. This is not the case for $s_{FSB}$ because of the two previously mentionned cases. Further, even when the global solution changes, we can show that $\Utility$ is a safe overapproximation, which does not hold for $s_{FSB},s_{SR}$ (because of the case $sol(b) > 0$):
+on neurons independent of $a$, then $\Utility$ is exact. This is not the case for $s_{FSB}$ because of the two previously mentioned cases. Further, even when the global solution changes, we can show that $\Utility$ is a safe overapproximation, which does not hold for $s_{FSB},s_{SR}$ (because of the case $sol(b) > 0$):
+
 
 
 \begin{proposition}
@@ -192,6 +254,9 @@ we are sure that this node is not having any impact on $\Sol\_\max_{\{a\}}^z(z)$
 	$\sol(z)-\sol'(z) \geq \sol(z) -$ $\Sol\_\max_{\{a\}}^z(z)$, i.e. 
 	$ \Utility\_\max^z(a) \geq \Improve\_\max^z(a)$.
 	In particular, we have that $\Utility\_\max^z(a) \geq 0$, which was not obvious from the definition.
+
+
+	
 
 	Finally, we show (\ref{eq12}). First, opening $a$ changes the value of $\hat{a}$ from
 	$\sol(\hat{a})$ to $\ReLU(\sol(a)) = sol(\hat{a}) + \Delta(a)$, 
