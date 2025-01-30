@@ -262,15 +262,18 @@ we are sure that this node is not having any impact on $\Sol\_\max_{\{a\}}^z(z)$
 	$\sol(\hat{a})$ to $\ReLU(\sol(a)) = sol(\hat{a}) + \Delta(a)$, 
 	and from $sol(b)$ to $sol(b) + \Delta(b)$.
 	The case of $\Delta(\hat{b})$ is the most interesting:
-	If $W_{bz}>0$, then according to Proposition \ref{LP}, the LP solver
-sets $\sol(\hat{b}) = \sol(b) \frac{\UB(b)}{\UB(b)-\LB(b)} +$ Cst to maximize $z$.
+	If (a) $W_{bz}>0$, to maximize $z$, the LP solver sets $\sol(\hat{b})$ to the maximal possible value, which is 
+	$r(b) \sol(b)+$ Cst according to Proposition \ref{LP}.
 Changing $b$ by $\Delta(b)$ thus results in changing $\sol(\hat{b})$ by 
-$\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b)$.
+$r(b) \Delta(b)$.
 If $W_{bz}\leq0$, then the LP solver sets $\sol(\hat{b})$ to the lowest possible value to maximize $z$, which happens to be $\ReLU(b)$ according to Proposition \ref{LP}.
-If $\sol(b) < 0$, then we have $\sol(\hat{b})=\ReLU(b)=0$ and opening $a$ change the 0 value only if $\sol(b)+\Delta(b)>0$. If $\sol(b) > 0$, then 
+If (b) $\sol(b) > 0$, then 
 $\sol(\hat{b})=\ReLU(\sol(b))=\sol(b)$, and the change to $\hat{b}$ will be 
 the full $\Delta(b)$, unless $\Delta(b) < -\sol(b) < 0$ in which case it is 
 $-\sol(b)$.
+If (c) $\sol(b) < 0$, then we have $\sol(\hat{b})=\ReLU(b)=0$ and opening $a$ moves away 
+from 0 only if $\sol(b)+\Delta(b)>0$. 
+ \qed
 		\end{proof}
 
 

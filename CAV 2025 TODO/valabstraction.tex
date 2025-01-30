@@ -168,6 +168,7 @@ The lower bound on $\hat{x}$ is simple, as $\hat{x} \geq 0 \wedge \hat{x} \geq x
 We now show that the three constraints 
 $\hat{x} \leq \UB(n) \cdot a \, \wedge \, \hat{x} \leq x-\LB(n) \cdot (1-a) \, \wedge \, a \in [0,1]$ translates into $\hat{x} \leq \UB(n) \frac{x-\LB(n)}{\UB(n)-\LB(n)}$. 
 We have $\hat{x}$ is upper bounded by $max_{a \in [0,1]} (min(\UB(n) \cdot a, x - \LB(n) (1-a)))$, and this bound can be reached. Furthermore, using standard function analysis tools (derivative...), we can show that the function $a \mapsto \min(\UB(n) \cdot a, x - \LB(n) (1-a))$ attains its maximum when $\UB(n) \cdot a = x - \LB(n) (1-a)$, leading to the equation $(\UB(n) - \LB(n)) a = x - \LB(n)$ and consequently $a = \frac{x - \LB(n)}{\UB(n)-\LB(n)}$. This results in an upper bound $\hat{x} \leq \UB(n) \frac{x - \LB(n)}{\UB(n)-\LB(n)}$, which can be reached, hence the equivalence.
+\qed
 \end{proof}
 
 

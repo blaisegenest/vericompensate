@@ -6,14 +6,14 @@
 	\includegraphics[height=7cm]{open.png}.
 	\vspace*{-0.4cm}
 	\caption{Average uncertainty of pMILP for neurons of the fourth layer of CNN-B-Adv, 
-	when opening between 0 and 30 ReLUs, chosen randomly vs Huang \cite{DivideAndSlide} vs 
-	$s_{FSB}$ vs $\Utility$ (with time-out=900s).}
+	when selecting between 0 and 30 ReLUs with different scoring functions.}
 	\label{fig_table3}
 \end{figure}
 
 %
 We implemented \toolname\ in Python 3.8: it first calls $\alpha,\beta$-Crown with small time out (10s for small and 30s for larger DNNs), and then call pMILP on the undecided inputs.
 Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD Threadripper 7970X  ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. The  objectives of our evaluation was to answer the following  questions:
+\vspace{-0.1cm}
 
 \begin{enumerate}
 	\item How does the the choice of the set $X$ impacts the accuracy of $\MILP_X$? 
@@ -24,7 +24,9 @@ Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluati
 \subsection{Comparison between different scoring functions.}
 
 %The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes,  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
-To measure the impact of the scoring function to select neurons to open, 
+First, we measured the distance between SAS or GS and real improvement for all nodes in the first two layers of $5 \times 100$ wrt the accuracy of nodes in the third layer. On average, the distance using GS is 4 times larger than using SAS.
+
+Then, to measure the impact of the scoring function to select neurons to open, 
 we considered the largest complex CNN-B-Adv, with 20 000 nodes. 
 We tested over the $\vx=37$th image in the CIFAR dataset.
 To measure the accuracy, we measure the uncertainty of all nodes in the 4th layer:
@@ -116,7 +118,7 @@ Each individual node of the last layer displays a similar pattern, and the patte
 
 
 Gurobi relies on a BaB procedure to compute bounds. The standard Gurobi ordering of variables is adaptative in each branch. We report in Table \ref{table.order} experiments on changing the ordering on variables in Gurobi, when the selection of ReLUs is fixed by SAS. We compared it with the static order provided by SAS, as well as the static order provided by GS, for runtime at a fixed accuracy, where we report the distance to verify the image.
-The test are done on the same CIFAR image 85  and CNN-B-Adv.
+The test are done on CIFAR image 85 and CNN-B-Adv.
 
 
 
@@ -134,13 +136,13 @@ The test are done on the same CIFAR image 85  and CNN-B-Adv.
 		SAS (static) & 0.384 & 448s & &  & & & 0.355  & 971s \\
 		GS (static) & 0.384 & {\bf 251s} & &  &  & & 0.315 & {\bf 281s} \\ \hline
 	\end{tabular}
-	\caption{Comparison of different orderings with selection of ReLUs by SAS.}
+	\caption{Comparison of different orderings with selection of ReLUs by SAS.
+	\vspace{-0.4cm}}
 	\label{table.order}
-	
 \end{table}
 
-SAS ordering is particularly counter-productive because it is static, and it is accurate only for one branch (the most complicated one), whereas Gurobi can adapt the order to each branch.
-However, the GS ordering (with the SAS selection) is better as it is general and not local to a solution, with better runtime than Gurobi, although it is static whereas Gurobi order is adaptative. Using SAS order for the solution branch, and GS ordering for other branches should be more efficient, but we cannot experiment that within the closed source Gurobi solver.
+SAS ordering is particularly counter-productive because it is accurate only for one branch (the most complicated one), whereas Gurobi can adapt the order to each branch.
+However, the GS ordering (with the SAS selection) is better as it is general and not local to a solution, with better runtime than Gurobi, despite its staticness whereas Gurobi order is adaptative. Using SAS order for the solution branch, and GS ordering for other branches should be more efficient, but we cannot experiment that within the closed-source Gurobi solver.
 
 \iffalse
 Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
@@ -183,7 +185,7 @@ which can be downloaded from the \href{https://github.com/Verified-Intelligence/
 We commit to the same $\epsilon$ settings as in \cite{crown}, that are recalled in Table \ref{table_beta}. 
 For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. 
 We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark. 
-The exact same DNNs and $\epsilon$ are used in Tables \ref{table_beta} and \ref{table_hybrid}.
+The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta} and \ref{table_hybrid}.
 
 
 \begin{table}[t!]
