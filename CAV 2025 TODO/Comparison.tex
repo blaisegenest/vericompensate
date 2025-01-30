@@ -75,7 +75,7 @@ Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer 
 		
 		
 		
-		\draw[->, thick] (hidden1) -- (hidden3) node[midway, above] {ReLU?};
+		\draw[->, thick] (hidden1) -- (hidden3) node[midway, above] {open ReLU?};
 		%\draw[->, thick] (hidden2) -- (hidden4);
 		
 		
@@ -186,7 +186,7 @@ either 0 or $d \Delta(b)<\frac{cd}{2}$, as compared with $s_{FSB}(a)=\frac{cd}{4
 
 
 
-We call {\em global scoring} (GS) such functions $s_{FSB},s_{SR}$  because they score ReLUs as accuratly as possible, considering that they do not have access to the solution $sol(a),sol(b)$ values. This analysis already hints at our novel ranking function, that will be solution-aware to be more accurate.
+We call {\em global scoring} (GS) such functions $s_{FSB},s_{SR}$  because they score ReLUs as accuratly as possible, considering that they do not have access to the solution values $sol(a),sol(b)$. This analysis already hints at our novel ranking function, that will be solution-aware to be more accurate.
 	
 
 
