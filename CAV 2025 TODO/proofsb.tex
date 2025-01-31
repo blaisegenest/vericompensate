@@ -147,6 +147,13 @@ First, we explore the time scaling with different number of open nodes, for our 
 	\label{fig3}
 \end{figure}
 
+\begin{figure}[b!]
+	\hspace*{-0.8cm}
+	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image37}
+	\caption{Comparison of different methods with image 37.}
+	\label{fig5}
+\end{figure}
+
 
 The exponential complexity with the number of nodes can be seen on Figure \ref{fig3}, where time is represented using logarithmic scale. The flat area in the middle is Gurobi having good heuristic to avoid considering all $2^K$ cases when $K<21$ is not too large, but not working so well for $K>25$. Notice that when certifying, pMILP uses $|X| \in$ 21-24, which is a good trade off between time and accuracy.
 
