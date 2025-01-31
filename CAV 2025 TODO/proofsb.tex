@@ -448,7 +448,6 @@ Notice that DNN 6$\times$ 500 and $\epsilon=0.1$ is a very hard instance as bein
 For CNN-B-Adv, the very long maximum time for a MILP call is an outlier: it happens only for one output layer, for which the number $K$ of open nodes is particularly large (around 200 out of 20000 neurons) to certify this hard image 76. Indeed, the average time is at $1s$. Notice that this does not lead to a runtime of 20.000s, as 20 threads are used by pMILP 
 in parallel (similar to competing solutions, except $\alpha,\beta$-CROWN which uses $>4096$ GPU cores).
 
-
 }
 
 
