@@ -2,19 +2,21 @@
 
 \section*{Appendix}
 
-{\color{blue}
 \section{Parameter settings}
 
-\subsection*{Setting for $\alpha,\beta$-Crown}
-
-The networks were already tested by $\alpha,\beta$-Crown \cite{crown}. We thus simply reused the parameter files from \href{https://github.com/Verified-Intelligence/alpha-beta-CROWN/blob/main/complete_verifier/exp_configs/beta_crown/}{their Github}, 
-except for time-out which we explicitly mention.
-
-e.g., for CNN-B-Adv: "solver: batch size: 512 beta-crown: iteration: 20" and
-for MNIST 5x100: "solver: batch size: 1024 beta-crown: iteration: 20".
-
-We did not experiment with cutting planes (GCP-CROWN \cite{cutting}), as it needs an additional package, namely IBM CPLEX solver, we do not have access to. From \cite{cutting}, the number of undecided inputs of GCP-CROWN is $\leq 2\%$ better than $\alpha,\beta$-Crown on the DNNs we experimented with, far from the $10-40\%$ improvement seen from Hybrid MILP. The conclusion are thus unchanged.
-}
+%{\color{blue}
+%
+%
+%\subsection*{Setting for $\alpha,\beta$-Crown}
+%
+%The networks were already tested by $\alpha,\beta$-Crown \cite{crown}. We thus simply reused the parameter files from \href{https://github.com/Verified-Intelligence/alpha-beta-CROWN/blob/main/complete_verifier/exp_configs/beta_crown/}{their Github}, 
+%except for time-out which we explicitly mention.
+%
+%e.g., for CNN-B-Adv: "solver: batch size: 512 beta-crown: iteration: 20" and
+%for MNIST 5x100: "solver: batch size: 1024 beta-crown: iteration: 20".
+%
+%We did not experiment with cutting planes (GCP-CROWN \cite{cutting}), as it needs an additional package, namely IBM CPLEX solver, we do not have access to. From \cite{cutting}, the number of undecided inputs of GCP-CROWN is $\leq 2\%$ better than $\alpha,\beta$-Crown on the DNNs we experimented with, far from the $10-40\%$ improvement seen from Hybrid MILP. The conclusion are thus unchanged.
+%}
 
 \subsection*{Setting for Hybrid MILP}
 
@@ -22,7 +24,7 @@ We did not experiment with cutting planes (GCP-CROWN \cite{cutting}), as it need
 Hybird MILP first call $\alpha,\beta$-Crown with short time-out (TO), then call partial MILP on those inputs which was neither certified nor falsified by this run of $\alpha,\beta$-Crown. We are using two settings of TO, for smaller DNNs we use T0$=10s$, and for the two larger ones, we use TO$=30s$.
 
 The setting for partial MILP for fully-connected DNNs is about how many neurons need to be opened (once set, the selection is automatic). The runtime depending crucially upon the number of open ReLU neurons, we set it quite tightly, only allowing few neuron deviation to accommodate to a particularly accurate/inaccurate bound computation (measure by the weight of the remaining Utility function). As complexity increases with the layer considered, as the size of the MILP model grows, we lower this number with the depth, only committing to an intermediate number for the output neuron (the number of output neurons  is smaller than hidden layer, and this is the most important computation). We experimentally set this number so that each computing the bounds in each hidden layer takes around the same time. Remember that in layer 1, partial MILP is not necessary and propagating bounds using interval arithmetic is already exact. We open [48,48] to compute bounds for hidden layer 2, [21,24] for layer 3, [11,14] for layer 4, [6,9] for layer 5, [3,6] for layer 6, [2,5] for layer 7, [1,4] for hidden layer 8 (if any), and we open [14,17] for the output layer.
-{\color{blue} The exact number of open nodes in the range [a,a+3] is decided automatically for each neuron being computed : ReLUs are ranked according to their value by Utility, and the a top ReLUs are open. Then, ReLUs ranked a+1,a+2, a+3 are opened if their Utility value is larger than a small threshold. We set the threshold at 0.01. It should be seen as a way to save runtime when Utility knows that the next node by ranking (a+i) will not impact accuracy much (thanks to the upper bound from Proposition \ref{prop2}).}
+%{\color{blue} The exact number of open nodes in the range [a,a+3] is decided automatically for each neuron being computed : ReLUs are ranked according to their value by Utility, and the a top ReLUs are open. Then, ReLUs ranked a+1,a+2, a+3 are opened if their Utility value is larger than a small threshold. We set the threshold at 0.01. It should be seen as a way to save runtime when Utility knows that the next node by ranking (a+i) will not impact accuracy much (thanks to the upper bound from Proposition \ref{prop2}).}
 
 \begin{table}[b!]
 	\centering
@@ -48,23 +50,24 @@ We do not open any nodes in the third layer (the first fully connected layer) if
 In the output layer, we open at least 45 neurons (there is less output neurons than nodes in the previous layer), and enlarge the number of open neurons (up to 300) till we find an upper bound, that is a best current MILP solution, of around +0.1 (this 0.1 was experimentally set as target, a good balance between accuracy and efficiency), and compute a guaranteed lower bound (the goal is to guarantee the bound is $>0$).
 
 In Table \ref{table20}, we sum-up the TO and minimum open numbers for each DNN considered.
-
-{\color{blue}
-$\alpha,\beta$-Crown uses massively parallel ($>$4096 threads) GPU, while Partial MILP uses 20 CPU-threads.}
+%
+%{\color{blue}
+%$\alpha,\beta$-Crown uses massively parallel ($>$4096 threads) GPU, while Partial MILP uses 20 CPU-threads.}
 
 Notice that a different balance between accuracy and runtime could be set. For instance, we set up the numbers of open neurons to have similar runtime as Refined $\beta$-Crown for the first 4 DNNs ($50s-100s$). We could easily target better accuracy (e.g. for $8 \times 100$ with a relatively high $15\%$ undecided images) by increasing the number of open neurons, with a trade-off on runtime (current runtime is at $61s$).
 By comparison, the sweet spot for $\alpha,\beta$-Crown seems to be around TO$=30s$, enlarging the time-out having very little impact on accuracy but large impact on runtime
 (Table \ref{table_beta}).
 
 
-{\color{blue}
-Last, for Gurobi, we use a custom MIP-Gap (from $0.001$ to $0.1$) and time-out parameters, depending on the seen improvement and the possibility to make a node stable. This is low level implementation details that will be available in the code once the paper is accepted.
-}
+%{\color{blue}
+%Last, for Gurobi, we use a custom MIP-Gap (from $0.001$ to $0.1$) and time-out parameters, depending on the seen improvement and the possibility to make a node stable. This is low level implementation details that will be available in the code once the paper is accepted.
+%}
 
 
 
 
 
+<<<<<<< HEAD
 {\color{blue}
 
 
@@ -580,3 +583,5 @@ The utility function for a node $a$ wrt neuron $z$ is defined inductively as fol
 }
 
 
+=======
+>>>>>>> ddb9d97fde9097348911836ab48e4ecfe29d5b2b
