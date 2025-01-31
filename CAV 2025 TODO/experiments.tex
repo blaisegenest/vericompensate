@@ -132,9 +132,9 @@ The test are done on CIFAR image 85 and CNN-B-Adv.
 		  & \multicolumn{2}{c|}{55 open ReLUs} & \multicolumn{2}{c|}{60 open ReLUs}\\ 
 		 order & distance & time & distance & time & distance & time & distance & time \\
 		\hline \hline
-		Gurobi & 0.384 & 252s & &  & & & 0.315  & 306s  \\ 
-		SAS (static) & 0.384 & 448s & &  & & & 0.355  & 971s \\
-		GS (static) & 0.384 & {\bf 251s} & &  &  & & 0.315 & {\bf 281s} \\ \hline
+		Gurobi & 0.384 & 252s & 0.368&265  &0.342 & 287& 0.315  & 306s  \\ 
+		SAS (static) & 0.384 & 448s & 0.368&759  &0.365 &971 & 0.355  & 971s \\
+		GS (static) & 0.384 & {\bf 251s} &0.368 &{\bf 253}  & 0.342 &{\bf 270} & 0.315 & {\bf 281s} \\ \hline
 	\end{tabular}
 	\caption{Comparison of different orderings with selection of ReLUs by SAS.
 	\vspace{-0.4cm}}
