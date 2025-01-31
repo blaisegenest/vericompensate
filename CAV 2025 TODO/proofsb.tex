@@ -462,123 +462,123 @@ in parallel (similar to competing solutions, except $\alpha,\beta$-CROWN which u
 
 \end{document}
 
-
-\section{SR Heuristic for choosing nodes}
-
-Here we provide the formula of BaB-SR from paper \cite{BaB}.
-
-\begin{align*}
-	\nu_{n+1} &= -1&\\
-	\hat{\nu}_k &= W^T_kv_{k+1}, k = n,\cdots,1 &\\
-	\nu_{k,j} &= \begin{cases}
-		0  &\text{ if }u_{k[j]}<0 \hspace*{2ex}(j\in\mathcal{I}^-_k)\\
-		\hat{\nu}_{k[j]} &\text{ if }l_{k[j]}>0 \hspace*{2.5ex}(j\in\mathcal{I}^-_k)\\
-		\frac{u_{k[j]}}{u_{k[j]}-l_{k[j]}}[\hat{\nu}_{k[j]}]_+-\frac{u_{k[j]}}{u_{k[j]}-l_{k[j]}}[\hat{\nu}_{k[j]}]_-  &\text{ otherwise } \hspace*{3ex}(j\in\mathcal{I}_k)\\ 
-	\end{cases}\\
-	&\hspace*{22ex}\text{for } k = n,\cdots,2&
-\end{align*}and\begin{align*}
-	s_{i[j]} = |\max(v_{i[j]}b_{i-1[j]},(v_{i[j]}-1)b_{i-1[j]})-\frac{u_{k[j]}}{u_{k[j]}-l_{k[j]}}[\hat{\nu}_{k[j]}]_+|
-\end{align*}
-
-
-\begin{figure}[b!]
-	\hspace*{-0.8cm}
-	\includegraphics[scale=0.6]{Plot for table 3}.
-	\caption{Plot for table 3}
-	\label{fig_table3}
-\end{figure}
-
-
-\begin{table}[h!]	
-	\centering
-	\begin{tabular}{|c||c|c|c|c|}
-		\hline
-		&\multicolumn{3}{c|}{$X \subseteq$ Layers 1\&2, max $=116$}\\\cline{2-5}
-		\text{$|X|$} & \text{Random} &BSR &FSB &\bf Utility\\ \hline
-		0  (LP) & 1.761  &  1.761& 1.761&1.761\\ \hline \hline
-		5  & 1.729& 1.7138 & 1.7182 &\bf 1.532 \\ \hline
-		10  & 1.696 & 1.6775&  1.6803&\bf  1.371\\ \hline
-		15  &   1.653& 1.6392& 1.6475&\bf  1.247\\ \hline
-		20  &   1.619 &1.5938 & 1.6174&\bf  1.145\\ \hline
-		25  &    1.586 &1.5534 &1.5788 &\bf 1.061\\ \hline
-		30  &  1.546 & 1.5166& 1.5413&\bf  0.989 \\ \hline
-		35  &   1.502 & 1.4788 &1.4972 &\bf 0.934 \\ \hline
-		40  &  1.469 & 1.4395& 1.4514&\bf 0.921 \\ \hline \hline
-		max &  0.895 & 0.895 &0.895 &0.895   \\ \hline
-	\end{tabular}
-	\caption{BSR and FSB}
-	\label{BSRandFSB}
-	%\vspace{-0.6cm}
-\end{table}
-
-
-
-\end{document}
-
-
-
-
-\subsection*{Formula for ResNet}
-
-Consider a ResNet, like ResNet4b, we list the formula for an Add layer.
-
-Suppose we are dealing with an Add layer $l$, target node $z$, with previous layer $l_1$ and shortcut connection previous layer $l_2$, starting from a layer $l_0$, that is:
-\begin{align*}
-	l &= l_1+l_2\\
-	l_2 &= Conv_{W_2}(\ReLU(l_0))\\
-	l_1' &= Conv_{W'_1}(\ReLU(l_0))\\
-	l_1 &= Conv_{W_1}(\ReLU(l'_{1}))
-\end{align*}The paths are $$l_0\rightarrow \ReLU(l_0)\rightarrow l_2\rightarrow l,$$ and $$l_0\rightarrow \ReLU(l_0)\rightarrow l'_1\rightarrow \ReLU(l_1')\rightarrow l_1\rightarrow l.$$
-
-So, for nodes in layer $l_1'$, we can use the same formula as previous section, i.e., the formula at the end of page 6: for a node $b$ in $l_1'$, suppose $z=x+y$ for $x$ in layer $l_1$ and $y$ in $l_2$, 
-\begin{align*}
-\Utility\_\max\nolimits^x(b) &= W_{bx} \times (\sol(\hat{b})- \ReLU(\sol(b)))\\
-\Utility\_\max\nolimits^z(b) &= \Utility\_\max\nolimits^x(b)
-\end{align*}
-
-For nodes in layer $l_0$, the simple idea is to consider both paths, and sum up the utilities of two paths. For a node $a$ in $l_0$, suppose $z=x+y$ for $x$ in layer $l_1$ and $y$ in $l_2$ ,
-\begin{align*}
-		\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})\\
-		\Utility_\_\max\nolimits^y(a) &= -W_{ay} \Delta(\hat{a})\\
-	\forall b \in \ell, \Delta(b) &= W_{ab}\Delta(\hat{a})\\
-	\forall b \in \ell, \Delta(\hat{b}) &=
-	\begin{cases}
-		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bx} > 0\\
-		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bx} < 0 \text{ and } \sol(b)\geq0\\
-		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bx} < 0 \text{ and } \sol(b)<0		 
-	\end{cases}\\
-	\Utility\_\max\nolimits^x(a) &= -\sum_{b \in \ell} W_{bx} \Delta(\hat{b})\\
-	\Utility\_\max\nolimits^z(a) &= \Utility\_\max\nolimits^x(a)+\Utility\_\max\nolimits^y(a)
-\end{align*}
-
-	
-	
-		
-	
-
-
-\section{Formula for Utility}
-
-
-Recall that for nodes $a,b$, we use 
-$\hat{a}, \hat{b}$ to denote variable after ReLU functions, and
-$\Delta(a),\Delta(\hat{a}),\Delta(b),\Delta(\hat{b})$ to denote the changes of those variables. $a$ means the source node, and $b$ means nodes one layer after $a$, and $z$ is 2 layers after $a$ and one after $b$.
-
-The utility function for a node $a$ wrt neuron $z$ is defined inductively as follows:
-
-
-\begin{align*}
-	\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})\\
-	\Delta(b) &= W_{ab}\Delta(\hat{a})\\
-	\Delta(\hat{b}) &=
-	\begin{cases}
-		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bz} > 0\\
-		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)\geq0\\
-		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)<0		 
-	\end{cases}\\
-	\Utility\_\max\nolimits^z(a) &= -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})
-\end{align*}
-
-}
+%
+%\section{SR Heuristic for choosing nodes}
+%
+%Here we provide the formula of BaB-SR from paper \cite{BaB}.
+%
+%\begin{align*}
+%	\nu_{n+1} &= -1&\\
+%	\hat{\nu}_k &= W^T_kv_{k+1}, k = n,\cdots,1 &\\
+%	\nu_{k,j} &= \begin{cases}
+%		0  &\text{ if }u_{k[j]}<0 \hspace*{2ex}(j\in\mathcal{I}^-_k)\\
+%		\hat{\nu}_{k[j]} &\text{ if }l_{k[j]}>0 \hspace*{2.5ex}(j\in\mathcal{I}^-_k)\\
+%		\frac{u_{k[j]}}{u_{k[j]}-l_{k[j]}}[\hat{\nu}_{k[j]}]_+-\frac{u_{k[j]}}{u_{k[j]}-l_{k[j]}}[\hat{\nu}_{k[j]}]_-  &\text{ otherwise } \hspace*{3ex}(j\in\mathcal{I}_k)\\ 
+%	\end{cases}\\
+%	&\hspace*{22ex}\text{for } k = n,\cdots,2&
+%\end{align*}and\begin{align*}
+%	s_{i[j]} = |\max(v_{i[j]}b_{i-1[j]},(v_{i[j]}-1)b_{i-1[j]})-\frac{u_{k[j]}}{u_{k[j]}-l_{k[j]}}[\hat{\nu}_{k[j]}]_+|
+%\end{align*}
+%
+%
+%\begin{figure}[b!]
+%	\hspace*{-0.8cm}
+%	\includegraphics[scale=0.6]{Plot for table 3}.
+%	\caption{Plot for table 3}
+%	\label{fig_table3}
+%\end{figure}
+%
+%
+%\begin{table}[h!]	
+%	\centering
+%	\begin{tabular}{|c||c|c|c|c|}
+%		\hline
+%		&\multicolumn{3}{c|}{$X \subseteq$ Layers 1\&2, max $=116$}\\\cline{2-5}
+%		\text{$|X|$} & \text{Random} &BSR &FSB &\bf Utility\\ \hline
+%		0  (LP) & 1.761  &  1.761& 1.761&1.761\\ \hline \hline
+%		5  & 1.729& 1.7138 & 1.7182 &\bf 1.532 \\ \hline
+%		10  & 1.696 & 1.6775&  1.6803&\bf  1.371\\ \hline
+%		15  &   1.653& 1.6392& 1.6475&\bf  1.247\\ \hline
+%		20  &   1.619 &1.5938 & 1.6174&\bf  1.145\\ \hline
+%		25  &    1.586 &1.5534 &1.5788 &\bf 1.061\\ \hline
+%		30  &  1.546 & 1.5166& 1.5413&\bf  0.989 \\ \hline
+%		35  &   1.502 & 1.4788 &1.4972 &\bf 0.934 \\ \hline
+%		40  &  1.469 & 1.4395& 1.4514&\bf 0.921 \\ \hline \hline
+%		max &  0.895 & 0.895 &0.895 &0.895   \\ \hline
+%	\end{tabular}
+%	\caption{BSR and FSB}
+%	\label{BSRandFSB}
+%	%\vspace{-0.6cm}
+%\end{table}
+%
+%
+%
+%\end{document}
+%
+%
+%
+%
+%\subsection*{Formula for ResNet}
+%
+%Consider a ResNet, like ResNet4b, we list the formula for an Add layer.
+%
+%Suppose we are dealing with an Add layer $l$, target node $z$, with previous layer $l_1$ and shortcut connection previous layer $l_2$, starting from a layer $l_0$, that is:
+%\begin{align*}
+%	l &= l_1+l_2\\
+%	l_2 &= Conv_{W_2}(\ReLU(l_0))\\
+%	l_1' &= Conv_{W'_1}(\ReLU(l_0))\\
+%	l_1 &= Conv_{W_1}(\ReLU(l'_{1}))
+%\end{align*}The paths are $$l_0\rightarrow \ReLU(l_0)\rightarrow l_2\rightarrow l,$$ and $$l_0\rightarrow \ReLU(l_0)\rightarrow l'_1\rightarrow \ReLU(l_1')\rightarrow l_1\rightarrow l.$$
+%
+%So, for nodes in layer $l_1'$, we can use the same formula as previous section, i.e., the formula at the end of page 6: for a node $b$ in $l_1'$, suppose $z=x+y$ for $x$ in layer $l_1$ and $y$ in $l_2$, 
+%\begin{align*}
+%\Utility\_\max\nolimits^x(b) &= W_{bx} \times (\sol(\hat{b})- \ReLU(\sol(b)))\\
+%\Utility\_\max\nolimits^z(b) &= \Utility\_\max\nolimits^x(b)
+%\end{align*}
+%
+%For nodes in layer $l_0$, the simple idea is to consider both paths, and sum up the utilities of two paths. For a node $a$ in $l_0$, suppose $z=x+y$ for $x$ in layer $l_1$ and $y$ in $l_2$ ,
+%\begin{align*}
+%		\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})\\
+%		\Utility_\_\max\nolimits^y(a) &= -W_{ay} \Delta(\hat{a})\\
+%	\forall b \in \ell, \Delta(b) &= W_{ab}\Delta(\hat{a})\\
+%	\forall b \in \ell, \Delta(\hat{b}) &=
+%	\begin{cases}
+%		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bx} > 0\\
+%		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bx} < 0 \text{ and } \sol(b)\geq0\\
+%		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bx} < 0 \text{ and } \sol(b)<0		 
+%	\end{cases}\\
+%	\Utility\_\max\nolimits^x(a) &= -\sum_{b \in \ell} W_{bx} \Delta(\hat{b})\\
+%	\Utility\_\max\nolimits^z(a) &= \Utility\_\max\nolimits^x(a)+\Utility\_\max\nolimits^y(a)
+%\end{align*}
+%
+%	
+%	
+%		
+%	
+%
+%
+%\section{Formula for Utility}
+%
+%
+%Recall that for nodes $a,b$, we use 
+%$\hat{a}, \hat{b}$ to denote variable after ReLU functions, and
+%$\Delta(a),\Delta(\hat{a}),\Delta(b),\Delta(\hat{b})$ to denote the changes of those variables. $a$ means the source node, and $b$ means nodes one layer after $a$, and $z$ is 2 layers after $a$ and one after $b$.
+%
+%The utility function for a node $a$ wrt neuron $z$ is defined inductively as follows:
+%
+%
+%\begin{align*}
+%	\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})\\
+%	\Delta(b) &= W_{ab}\Delta(\hat{a})\\
+%	\Delta(\hat{b}) &=
+%	\begin{cases}
+%		\frac{\UB(b)}{\UB(b)-\LB(b)}\Delta(b),  &\text{if }W_{bz} > 0\\
+%		\max(\Delta(b),-\sol(b)),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)\geq0\\
+%		\max(\Delta(b)+\sol(b),0),  &\text{if }  W_{bz} < 0 \text{ and } \sol(b)<0		 
+%	\end{cases}\\
+%	\Utility\_\max\nolimits^z(a) &= -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})
+%\end{align*}
+%
+%}
 
 
