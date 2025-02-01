@@ -73,12 +73,24 @@ for MNIST 5x100: "solver: batch size: 1024 beta-crown: iteration: 20".
 
 \section{Additional experiments including Ablation studies}	
 
-First, we provide Fig.~\ref{fig5}, similar to 
+First, we provide in Fig.~\ref{fig55} the distance to verify Image 85 (which is an extremely hard image), comparing SAS with GS in runtime and not just in number of ReLUs to open. The {\em distance to verify} an image is specifically the lower bound of {\em one} output neuron (in the 4th layer of CNN-B-Adv), the furthest away from verification, (the local robustness objective asks the difference between the value of the output neuron corresponding to the correct class and the value of any other output neuron to be positive). Compared with Fig.~\ref{fig_table3}, we consider a unique neuron rather than an average over all the neuron of the 4th layer. This explains why the curve is much less smooth. This provides an idea of the runtime scaling with the number of ReLUs opened. 
+
+\begin{figure}[b!]
+	\hspace*{-0.8cm}
+	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image85_min.png}
+	\caption{Distance to verify vs runtime: comparison between SAS and GS for different number of ReLUs open.}
+	\label{fig55}
+\end{figure}
+
+The difference of distance to verify between SAS and GS ISO number of ReLUs is very large. However, as the ReLUs opened by GS are not as important as the ReLUs opened by SAS, the runtime of GS ISO number of ReLUs is faster than for SAS. Still, the important metric here is runtime ISO accuracy (distance to verify), which is clearly favorable for SAS, close to 2x faster. Importantly, the accuracy gain by SAS is very predictable, with improvement with each open ReLUs, while it is much more erratic for GS. This helps setting a fixed number of ReLUs. Also, SAS reaches accuracy which would be hard to match by GS in number of ReLUs to open, needing an extremely high number of open ReLUs, and thus, a uncertain high runtime.
+
+
+Then, we provide Fig.~\ref{fig5}, similar to 
 Fig.~\ref{fig_table3} but on a different image, namely 37.
 It display similar pattern as image 85, with an even larger difference between SAS and GS (around 3x more binary variables are necessary for GS to match the accuracy of SAS).
 
 \begin{figure}[h!]
-	\hspace*{-0.8cm}
+	\hspace*{-1cm}
 	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image37}
 	\caption{Comparison of different methods with image 37.}
 	\label{fig5}
