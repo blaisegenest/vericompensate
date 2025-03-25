@@ -7,7 +7,7 @@ We will introduce some formulas.
 $$v=\frac{\gamma}{4}\cdot\lambda_a\cdot\sign(\lambda_a).$$
 
 
-Here, $\lambda_a$ is computed by backward-propagation as usual, but use $-\gamma$ as $\LB$ and $\gamma$ as $\UB$.
+Here, $\lambda_a$ is computed by backward-propagation as usual (the formula at the end of page 9), but use $-\gamma$ as $\LB$ and $\gamma$ as $\UB$.
 
 
 
@@ -19,8 +19,8 @@ Here, the computation of $\Delta(\hat{a})$ is as follows:
 
 \begin{subnumcases}{\Delta(\hat{a}) =}
 \sol(a)-\sol(\hat{a}), &for $\lambda_a > 0$ and $\sol(a) \geq 0$\\
--\sol(\hat{a}), &for $\lambda_a < 0$ and $\sol(a) \geq 0$\\
 -\sol(\hat{a}), &for $\lambda_a > 0$ and $\sol(a) \leq 0$\\
+-\sol(\hat{a}), &for $\lambda_a < 0$ and $\sol(a) \geq 0$\\
 \sol(a)-\sol(\hat{a}), &for $\lambda_a < 0$ and $\sol(a) \leq 0$	 
 \end{subnumcases}
 
