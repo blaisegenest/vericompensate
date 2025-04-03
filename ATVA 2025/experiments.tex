@@ -10,6 +10,10 @@
 	\label{fig_table3}
 \end{figure}
 
+
+\textcolor{red}{The number of open nodes we considered for the 5 F(ully)C(onnected)NNs depend neither on the image nor on the particular FCNN, only on the depth of the layer, because the runtime depends crucially on this factor. For FCNNs, we use a simple /2 rule between the number of open nodes of layer+1 vs layer (except last layer=14). For other architectures, we set the number of nodes to obtain similar runtime per layer, by testing a couple of neurons per layer, and use it for all images.}
+
+
 %
 We implemented \toolname\ in Python 3.8: it first calls $\alpha,\beta$-Crown with small time out (10s for small and 30s for larger DNNs), and then call pMILP on the undecided inputs.
 Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD Threadripper 7970X  ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. The  objectives of our evaluation was to answer the following  questions:
@@ -188,6 +192,9 @@ We commit to the same $\epsilon$ settings as in \cite{crown}, that are recalled 
 For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. 
 We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark. 
 The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta} and \ref{table_hybrid}.
+
+
+\textcolor{red}{MNIST FCNN networks use the same open numbers sequence for all images, based on layer depth. CIFAR ConvolutionalNN uses another sequence (the same for all images) [AppendixA, Table6 p22].}
 
 
 \begin{table}[t!]
