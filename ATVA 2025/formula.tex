@@ -317,6 +317,8 @@ We proceed inductively to define $\Utility\_\max^z(a)$ for deeper neurons $a$.
 
 While $\Utility$ is a priori a more accurate way to select neurons to open in partial MILP (that will be verified in Fig. \ref{fig_table3}), global scoring functions have two advantages: first, they are faster to compute (a unique backpropagation is sufficient, while SAS needs one full LP call to recover the solution, plus a forward propagation for each node $a$). This is not an issue for selecting nodes for partial MILP, as there is a single selection step. This would be potentially problematic for choosing branching nodes in BaB, at each branch. A trade off could be to precompute FSB and only on the most promising nodes run $\Utility$. The second shortcoming is the other side of the coin to consider improvement local to a solution: in the case of branching, one of the branch imposes to be far from the solution and $\Utility$ is not accurate on that branch, while global scoring is as (in)accurate for both branches. We will verify that using GS for ordering nodes after the SAS selection is actually more efficient, for this very reason.
 
+\textcolor{red}{$s_{FSB}$ *is* in Figure 5, under label “GS” (global-scoring). $s_{SR}$ is very slightly worst, reason why we did not report it.}
+
 \iffalse
 We use the following formula for general cases, i.e. possibly more than 3 layers. We use $a$ to denote the source node, and use $b,c$ to denote that $b$ is in one layer before $c$. 
 
