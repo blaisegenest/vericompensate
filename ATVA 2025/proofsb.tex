@@ -277,6 +277,8 @@ Running full MILP till a small MIP-Gap (typically 0.001) is reached is extremely
 
 Instead, the standard strategy is to set a reasonable time-out and use whatever bound has been generated. We compare this standard strategy with the pMILP strategy of setting a priori a number of open nodes.
 
+\textcolor{red}{Direct MILP encodings are inefficient! Even the advanced Gurobi MILP solver struggle to sort out all neurons – see Fig11 page27: direct MILP encoding is $>10$ times slower on same instance ($>300s$ vs $<30s$ for similar accuracy) wrt considering only 8 open nodes selected with SAS (more open nodes lead to larger differences). Our main contribution is a way to select the most important nodes, and it helps Gurobi tremendously. This is the whole point of the paper!}
+
 \begin{figure}[h!]\hspace*{-0.8cm}
 	\includegraphics[scale=0.6]{Layer7_comparison.png}.
 	\caption{Comparison of uncertainty at layer 7 for full MILP with different time-outs vs pMILP with different number of open nodes. Time is using logscale.}
