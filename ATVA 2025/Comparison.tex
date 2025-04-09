@@ -2,6 +2,10 @@
 
 \label{sec4p5}
 
+\textcolor{red}{Fig2 page10 is intended as a running example: We show how $s_{FSB}$ behaves on Fig2 (page10-11). Page12 (Fig4 and above), we explain how SAS computes the same case and compares with FSB. We will add explicit references to the case $c<0,d<0$ leading to $s_{FSB}=\frac{cd}{4}$, which corresponds in Figure4 to either case	
+	(b) $\Delta(\hat{b})=\Delta(b)<\frac{c}{2}$ leading to $s_{SAS}=d\Delta(b)<\frac{cd}{2}$ or
+	(c) $\Delta(\hat{b})=0$ leading to $s_{SAS}=0$.}
+
 First, we adapt from the BaB-SR \cite{BaB} and FSB \cite{FSB} functions, %(replacing the symbols from the original paper with those used in our paper.)
  selecting a node to branch on for BaB, {\em  global scoring} (GS) functions to select nodes for pMILP. Intuitively, we extract the scoring $s_{SR}$ and $s_{FSB}$ from both BaB-SR and FSB, as the BaB bounding step is not adapted for pMILP. They both work by backpropagating gradients vectors $\bm{\lambda}$ from the neurons under consideration in layer $n$, back to neurons to be potentially selected. To do so, they consider the rate of $\ReLU(\bm{u}_k)$ to be 
 $r(\bm{u}_k)=\frac{\max(0,\UB(\bm{u}_k))}{\max(0,\UB(\bm{u}_k))-\min(0,\LB(\bm{u}_k))} \in [0,1]$, 

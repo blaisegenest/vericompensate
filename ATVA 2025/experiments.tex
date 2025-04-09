@@ -240,6 +240,10 @@ We voluntarily limited the comparison to $\alpha,\beta$-Crown because it is one 
 Interestingly, GCP-CROWN \cite{cutting} is slightly more accurate than $\alpha,\beta$-Crown on the DNNs we tested, but necessitates IBM CPLEX solver, which is not available to us.
 We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cutting}, experimenting with different verifiers on the most interesting CIFAR CNN-B-Adv. Notice that results are not exactly comparable with ours because the testing images are not the same (ours has $62\%$ upper bound while \cite{cutting} has $65\%$ upper bound, so the image set in \cite{cutting} are slightly easier). There, GCP-CROWN is $2\%$ more accurate (with higher runtime) than $\alpha,\beta$-Crown with 90s TO, so we can deduce that Hybrid MILP, which is $9\%$ more accurate than $\alpha,\beta$-Crown with 2000s TO, is significantly more accurate than GCP-CROWN.
 
+\textcolor{red}{Currently, for hard instances, there is no alternative  to pMILP (hundreds of seconds), other methods being $>>10$ times slower.}
+
+\textcolor{red}{We did run and reported other tools as best as we could (see also appendixC (Table11...)). Reporting *some* experimental numbers from other papers (Figure5) is standard in the DNN verification community (eg [26]).}
+
 \begin{table}[t!]
 	\centering
 	\begin{tabular}{||c||c|c|c|c|c||}
