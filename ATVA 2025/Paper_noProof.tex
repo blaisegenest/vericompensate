@@ -86,14 +86,7 @@ partial MILP strikes back for DNN verification}
 
 \section{Introduction}
 
-\textcolor{red}{HyperParameter selection [Reviewer1]:
-	The number of open nodes we considered for the 5 F(ully)C(onnected)NNs depend neither on the image nor on the particular FCNN, only on the depth of the layer, because the runtime depends crucially on this factor. For FCNNs, we use a simple /2 rule between the number of open nodes of layer+1 vs layer (except last layer=14). For other architectures, we set the number of nodes to obtain similar runtime per layer, by testing a couple of neurons per layer, and use it for all images.
-	In Table 4, are the same number of open nodes considered? [Reviewer3]
-	MNIST FCNN networks use the same open numbers sequence for all images, based on layer depth. CIFAR ConvolutionalNN uses another sequence (the same for all images) [AppendixA, Table6 p22].
-	Scaling [Reviewer1]:
-	Currently, for hard instances, there is no alternative  to pMILP (hundreds of seconds), other methods being $>>10$ times slower.	
-	Comprehensive experimental evaluation with all tools [Reviewer2]:
-	We did run and reported other tools as best as we could (see also appendixC (Table11...)). Reporting *some* experimental numbers from other papers (Figure5) is standard in the DNN verification community (eg [26]).}
+
 
 
 
