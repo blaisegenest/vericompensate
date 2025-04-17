@@ -2,12 +2,18 @@
 
 \label{sec4p5}
 
-\textcolor{red}{Fig2 page10 is intended as a running example: We show how $s_{FSB}$ behaves on Fig2 (page10-11). Page12 (Fig4 and above), we explain how SAS computes the same case and compares with FSB. We will add explicit references to the case $c<0,d<0$ leading to $s_{FSB}=\frac{cd}{4}$, which corresponds in Figure4 to either case	
-	(b) $\Delta(\hat{b})=\Delta(b)<\frac{c}{2}$ leading to $s_{SAS}=d\Delta(b)<\frac{cd}{2}$ or
-	(c) $\Delta(\hat{b})=0$ leading to $s_{SAS}=0$.}
+%\textcolor{red}{Fig2 page10 is intended as a running example: We show how $s_{FSB}$ behaves on Fig2 (page10-11). Page12 (Fig4 and above), we explain how SAS computes the same case and compares with FSB. We will add explicit references to the case $c<0,d<0$ leading to $s_{FSB}=\frac{cd}{4}$, which corresponds in Figure4 to either case	
+%	(b) $\Delta(\hat{b})=\Delta(b)<\frac{c}{2}$ leading to $s_{SAS}=d\Delta(b)<\frac{cd}{2}$ or
+%	(c) $\Delta(\hat{b})=0$ leading to $s_{SAS}=0$.}
 
-First, we adapt from the BaB-SR \cite{BaB} and FSB \cite{FSB} functions, %(replacing the symbols from the original paper with those used in our paper.)
- selecting a node to branch on for BaB, {\em  global scoring} (GS) functions to select nodes for pMILP. Intuitively, we extract the scoring $s_{SR}$ and $s_{FSB}$ from both BaB-SR and FSB, as the BaB bounding step is not adapted for pMILP. They both work by backpropagating gradients vectors $\bm{\lambda}$ from the neurons under consideration in layer $n$, back to neurons to be potentially selected. To do so, they consider the rate of $\ReLU(\bm{u}_k)$ to be 
+To select nodes $X$ for pMILP$_X$, we first adapt from the BaB-SR \cite{BaB} and FSB \cite{FSB} functions, %(replacing the symbols from the original paper with those used in our paper.)
+ which originally iteratively select one node to branch on for BaB.
+ Intuitively, we extract the scoring $s_{SR}$ and $s_{FSB}$ from both BaB-SR and FSB, as the 
+ BaB bounding step is not adapted for pMILP. 
+ We will call such functions {\em  global scoring} (GS) functions. 
+  
+ 
+ They both work by backpropagating gradients vectors $\bm{\lambda}$ from the neurons under consideration in layer $n$, back to neurons to be potentially selected. To do so, they consider the rate of $\ReLU(\bm{u}_k)$ to be 
 $r(\bm{u}_k)=\frac{\max(0,\UB(\bm{u}_k))}{\max(0,\UB(\bm{u}_k))-\min(0,\LB(\bm{u}_k))} \in [0,1]$, 
 with $r(b)=0$ iff $\UB(b)\leq 0$ and $r(b)=1$ iff $\LB(b)\geq 0$.
 
@@ -16,10 +22,28 @@ with $r(b)=0$ iff $\UB(b)\leq 0$ and $r(b)=1$ iff $\LB(b)\geq 0$.
 \end{align*}
 
 
-Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer $k$ are computed by approximating how each node would impact the neurons in layer $n$, by also factoring in the bias $\bm{b}_k$ in different ways:
+Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer $k$ are computed by approximating how each node would impact the neurons in layer $n$, using the computed $\bm{\lambda}$, differeing only in how they handle the bias $\bm{b}_k$:
 
 
-\begin{figure}[t!]
+
+
+\begin{align*}
+	\bm{s}_{SR}(k) =& %\bm{1}_{\bm{u}_k>0,\bm{l}_k<0} \odot
+	\Biggl\lvert r(\bm{u}_k) \odot \LB(\bm{u}_k) \odot \max(\bm{\lambda}_{k},0)
+	+ \max\{0,\bm{\lambda}_{k}\odot\bm{b}_{k}\}-r(\bm{u}_k) \odot\bm{\lambda}_{k}\odot\bm{{b}}_{k}
+	\Biggr\rvert  \\
+	\bm{s}_{FSB}(k) =& \Biggl\lvert r(\bm{u}_k) \odot \LB(\bm{u}_k) \odot \max(\bm{\lambda}_{k},0)
+	+ \min\{0,\bm{\lambda}_{k}\odot\bm{b}_{k}\}-r(\bm{u}_k) \odot\bm{\lambda}_{k}\odot\bm{{b}}_{k}
+	\Biggr\rvert
+\end{align*}
+
+
+
+
+
+
+
+\begin{figure}[b!]
 	\centering
 	\begin{tikzpicture}
 		
@@ -101,12 +125,41 @@ Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer 
 		
 	\end{tikzpicture}
 	\vspace{-0.8cm}
-	\caption{A simple example with parametric weights {\color{red}$c$} and {\color{red}$d$}}
+	\caption{A running example with parametric weights {\color{red}$c$} and {\color{red}$d$}}
 	\label{img:FSB_example}
 \end{figure}
 
 
-\begin{figure}[b!]
+
+
+
+	
+	%In case where the bias is 0, then there is no difference between $s_{SR}$ and $s_{FSB}$.
+	Then, ReLU are ranked using these scores, to select the most important unstable ReLUs
+	(with $\LB(u_k) < 0 < \UB(u_k)$).
+	% as stable ReLUs are linear, thus they are already treated correctly.
+	
+
+
+\noindent {\em Running Example:} Consider Fig. \ref{img:FSB_example}. 
+It has no bias, so $s_{SR}=s_{FSB}$.
+We have $\lambda(b)=d$, $\lambda(a)=\frac{cd}{2}$.
+Consider the real improvement on the {\em maximal bound} computed by pMILP$_X(z)$ when opening the $\ReLU$ of node $a$ ($X=\{a\}$) compared with $X=\emptyset$, and compare with 
+$s_{FSB}(a)$. Let us do a case analysis:
+
+
+
+The most favorable cases are $c < 0 < d$ and $d < 0 < c$: 
+as $cd <0$, we have $s_{FSB}(a)=\max(0,\frac{cd}{4}) = 0$.
+Because $cd <0$, both $a$ and $\hat{a}$ need to be minimized by pMILP in order to maximize the value of $z$. The LP approximation ($X=\emptyset$) matches the triangle approximation represented in Fig. \ref{triangle}: having a value $sol(a)$ for $a$, the minimal value for $\hat{a}$ is $\ReLU(sol(a))$. If we open $a$ ($X=\{a\}$), then the value for $\hat{a}$ will also be $\ReLU(sol(a))$. That is, opening this ReLU is not helping in computing $\UB(z)$, as correctly predicted by the score $s_{FSB}(a)= 0$.
+
+
+
+
+
+
+
+\begin{figure}[t!]
 	\begin{centering}
 	\begin{tikzpicture}[scale=1, >=stealth]
 		
@@ -140,32 +193,6 @@ Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer 
 	\label{triangle}
 	\end{centering}
 	\end{figure}
-
-
-
-	\begin{align*}
-		\bm{s}_{SR}(k) =& %\bm{1}_{\bm{u}_k>0,\bm{l}_k<0} \odot
-		\Biggl\lvert r(\bm{u}_k) \odot \LB(\bm{u}_k) \odot \max(\bm{\lambda}_{k},0)
-		+ \max\{0,\bm{\lambda}_{k}\odot\bm{b}_{k}\}-r(\bm{u}_k) \odot\bm{\lambda}_{k}\odot\bm{{b}}_{k}
-		\Biggr\rvert  \\
-		\bm{s}_{FSB}(k) =& \Biggl\lvert r(\bm{u}_k) \odot \LB(\bm{u}_k) \odot \max(\bm{\lambda}_{k},0)
-		+ \min\{0,\bm{\lambda}_{k}\odot\bm{b}_{k}\}-r(\bm{u}_k) \odot\bm{\lambda}_{k}\odot\bm{{b}}_{k}
-		\Biggr\rvert
-	\end{align*}
-	
-	In case where the bias is 0, then there is no difference between $s_{SR}$ and $s_{FSB}$.
-	Then, unstable ReLU (with $\LB(u_k) < 0 < \UB(u_k)$) are ranked using these scores, to select the most important ReLUs, as stable ReLUs are linear, thus they are already treated correctly.
-	
-
-
-Consider the example in Fig. \ref{img:FSB_example}. It has no bias so $s_{SR}=s_{FSB}$.
-We have $\lambda(b)=d$, $\lambda(a)=\frac{cd}{2}$.
-Let us do a case analysis:
-The most favorable cases are $c < 0 < d$ and $d < 0 < c$: 
-as $cd <0$, we have $s_{FSB}(a)=\max(0,\frac{cd}{4}) = 0$.
-Now, $a$ and $\hat{a}$ need to be minimized in order to maximize $z$, because $cd <0$. 
-For the triangle approximation (see Fig. \ref{triangle}), having a value $sol(a)$ for $a$, the minimal value for $\hat{a}$ is $\ReLU(sol(a))$. If we open $a$, then the value for $\hat{a}$ will also be $\ReLU(sol(a))$. That is, opening this ReLU is not helping in the approximation of $z$, as correctly predicted by the score $s_{FSB}(a)= 0$.
-
 
 
 
