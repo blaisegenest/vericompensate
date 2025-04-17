@@ -77,10 +77,14 @@ First, we provide in Fig.~\ref{fig55} the distance to verify Image 85 (which is 
 
 \begin{figure}[b!]
 	\hspace*{-0.8cm}
-	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image85_min.png}
-	\caption{Distance to verify vs runtime: comparison between SAS and GS for different number of ReLUs open.}
+	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
+	\caption{Distance to verify vs runtime: comparison between SAS, GS, full MILP and Huang's method for different number of ReLUs open.}
 	\label{fig55}
 \end{figure}
+
+
+
+
 
 The difference of distance to verify between SAS and GS ISO number of ReLUs is very large. However, as the ReLUs opened by GS are not as important as the ReLUs opened by SAS, the runtime of GS ISO number of ReLUs is faster than for SAS. Still, the important metric here is runtime ISO accuracy (distance to verify), which is clearly favorable for SAS, close to 2x faster. Importantly, the accuracy gain by SAS is very predictable, with improvement with each open ReLUs, while it is much more erratic for GS. This helps setting a fixed number of ReLUs. Also, SAS reaches accuracy which would be hard to match by GS in number of ReLUs to open, needing an extremely high number of open ReLUs, and thus, a uncertain high runtime.
 
