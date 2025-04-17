@@ -173,10 +173,39 @@ We have $\hat{x}$ is upper bounded by $max_{a \in [0,1]} (min(\UB(n) \cdot a, x 
 
 
 
+
+
+
+
+
+
+
+
+
+
 \section{Partial MILP}	
 
-In this paper, we revisit the use of {\em partial MILP} (see \cite{DivideAndSlide}), to get interesting trade-offs between accuracy and runtime: 
-for a set of unstable neurons $X$, we denote by MILP$_X$ the MILP encoding where variables encoding $X$ are binary, and other variables are linear variables using the LP relaxation. We say that nodes in $X$ are {\em opened}. To further limit the number of binary variables needed for a given accuracy, we devise the same iterative approach as the box abstraction or DeepPoly \cite{deeppoly}, computing lower and upper bounds $\LB(n),\UB(n)$ for neurons $n$ of a layer, that are used when computing values of the next layer, thus necessitating less variables from previous layers. 
+{\color{red}
+In this paper, we revisit the use of {\em partial MILP} (pMILP for short, see \cite{DivideAndSlide}), to get interesting trade-offs between accuracy and runtime.
+Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: pMILP$_X(n)$ simply calls Gurobi to minimize/maximize the value of $n$ with the MILP model encoding (equation (2) Section 3.2), where variable $a$ is
+\begin{itemize}
+\item binary for neurons in $X$ (exact encoding of the ReLU),
+\item linear for neurons not in $X$ (linear relaxation).
+\end{itemize}
+
+
+Formally, we denote by MILP$_X$ the MILP encoding where the variable $a$ encoding $\ReLU(y)$ is binary for $y\in X$, and linear for $y\notin X$, whether $y$ is unstable or stable. 
+We say that nodes in $X$ are {\em opened}. 
+That is, if $X$ is a strict subset of the set of all unstable neurons, then 
+MILP$_X$ is an abstraction of the constraints in the full MILP model. If $X$ covers all unstable neurons, then MILP$_X$ is exact as there is only one linear mode for stable variables. The worst-case complexity to solve MILP$_X$ is NP-complete in $|X|$, ie the number of binary variables.
+
+\smallskip
+
+To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we do a trade-off in Algorithm \ref{algo1} pMILP$_K$, using an iterative approach similar to the box abstraction or DeepPoly \cite{deeppoly}, computing lower and upper bounds $\LB(n),\UB(n)$ for neurons $n$ of a each layer iteratively, that are used when computing values of the next layer.
+So we trade-off the NP-complexity in $|X|$ with a linear complexity in the number of neurons. Notice that all the neurons of a layer can be treated in parallel.
+}
+
+\medskip
 
 %To obtain a more accurate measure, that 
 %can also scale to deeper layers and 
@@ -186,19 +215,19 @@ for a set of unstable neurons $X$, we denote by MILP$_X$ the MILP encoding where
 \SetKwInput{KwInput}{Input}
 \SetKwInput{KwOutput}{Output}
 
-\begin{algorithm}[h!]
-	\caption{pMILP($K$)}
+\begin{algorithm}[t!]
+	\caption{pMILP$_K$}
 	\label{algo1}
-	\KwInput{Bounds $[\alpha_n,\beta_n]$ for input nodes $n$ at layer $0$ (input neighbourhood)}
+	\KwInput{Bounds $[\LB(m),\UB(m)]$ for nodes $m$ at layer $0$}
 	
-	\KwOutput{Bounds $[\alpha_n,\beta_n]$ for every node $n$}
+	\KwOutput{Bounds $[\LB(n),\UB(n)]$ for every node $n$}
 	
-	\For{layer $k=1 \cdots \ell$}{
+	\For{layer $k=1, \ldots, \ell$}{
 		\For{neuron $n$ in layer $k$}{
 			
-			Compute $X$ a set of $K$ nodes with the highest Utility for target neuron $n$.
+			Compute $X$ a set of $K$ nodes most important for target neuron $n$.
 			
-			Run MILP$_X$ to obtain $[\alpha_n,\beta_n]$ from bounds of neurons in layers $< k$
+			Run pMILP$_X(n)$ to obtain $[\LB(n),\UB(n)]$ using $\MILP_X$ and additional constraints $\bigvee_{m \text{ in layer } <k} \val(m) \in [\LB(m),\UB(m)]$.
 		}
 	}
 \end{algorithm}	
@@ -206,8 +235,8 @@ for a set of unstable neurons $X$, we denote by MILP$_X$ the MILP encoding where
 %We then analyse its complexity.
 %First, notice that the complexity to rnu Utility is negligible wrt the Run MILP$_X$.
 
-We provide the pseudo code for pMILP in Algorithm \ref{algo1}.
-pMILP($K$) has a worst case complexity bounded by $O(N \cdot \MILP(N,K))$, 
+We provide the pseudo code for pMILP$_K$ in Algorithm \ref{algo1}.
+pMILP$_K$ has a worst case complexity bounded by $O(N \cdot \MILP(N,K))$, 
 where $N$ is the number of nodes of the DNN, and $\MILP(N,K)$ is the complexity of solving a MILP program with $K$ integer variables and $N$ linear variables.
 We have $\MILP(N,K) \leq 2^K \LP(N)$ where $\LP(N)$ is the Polynomial time to solve a Linear Program with $N$ variables, $2^K$ being an upper bound. Solvers like Gurobi are quite adept and usually do not need to evaluate all $2^K$ ReLU configurations to deduce the bounds.
 It is worth mentioning that the "for" loop iterating over neurons $n$ in layer $k$ (line 2) can be executed in parallel, because the computation only depends on bounds from preceding layers, not the current layer $k$. This worst-case complexity compares favorably when $K<<N$ with the worst-case complexity of BaB which would be $O(out \times 2^N)$, where $out$ is the number of output neurons. Of course, actual complexity is always much better than the worst case, thanks to different heuristics, such as pruning, which is what happens for easy instances, for which the linear cost $N$ in pMILP (which cannot be avoided) is actually the limiting factor. Only experimental results can tell whether the accuracy lost using reduced variables in pMILP can be a good trade off vs efficiency, both depending on the number $K$ chosen.
