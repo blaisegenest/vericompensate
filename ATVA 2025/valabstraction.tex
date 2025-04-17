@@ -194,14 +194,14 @@ Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which w
 \end{itemize}
 
 
-Formally, we denote by MILP$_X$ the MILP encoding where the variable $a$ encoding $\ReLU(y)$ is binary for $y\in X$, and linear for $y\notin X$, whether $y$ is unstable or stable. 
+Formally, we denote by MILP$_X$ the MILP encoding where the variable $a$ encoding $\ReLU(y)$ is binary for $y\in X$, and linear for $y\notin X$ ($y$ being unstable or stable). 
 We say that nodes in $X$ are {\em opened}. 
 That is, if $X$ is a strict subset of the set of all unstable neurons, then 
 MILP$_X$ is an abstraction of the constraints in the full MILP model. If $X$ covers all unstable neurons, then MILP$_X$ is exact as there is only one linear mode for stable variables. The worst-case complexity to solve MILP$_X$ is NP-complete in $|X|$, ie the number of binary variables.
 
 \smallskip
 
-To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we do a trade-off in Algorithm \ref{algo1} pMILP$_K$, using an iterative approach similar to the box abstraction or DeepPoly \cite{deeppoly}, computing lower and upper bounds $\LB(n),\UB(n)$ for neurons $n$ of a each layer iteratively, that are used when computing values of the next layer.
+To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach similar to the box abstraction or DeepPoly \cite{deeppoly}, computing lower and upper bounds $\LB(n),\UB(n)$ for neurons $n$ of a each layer iteratively, that are used when computing values of the next layer.
 So we trade-off the NP-complexity in $|X|$ with a linear complexity in the number of neurons. Notice that all the neurons of a layer can be treated in parallel.
 }
 
