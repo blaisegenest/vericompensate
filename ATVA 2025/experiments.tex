@@ -250,9 +250,9 @@ Last, compared with {\em Refined} $\beta$-Crown, we can observe three patterns: 
 
 
 
-\subsection{Comparison with other Verifiers?}
+\subsection{Comparison with other Verifiers}
 
-We voluntarily limited the comparison to $\alpha,\beta$-Crown because it is one of the most efficient verifier to date, which allowed us to consider a spectrum of parameters to understand $\alpha,\beta$-Crown scaling without too much clutter.
+We voluntarily limited the comparison so far to $\alpha,\beta$-Crown because it is one of the most efficient verifier to date, which allowed us to consider a spectrum of parameters to understand $\alpha,\beta$-Crown scaling without too much clutter.
 
 Interestingly, GCP-CROWN \cite{cutting} is slightly more accurate than $\alpha,\beta$-Crown on the DNNs we tested, but necessitates IBM CPLEX solver, which is not available to us.
 We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cutting}, experimenting with different verifiers on the most interesting CIFAR CNN-B-Adv. Notice that results are not exactly comparable with ours because the testing images are not the same (ours has $62\%$ upper bound while \cite{cutting} has $65\%$ upper bound, so the image set in \cite{cutting} are slightly easier). There, GCP-CROWN is $2\%$ more accurate (with higher runtime) than $\alpha,\beta$-Crown with 90s TO, so we can deduce that Hybrid MILP, which is $9\%$ more accurate than $\alpha,\beta$-Crown with 2000s TO, is significantly more accurate than GCP-CROWN.
