@@ -11,9 +11,6 @@
 \end{figure}
 
 
-\textcolor{red}{The number of open nodes we considered for the 5 F(ully)C(onnected)NNs depend neither on the image nor on the particular FCNN, only on the depth of the layer, because the runtime depends crucially on this factor. For FCNNs, we use a simple /2 rule between the number of open nodes of layer+1 vs layer (except last layer=14). For other architectures, we set the number of nodes to obtain similar runtime per layer, by testing a couple of neurons per layer, and use it for all images.}
-
-
 %
 We implemented \toolname\ in Python 3.8: it first calls $\alpha,\beta$-Crown with small time out (10s for small and 30s for larger DNNs), and then call pMILP on the undecided inputs.
 Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD Threadripper 7970X  ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. The  objectives of our evaluation was to answer the following  questions:
@@ -25,12 +22,13 @@ Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluati
 \end{enumerate}
 
 
-\subsection{Comparison between different scoring functions.}
+\subsection{Comparison between different scoring functions (accuracy).}
 
 %The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes,  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
-First, we measured the distance between SAS or GS and real improvement for all nodes in the first two layers of $5 \times 100$ wrt the accuracy of nodes in the third layer. On average, the distance using GS is 4 times larger than using SAS.
+%First, we measured the distance between SAS or GS and real improvement for all nodes in the first two layers of $5 \times 100$ wrt the accuracy of nodes in the third layer. On average, the distance using GS is 4 times larger than using SAS.
 
-Then, to measure the impact of the scoring function to select neurons to open, 
+%Then, 
+To measure the impact of the scoring function to select neurons to open, 
 we considered the largest complex CNN-B-Adv, with 20 000 nodes. 
 We tested over the $\vx=85$th image in the CIFAR dataset.
 To measure the accuracy, we measure the uncertainty of all nodes in the 4th layer:
@@ -86,7 +84,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 
 %We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer. The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. 
 We report in Figure \ref{fig_table3} the average uncertainty of $\MILP_X$ following the 
-choice of the $K$ heaviest neurons of SAS, compared with a random choice, with Huang \cite{DivideAndSlide}, based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$, and with GS.
+choice of the $K$ heaviest neurons of SAS, compared with a random choice, with Huang \cite{DivideAndSlide}, based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$, and with GS (here, $s_{FSB}$).
 
 
 
@@ -138,9 +136,9 @@ with the static order provided by SAS, as well as the static order provided by G
 		  & \multicolumn{2}{c|}{55 open ReLUs} & \multicolumn{2}{c|}{60 open ReLUs}\\ 
 		 order & distance & time & distance & time & distance & time & distance & time \\
 		\hline \hline
-		Gurobi & 0.384 & 252s & 0.368&265  &0.342 & 287& 0.315  & 306s  \\ 
-		SAS (static) & 0.384 & 448s & 0.368&759  &0.365 &971 & 0.355  & 971s \\
-		GS (static) & 0.384 & {\bf 251s} &0.368 &{\bf 253}  & 0.342 &{\bf 270} & 0.315 & {\bf 281s} \\ \hline
+		Gurobi & 0.384 & 252s & 0.368&265s  &0.342 & 287s& 0.315  & 306s  \\ 
+		SAS (static) & 0.384 & 448s & 0.368&759s  &0.365 &971s & 0.355  & 971s \\
+		GS (static) & 0.384 & {\bf 251s} &0.368 &{\bf 253s}  & 0.342 &{\bf 270s} & 0.315 & {\bf 281s} \\ \hline
 	\end{tabular}
 	\caption{Comparison of different orderings with selection of ReLUs by SAS.
 	\vspace{-0.4cm}}
@@ -148,7 +146,8 @@ with the static order provided by SAS, as well as the static order provided by G
 \end{table}
 
 SAS ordering is particularly counter-productive because it is accurate only for one branch (the most complicated one), whereas Gurobi can adapt the order to each branch.
-However, the GS {\em ordering} (with the SAS {\em selection}) is better as it is general and not local to a solution, with better runtime than Gurobi, despite its staticness whereas Gurobi order is adaptative. Using SAS order for the solution branch, and GS ordering for other branches should be more efficient, but we cannot experiment that within the closed-source Gurobi solver.
+However, the GS {\em ordering} (with the SAS {\em selection}) is better as it is general and not local to a solution, with better runtime than Gurobi, despite its staticness whereas Gurobi order is adaptative.
+% Using SAS order for the solution branch, and GS ordering for other branches should be more efficient, but we cannot experiment that within the closed-source Gurobi solver.
 
 \iffalse
 Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
@@ -177,10 +176,42 @@ Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier becaus
 
 
 
+\subsection{Comparison with MILP (time and accuracy)}
+
+Restricting the set $X$ of open ReLU nodes potentially hurts accuracy. 
+Another strategy could be to still compute inductively accurate bounds for each nodes,
+replacing pMILP ({\sf SAS, GS}, etc.) with a full MILP model, and stopping it early after some fixed time-out (100s,250s, $\ldots$, 2000s).
+
+We evaluate in Figure \ref{fig555} the full MILP and different pMILP models on the output layer of CNN-B-Adv. The bounds for hidden layers have been computed with the same SAS method.
+We compare the {\em distance to verify} the same Image 85, specifically the lower bound of an output neuron, the furthest away from verification.
+%(the local robustness objective asks the difference between the value of the output neuron corresponding to the correct class and the value of any other output neuron to be positive). 
+The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is considered rather than an average over neurons.
+
+\begin{figure}[t!]
+	\hspace*{-0.8cm}
+	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
+	\caption{Distance to verify vs runtime: comparison between SAS, GS, full MILP and Huang's method for different number of ReLUs open / time-outs.}
+	\label{fig555}
+\end{figure}
+
+{\sf SAS} (even {\sf GS}$=s_{FSB}$) is much more accurate than full MILP for every reasonable time-outs considered, with >10 times fastest runtime at better accuracy. The reason is that even the advanced MILP solver Gurobi struggles to sort out all ReLUs, and that is when having accurate scoring functions as {\sf SAS }is particularly important.
+
+
+
+
+The difference of distance to verify between SAS and GS ISO number of ReLUs is very large. However, as the ReLUs opened by GS are not as important as the ReLUs opened by SAS, the runtime of GS ISO number of ReLUs is faster than for SAS. Still, the important metric here is runtime ISO accuracy (distance to verify), which is clearly favorable for SAS, close to 2x faster. Importantly, the accuracy gain by SAS is very predictable, with improvement with each open ReLUs, while it is much more erratic for GS. This helps setting a fixed number of ReLUs. Also, SAS reaches accuracy which would be hard to match by GS in number of ReLUs to open, needing an extremely high number of open ReLUs, and thus, a uncertain high runtime.
+
 
 
 
 \subsection{Comparison with $\alpha,\beta$-Crown}
+
+
+
+
+
+\textcolor{red}{The number of open nodes we considered for the 5 F(ully)C(onnected)NNs depend neither on the image nor on the particular FCNN, only on the depth of the layer, because the runtime depends crucially on this factor. For FCNNs, we use a simple /2 rule between the number of open nodes of layer+1 vs layer (except last layer=14). For other architectures, we set the number of nodes to obtain similar runtime per layer, by testing a couple of neurons per layer, and use it for all images.}
+
 
 
 To assess the verification efficiency and runtime vs $\alpha,\beta$-Crown, we 
@@ -219,7 +250,6 @@ The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta
 	\label{table_hybrid}
 	\end{table}
 
-\newpage
 
 {\em Analysis}: overall, Hybrid MILP is very accurate, only leaving $8\%$-$15\%$ of images undecided, with runtime taking less than $500s$ in average per image, and even 10 times less on smaller DNNs. It can scale up to quite large hard DNNs, such as CNN-B-Adv with 2M parameters and 20K activation functions.
 
@@ -262,6 +292,7 @@ We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cut
 Results on other networks from other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported \cite{crown} on other tested DNNs, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on complex (even small) instances. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em complex} MNIST DNNs at several time-out settings. Last, Pyrat \cite{pyrat} (2sd in the latest VNNComp) is not open source, which made running it impossible. Details can be found in the appendix. Also, ablation studies showing what each feature of Hybrid MILP is bringing can be found in the appendix.
 
 
+\iffalse
 \subsection{Finer Grain evaluation of Accuracy}
 
 \begin{figure}[b!]
@@ -284,6 +315,7 @@ We report the results (upper bound, best bound verified by $\alpha,\beta$-Crown 
 
 {\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10, 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so the falsifier may have missed a closer attack to robustness. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, 3 times smaller than the $0.042$ gap for $\alpha,\beta$-CROWN.
 
+\fi
 
 \iffalse
 
