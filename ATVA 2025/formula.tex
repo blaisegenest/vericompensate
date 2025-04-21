@@ -122,7 +122,7 @@ We define:
 
 
 
-\begin{figure}[b!]
+\begin{figure}[t!]
 	\begin{centering}
 	\begin{tikzpicture}[scale=1, >=stealth]
 		
@@ -265,12 +265,9 @@ we are sure that this node is not having any impact on $\Sol\_\max_{\{a\}}^z(z)$
 	$\sol'(z)$ is a solution of $\mathcal{M}_{\{a\}}$, it is smaller or equal to the maximal solution: $\sol'(z) \leq$ $\Sol\_\max_{\{a\}}^z(z)$. That is, 
 	$\sol(z)-\sol'(z) \geq \sol(z) -$ $\Sol\_\max_{\{a\}}^z(z)$, i.e. 
 	$ \Utility\_\max^z(a) \geq \Improve\_\max^z(a)$.
-	In particular, we have that $\Utility\_\max^z(a) \geq 0$, which was not obvious from the definition.
+	In particular, we have that $\Utility\_\max^z(a) \geq 0$, which was not obvious from the definition.	
 
-
-	
-
-	Finally, we show (\ref{eq12}). First, opening $a$ changes the value of $\hat{a}$ from
+Finally, we show (\ref{eq12}). First, opening $a$ changes the value of $\hat{a}$ from
 	$\sol(\hat{a})$ to $\ReLU(\sol(a)) = sol(\hat{a}) + \Delta(a)$, 
 	and from $sol(b)$ to $sol(b) + \Delta(b)$.
 	The case of $\Delta(\hat{b})$ is the most interesting:
@@ -285,11 +282,11 @@ the full $\Delta(b)$, unless $\Delta(b) < -\sol(b) < 0$ in which case it is
 $-\sol(b)$.
 If (c) $\sol(b) < 0$, then we have $\sol(\hat{b})=\ReLU(b)=0$ and opening $a$ moves away 
 from 0 only if $\sol(b)+\Delta(b)>0$. 
- \qed
-		\end{proof}
+\qed
+\end{proof}
 
 
-	\iffalse
+\iffalse
 
 	If we open $a$ without changing its value $\sol(a)$, then the change $\Delta(\hat{a})$ in the weight of $\hat{a}$ is 
 $\Delta(\hat{a})=\ReLU(\sol(a)) - \sol(\hat{a}) \leq 0$ as above. Its impact on $z$ is no more direct with $W_{az}$, but it is through $\ell$. 
@@ -325,9 +322,11 @@ $-\sol(b)$. We then set:
 $$ \Utility\_\max\nolimits^z(a) = -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})$$
 \fi
 
-We proceed inductively to define $\Utility\_\max^z(a)$ for deeper neurons $a$.
+%We proceed inductively to define $\Utility\_\max^z(a)$ for deeper neurons $a$.
 
-While $\Utility$ is a priori a more accurate way to select neurons to open in partial MILP (that will be verified in Fig. \ref{fig_table3}), global scoring functions have two advantages: first, they are faster to compute (a unique backpropagation is sufficient, while SAS needs one full LP call to recover the solution, plus a forward propagation for each node $a$). This is not an issue for selecting nodes for partial MILP, as there is a single selection step. This would be potentially problematic for choosing branching nodes in BaB, at each branch. A trade off could be to precompute FSB and only on the most promising nodes run $\Utility$. The second shortcoming is the other side of the coin to consider improvement local to a solution: in the case of branching, one of the branch imposes to be far from the solution and $\Utility$ is not accurate on that branch, while global scoring is as (in)accurate for both branches. We will verify that using GS for ordering nodes after the SAS selection is actually more efficient, for this very reason.
+\iffalse
+While $\Utility$ is a priori a more accurate way to select neurons to open in partial MILP (that will be verified in Fig. \ref{fig_table3}), global scoring functions have two advantages: first, they are faster to compute (a unique backpropagation is sufficient, while SAS needs one LP call to recover the solution, plus a forward propagation for each node $a$). This is not an issue for selecting nodes for partial MILP, as there is a single selection step. This would be potentially problematic for choosing branching nodes in BaB, at each branch. A trade off could be to precompute FSB and only on the most promising nodes run $\Utility$. The second shortcoming is the other side of the coin to consider improvement local to a solution: in the case of branching, one of the branch imposes to be far from the solution and $\Utility$ is not accurate on that branch, while global scoring is as (in)accurate for both branches. We will verify that using GS for ordering nodes after the SAS selection is actually more efficient, for this very reason.
+\fi
 
 %\textcolor{red}{$s_{FSB}$ *is* in Figure 5, under label “GS” (global-scoring). $s_{SR}$ is very slightly worst, reason why we did not report it.}
 

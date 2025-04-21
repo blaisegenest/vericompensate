@@ -43,7 +43,94 @@ Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer 
 
 
 
-\begin{figure}[b!]
+
+
+
+
+	
+	%In case where the bias is 0, then there is no difference between $s_{SR}$ and $s_{FSB}$.
+	Then, ReLU are ranked using these scores, to select the most important unstable ReLUs
+	(with $\LB(u_k) < 0 < \UB(u_k)$).
+	% as stable ReLUs are linear, thus they are already treated correctly.
+	
+
+
+	{\color{red}
+\noindent {\em Running Example:} Consider Fig. \ref{img:FSB_example}. 
+It has no bias, so $s_{SR}=s_{FSB}$. We have $\lambda(b)=d$, $\lambda(a)=\frac{cd}{2}$.
+The value of $s_{FSB}(a)$ depends on the signs of $c,d$.
+
+We perform a novel comparison between $s_{FSB}(a)$ and $\Delta(z)$, the difference on the {\em maximal bound} computed by pMILP$_X(z)$ when opening the $\ReLU$ of node $a$ ($X=\{a\}$), yielding $\val(\hat{a}) = \ReLU(\val(a))$, versus having $X=\emptyset$, for which 
+$\val(\hat{a})$ can be any value in the triangle approximation (Prop. \ref{LP}).
+%, Fig. \ref{triangle})).
+
+
+The most favorable cases are $c < 0 < d$ and $d < 0 < c$: 
+as $cd <0$, we have $s_{FSB}(a)=\max(0,\frac{cd}{4}) = 0$.
+Because $cd <0$, both $a$ and $\hat{a}$ need to be minimized by MILP$_X$ in order to maximize the value of $z$. For $X=\emptyset$, the LP approximation (=MILP$_\emptyset$) will thus 
+set $\val(\hat{a}) = \ReLU(\val(a))$ as this is the minimum value in the triangle approximation. Notice that opening $X=\{a\}$ yields the same $\val(\hat{a}) = \ReLU(\val(a))$.
+That is, opening node $a$ is not improving the bound $\UB(z)$, as correctly predicted by the score $s_{FSB}(a)= \Delta(a) = 0$.
+
+
+
+
+
+
+\iffalse
+\begin{figure}[t!]
+	\begin{centering}
+	\begin{tikzpicture}[scale=1, >=stealth]
+		
+		% Draw axes
+		\draw[->] (-5,0) -- (4,0) node[right] {$a$};
+		\draw[->] (0,-1) -- (0,3) node[above] {$\hat{a}$};
+		
+		% Draw ReLU function
+		\draw[line width=0.4mm, blue] (-3,0) -- (0,0);
+		\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(-1.1,-1.9)}] {$\hat{a} = \ReLU(a)$};
+		\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-5.7,-2)}] {$\hat{a} = r(a) (a-\LB)$};
+		
+		% Add labels
+		\draw[dashed] (2.5,0) -- (2.5,2.5) -- (0,2.5); % Optional grid
+		\node[below left] at (0,0) {$0$};
+		
+		% Add tick marks
+		
+		\foreach \x in {2.5}
+		\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\UB$};
+		\foreach \x in {-3}
+		\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\LB$};
+	
+		\foreach \y in {2.5}
+		\draw[shift={(0,\y)}] (0.1,0) -- (-0.1,0) node[left] {$\UB$};
+		
+		
+	\end{tikzpicture}
+		\caption{Triangle approximation with $r(a)=\frac{1}{2}$
+		\vspace{-0.3cm}}
+	\label{triangle}
+	\end{centering}
+	\end{figure}
+\fi
+
+
+
+
+Case $c>0,d>0$: we have $s_{FSB}(a)=\frac{cd}{4}$.
+The value of $a,\hat{a},b,\hat{b}$ should be maximized to maximize the value of $z$, because $W_{bz}=d>0$ and $W_{ab}=c>0$. 
+%Each variation of $b$ by $\Delta(b)$ will have an impact $r(b) \cdot \Delta(b)=\frac{\Delta(b)}{2}$ on the value of $\hat{b}$, and thus $\frac{d \Delta(b)}{2}$ on $z$. 
+Now, let us call $val(a)$ the maximum value for $a$ 
+(same for MILP$_\emptyset$ and MILP$_{\{a\}}$).
+The maximum value for $\hat{a}$ under LP ($X=\emptyset$) is 
+$\frac{1}{2} \cdot (\val(a)-LB(a))$ following the triangle approximation. 
+Now, if $X=\{a\}$, then the value of $\hat{a}$ is $\ReLU(\val(a))$: the difference 
+$\Delta(\hat{a})$ is between 0 (for $\val(a)\in \{LB,UB\}$) and $\frac{1}{2}$ (for $\val(a)=0$). The difference $\Delta(b)$ for the value of $b$ is thus between 0 and $\frac{c}{2}$, which means $\Delta(\hat{b}) \in [0, \frac{c}{4}]$, using the upper function of the triangle approximation of rate $r(b)=\frac{1}{2}$, as the value of $\hat{b}$ should be maximized.
+This means a difference $\Delta(z) \in [0, \frac{cd}{4}]$ 
+(depending on the maximal value $val(a)$), to compare with the fixed 
+$s_{FSB}(a)=\frac{cd}{4}$.
+
+
+\begin{figure}[t!]
 	\centering
 	\begin{tikzpicture}
 		
@@ -130,89 +217,6 @@ Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer 
 \end{figure}
 
 
-
-
-
-	
-	%In case where the bias is 0, then there is no difference between $s_{SR}$ and $s_{FSB}$.
-	Then, ReLU are ranked using these scores, to select the most important unstable ReLUs
-	(with $\LB(u_k) < 0 < \UB(u_k)$).
-	% as stable ReLUs are linear, thus they are already treated correctly.
-	
-
-
-	{\color{red}
-\noindent {\em Running Example:} Consider Fig. \ref{img:FSB_example}. 
-It has no bias, so $s_{SR}=s_{FSB}$. We have $\lambda(b)=d$, $\lambda(a)=\frac{cd}{2}$.
-The value of $s_{FSB}(a)$ depends on the signs of $c,d$.
-
-We perform a novel comparison between $s_{FSB}(a)$ and $\Delta(z)$, the difference on the {\em maximal bound} computed by pMILP$_X(z)$ when opening the $\ReLU$ of node $a$ ($X=\{a\}$), yielding $\val(\hat{a}) = \ReLU(\val(a))$, versus having $X=\emptyset$, for which 
-$\val(\hat{a})$ can be any value in the triangle approximation (Prop. \ref{LP}, Fig. \ref{triangle})).
-
-
-The most favorable cases are $c < 0 < d$ and $d < 0 < c$: 
-as $cd <0$, we have $s_{FSB}(a)=\max(0,\frac{cd}{4}) = 0$.
-Because $cd <0$, both $a$ and $\hat{a}$ need to be minimized by MILP$_X$ in order to maximize the value of $z$. For $X=\emptyset$, the LP approximation (=MILP$_\emptyset$) will thus 
-set $\val(\hat{a}) = \ReLU(\val(a))$ as this is the minimum value in the triangle approximation. Notice that opening $X=\{a\}$ yields the same $\val(\hat{a}) = \ReLU(\val(a))$.
-That is, opening node $a$ is not improving the bound $\UB(z)$, as correctly predicted by the score $s_{FSB}(a)= \Delta(a) = 0$.
-
-
-
-
-
-
-
-\begin{figure}[t!]
-	\begin{centering}
-	\begin{tikzpicture}[scale=1, >=stealth]
-		
-		% Draw axes
-		\draw[->] (-5,0) -- (4,0) node[right] {$a$};
-		\draw[->] (0,-1) -- (0,3) node[above] {$\hat{a}$};
-		
-		% Draw ReLU function
-		\draw[line width=0.4mm, blue] (-3,0) -- (0,0);
-		\draw[thick, blue] (0,0) -- (2.5,2.5) node[below, shift={(-1.1,-1.9)}] {$\hat{a} = \ReLU(a)$};
-		\draw[thick, blue] (-3,0) -- (2.5,2.5) node[above, shift={(-5.7,-2)}] {$\hat{a} = r(a) (a-\LB)$};
-		
-		% Add labels
-		\draw[dashed] (2.5,0) -- (2.5,2.5) -- (0,2.5); % Optional grid
-		\node[below left] at (0,0) {$0$};
-		
-		% Add tick marks
-		
-		\foreach \x in {2.5}
-		\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\UB$};
-		\foreach \x in {-3}
-		\draw[shift={(\x,0)}] (0,0.1) -- (0,-0.1) node[below] {$\LB$};
-	
-		\foreach \y in {2.5}
-		\draw[shift={(0,\y)}] (0.1,0) -- (-0.1,0) node[left] {$\UB$};
-		
-		
-	\end{tikzpicture}
-		\caption{Triangle approximation with $r(a)=\frac{1}{2}$
-		\vspace{-0.3cm}}
-	\label{triangle}
-	\end{centering}
-	\end{figure}
-
-
-
-
-
-Case $c>0,d>0$: we have $s_{FSB}(a)=\frac{cd}{4}$.
-The value of $a,\hat{a},b,\hat{b}$ should be maximized to maximize the value of $z$, because $W_{bz}=d>0$ and $W_{ab}=c>0$. 
-%Each variation of $b$ by $\Delta(b)$ will have an impact $r(b) \cdot \Delta(b)=\frac{\Delta(b)}{2}$ on the value of $\hat{b}$, and thus $\frac{d \Delta(b)}{2}$ on $z$. 
-Now, let us call $val(a)$ the maximum value for $a$ 
-(same for MILP$_\emptyset$ and MILP$_{\{a\}}$).
-The maximum value for $\hat{a}$ under LP ($X=\emptyset$) is 
-$\frac{1}{2} \cdot (\val(a)-LB(a))$ following the triangle approximation. 
-Now, if $X=\{a\}$, then the value of $\hat{a}$ is $\ReLU(\val(a))$: the difference 
-$\Delta(\hat{a})$ is between 0 (for $\val(a)\in \{LB,UB\}$) and $\frac{1}{2}$ (for $\val(a)=0$). The difference $\Delta(b)$ for the value of $b$ is thus between 0 and $\frac{c}{2}$, which means $\Delta(\hat{b}) \in [0, \frac{c}{4}]$, using the upper function of the triangle approximation of rate $r(b)=\frac{1}{2}$, as the value of $\hat{b}$ should be maximized.
-This means a difference $\Delta(z) \in [0, \frac{cd}{4}]$ 
-(depending on the maximal value $val(a)$), to compare with the fixed 
-$s_{FSB}(a)=\frac{cd}{4}$.
 
 The last case is the most problematic: 
 Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$, because $cd >0$.
