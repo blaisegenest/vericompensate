@@ -146,17 +146,15 @@ Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer 
 It has no bias, so $s_{SR}=s_{FSB}$. We have $\lambda(b)=d$, $\lambda(a)=\frac{cd}{2}$.
 The value of $s_{FSB}(a)$ depends on the signs of $c,d$.
 
-Compare $s_{FSB}(a)$ with $imp(a)$, the real improvement on the {\em maximal bound} computed by pMILP$_X(z)$ when opening the $\ReLU$ of node $a$ ($X=\{a\}$), yielding 
-$\val(\hat{a}) = \ReLU(\val(a))$, versus having $X=\emptyset$, for which 
-$\val(\hat{a})$ can be any value in the triangle approximation (Figure \ref{triangle})), 
-according to Prop. \ref{lp}.
+We perform a novel comparison between $s_{FSB}(a)$ and $\Delta(z)$, the difference on the {\em maximal bound} computed by pMILP$_X(z)$ when opening the $\ReLU$ of node $a$ ($X=\{a\}$), yielding $\val(\hat{a}) = \ReLU(\val(a))$, versus having $X=\emptyset$, for which 
+$\val(\hat{a})$ can be any value in the triangle approximation (Prop. \ref{LP}, Fig. \ref{triangle})).
 
 
 The most favorable cases are $c < 0 < d$ and $d < 0 < c$: 
 as $cd <0$, we have $s_{FSB}(a)=\max(0,\frac{cd}{4}) = 0$.
 Because $cd <0$, both $a$ and $\hat{a}$ need to be minimized by MILP$_X$ in order to maximize the value of $z$. For $X=\emptyset$, the LP approximation (=MILP$_\emptyset$) will thus 
 set $\val(\hat{a}) = \ReLU(\val(a))$ as this is the minimum value in the triangle approximation. Notice that opening $X=\{a\}$ yields the same $\val(\hat{a}) = \ReLU(\val(a))$.
-That is, opening node $a$ is not improving the bound $\UB(z)$, as correctly predicted by the score $s_{FSB}(a)= imp(a) = 0$.
+That is, opening node $a$ is not improving the bound $\UB(z)$, as correctly predicted by the score $s_{FSB}(a)= \Delta(a) = 0$.
 
 
 
@@ -210,23 +208,26 @@ Now, let us call $val(a)$ the maximum value for $a$
 (same for MILP$_\emptyset$ and MILP$_{\{a\}}$).
 The maximum value for $\hat{a}$ under LP ($X=\emptyset$) is 
 $\frac{1}{2} \cdot (\val(a)-LB(a))$ following the triangle approximation. 
-Now, if $X=\{a\}$, then the value of $\hat{a}$ is $\ReLU(\val(a))$: the difference is 
-between 0 (for $\val(a)\in \{LB,UB\}$) and $\frac{1}{2}$ (for $\val(a)=0$). 
-The difference $\Delta(b)$ for the value of $b$ is thus between 0 and $\frac{c}{2}$, which means a difference at most $\frac{c}{4}$ for $\hat{b}$, using the upper function of the triangle approximation of rate $r(b)$, as the value of $\hat{b}$ should be maximized.
-This means a difference $imp(a) \in [0, \frac{cd}{4}]$ on the value of $z$ (depending on the maximal value $val(a)$), to compare with the fixed $s_{FSB}(a)=\frac{cd}{4}$.
+Now, if $X=\{a\}$, then the value of $\hat{a}$ is $\ReLU(\val(a))$: the difference 
+$\Delta(\hat{a})$ is between 0 (for $\val(a)\in \{LB,UB\}$) and $\frac{1}{2}$ (for $\val(a)=0$). The difference $\Delta(b)$ for the value of $b$ is thus between 0 and $\frac{c}{2}$, which means $\Delta(\hat{b}) \in [0, \frac{c}{4}]$, using the upper function of the triangle approximation of rate $r(b)=\frac{1}{2}$, as the value of $\hat{b}$ should be maximized.
+This means a difference $\Delta(z) \in [0, \frac{cd}{4}]$ 
+(depending on the maximal value $val(a)$), to compare with the fixed 
+$s_{FSB}(a)=\frac{cd}{4}$.
 
 The last case is the most problematic: 
 Case $c<0,d<0$, implying that $s_{FSB}(a)=\frac{cd}{4}$, because $cd >0$.
-Opening $\ReLU(a)$ will have the same impact on the value of $\hat{a}$ then $b$
-than in case $c>0,d>0$, with difference of $\val(b)$ between $[0,\frac{c}{2}]$.
-However, as $d<0$, value of $\hat{b}$ needs to be minimized to maximize the value of $z$. That is, the value of $\hat{b}$ will be the value of $\ReLU(sol(b))$, and the change in $\hat{b}$ will be either 0 in case $\val(b)<0$,
+Opening $\ReLU(a)$ will have the same impact on the value of $\hat{a},b$ 
+than in case $c>0,d>0$, with $\Delta(b) \in [0,\frac{c}{2}]$.
+However, as $d<0$, value of $\hat{b}$ needs to be minimized to maximize the value of $z$. That is, the value of $\hat{b}$ will be the value of $\ReLU(sol(b))$, and the change 
+$\Delta(\hat{b})$ will be either 0 in case $\val(b)<0$,
 or $\Delta(b) \in [0,\frac{c}{2}]$ for $\val(b)>0$.
-That is, $z$ will be modified by either $imp(a)=0$ or $imp(a) = d \Delta(b)$, to be compared with the fix value $s_{FSB}(a)=\frac{cd}{4}$, which is not always an overapproximation, it is possible that $imp(a)=\frac{cd}{2} > s_{FSB}(a)$, for $val(a)=0$ and $val(b)>0$.
+That is, $z$ will be modified by either $\Delta(z)=0$ or $\Delta(z) = d \Delta(b)$, to be compared with the fix value $s_{FSB}(a)=\frac{cd}{4}$, which is not always an overapproximation: we have $\Delta(z)=\frac{cd}{2} > s_{FSB}(a)$, 
+if $\val(a)=0$ and $\val(b)>0$.
 
 We call {\em global scoring} (GS) these functions $s_{FSB},s_{SR}$  because they score ReLUs as accuratly as possible, considering that they do not have access to the values 
-$\val(a),\val(b)$ maximizing $z$. Following this novel analysis of $s_{FSB},s_{SR}$, next Section presents a novel scoring function more accurate wrt $imp(a)$.
+$\val(a),\val(b)$ maximizing $z$. Following this analysis of $s_{FSB},s_{SR}$, 
+next Section presents a novel scoring function more accurate wrt $\Delta(z)$.
 	
-
 	}
 
 \iffalse

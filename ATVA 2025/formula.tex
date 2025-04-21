@@ -2,15 +2,14 @@
 
 \label{sec4}
 
-In this section, we propose a novel {\em Solution-Aware Scoring} (SAS),
+In this section, we propose {\em Solution-Aware Scoring} (SAS),
 to evaluate accurately how opening a ReLU impacts the accuracy.
-To do so, SAS considers explicitly the {\em difference} $\Delta(z)$ on the value of target node $z$ from opening $\ReLU(a)$, that is the difference for the value of $z$ between considering $\ReLU(a)$ exactly or using its LP relaxation $\LP(a)$, using the solution to a unique full LP call, which is resonnably fast to obtain. To compute $\Delta(z)$, intermediate $\Delta(b),\Delta(\hat{b})$ are computed inductively.
+To do so, SAS considers explicitly a solution to a unique LP call, which is reasonably fast to obtain as there is no binary variables (polynomial time). 
+%To compute $\Delta(z)$, intermediate $\Delta(b),\Delta(\hat{b})$ are computed inductively.
 %Indeed, it is not rare that $z$ is sensitive to ReLU node $n$, and yet $\LP(n)$ already provides an accurate approximation of $\ReLU(n)$.
 %In this case, usual heuristics would open $n$, while it would only improve the value of $z$ in a limited way.
 Assume that we want to compute an upper bound for neuron $z$ on layer $\ell_z$.
 We write $n < z$ if neuron $n$ is on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$. We denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ maximizing $z$: $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
-
-\textcolor{red}{SAS is a completely new method, computing based on the solution.}
 
 Consider $(sol(n))_{n \leq z} = (\Sol\_\max_\emptyset^z(n))_{n \leq z}$, a solution maximizing the value for $z$ when all ReLU use the LP relaxation.
 %(this can be obtained very efficiently by {\em one} call to an LP solver).
@@ -20,11 +19,10 @@ accurately represents how much opening neuron $n < z$ reduces the maximum comput
 compared with using only LP. 
 We have $\Improve\_\max^z(n)\geq 0$ as $\Sol\_\max_{\{n\}}^z$ fulfills all the constraints of 
 $\mathcal{M}_\emptyset$, so $\Sol\_\max_{\{n\}}^z(z) \leq \sol(z)$.
-Similarly, we define ($\Sol\_\min_\emptyset^z(n))_{n \leq z}$ and 
-$\Improve\_\min^z(n)$. 
-Calling MILP on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$
-would however be very time consuming when the number of neurons $a$ to evaluate is large.
-Instead, the SAS function uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ to choose a meaningful set $X$ of open nodes (Fig. \ref{fig_table3}).
+%Similarly, we define ($\Sol\_\min_\emptyset^z(n))_{n \leq z}$ and 
+%$\Improve\_\min^z(n)$. 
+Computing exactly $\Improve\_\max^z(n)$ would need a MILP call on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$, which would be very time consuming. Instead, the SAS function uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ 
+(Fig. \ref{fig_table3}).
 
 
 \iffalse
@@ -74,7 +72,7 @@ In our algorithm, we will open neurons at most 3 layer3 before the target layer.
 %and other values remain the same - in particular, $value(\hat{a})=\ReLU(sol(a))$. We define:
 %we first need to run $M^a_{\emptyset}$ to compute the upper bound of $a$  to obtain the solution data. Especially, we will read the values of $b$, before $\ReLU$ function and after $\ReLU$ function.
 
-For a neuron $b$ on the layer before the layer $\ell_z$, we define:
+For a neuron $b$ on the layer before layer $\ell_z$, we define:
 
 
 \vspace{-0.4cm}
@@ -86,16 +84,22 @@ For a neuron $b$ on the layer before the layer $\ell_z$, we define:
 %		Utility^z(a) = 0.
 %	\end{align*}
 
-Consider $b$ with $W_{bz}<0$: to maximize $z$, the value of $\sol(\hat{b})$ is minimized, 
-which is $\sol(\hat{b})=\ReLU(\sol(b))$ thanks to Proposition~\ref{LP}. 
-Even if $z$ is sensitive to this ReLU $b$, the improvement of $b$ is 0.
-Utility does not open it as $\Utility\_\max^z(b)=0$, whereas usual heuristics would.
 
+\noindent {\em Comparison:} consider $b$ with $W_{bz}<0$: 
+to maximize $z$, the value of $\sol(\hat{b})$ is minimized by LP, 
+ie $\sol(\hat{b})=\ReLU(\sol(b))$ thanks to Proposition~\ref{LP}. 
+Thus, we have $\Utility\_\max^z(b)=0=\Improve_{max}^z(b)$.
+Notice that the original scoring function $|W_{bz}|(\UB(b)-\LB(b))$ \cite{DivideAndSlide}  would be possibly very large in this case. However, {\sf GS} scoring functions from BaB-SR and FSB would also accurately compute  $s_{FSB}(b)=s_{SR}=0$.
+Notice that $\Utility$ does not need to consider bias explicitly, unlike $s_{FSB},s_{SR}$,
+as they are already accounted for in the solution considered. 
+
+\medskip
+
+Consider a neuron $a$ two layers before $\ell_z$, 
+$b$ denoting neurons in the layer $\ell$ just before $\ell_z$.
 Recall the rate $r(b)=\frac{\max(0,\UB(b))}{\max(0,\UB(b))-\min(0,\LB(b))} \in [0,1]$.
-For a neuron $a$ two layers before $\ell_z$, 
-$b$ denoting neurons in the layer $\ell$ just before $\ell_z$, 
-we define:
-\vspace{-0.4cm}
+We define:
+
 
 \begin{flalign*}
 	\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})&&\\
@@ -109,10 +113,13 @@ we define:
 		\max(\Delta(b),-\sol(b)), & for $W_{bz} < 0$ and $\sol(b)\geq0$\\
 		\max(0,\Delta(b)+\sol(b)), & for $W_{bz} < 0$ and $\sol(b)<0$ \quad \, \quad \, \quad		 
 \end{subnumcases}
-\vspace{-0.4cm}
+
 \begin{flalign*}
-	\Utility\_\max\nolimits^z(a) &= -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})&&
+	\Utility\_\max\nolimits^z(a) &= \Delta(z) = -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})&&
 \end{flalign*}
+
+
+
 
 
 \begin{figure}[b!]
@@ -198,17 +205,21 @@ we define:
 
 %Informally, $\Delta(\hat{a}), \Delta(b), \Delta(\hat{b})$ approximate the improvement on the accuracy of $\hat{a}, b, \hat{b}$ when computing $\ReLU(a)$ using the exact MILP encoding instead of LP. 
 
-Notice that $\Utility$ does not need to consider bias explicitly, unlike $s_{FSB},s_{SR}$,
-as they are already accounted for in the solution considered. 
-There are two main differences with $s_{FSB}$: 
-First, $\Delta(\hat{a})$ is defined exactly, with $\ReLU(\sol(a))-\sol(\hat{a})$,
-whereas the corresponding $\Delta_{FSB}(\hat{a})$ is approximated as $\LB(a) r(a)$, 
-which is only an upper bound. %of $\ReLU(\sol(a))-\sol(\hat{a})$.
-More importantly, the corresponding $\Delta_{FSB}(\hat{b})$ is always $r(b) \Delta(b)$, whereas SAS adapts to the 3 cases (see Fig. \ref{node:b}), correctly considering the 0 phase of $ReLU(b)$ when $\sol(b)\geq 0$, and the ID phase when $\sol(b)<0$.
-Assuming that the solution to maximize $z$ does not change when opening $\ReLU(a)$
-on neurons independent of $a$, then $\Utility$ is exact. This is not the case for $s_{FSB}$ because of the two previously mentioned cases. Further, even when the global solution changes, we can show that $\Utility$ is a safe overapproximation, which does not hold for $s_{FSB},s_{SR}$ (because of the case $sol(b) > 0$):
-
-
+{\color{red}
+\noindent {\em Comparison:} First, the original \cite{DivideAndSlide} does not propose a formula for node $a$ two layers before $z$. 
+Consider again the running example of Fig. \ref{img:FSB_example}. 
+In the case $c\cdot d<0$, we have $\Utility\_\max\nolimits^z(a)=\Improve_{max}^z(b)=s_{FSB}(a)=s_{SR}(a)=0$, as $\Delta(\hat{a})=0$. In the case $c>0,d>0$, 
+$\Delta(\hat{a}) = \ReLU(\sol(a))-\sol(\hat{a})$ is precise,
+whereas the corresponding $\Delta_{FSB}(\hat{a}) = \LB(a) r(a)$ is only an upperbound.
+The last case $c<0,d<0$ is the most extreme: 
+$\Delta(\hat{b})$ adapts to the case (b),(c) in Fig. \ref{node:b} leveraging the value $\sol(b)$, which yields very different values, whereas the corresponding $\Delta_{FSB}(\hat{b})$
+is always $r(b) \Delta_{FSB}(b)$. For $sol(b)<<0$, we will have 
+$\Delta(\hat{b})=0<\Delta_{FSB}(\hat{b})$.
+For $sol(b)>>0$, we will have 
+$\Delta(\hat{b})=\Delta(b) > \frac{1}{2}\Delta_{FSB}(\hat{b})$ 
+as $r(b)=\frac{1}{2}$. We can show that $\Utility$ is a safe overapproximation of 
+$\Improve\_\max^z(a)$, which does not hold for $s_{FSB},s_{SR}$ (because of the case $sol(b)>>0$):
+}
 
 \begin{proposition}
 	\label{prop2}
@@ -216,7 +227,6 @@ on neurons independent of $a$, then $\Utility$ is exact. This is not the case fo
 \end{proposition}
 
 
-Thus, $\Utility\_\max^z(a)$ can be used to approximate $\Improve\_\max^z(a)$. 
 In particular, for all nodes $a$ with $\Utility\_\max\nolimits^z(a)=0$, 
 we are sure that this node is not having any impact on $\Sol\_\max_{\{a\}}^z(z)$. 
 %This is one striking difference (but not the only one) with choosing utility based on 
@@ -319,7 +329,7 @@ We proceed inductively to define $\Utility\_\max^z(a)$ for deeper neurons $a$.
 
 While $\Utility$ is a priori a more accurate way to select neurons to open in partial MILP (that will be verified in Fig. \ref{fig_table3}), global scoring functions have two advantages: first, they are faster to compute (a unique backpropagation is sufficient, while SAS needs one full LP call to recover the solution, plus a forward propagation for each node $a$). This is not an issue for selecting nodes for partial MILP, as there is a single selection step. This would be potentially problematic for choosing branching nodes in BaB, at each branch. A trade off could be to precompute FSB and only on the most promising nodes run $\Utility$. The second shortcoming is the other side of the coin to consider improvement local to a solution: in the case of branching, one of the branch imposes to be far from the solution and $\Utility$ is not accurate on that branch, while global scoring is as (in)accurate for both branches. We will verify that using GS for ordering nodes after the SAS selection is actually more efficient, for this very reason.
 
-\textcolor{red}{$s_{FSB}$ *is* in Figure 5, under label “GS” (global-scoring). $s_{SR}$ is very slightly worst, reason why we did not report it.}
+%\textcolor{red}{$s_{FSB}$ *is* in Figure 5, under label “GS” (global-scoring). $s_{SR}$ is very slightly worst, reason why we did not report it.}
 
 \iffalse
 We use the following formula for general cases, i.e. possibly more than 3 layers. We use $a$ to denote the source node, and use $b,c$ to denote that $b$ is in one layer before $c$. 
