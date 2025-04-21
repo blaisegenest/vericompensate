@@ -84,7 +84,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 
 %We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer. The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. 
 We report in Figure \ref{fig_table3} the average uncertainty of $\MILP_X$ following the 
-choice of the $K$ heaviest neurons of SAS, compared with a random choice, with Huang \cite{DivideAndSlide}, based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$, and with GS (here, $s_{FSB}$).
+choice of the $K$ heaviest neurons of {\sf SAS}, compared with a random choice, with Huang \cite{DivideAndSlide}, based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$, and with GS (here, $s_{FSB}$).
 
 
 
@@ -114,15 +114,15 @@ choice of the $K$ heaviest neurons of SAS, compared with a random choice, with H
 \fi
 
 
-Overall, SAS is more accurate than GS, more accurate than Huang, more accurate than random choice of variables. SAS significantly outperforms other solutions, 
+Overall, {\sf SAS} is more accurate than GS, more accurate than Huang, more accurate than random choice of variables. {\sf SAS} significantly outperforms other solutions, 
 with 2 times less binary variables for the same accuracy (10 vs 22) vs GS and 6 times vs Huang (4 vs 24).
 Each node of the 4th layer displays a similar pattern, and the pattern is similar for different images (see appendix).
 
 \smallskip
 
-Gurobi relies on a BaB procedure to compute bounds. We report in Table \ref{table.order} experiments on changing the ordering on variables in Gurobi, when the selection of ReLUs is fixed by SAS on CNN-B-Adv Image 85. We compared 
+Gurobi relies on a BaB procedure to compute bounds. We report in Table \ref{table.order} experiments on changing the ordering on variables in Gurobi, when the selection of ReLUs is fixed by {\sf SAS} on CNN-B-Adv Image 85. We compared 
 the standard Gurobi ordering of variables, which is adaptative in each branch, 
-with the static order provided by SAS, as well as the static order provided by GS, wrt runtime at a fixed accuracy (we report the {\em distance} to verify the image).
+with the static order provided by {\sf SAS}, as well as the static order provided by GS, wrt runtime at a fixed accuracy (we report the {\em distance} to verify the image).
 
 
 
@@ -137,16 +137,16 @@ with the static order provided by SAS, as well as the static order provided by G
 		 order & distance & time & distance & time & distance & time & distance & time \\
 		\hline \hline
 		Gurobi & 0.384 & 252s & 0.368&265s  &0.342 & 287s& 0.315  & 306s  \\ 
-		SAS (static) & 0.384 & 448s & 0.368&759s  &0.365 &971s & 0.355  & 971s \\
-		GS (static) & 0.384 & {\bf 251s} &0.368 &{\bf 253s}  & 0.342 &{\bf 270s} & 0.315 & {\bf 281s} \\ \hline
+		{\sf SAS} (static) & 0.384 & 448s & 0.368&759s  &0.365 &971s & 0.355  & 971s \\
+		{\sf GS} (static) & 0.384 & {\bf 251s} &0.368 &{\bf 253s}  & 0.342 &{\bf 270s} & 0.315 & {\bf 281s} \\ \hline
 	\end{tabular}
-	\caption{Comparison of different orderings with selection of ReLUs by SAS.
+	\caption{Comparison of different orderings with selection of ReLUs by {\sf SAS}.
 	\vspace{-0.4cm}}
 	\label{table.order}
 \end{table}
 
-SAS ordering is particularly counter-productive because it is accurate only for one branch (the most complicated one), whereas Gurobi can adapt the order to each branch.
-However, the GS {\em ordering} (with the SAS {\em selection}) is better as it is general and not local to a solution, with better runtime than Gurobi, despite its staticness whereas Gurobi order is adaptative.
+{\sf SAS} ordering is particularly counter-productive because it is accurate only for one branch (the most complicated one), whereas Gurobi can adapt the order to each branch.
+However, the GS {\em ordering} (with the {\sf SAS} {\em selection}) is better as it is general and not local to a solution, with better runtime than Gurobi, despite its staticness whereas Gurobi order is adaptative.
 % Using SAS order for the solution branch, and GS ordering for other branches should be more efficient, but we cannot experiment that within the closed-source Gurobi solver.
 
 \iffalse
@@ -182,7 +182,7 @@ Restricting the set $X$ of open ReLU nodes potentially hurts accuracy.
 Another strategy could be to still compute inductively accurate bounds for each nodes,
 replacing pMILP ({\sf SAS, GS}, etc.) with a full MILP model, and stopping it early after some fixed time-out (100s,250s, $\ldots$, 2000s).
 
-We evaluate in Figure \ref{fig555} the full MILP and different pMILP models on the output layer of CNN-B-Adv. The bounds for hidden layers have been computed with the same SAS method.
+We evaluate in Figure \ref{fig555} the full MILP and different pMILP models on the output layer of CNN-B-Adv. The bounds for hidden layers have been computed with the same {\sf SAS} method.
 We compare the {\em distance to verify} the same Image 85, specifically the lower bound of an output neuron, the furthest away from verification.
 %(the local robustness objective asks the difference between the value of the output neuron corresponding to the correct class and the value of any other output neuron to be positive). 
 The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is considered rather than an average over neurons.
@@ -190,23 +190,15 @@ The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is co
 \begin{figure}[t!]
 	\hspace*{-0.8cm}
 	\includegraphics[scale=0.5]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
-	\caption{Distance to verify vs runtime: comparison between SAS, GS, full MILP and Huang's method for different number of ReLUs open / time-outs.}
+	\caption{Distance to verify vs runtime: comparison between {\sf SAS}, GS, full MILP and Huang's method for different number of opened ReLUs / time-outs.}
 	\label{fig555}
 \end{figure}
 
-{\sf SAS} (even {\sf GS}$=s_{FSB}$) is much more accurate than full MILP for every reasonable time-outs considered, with $>10$ times fastest runtime at better accuracy. The reason is that even the advanced MILP solver Gurobi struggles to sort out all ReLUs. It is thus particulary important to have accurate scoring functions as {\sf SAS}, in order to optimize both accuracy and runtime. Huang \cite{DivideAndSlide} is limited in ReLUs in the previous layer, reason why it is stuck at relatively poor accuracy. The accuracy/runtime curve from {\sf GS} is closer to {\sf SAS} than the number of nodes / accuracy curve of Fig. \ref{fig_table3}. This is because some ReLU nodes deemed important by {\sf GS} are not important for accuracy, but they are also not penalizing runtime too much. Still, {\sf SAS} is faster than {\sf GS} at  every accuracy. Importantly, {\sf SAS} is more deterministic in its runtime given a number of ReLU nodes, with half the variance over different output neurons in runtime compared with {\sf GS} for similar accuracy
+{\sf SAS} (even {\sf GS}$=s_{FSB}$) is much more accurate than full MILP for every reasonable time-outs considered, with $>10$ times fastest runtime at better accuracy. The reason is that even the advanced MILP solver Gurobi struggles to sort out all ReLUs. It is thus particulary important to have accurate scoring functions as {\sf SAS}, in order to optimize both accuracy and runtime. Huang \cite{DivideAndSlide} is limited in ReLUs in the previous layer, reason why it is stuck at relatively poor accuracy. The accuracy/runtime curve from {\sf GS} is closer to {\sf SAS} than the number of nodes / accuracy curve of Fig. \ref{fig_table3}. This is because some ReLU nodes deemed important by {\sf GS} are not important for accuracy, but they are also not penalizing runtime too much. Still, {\sf SAS} is faster than {\sf GS} at  every accuracy. Importantly, {\sf SAS} is more deterministic in its runtime given a number of ReLU nodes, with half the variance in runtime  over different output neurons compared with {\sf GS} for similar accuracy
 (not displayed), which helps setting a number of ReLU nodes to open.
 
 
 \subsection{Comparison with $\alpha,\beta$-Crown}
-
-
-
-
-
-\textcolor{red}{The number of open nodes we considered for the 5 F(ully)C(onnected)NNs depend neither on the image nor on the particular FCNN, only on the depth of the layer, because the runtime depends crucially on this factor. For FCNNs, we use a simple /2 rule between the number of open nodes of layer+1 vs layer (except last layer=14). For other architectures, we set the number of nodes to obtain similar runtime per layer, by testing a couple of neurons per layer, and use it for all images.}
-
-
 
 To assess the verification efficiency and runtime vs $\alpha,\beta$-Crown, we 
 conducted evaluations  on neural networks tested in \cite{crown} which are mostly {\em complex} to verify (as easy instances are already appropriately taken care of). Namely, 6 ReLU-DNNs: 5 MNIST DNN that can be found in the \href{https://github.com/eth-sri/eran}{ERAN GitHub} 
@@ -219,8 +211,9 @@ We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the 
 The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta} and \ref{table_hybrid}.
 
 
-\textcolor{red}{MNIST FCNN networks use the same open numbers sequence for all images, based on layer depth. CIFAR ConvolutionalNN uses another sequence (the same for all images) [AppendixA, Table6 p22].}
-
+\iffalse
+\textcolor{red}{The number of open nodes we considered for the 5 F(ully)C(onnected)NNs depend neither on the image nor on the particular FCNN, only on the depth of the layer, because the runtime depends crucially on this factor. For FCNNs, we use a simple /2 rule between the number of open nodes of layer+1 vs layer (except last layer=14). For other architectures, we set the number of nodes to obtain similar runtime per layer, by testing a couple of neurons per layer, and use it for all images. MNIST FCNN networks use the same open numbers sequence for all images, based on layer depth. CIFAR ConvolutionalNN uses another sequence (the same for all images) [AppendixA, Table6 p22].}
+\fi 
 
 \begin{table}[t!]
 	\centering
@@ -245,7 +238,7 @@ The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta
 	\end{table}
 
 
-{\em Analysis}: overall, Hybrid MILP is very accurate, only leaving $8\%$-$15\%$ of images undecided, with runtime taking less than $500s$ in average per image, and even 10 times less on smaller DNNs. It can scale up to quite large hard DNNs, such as CNN-B-Adv with 2M parameters and 20K activation functions.
+{\em Analysis}: overall, Hybrid MILP is very accurate, only leaving $8\%$-$15\%$ of images undecided, with runtime taking less than $500s$ in average per image, and even 10 times less on smaller DNNs. It can scale up to quite large hard DNNs, such as CNN-B-Adv with 2M parameters.
 
 Compared with $\alpha,\beta$-Crown: on easy instances, Hybrid MILP is virtually similar to $\alpha,\beta$-CROWN (e.g. even on the very large ResNet), since Hybrid MILP calls first $\alpha,\beta$-CROWN as it is very efficient for easy instances.
 
@@ -264,9 +257,9 @@ We voluntarily limited the comparison to $\alpha,\beta$-Crown because it is one 
 Interestingly, GCP-CROWN \cite{cutting} is slightly more accurate than $\alpha,\beta$-Crown on the DNNs we tested, but necessitates IBM CPLEX solver, which is not available to us.
 We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cutting}, experimenting with different verifiers on the most interesting CIFAR CNN-B-Adv. Notice that results are not exactly comparable with ours because the testing images are not the same (ours has $62\%$ upper bound while \cite{cutting} has $65\%$ upper bound, so the image set in \cite{cutting} are slightly easier). There, GCP-CROWN is $2\%$ more accurate (with higher runtime) than $\alpha,\beta$-Crown with 90s TO, so we can deduce that Hybrid MILP, which is $9\%$ more accurate than $\alpha,\beta$-Crown with 2000s TO, is significantly more accurate than GCP-CROWN.
 
-\textcolor{red}{Currently, for hard instances, there is no alternative  to pMILP (hundreds of seconds), other methods being $>>10$ times slower.}
 
-\textcolor{red}{We did run and reported other tools as best as we could (see also appendixC (Table11...)). Reporting *some* experimental numbers from other papers (Figure5) is standard in the DNN verification community (eg [26]).}
+
+%\textcolor{red}{We did run and reported other tools as best as we could (see also appendixC (Table11...)). Reporting *some* experimental numbers from other papers (Figure5) is standard in the DNN verification community (eg [26]).}
 
 \begin{table}[t!]
 	\centering
@@ -276,14 +269,14 @@ We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cut
 		65\% & 32.8\% & 38\% & 27\% & 46.5\% & 48.5\% \\
 		$\epsilon = 2/255$ & $>25$h & $344$s & $361$s & $32$s &  $58$s  \\  \hline
 	\end{tabular}
-	\caption{Images verified by different verifiers on CIFAR CNN-B-adv from \cite{cutting}.
-	Results are not directly comparable with Tables \ref{table_beta},\ref{table_hybrid}.}
+	\caption{Images verified by different verifiers ($\%$, higher is better) on CIFAR CNN-B-adv. Results, from \cite{cutting}, are not fully comparable with Tables \ref{table_beta},\ref{table_hybrid}.}
 	\label{table_gcp}
 	\vspace{-0.3cm}
 \end{table}
 
 
 Results on other networks from other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported \cite{crown} on other tested DNNs, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on complex (even small) instances. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em complex} MNIST DNNs at several time-out settings. Last, Pyrat \cite{pyrat} (2sd in the latest VNNComp) is not open source, which made running it impossible. Details can be found in the appendix. Also, ablation studies showing what each feature of Hybrid MILP is bringing can be found in the appendix.
+
 
 
 \iffalse
