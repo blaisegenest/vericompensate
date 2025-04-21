@@ -189,19 +189,13 @@ The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is co
 
 \begin{figure}[t!]
 	\hspace*{-0.8cm}
-	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
+	\includegraphics[scale=0.5]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
 	\caption{Distance to verify vs runtime: comparison between SAS, GS, full MILP and Huang's method for different number of ReLUs open / time-outs.}
 	\label{fig555}
 \end{figure}
 
-{\sf SAS} (even {\sf GS}$=s_{FSB}$) is much more accurate than full MILP for every reasonable time-outs considered, with >10 times fastest runtime at better accuracy. The reason is that even the advanced MILP solver Gurobi struggles to sort out all ReLUs, and that is when having accurate scoring functions as {\sf SAS }is particularly important.
-
-
-
-
-The difference of distance to verify between SAS and GS ISO number of ReLUs is very large. However, as the ReLUs opened by GS are not as important as the ReLUs opened by SAS, the runtime of GS ISO number of ReLUs is faster than for SAS. Still, the important metric here is runtime ISO accuracy (distance to verify), which is clearly favorable for SAS, close to 2x faster. Importantly, the accuracy gain by SAS is very predictable, with improvement with each open ReLUs, while it is much more erratic for GS. This helps setting a fixed number of ReLUs. Also, SAS reaches accuracy which would be hard to match by GS in number of ReLUs to open, needing an extremely high number of open ReLUs, and thus, a uncertain high runtime.
-
-
+{\sf SAS} (even {\sf GS}$=s_{FSB}$) is much more accurate than full MILP for every reasonable time-outs considered, with $>10$ times fastest runtime at better accuracy. The reason is that even the advanced MILP solver Gurobi struggles to sort out all ReLUs. It is thus particulary important to have accurate scoring functions as {\sf SAS}, in order to optimize both accuracy and runtime. Huang \cite{DivideAndSlide} is limited in ReLUs in the previous layer, reason why it is stuck at relatively poor accuracy. The accuracy/runtime curve from {\sf GS} is closer to {\sf SAS} than the number of nodes / accuracy curve of Fig. \ref{fig_table3}. This is because some ReLU nodes deemed important by {\sf GS} are not important for accuracy, but they are also not penalizing runtime too much. Still, {\sf SAS} is faster than {\sf GS} at  every accuracy. Importantly, {\sf SAS} is more deterministic in its runtime given a number of ReLU nodes, with half the variance over different output neurons in runtime compared with {\sf GS} for similar accuracy
+(not displayed), which helps setting a number of ReLU nodes to open.
 
 
 \subsection{Comparison with $\alpha,\beta$-Crown}
