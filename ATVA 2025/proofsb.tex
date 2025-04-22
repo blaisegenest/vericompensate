@@ -73,14 +73,14 @@ for MNIST 5x100: "solver: batch size: 1024 beta-crown: iteration: 20".
 
 \section{Additional experiments including Ablation studies}	
 
-First, we provide in Fig.~\ref{fig55} the distance to verify Image 85 (which is an extremely hard image), comparing SAS with GS in runtime and not just in number of ReLUs to open. The {\em distance to verify} an image is specifically the lower bound of {\em one} output neuron (in the 4th layer of CNN-B-Adv), the furthest away from verification, (the local robustness objective asks the difference between the value of the output neuron corresponding to the correct class and the value of any other output neuron to be positive). Compared with Fig.~\ref{fig_table3}, we consider a unique neuron rather than an average over all the neuron of the 4th layer. This explains why the curve is much less smooth. This provides an idea of the runtime scaling with the number of ReLUs opened. 
-
-\begin{figure}[b!]
-	\hspace*{-0.8cm}
-	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
-	\caption{Distance to verify vs runtime: comparison between SAS, GS, full MILP and Huang's method for different number of ReLUs open.}
-	\label{fig55}
-\end{figure}
+%First, we provide in Fig.~\ref{fig55} the distance to verify Image 85 (which is an extremely hard image), comparing SAS with GS in runtime and not just in number of ReLUs to open. The {\em distance to verify} an image is specifically the lower bound of {\em one} output neuron (in the 4th layer of CNN-B-Adv), the furthest away from verification, (the local robustness objective asks the difference between the value of the output neuron corresponding to the correct class and the value of any other output neuron to be positive). Compared with Fig.~\ref{fig_table3}, we consider a unique neuron rather than an average over all the neuron of the 4th layer. This explains why the curve is much less smooth. This provides an idea of the runtime scaling with the number of ReLUs opened. 
+%
+%\begin{figure}[b!]
+%	\hspace*{-0.8cm}
+%	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
+%	\caption{Distance to verify vs runtime: comparison between SAS, GS, full MILP and Huang's method for different number of ReLUs open.}
+%	\label{fig55}
+%\end{figure}
 
 
 
