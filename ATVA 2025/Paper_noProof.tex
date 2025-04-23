@@ -104,8 +104,8 @@ partial MILP strikes back for DNN verification}
 In this paper, we will use lower case latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
 capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
 To simplify the notations, we restrict the presentation to feed-forward, 
-fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
-$ReLU(x)=x$ for $x \geq 0$ and $ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
+fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $\ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
+$\ReLU(x)=x$ for $x \geq 0$ and $\ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
 
 %In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
 
@@ -123,7 +123,7 @@ Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$,
 denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
 \begin{align*}
 	\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i \qquad \, \qquad
-	\hat{\boldsymbol{z}}^{i} = ReLU({\boldsymbol{z}}^i).
+	\hat{\boldsymbol{z}}^{i} = \ReLU({\boldsymbol{z}}^i).
 \end{align*} 
 
 The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
