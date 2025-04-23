@@ -83,28 +83,32 @@ for MNIST 5x100: "solver: batch size: 1024 beta-crown: iteration: 20".
 %\end{figure}
 
 \begin{table}
-	\begin{tabular}{|c|c|c|c|c|c|c|}
+	\begin{tabular}{|c|c|c|c|c|}
 		\hline
-		NodeID & $\UB$ by SAS 30 & Time cost & $\UB$ by SAS 14& Time cost & $\UB$ by GS 30 & Time cost \\
+		NodeID & $\UB$ by SAS& Time cost & $\UB$ by GS  & Time cost \\
 		\hline
-		0 & -1.7500094 & 117 & -1.4684063 & 66.9 & -1.3804709 & 71.6 \\
-		\hline
-		2 & -4.8793237 & 166 & -4.5550154 & 54.8 & -4.5424599 & 84.9 \\
-		\hline
-		3 & -4.5297744 & 181 & -4.4795618 & 69.9 & -4.4459532 & 71.2 \\
-		\hline
-		4 & -3.8020608 & 163 & -3.4594076 & 88.8 & -3.4784499 & 113 \\
-		\hline
-		5 & -5.647516 & 181 & -5.5981178 & 94.8 & -5.6955818 & 93.7 \\
-		\hline
-		6 & -3.3242807 & 147 & -3.0597499 & 63.3 & -2.9797569 & 68.5 \\
-		\hline
-		7 & -4.4721102 & 171 & -4.1742691 & 73.4 & -4.0842553 & 88.6 \\
-		\hline
-		8 & 0.47182795 & 64.4 & 0.63875415 & 56.7 & 0.72631579 & 46.5 \\
-		\hline
-		9 & -2.4669618 & 146 & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
-		\hline
+	0 & -1.4684063 & 66.9 & -1.3804709 & 71.6 \\
+	\hline
+	2 & -4.5550154 & 54.8 & -4.5424599 & 84.9 \\
+	\hline
+	3 & -4.4795618 & 69.9 & -4.4459532 & 71.2 \\
+	\hline
+	4 & -3.4594076 & 88.8 & -3.4784499 & 113 \\
+	\hline
+	5 & -5.5981178 & 94.8 & -5.6955818 & 93.7 \\
+	\hline
+	6 & -3.0597499 & 63.3 & -2.9797569 & 68.5 \\
+	\hline
+	7 & -4.1742691 & 73.4 & -4.0842553 & 88.6 \\
+	\hline
+	8 & 0.63875415 & 56.7 & 0.72631579 & 46.5 \\
+	\hline
+	9 & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
+	\hline
+		Average & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
+	\hline
+		Variant & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
+	\hline
 	\end{tabular}
 	\vspace*{1ex}
 	 \caption{Time cost and accuracy by SAS (open 30 nodes and 14 nodes) and GS (open 30 nodes). Here, smaller $\UB$ means higher accuracy and positive means verified.}
@@ -307,7 +311,6 @@ Running full MILP till a small MIP-Gap (typically 0.001) is reached is extremely
 
 Instead, the standard strategy is to set a reasonable time-out and use whatever bound has been generated. We compare this standard strategy with the pMILP strategy of setting a priori a number of open nodes.
 
-\textcolor{red}{Direct MILP encodings are inefficient! Even the advanced Gurobi MILP solver struggle to sort out all neurons – see Fig11 page27: direct MILP encoding is $>10$ times slower on same instance ($>300s$ vs $<30s$ for similar accuracy) wrt considering only 8 open nodes selected with SAS (more open nodes lead to larger differences). Our main contribution is a way to select the most important nodes, and it helps Gurobi tremendously. This is the whole point of the paper!}
 
 \begin{figure}[h!]\hspace*{-0.8cm}
 	\includegraphics[scale=0.6]{Layer7_comparison.png}.

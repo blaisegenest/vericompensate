@@ -198,6 +198,39 @@ The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is co
 (not displayed), which helps setting a number of ReLU nodes to open.
 
 
+\begin{table}
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		NodeID & $\UB$ by SAS& Time cost & $\UB$ by GS  & Time cost \\
+		\hline
+		0 & -1.4684063 & 66.9 & -1.3804709 & 71.6 \\
+		\hline
+		2 & -4.5550154 & 54.8 & -4.5424599 & 84.9 \\
+		\hline
+		3 & -4.4795618 & 69.9 & -4.4459532 & 71.2 \\
+		\hline
+		4 & -3.4594076 & 88.8 & -3.4784499 & 113 \\
+		\hline
+		5 & -5.5981178 & 94.8 & -5.6955818 & 93.7 \\
+		\hline
+		6 & -3.0597499 & 63.3 & -2.9797569 & 68.5 \\
+		\hline
+		7 & -4.1742691 & 73.4 & -4.0842553 & 88.6 \\
+		\hline
+		8 & 0.63875415 & 56.7 & 0.72631579 & 46.5 \\
+		\hline
+		9 & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
+		\hline
+		Average & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
+		\hline
+		Variant & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
+		\hline
+	\end{tabular}
+	\vspace*{1ex}
+	\caption{Time cost and accuracy by SAS (open 30 nodes and 14 nodes) and GS (open 30 nodes). Here, smaller $\UB$ means higher accuracy and positive means verified.}
+\end{table}
+
+
 \subsection{Comparison with $\alpha,\beta$-Crown}
 
 To assess the verification efficiency and runtime vs $\alpha,\beta$-Crown, we 
