@@ -185,9 +185,9 @@ We have $\hat{x}$ is upper bounded by $max_{a \in [0,1]} (min(\UB(n) \cdot a, x 
 
 \section{Partial MILP}	
 
-{\color{red}
+
 In this paper, we revisit the use of {\em partial MILP} (pMILP for short, see \cite{DivideAndSlide}), to get interesting trade-offs between accuracy and runtime.
-Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: pMILP$_X(n)$ simply calls Gurobi to minimize/maximize the value of $n$ with the MILP model encoding (equation (2) Section 3.2), where variable $a$ is
+Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: pMILP$_X(n)$ simply calls Gurobi to minimize/maximize the value of $n$ with the MILP model encoding (equation (2) Section 3.2), where variable $a$ is:
 \begin{itemize}
 \item binary for neurons in $X$ (exact encoding of the ReLU),
 \item linear for neurons not in $X$ (linear relaxation).
@@ -203,7 +203,7 @@ MILP$_X$ is an abstraction of the constraints in the full MILP model. If $X$ cov
 
 To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach similar to the box abstraction or DeepPoly \cite{deeppoly}, computing lower and upper bounds $\LB(n),\UB(n)$ for neurons $n$ of a each layer iteratively, that are used when computing values of the next layer.
 So we trade-off the NP-complexity in $|X|$ with a linear complexity in the number of neurons. Notice that all the neurons of a layer can be treated in parallel.
-}
+
 
 \medskip
 

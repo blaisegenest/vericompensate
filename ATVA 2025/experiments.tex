@@ -29,8 +29,8 @@ Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluati
 
 %Then, 
 To measure the impact of the scoring function to select neurons to open, 
-we considered the largest complex CNN-B-Adv, with 20 000 nodes. 
-We tested over the $\vx=85$th image in the CIFAR dataset.
+we considered the complex CNN-B-Adv, which has 16634 nodes. 
+We tested over the $\vx=85$th image in the CIFAR-10 dataset.
 To measure the accuracy, we measure the uncertainty of all nodes in the 4th layer:
 the uncertainty of a node is the range between its computed lower and upper bound. 
 We then average the uncertainty among all the nodes of the layer.
@@ -84,7 +84,7 @@ We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ follo
 
 %We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer. The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. 
 We report in Figure \ref{fig_table3} the average uncertainty of $\MILP_X$ following the 
-choice of the $K$ heaviest neurons of {\sf SAS}, compared with a random choice, with Huang \cite{DivideAndSlide}, based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$, and with GS (here, $s_{FSB}$).
+choice of the $K$ heaviest neurons of {\sf SAS}, compared with a random choice, with Huang \cite{DivideAndSlide}, based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$, and with {\sf GS} (here, $s_{FSB}$).
 
 
 
@@ -115,7 +115,7 @@ choice of the $K$ heaviest neurons of {\sf SAS}, compared with a random choice, 
 
 
 Overall, {\sf SAS} is more accurate than GS, more accurate than Huang, more accurate than random choice of variables. {\sf SAS} significantly outperforms other solutions, 
-with 2 times less binary variables for the same accuracy (10 vs 22) vs GS and 6 times vs Huang (4 vs 24).
+with 2 times less binary variables for the same accuracy (10 vs 22) vs {\sf GS} and 6 times vs Huang \cite{DivideAndSlide} (4 vs 24).
 Each node of the 4th layer displays a similar pattern, and the pattern is similar for different images (see appendix).
 
 \smallskip
