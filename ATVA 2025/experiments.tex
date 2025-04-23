@@ -195,7 +195,7 @@ The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is co
 \end{figure}
 
 {\sf SAS} (even {\sf GS}$=s_{FSB}$) is much more accurate than full MILP for every reasonable time-outs considered, with $>10$ times fastest runtime at better accuracy. The reason is that even the advanced MILP solver Gurobi struggles to sort out all ReLUs. It is thus particulary important to have accurate scoring functions as {\sf SAS}, in order to optimize both accuracy and runtime. Huang \cite{DivideAndSlide} is limited in ReLUs in the previous layer, reason why it is stuck at relatively poor accuracy. The accuracy/runtime curve from {\sf GS} is closer to {\sf SAS} than the number of nodes / accuracy curve of Fig. \ref{fig_table3}. This is because some ReLU nodes deemed important by {\sf GS} are not important for accuracy, but they are also not penalizing runtime too much. Still, {\sf SAS} is faster than {\sf GS} at  every accuracy. Importantly, {\sf SAS} is more deterministic in its runtime given a number of ReLU nodes, with half the variance in runtime  over different output neurons compared with {\sf GS} for similar accuracy
-(not displayed), which helps setting a number of ReLU nodes to open.
+(see table \ref{SAS_GS_similarTO}), which helps setting a number of ReLU nodes to open.
 
 
 \begin{table}
@@ -221,13 +221,20 @@ The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is co
 		\hline
 		9 & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
 		\hline
-		Average & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
+		Average & -3.1647624
+		 & 70.3
+		  & -3.129414017 & 78.6
+		  \\
 		\hline
-		Variant & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
+		Variance & 
+		 & 184
+		  &  & 359
+		   \\
 		\hline
 	\end{tabular}
 	\vspace*{1ex}
-	\caption{Time cost and accuracy by SAS (open 30 nodes and 14 nodes) and GS (open 30 nodes). Here, smaller $\UB$ means higher accuracy and positive means verified.}
+	\caption{Time cost and accuracy by SAS and GS. Here, smaller $\UB$ means higher accuracy and negative means verified.}
+	\label{SAS_GS_similarTO}
 \end{table}
 
 
