@@ -11,7 +11,7 @@ To do so, SAS considers explicitly a solution to a unique LP call, which is reas
 Assume that we want to compute an upper bound for neuron $z$ on layer $\ell_z$.
 We write $n < z$ if neuron $n$ is on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$. We denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ maximizing $z$: $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$.
 
-Consider $(sol(n))_{n \leq z} = (\Sol\_\max_\emptyset^z(n))_{n \leq z}$, a solution maximizing the value for $z$ when all ReLU use the LP relaxation.
+Consider $(\sol(n))_{n \leq z} = (\Sol\_\max_\emptyset^z(n))_{n \leq z}$, a solution maximizing the value for $z$ when all ReLU use the LP relaxation.
 %(this can be obtained very efficiently by {\em one} call to an LP solver).
 Function
 $\Improve\_\max^z(n)=$ $\sol(z) - \Sol\_\max_{\{n\}}^z(z)$, 
@@ -21,7 +21,7 @@ We have $\Improve\_\max^z(n)\geq 0$ as $\Sol\_\max_{\{n\}}^z$ fulfills all the c
 $\mathcal{M}_\emptyset$, so $\Sol\_\max_{\{n\}}^z(z) \leq \sol(z)$.
 %Similarly, we define ($\Sol\_\min_\emptyset^z(n))_{n \leq z}$ and 
 %$\Improve\_\min^z(n)$. 
-Computing exactly $\Improve\_\max^z(n)$ would need a MILP call on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$, which would be very time consuming. Instead, the SAS function uses a (single) LP call to compute $(sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ 
+Computing exactly $\Improve\_\max^z(n)$ would need a MILP call on $\mathcal{M}_{\{n\}}$ for every neuron $n \leq z$, which would be very time consuming. Instead, the SAS function uses a (single) LP call to compute $(\sol(n))_{n \leq z}$, with negligible runtime wrt the forthcoming  $\MILP_X$ call, and yet accurately approximates $\Improve\_\max^z(n)$ 
 (Fig. \ref{fig_table3}).
 
 
