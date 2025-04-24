@@ -208,12 +208,18 @@ We define:
 {\color{red}
 \noindent {\em Comparison:} First, the original \cite{DivideAndSlide} does not propose a formula for node $a$ two layers before $z$. 
 Consider again the running example of Fig. \ref{img:FSB_example}. 
-In the case $c\cdot d<0$, we have $\Utility\_\max\nolimits^z(a)=\Improve_{max}^z(b)=s_{FSB}(a)=s_{SR}(a)=0$, as $\Delta(\hat{a})=0$. In the case $c>0,d>0$, 
+
+In the case $c\cdot d<0$, we have $\Utility\_\max\nolimits^z(a)=\Improve_{max}^z(b)=s_{FSB}(a)=s_{SR}(a)=0$, as $\Delta(\hat{a})=0$. 
+
+In the case $c>0,d>0$, 
 $\Delta(\hat{a}) = \ReLU(\sol(a))-\sol(\hat{a})$ is precise,
 whereas the corresponding $\Delta_{FSB}(\hat{a}) = \LB(a) r(a)$ is only an upperbound.
+
 The last case $c<0,d<0$ is the most extreme: 
 $\Delta(\hat{b})$ adapts to the case (b),(c) in Fig. \ref{node:b} leveraging the value $\sol(b)$, which yields very different values, whereas the corresponding $\Delta_{FSB}(\hat{b})$
-is always $r(b) \Delta_{FSB}(b)$. For $sol(b)<<0$, we will have 
+is always $r(b) \Delta_{FSB}(b)$. 
+
+For $sol(b)<<0$, we will have 
 $\Delta(\hat{b})=0<\Delta_{FSB}(\hat{b})$.
 For $sol(b)>>0$, we will have 
 $\Delta(\hat{b})=\Delta(b) > \frac{1}{2}\Delta_{FSB}(\hat{b})$ 
