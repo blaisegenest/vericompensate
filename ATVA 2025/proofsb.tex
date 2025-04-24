@@ -73,6 +73,20 @@ for MNIST 5x100: "solver: batch size: 1024 beta-crown: iteration: 20".
 
 \section{Additional experiments including Ablation studies}	
 
+
+First, we provide Fig.~\ref{fig5}, similar to 
+Fig.~\ref{fig_table3} but on a different image, namely 37.
+It display similar pattern as image 85, with an even larger difference between SAS and GS (around 3x more binary variables are necessary for GS to match the accuracy of SAS).
+
+\begin{figure}[h!]
+	\hspace*{-1cm}
+	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image37}
+	\caption{Comparison of different methods with image 37.}
+	\label{fig5}
+\end{figure}
+
+
+
 %First, we provide in Fig.~\ref{fig55} the distance to verify Image 85 (which is an extremely hard image), comparing SAS with GS in runtime and not just in number of ReLUs to open. The {\em distance to verify} an image is specifically the lower bound of {\em one} output neuron (in the 4th layer of CNN-B-Adv), the furthest away from verification, (the local robustness objective asks the difference between the value of the output neuron corresponding to the correct class and the value of any other output neuron to be positive). Compared with Fig.~\ref{fig_table3}, we consider a unique neuron rather than an average over all the neuron of the 4th layer. This explains why the curve is much less smooth. This provides an idea of the runtime scaling with the number of ReLUs opened. 
 %
 %\begin{figure}[b!]
@@ -83,52 +97,23 @@ for MNIST 5x100: "solver: batch size: 1024 beta-crown: iteration: 20".
 %\end{figure}
 
 \begin{table}
-	\begin{tabular}{|c|c|c|c|c|}
+	\begin{tabular}{|c||>{\centering\arraybackslash}p{6ex}|>{\centering\arraybackslash}p{6ex}|>{\centering\arraybackslash}p{6ex}|>{\centering\arraybackslash}p{6ex}|>{\centering\arraybackslash}p{6ex}|>{\centering\arraybackslash}p{6ex}|>{\centering\arraybackslash}p{6ex}|>{\centering\arraybackslash}p{6ex}|>{\centering\arraybackslash}p{6ex}||>{\centering\arraybackslash}p{6ex}||>{\centering\arraybackslash}p{6ex}|}
 		\hline
-		NodeID & $\UB$ by SAS& Time cost & $\UB$ by GS  & Time cost \\
+		Output Node & 0 &  2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 &Avg& Var \\
 		\hline
-	0 & -1.4684063 & 66.9 & -1.3804709 & 71.6 \\
-	\hline
-	2 & -4.5550154 & 54.8 & -4.5424599 & 84.9 \\
-	\hline
-	3 & -4.4795618 & 69.9 & -4.4459532 & 71.2 \\
-	\hline
-	4 & -3.4594076 & 88.8 & -3.4784499 & 113 \\
-	\hline
-	5 & -5.5981178 & 94.8 & -5.6955818 & 93.7 \\
-	\hline
-	6 & -3.0597499 & 63.3 & -2.9797569 & 68.5 \\
-	\hline
-	7 & -4.1742691 & 73.4 & -4.0842553 & 88.6 \\
-	\hline
-	8 & 0.63875415 & 56.7 & 0.72631579 & 46.5 \\
-	\hline
-	9 & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
-	\hline
-		Average & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
-	\hline
-		Variant & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
-	\hline
+		{\sf SAS} distance & -1.47 & -4.56 & -4.48 & -3.46 & -5.6 & -3.06 & -4.17 & 0.639 & -2.33 &-3.16& \\
+		Time (s) & 66.9 & 54.8 & 69.9 & 88.8 & 94.8 & 63.3 & 73.4 & 56.7 & 64.6 &70.3& 184\\
+		\hline
+		{\sf GS} distance & -1.38 & -4.54 & -4.45 & -3.48 & -5.7 & -2.98 & -4.08 & 0.726 & -2.28 &-3.13&\\
+		Time (s) & 71.6 & 84.9 & 71.2 & 113 & 93.7 & 68.5 & 88.6 & 46.5 & 69.4 &78.6&359\\
+		\hline
 	\end{tabular}
-	\vspace*{1ex}
-	 \caption{Time cost and accuracy by SAS (open 30 nodes and 14 nodes) and GS (open 30 nodes). Here, smaller $\UB$ means higher accuracy and positive means verified.}
-\end{table}
-
-
-
-The difference of distance to verify between SAS and GS ISO number of ReLUs is very large. However, as the ReLUs opened by GS are not as important as the ReLUs opened by SAS, the runtime of GS ISO number of ReLUs is faster than for SAS. Still, the important metric here is runtime ISO accuracy (distance to verify), which is clearly favorable for SAS, close to 2x faster. Importantly, the accuracy gain by SAS is very predictable, with improvement with each open ReLUs, while it is much more erratic for GS. This helps setting a fixed number of ReLUs. Also, SAS reaches accuracy which would be hard to match by GS in number of ReLUs to open, needing an extremely high number of open ReLUs, and thus, a uncertain high runtime.
-
-
-Then, we provide Fig.~\ref{fig5}, similar to 
-Fig.~\ref{fig_table3} but on a different image, namely 37.
-It display similar pattern as image 85, with an even larger difference between SAS and GS (around 3x more binary variables are necessary for GS to match the accuracy of SAS).
-
-\begin{figure}[h!]
-	\hspace*{-1cm}
-	\includegraphics[scale=0.55]{CNN-B-ADV_layer7_comparison_image37}
-	\caption{Comparison of different methods with image 37.}
-	\label{fig5}
-\end{figure}
+		\vspace*{1ex}
+		\caption{Distance to verify and runtime (lower is better) for different output nodes for image 85. Here, negative distance means the node is verified.}
+		\label{SAS_GS_similarTO}
+	\end{table}
+	
+Then, we provide Table \ref{SAS_GS_similarTO} to show the runtime variability of {\sf GS} and {\sf SAS}. The number of opens nodes for {\sf SAS} is 14 and the number of open nodes for {\sf GS} is 30, to account for the lack of accuracy of SAS, making the average distance to verify similar between both ($-3.16$ vs $-3.13$). The runtime variability between different output nodes is twice as high for {\sf GS} vs {\sf SAS}, because the number of irrelevant nodes chosen by {\sf GS} is inpredictable. If this number is high, then the runtime can be particularly short (node 8), with also a worse accuracy; while if it is low (e.g. 4), then the runtime is particularly long. This does not necesarily translates into better accuracy, e.g. node 2 where the runtime is much longer for {\sf GS} vs {\sf SAS}, while the accuracy is also lower. {\sf SAS} displays much less variability in time between different output nodes as most nodes are relevant.
 
 
 Further, we consider ablation studies to understand how each feature enables the efficiency of pMILP.
@@ -303,7 +288,6 @@ This experiment explains the rationale to use divide and conquer protocol, using
 %	\end{figure}
 
 
-\newpage
 
 \subsubsection*{restricting number of open nodes (pMILP) vs setting time-outs (full MILP)}	
 

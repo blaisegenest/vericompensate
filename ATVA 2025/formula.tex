@@ -205,8 +205,8 @@ We define:
 
 %Informally, $\Delta(\hat{a}), \Delta(b), \Delta(\hat{b})$ approximate the improvement on the accuracy of $\hat{a}, b, \hat{b}$ when computing $\ReLU(a)$ using the exact MILP encoding instead of LP. 
 
-{\color{red}
-\noindent {\em Comparison:} First, the original \cite{DivideAndSlide} does not propose a formula for node $a$ two layers before $z$. 
+
+\noindent {\em Comparison:} First, the original \cite{DivideAndSlide} does not propose a formula for node $a$ two layers before $z$. So we will compare {\sf SAS} with {\sf GS}.
 Consider again the running example of Fig. \ref{img:FSB_example}. 
 
 In the case $c\cdot d<0$, we have $\Utility\_\max\nolimits^z(a)=\Improve_{max}^z(b)=s_{FSB}(a)=s_{SR}(a)=0$, as $\Delta(\hat{a})=0$. 
@@ -217,15 +217,17 @@ whereas the corresponding $\Delta_{FSB}(\hat{a}) = \LB(a) r(a)$ is only an upper
 
 The last case $c<0,d<0$ is the most extreme: 
 $\Delta(\hat{b})$ adapts to the case (b),(c) in Fig. \ref{node:b} leveraging the value $\sol(b)$, which yields very different values, whereas the corresponding $\Delta_{FSB}(\hat{b})$
-is always $r(b) \Delta_{FSB}(b)$. 
-
-For $sol(b)<<0$, we will have 
+is always $r(b) \Delta_{FSB}(b)$: 
+\begin{itemize}
+\item For $sol(b)<<0$, we will have 
 $\Delta(\hat{b})=0<\Delta_{FSB}(\hat{b})$.
-For $sol(b)>>0$, we will have 
+\item For $sol(b)>>0$, we will have 
 $\Delta(\hat{b})=\Delta(b) > \frac{1}{2}\Delta_{FSB}(\hat{b})$ 
-as $r(b)=\frac{1}{2}$. We can show that $\Utility$ is a safe overapproximation of 
+as $r(b)=\frac{1}{2}$.
+\end{itemize}
+
+Further, we can show that $\Utility$ is a safe overapproximation of 
 $\Improve\_\max^z(a)$, which does not hold for $s_{FSB},s_{SR}$ (because of the case $sol(b)>>0$):
-}
 
 \begin{proposition}
 	\label{prop2}
