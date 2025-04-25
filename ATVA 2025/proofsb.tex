@@ -8,7 +8,7 @@
 \subsection*{Setting for Hybrid MILP}
 
 
-Hybird MILP first call $\alpha,\beta$-Crown with short time-out (TO), then call partial MILP on those inputs which was neither certified nor falsified by this run of $\alpha,\beta$-Crown. We are using two settings of TO, for smaller DNNs we use T0$=10s$, and for the two larger ones, we use TO$=30s$.
+Hybird MILP first call $\alpha,\beta$-Crown with short time-out (TO), then call partial MILP on those inputs which was neither certified nor falsified by this run of $\alpha,\beta$-Crown. We are using two settings of TO, for smaller DNNs we use TO$=10s$, and for the two larger ones, we use TO$=30s$.
 
 Partial MILP uses 20 CPU-threads, while $\alpha,\beta$-Crown uses massively parallel ($>$4096 threads) GPU, 
 
