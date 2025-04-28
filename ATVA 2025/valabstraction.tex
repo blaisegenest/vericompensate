@@ -133,7 +133,7 @@ The value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with
 integer (actually even binary) variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
 
 \vspace{-0.4cm}
-\begin{equation}\quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \UB(n) \cdot a \quad \wedge \quad \hat{x} \leq x-\LB(n) \cdot (1-a)
+\begin{equation}\quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0 \quad \wedge \quad \hat{x} \leq \UB(n) \cdot a \quad \wedge \quad \hat{x} \leq x-\LB(n) \cdot (1-a)
 \label{eq11}
 \end{equation}
 
