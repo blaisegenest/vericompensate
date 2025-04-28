@@ -8,9 +8,9 @@
 \subsection*{Setting for Hybrid MILP}
 
 
-Hybird MILP first call $\alpha,\beta$-Crown with short time-out (TO), then call partial MILP on those inputs which was neither certified nor falsified by this run of $\alpha,\beta$-Crown. We are using two settings of TO, for smaller DNNs we use TO$=10s$, and for the two larger ones, we use TO$=30s$.
+Hybird MILP first call $\alpha,\beta$-CROWN with short time-out (TO), then call partial MILP on those inputs which was neither certified nor falsified by this run of $\alpha,\beta$-CROWN. We are using two settings of TO, for smaller DNNs we use TO$=10s$, and for the two larger ones, we use TO$=30s$.
 
-Partial MILP uses 20 CPU-threads, while $\alpha,\beta$-Crown uses massively parallel ($>$4096 threads) GPU, 
+Partial MILP uses 20 CPU-threads, while $\alpha,\beta$-CROWN uses massively parallel ($>$4096 threads) GPU, 
 
 
 The setting for partial MILP for fully-connected DNNs is about how many neurons need to be opened (once set, the selection is automatic). The runtime depending crucially upon the number of open ReLU neurons, we set it quite tightly, only allowing few neuron deviation to accommodate to a particularly accurate/inaccurate bound computation (measured by the weight of the remaining SAS score). As complexity increases with the layer considered, as the size of the MILP model grows, we lower this number with the depth, only committing to an intermediate number for the output neuron (the number of output neurons  is smaller than hidden layer, and this is the most important computation). We experimentally set this number so that each computing the bounds in each hidden layer takes around the same time. Remember that in layer 1, partial MILP is not necessary and propagating bounds using interval arithmetic is already exact. We open [48,48] to compute bounds for hidden layer 2, [21,24] for layer 3, [11,14] for layer 4, [6,9] for layer 5, [3,6] for layer 6, [2,5] for layer 7, [1,4] for hidden layer 8 (if any), and we open [14,17] for the output layer.
@@ -20,14 +20,14 @@ The setting for partial MILP for fully-connected DNNs is about how many neurons 
 	\centering
 	\begin{tabular}{||l||c|c||}
 		\hline \hline
-		Network & TO for $\alpha,\beta$-Crown  & Minimum number of Open neurons  \\ 		  
+		Network & TO for $\alpha,\beta$-CROWN  & Minimum number of Open neurons  \\ 		  
 		\hline
 		MNIST $5 \times 100$ & 10s  & 48,21,11,6,14  \\ \hline
 		MNIST $5 \times 200$ & 10s & 48,21,11,6,14  \\ \hline
 		MNIST $8 \times 100$ & 10s  & 48,21,11,6,3,2,1,14  \\ \hline
 		MNIST $8 \times 200$ & 10s & 48,21,11,6,3,2,1,14  \\ \hline
 		MNIST $6 \times 500$ & 30s & 48,21,11,6,3,14 \\ \hline
-		CIFAR CNN-B-adv & 30s & 200, 0, 45 \\ \hline \hline
+		CIFAR CNN-B-Adv & 30s & 200, 0, 45 \\ \hline \hline
 	\end{tabular}
 	\caption{Settings of Hybrid MILP for the different {\em hard} instances}
 	\label{table20}
@@ -49,8 +49,8 @@ Table \ref{table20} sums up the TO and the minimum numbers of ReLU opened.
 
 Last, for Gurobi, we use a custom MIP-Gap (from $0.001$ to $0.1$) and time-out parameters, depending on the seen improvement and the possibility to make a node stable. This is low level implementation details that will be available in the code once the paper is accepted.
 
-Notice that a different balance between accuracy and runtime could be set. For instance, we set up the numbers of open neurons to have similar runtime as Refined $\beta$-Crown for the first 4 DNNs ($50s-100s$). We could easily target better accuracy (e.g. for $8 \times 100$ with a relatively high $15\%$ undecided images) by increasing the number of open neurons, with a trade-off on runtime (current runtime is at $61s$).
-By comparison, the sweet spot for $\alpha,\beta$-Crown seems to be around TO$=30s$, enlarging the time-out having very little impact on accuracy but large impact on runtime
+Notice that a different balance between accuracy and runtime could be set. For instance, we set up the numbers of open neurons to have similar runtime as Refined $\beta$-CROWN for the first 4 DNNs ($50s-100s$). We could easily target better accuracy (e.g. for $8 \times 100$ with a relatively high $15\%$ undecided images) by increasing the number of open neurons, with a trade-off on runtime (current runtime is at $61s$).
+By comparison, the sweet spot for $\alpha,\beta$-CROWN seems to be around TO$=30s$, enlarging the time-out having very little impact on accuracy but large impact on runtime
 (Table \ref{table_beta}).
 
 
@@ -58,14 +58,14 @@ By comparison, the sweet spot for $\alpha,\beta$-Crown seems to be around TO$=30
 
 
 
-\subsection*{Setting for $\alpha,\beta$-Crown}
+\subsection*{Setting for $\alpha,\beta$-CROWN}
 
-The networks were already tested by $\alpha,\beta$-Crown \cite{crown}. We thus simply reused the parameter files from \href{https://github.com/Verified-Intelligence/alpha-beta-CROWN/blob/main/complete_verifier/exp_configs/beta_crown/}{their Github}, 
+The networks were already tested by $\alpha,\beta$-CROWN \cite{crown}. We thus simply reused the parameter files from \href{https://github.com/Verified-Intelligence/alpha-beta-CROWN/blob/main/complete_verifier/exp_configs/beta_crown/}{their Github}, 
 except for time-out which we explicitly mention:
 e.g. for CNN-B-Adv: "solver: batch size: 512 beta-crown: iteration: 20"; and
 for MNIST 5x100: "solver: batch size: 1024 beta-crown: iteration: 20".
 
-%We did not experiment with cutting planes (GCP-CROWN \cite{cutting}), as it needs an additional package, namely IBM CPLEX solver, we do not have access to. From \cite{cutting}, the number of undecided inputs of GCP-CROWN is $\leq 2\%$ better than $\alpha,\beta$-Crown on the DNNs we experimented with, far from the $10-40\%$ improvement seen from Hybrid MILP. The conclusion are thus unchanged.
+%We did not experiment with cutting planes (GCP-CROWN \cite{cutting}), as it needs an additional package, namely IBM CPLEX solver, we do not have access to. From \cite{cutting}, the number of undecided inputs of GCP-CROWN is $\leq 2\%$ better than $\alpha,\beta$-CROWN on the DNNs we experimented with, far from the $10-40\%$ improvement seen from Hybrid MILP. The conclusion are thus unchanged.
 
 
 
@@ -362,27 +362,27 @@ Figure \ref{fig4} shows that choosing nodes is much more efficient for time/accu
 
 \section{Comparison with other DNN verifiers}
 
-In the following, we provide results comparing $\alpha,\beta$-Crown to other verifiers, to justify our use of $\alpha,\beta$-Crown as state of the art for efficient verifiers as main source of comparison to Hybrid MILP for hard DNN instance.
+In the following, we provide results comparing $\alpha,\beta$-CROWN to other verifiers, to justify our use of $\alpha,\beta$-CROWN as state of the art for efficient verifiers as main source of comparison to Hybrid MILP for hard DNN instance.
 
 
-\subsection*{Comparison $\alpha,\beta$-Crown vs PRIMA}
+\subsection*{Comparison $\alpha,\beta$-CROWN vs PRIMA}
 
 
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{||l||c|c||c||}
 		\hline \hline
-		Network & $\alpha,\beta$-Crown & Refined $\beta$-Crown & PRIMA \\ 		  
+		Network & $\alpha,\beta$-CROWN & Refined $\beta$-CROWN & PRIMA \\ 		  
 		\hline
 		MNIST $5 \times 100$ & N/A  & 14.3\% (102s) & 33.2\% (159s)\\ \hline
 		MNIST $5 \times 200$ & N/A & 13.7\% (86s) & 21.1\% (224s) \\ \hline
 		MNIST $8 \times 100$ & N/A  & 20.0\% (103s) & 39.2\% (301s)   \\ \hline
 		MNIST $8 \times 200$ & N/A & 17.6\% (95s) & 28.7\% (395s)  \\ \hline
 		MNIST $6 \times 500$ & 51\% (16s) & $-$ & 64\% (117s) \\ \hline
-		CIFAR CNN-B-adv & 18.5\% (32s) & $-$ & 27\% (344s)\\ \hline \hline
+		CIFAR CNN-B-Adv & 18.5\% (32s) & $-$ & 27\% (344s)\\ \hline \hline
 		CIFAR ResNet & 0\% (2s) & $-$ & 0\% (2s) \\ \hline \hline
 	\end{tabular}
-	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown, Refined $\beta$-Crown, and PRIMA, as reported in \cite{crown}, except for $6 \times 500$ that we run ourselves. N/A means that \cite{crown} did not report the numbers, while $-$ means that Refined $\beta$-Crown cannot be run on these DNNs.}
+	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-CROWN, Refined $\beta$-CROWN, and PRIMA, as reported in \cite{crown}, except for $6 \times 500$ that we run ourselves. N/A means that \cite{crown} did not report the numbers, while $-$ means that Refined $\beta$-CROWN cannot be run on these DNNs.}
 	\label{table9}
 	\begin{tablenotes}
 		\footnotesize
@@ -393,64 +393,64 @@ In the following, we provide results comparing $\alpha,\beta$-Crown to other ver
 	\end{table}
 
 
-	PRIMA \cite{prima} is a major verifier in the ERAN toolkit. In Table \ref{table9}, we report the comparison between PRIMA and $\alpha,\beta$-Crown, mainly from \cite{crown}. The setting is mainly similar from ours, but numbers are not perfectly comparable as the images tested are not  exactly the same (1000 first or 200 first images for CNN-B-Adv), vs 100 first in Tables \ref{table_hybrid}, \ref{table_beta}. Also, time-out settings and hardware are slightly different. The overall picture is anyway the same.
+	PRIMA \cite{prima} is a major verifier in the ERAN toolkit. In Table \ref{table9}, we report the comparison between PRIMA and $\alpha,\beta$-CROWN, mainly from \cite{crown}. The setting is mainly similar from ours, but numbers are not perfectly comparable as the images tested are not  exactly the same (1000 first or 200 first images for CNN-B-Adv), vs 100 first in Tables \ref{table_hybrid}, \ref{table_beta}. Also, time-out settings and hardware are slightly different. The overall picture is anyway the same.
 
 
-Analysis: On the 4 smallest MNIST networks, PRIMA uses a refined path comparable with Refined $\beta$-Crown. However, it is slower and less accurate than Refined $\beta$-Crown.
-On larger {\em hard} networks, PRIMA has also more undecided images than $\alpha,\beta$-Crown, while the runtime is $>5$ times larger.
+Analysis: On the 4 smallest MNIST networks, PRIMA uses a refined path comparable with Refined $\beta$-CROWN. However, it is slower and less accurate than Refined $\beta$-CROWN.
+On larger {\em hard} networks, PRIMA has also more undecided images than $\alpha,\beta$-CROWN, while the runtime is $>5$ times larger.
 Hence, Hybrid MILP is more accurate than PRIMA with similar runtime or faster.
 
 Notice that kPoly \cite{kpoly}, OptC2V \cite{optC2V}, SDP-FO \cite{SDPFI} numbers were also reported in \cite{crown} on these networks, with even more unfavorable results.
 
-\subsection*{Comparison $\alpha,\beta$-Crown vs MN-BaB}
+\subsection*{Comparison $\alpha,\beta$-CROWN vs MN-BaB}
 
-MN-BaB \cite{ferrari2022complete} is an improvement built over PRIMA, using a similar Branch and Bound technique as used in $\alpha,\beta$-Crown. Results in \cite{ferrari2022complete}
-are close to those of $\alpha,\beta$-Crown. However, none of the {\em hard} networks from \cite{crown} that we consider have been tested. We thus tested three representative {\em hard} DNNs (first 100 images) to understand how MN-BaB fairs on such hard instances, and report the numbers in Table \ref{table10}. Results are directly comparable with Table \ref{table_hybrid}.
+MN-BaB \cite{ferrari2022complete} is an improvement built over PRIMA, using a similar Branch and Bound technique as used in $\alpha,\beta$-CROWN. Results in \cite{ferrari2022complete}
+are close to those of $\alpha,\beta$-CROWN. However, none of the {\em hard} networks from \cite{crown} that we consider have been tested. We thus tested three representative {\em hard} DNNs (first 100 images) to understand how MN-BaB fairs on such hard instances, and report the numbers in Table \ref{table10}. Results are directly comparable with Table \ref{table_hybrid}.
 
 
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{||l||c|c||c|c||}
 		\hline \hline
-		 & $\alpha,\beta$-Crown & $\alpha,\beta$-Crown & MN-BaB & MN-BaB \\ 
+		 & $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN & MN-BaB & MN-BaB \\ 
 		 Network & TO=30s & TO=2000s &  TO=30s & TO=2000s \\ 
 		\hline
 		MNIST $5 \times 100$ & 55\% (19s) & 50\%(1026s) & 60\% (19s) & 50\% (1027s) \\ \hline
 		MNIST $6 \times 500$ & 51\% (16s) & 50\% (1002s) & 58\% (18s) & 55\% (1036s) \\ \hline
-		CIFAR CNN-B-adv & 22\% (8.7s) & 20\% (373s) & 43\% (14s) & 24\% (576s) \\ \hline 
+		CIFAR CNN-B-Adv & 22\% (8.7s) & 20\% (373s) & 43\% (14s) & 24\% (576s) \\ \hline 
 	\end{tabular}
-	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown, and MN-BaB}
+	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-CROWN, and MN-BaB}
 	\label{table10}
 \end{table}
 
-Analysis: results reveal that MN-BaB is slightly slower and slightly less accurate than $\alpha,\beta$-Crown. Notice the specially high number of undecided images for CNN-B-Adv with TO=30s, probably meaning that 30s is too small for MN-BaB on this large DNN.
+Analysis: results reveal that MN-BaB is slightly slower and slightly less accurate than $\alpha,\beta$-CROWN. Notice the specially high number of undecided images for CNN-B-Adv with TO=30s, probably meaning that 30s is too small for MN-BaB on this large DNN.
 Hence, Hybrid MILP is more accurate than MN-BaB with similar runtime or faster.
 
 
 
-	\subsection*{Comparison $\alpha,\beta$-Crown vs NNenum}
+	\subsection*{Comparison $\alpha,\beta$-CROWN vs NNenum}
 
 NNenum \cite{nnenum} is a complete verifier with good performance according to VNNcomp.
-It was the only complete verifier tested in Table \ref{table_complete} to verify more images than $\alpha,\beta$-Crown. The experiments section in \cite{nnenum} does not report
+It was the only complete verifier tested in Table \ref{table_complete} to verify more images than $\alpha,\beta$-CROWN. The experiments section in \cite{nnenum} does not report
 the {\em hard} DNNs we are considering. We tried to experiment it on the same MNIST 
-$6 \times 500$ and CIFAR CNN-B-adv as we did in Table \ref{table10} for MN-BaB. Unfortunately, on $6 \times 500$, buffer overflow were reported.
-We report in Table \ref{table11} experiments with the same 2000s Time-out (it was $10 000s$ in Table \ref{table_complete})  for a fair comparison with $\alpha,\beta$-Crown, on both 
+$6 \times 500$ and CIFAR CNN-B-Adv as we did in Table \ref{table10} for MN-BaB. Unfortunately, on $6 \times 500$, buffer overflow were reported.
+We report in Table \ref{table11} experiments with the same 2000s Time-out (it was $10 000s$ in Table \ref{table_complete})  for a fair comparison with $\alpha,\beta$-CROWN, on both 
 MNIST $5 \times 100$ and CIFAR CNN-B-Adv. 
-On MNIST $5 \times 100$, NNenum is slightly more accurate than $\alpha,\beta$-Crown, but far from the accuracy Hybrid MILP.
-On CIFAR CNN-B-adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and thus of Hybrid MILP. In both test, the runtime of NNenum was also much longer than for Hybrid MILP.
+On MNIST $5 \times 100$, NNenum is slightly more accurate than $\alpha,\beta$-CROWN, but far from the accuracy Hybrid MILP.
+On CIFAR CNN-B-Adv, NNenum was much less accurate than $\alpha,\beta$-CROWN, and thus of Hybrid MILP. In both test, the runtime of NNenum was also much longer than for Hybrid MILP.
 
 
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{||l||c||c||c||c||}
 		\hline \hline
-		 & $\alpha,\beta$-Crown & NNenum & Hybrid\\ 
+		 & $\alpha,\beta$-CROWN & NNenum & Hybrid\\ 
 		 Network & TO=2000s &  TO=2000s & MILP\\ 
 		\hline
 		MNIST $5 \times 100$ & 50\%(1026s) & 44\% (1046s) & \bf 13\% (46s)\\ \hline
-		CIFAR CNN-B-adv & 20\% (373s) & 40\% (1020s) & \bf 11\% (417s)\\ \hline 
+		CIFAR CNN-B-Adv & 20\% (373s) & 40\% (1020s) & \bf 11\% (417s)\\ \hline 
 	\end{tabular}
-	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-Crown and NNenum with 2000s time-out, and Hybrid MILP}.
+	\caption{Undecided images ($\%$, {\em lower is better}), as computed by $\alpha,\beta$-CROWN and NNenum with 2000s time-out, and Hybrid MILP}.
 	\label{table11}
 \end{table}
 
@@ -480,7 +480,7 @@ For 6x500, we provide results for two different $\varepsilon$.
 		MNIST 6$\times$500 & &   \\ 
 		$\epsilon = 0.035$ & 1.4s & 3.5s \\ 
 		$\epsilon = 0.1$ & 44.6s & 310s \\  \hline 
-		CIFAR CNN-B-adv &  & \\
+		CIFAR CNN-B-Adv &  & \\
 		$\epsilon = 2/255$& 1s & 609s \\ \hline \hline
 	\end{tabular}
 	\caption{average and maximum time per $\MILP_X$ calls for image 3 (MNIST) and image 76 (CIFAR10).}
