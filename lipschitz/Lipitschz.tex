@@ -112,13 +112,17 @@
 		\forall \boldsymbol{x} \forall\boldsymbol{y} &  (|\boldsymbol{x}-\boldsymbol{y}| \geq \epsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|\\
 		&  |\boldsymbol{x}-\boldsymbol{y}| < \epsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K\epsilon)
 	\end{align*} 
-	In terms of the code, it is compute an optimization question respect to a certain number $\epsilon$:	\begin{align*}
+	In terms of the code, it is compute an optimization question respect to a certain number $\epsilon$:	\begin{align}\label{global_robustness}
 			\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \epsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
-	\end{align*} We can use this maximum value to estimate the Lipschitz constant.
+	\end{align} We can use this maximum value to estimate the Lipschitz constant.
 	
-	\section{pMILP and Local robustness}
+	\section{Local robustness and pMILP}
+	
+	
 	
 	\subsection{MILP and LP encodings for DNNs}
+	
+	First we introduce some concepts for local robustness question.
 	
 	Mixed Integer Linear Programming (MILP) value abstraction is a complete (but inefficient) method. 
 	For an unstable neuron $n$ that its value $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one 
@@ -204,11 +208,17 @@
 	\end{proposition}
 	
 	
-	\section{Global robustness and Lipschitz constant}
+	\section{Modeling for global robustness}
 	
+	We can modify the MILP model for local robustness to compute the question of global robustness \ref{global_robustness}.
 	
+	\subsubsection{Cloned model}
 	
-	\subsubsection*{Constraints for $\gamma$}
+	The most straight way is to build two identical MILP models $M_1,M_2$ with completely disjoint variables (including inputs and outputs) with some extra constraints: 
+	
+	\subsubsection{Simplified models}
+	
+	Constraints for $\gamma$
 	
 	We could get the following constraints for $\gamma$, using $y_i$ and $\hat{y}_i$ to denote the $x_i-x_i'$ and $\hat{x}_i-\hat{x}_i'$:\begin{align*}
 		\hat{y}_i \leq a \gamma_i \hspace*{2ex} &\wedge \hspace*{2ex}\hat{y}_i \geq y_i - a \gamma_i\\
