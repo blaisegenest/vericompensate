@@ -123,7 +123,7 @@ By assumption, $d \in [\epsilon N  , \epsilon(N+1)]$ .
 \begin{proposition}
 	Continue the definition. Suppose we have a number $K$ that for any $d$ in one of $\epsilon, 1.1\epsilon, 1.2\epsilon, \cdots, 1.9\epsilon$, we have $K_d\leq K$.
 	
-	Then, for any two inputs $x,y$,if $|x-y|\geq \epsilon$, then $\dfrac{|f(x)-f(y)|}{|x-y|}\leq 1.1 K$. 
+	Then, for any two inputs $x,y$, if $|x-y|\geq \epsilon$, then $\dfrac{|f(x)-f(y)|}{|x-y|}\leq 1.1 K$. 
 \end{proposition}
 
 \begin{proof}
@@ -141,7 +141,7 @@ By assumption, $d \in [\epsilon N  , \epsilon(N+1)]$ .
 		\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Kx_1+Kx_2+\cdots+Kx_n}{x_1+x_2+\cdots+x_n -0.1\epsilon}\\
 		& = K\cdot( 1+  \dfrac{0.1\epsilon}{x_1+x_2+\cdots+x_n -0.1\epsilon})\\
 		& \leq K\cdot( 1+  \dfrac{0.1\epsilon}{\epsilon})\\
-		& \leq 1.1 K
+		& = 1.1 K
 	\end{align*}
 	
 \end{proof}

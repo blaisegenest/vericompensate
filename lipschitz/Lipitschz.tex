@@ -1,17 +1,20 @@
 \documentclass{llncs}
+\usepackage{hyperref}
+\usepackage{url}
 \pagestyle{plain}
-
+\usepackage{threeparttable}
+\input{math_commands.tex}
 %\usepackage[latin9]{inputenc}
 %\usepackage[T1]{fontenc}
 \usepackage{float}
 \usepackage{wrapfig}
+\usepackage{lineno}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage{tikz}
-\usepackage{tikz-3dplot}
 \usepackage{subcaption}
 \usepackage{tabularx}
+\usepackage{cases}
 \captionsetup{compatibility=false}
 % \usepackage{esint}
 \usepackage{array}
@@ -21,74 +24,65 @@
 \usepackage{url}
 \usepackage{tikz}
 \usepackage{calc}
+\usepackage{array}
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usetikzlibrary{positioning, arrows.meta,calc}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\vx}{\boldsymbol{x}}
-\newcommand{\vy}{\boldsymbol{y}}
+
+
 \newcommand{\vW}{\boldsymbol{W}}
-\newcommand{\vz}{\boldsymbol{z}}
-\newcommand{\vb}{\boldsymbol{bias}}
+
+
 \newcommand{\val}{{\textrm{value}}}
 \newcommand{\Val}{{\textrm{value}}}
 \newcommand{\MILP}{{\textrm{MILP}}}
 \newcommand{\LP}{{\textrm{LP}}}
+\newcommand{\Improve}{\mathrm{Improve}}
+\newcommand{\Utility}{\mathrm{SAS}}
+\newcommand{\Sol}{\mathrm{Sol}}
+\newcommand{\sol}{\mathrm{sol}}
 
 \newcommand{\UB}{\mathrm{UB}}
 \newcommand{\LB}{\mathrm{LB}}
 \newcommand{\ub}{\mathrm{ub}}
 \newcommand{\lb}{\mathrm{lb}}
 \newcommand{\B}{\mathrm{B}}
-
-\newcommand{\CMP}{{\textrm{CMP}}\ }
-
-
-\newcommand{\toolname}{\CMP}
-
-
-
-
-
-
-%\usepackage{amsmath, amsthm, amssymb, amsfonts}
-%\newtheorem{theorem}{Theorem}
-%\newtheorem{lemma}{Lemma}
-%\newtheorem{corollary}{Corollary}
-%\theoremstyle{definition}
-%\newtheorem{definition}{Definition}
-
+\usepackage{amsmath, amssymb, amsfonts}
 
 
 \newcommand{\ReLU}{\mathrm{ReLU}}
 
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+\newcommand{\toolname}{Hybrid MILP}
 
 
-\title{Liptschiz}
+\title{Solution-aware vs global ReLU selection: \\
+	partial MILP strikes back for DNN verification}
 \date{}
+
 
 \begin{document}
 	
 	\maketitle
-	
+	\linenumbers
 	\begin{abstract}
-		
-		Local robustness is bad. We study a more global notion, lipsitcz constant.
-		
+		TODO
 	\end{abstract}
-	
 	
 	\section{Introduction}
 	
-	TO DO.
-	
 	\section{Notations and Preliminaries}
 	
-	In this paper, we will use lower case latin $a$ for scalars, bold for vectors $\boldsymbol{z}$, 
-	capitalized bold for matrices $\boldsymbol{W}$, similar to notations in \cite{prima,crown}.
+	In this paper, we will use lower case latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
+	capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
 	To simplify the notations, we restrict the presentation to feed-forward, 
-	fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
-	$ReLU(x)=x$ for $x \geq 0$ and $ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
+	fully connected ReLU Deep Neural Networks (DNN for short), where the activation function is $\ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
+	$\ReLU(x)=x$ for $x \geq 0$ and $\ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
 	
 	%In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
 	
@@ -105,212 +99,308 @@
 	Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
 	denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
 	\begin{align*}
-		{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i\\
-		\hat{\boldsymbol{z}}^{i} &= ReLU({\boldsymbol{z}}^i).
+		\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i \qquad \, \qquad
+		\hat{\boldsymbol{z}}^{i} = \ReLU({\boldsymbol{z}}^i).
 	\end{align*} 
 	
 	The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
 	$\boldsymbol{z}$ is called pre-activation values, 
 	and $\boldsymbol{z}^{i}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
-	For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, pre- and post-activation neurons are called \emph{nodes}, and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$. A path $\pi$ is a sequence $\pi=(a_i)_{k \leq  i \leq k'}$ of neurons in consecutive layers, and the weight of $\pi$ is 
-	$weight(\pi)=W_{a_k,a_{k+1}} \times \cdots \times  W_{a_{k'-1},a_{k'}}$.
+	For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, pre- and post-activation neurons are called \emph{nodes}, and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$. 
+	
+	For convenience, we write $n < z$ if neuron $n$ is on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$.
+	
+	%Concerning the verification problem, we focus on the well studied local-robustness question. Local robustness asks to determine whether the output of a neural network will be affected under small perturbations to the input. 
+	%Formally, for an input $\vx$ perturbed by $\varepsilon >0$ under distance $d$, then the DNN is locally $\varepsilon$-robust in $\vx$ whenever:
+	%\begin{align*}
+	%	\forall \boldsymbol{x'} \text{ s.t. } d(\vx,\vx')\leq \varepsilon, \text{ we have }  
+	%	argmax_i (f(\boldsymbol{x'})[i]) = argmax_i(f(\boldsymbol{x})[i])
+	%\end{align*} 
 	
 	
+	\section{pMILP and Local robustness}
 	
-	\iffalse
-	and the $i$-th hidden layer is a vector in $\mathbb{R}^{d_i}$, 
-	and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. 
-	The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight 
-	$\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, 
-	the bias is a vector $\vb^i$ in $\mathbb{R}^{d_i}$, and the activation function 
-	is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, 
-	then the value of $i$-th layer is computed by: 
+	\subsection{MILP and LP encodings for DNNs}
+	
+	Mixed Integer Linear Programming (MILP) value abstraction is a complete (but inefficient) method. 
+	For an unstable neuron $n$ that its value $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one 
+	integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
+	
+	\vspace{-0.4cm}
+	\begin{equation}\quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \UB(n) \cdot a \quad \wedge \quad \hat{x} \leq x-\LB(n) \cdot (1-a)
+		\label{eq11}
+	\end{equation}
+	
+	%For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
+	
+	MILP instances can be linearly relaxed into LP over-abstraction, where variables originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}. We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof:
+	
+	
+	\subsection{partial MILP}
+	
+	We will use {\em partial MILP} (pMILP for short, see \cite{DivideAndSlide}) to get trade-offs between accuracy and runtime. Here, we extract the explanation from paper CITE.
+	
+	
+	Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: the partial MILP based on $X$ to compute neuron $n$ simply calls Gurobi to minimize/maximize the value of $n$ with the MILP model encoding, where variable $a$ is:
+	\begin{itemize}
+		\item binary for neurons in $X$ (exact encoding of the ReLU),
+		\item linear for neurons not in $X$ (linear relaxation).
+	\end{itemize}
+	We will denote above case by MILP$_X$ or $\mathcal{M}_X$. Informally, we say that a node is opened if it is in $X$. 
+	
+	If $X$ covers all unstable neurons, then MILP$_X$ is exact. But then the time cost may be very large (exponential growth).
+	
+	
+	To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach: computing lower and upper bounds $\LB,\UB$ for neurons $n$ of a each layer iteratively, that are used when computing values of the next layer.
+	
+	
+	\subsection{SAS}
+	
+	
+	In pMILP, to decide the set $X$, we introduce the method {\em Solution-Aware Scoring} (SAS)
+	to evaluate accurately how opening a ReLU impacts the accuracy. Again, here we use the definition from paper CITE. For details and explanation, see CITE.
+	
+	
+	Assume that we want to compute an upper bound for neuron $z$ on layer $\ell_z$. For each node $n<z$, we denote ($\Sol\_\max_X^z(n))_{n \leq z}$ a solution of $\mathcal{M}_X$ maximizing $z$: $\Sol\_\max_X^z(z)$ is the maximum of $z$ under $\mathcal{M}_X$; and we denote $(\sol(n))_{n \leq z} = (\Sol\_\max_\emptyset^z(n))_{n \leq z}$ a solution maximizing the value for $z$ when all ReLU use the LP relaxation. Moreover,  we define the function
+	$\Improve\_\max^z(n)=$ $\sol(z) - \Sol\_\max_{\{n\}}^z(z)$, 
+	accurately represents how much opening neuron $n < z$ reduces the maximum computed for $z$
+	compared with using only LP. 
+	
+	First, SAS will call solvers to compute the LP model to get a solution, which is reasonably fast as there is no binary variables. 
+	
+	Next, for a neuron $b$ on the layer before layer $\ell_z$, we define:
+	
+	
+	\vspace{-0.4cm}
+	$$\Utility\_\max\nolimits^z(b) = W_{bz} \times (\sol(\hat{b})- \ReLU(\sol(b)))$$
+	\vspace{-0.4cm}
+	
+	
+	And for a neuron $a$ two layers before $\ell_z$, 
+	$b$ denoting neurons in the layer $\ell$ just before $\ell_z$.
+	Recall the rate $r(b)=\frac{\max(0,\UB(b))}{\max(0,\UB(b))-\min(0,\LB(b))} \in [0,1]$.
+	We define:
+	
+	
+	\begin{flalign*}
+		\Delta(\hat{a}) &= \ReLU(\sol(a))-\sol(\hat{a})&&\\
+		\forall b \in \ell, \Delta(b) &= W_{ab}\Delta(\hat{a})&&\\	
+	\end{flalign*}
+	
+	\vspace{-1.2cm}
+	
+	\begin{subnumcases}{\forall b \in \ell, \Delta(\hat{b}) =}
+		r(b)\Delta(b), & for $W_{bz} > 0$ \\
+		\max(\Delta(b),-\sol(b)), & for $W_{bz} < 0$ and $\sol(b)\geq0$\\
+		\max(0,\Delta(b)+\sol(b)), & for $W_{bz} < 0$ and $\sol(b)<0$ \quad \, \quad \, \quad		 
+	\end{subnumcases}
+	
+	\begin{flalign*}
+		\Utility\_\max\nolimits^z(a) &= \Delta(z) = -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})&&
+	\end{flalign*}
+	
+	From paper CITE, we know that $\Utility$ is a safe overapproximation in the sense of following proposition:
+	
+	\begin{proposition}
+		$0 \leq \Improve\_\max^z(a) \leq \Utility\_\max^z(a)$. 
+	\end{proposition}
+	
+	
+	\section{Global robustness and Lipschitz constant}
+	
+	
+	\subsection{MILP and LP encodings for DNNs}
+	
+	At the other end of the spectrum, we find the Mixed Integer Linear Programming (MILP) value abstraction, which is a priori a complete method (albeit much slower than DeepPoly). 
+	Consider an unstable neuron $n \in[\alpha,\beta]$. The value $x$ of $\ReLU(n)$ can be encoded exactly in an MILP formula with one integer (actually even binary) variable $a$ valued in ${0,1}$, using 4 constraints \cite{MILP}:
+	\vspace{-0.1cm}
 	\begin{align*}
-		{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \vb^i\\
-		\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)).
-	\end{align*} The vector $\hat{\boldsymbol{z}}$ is called post-activation values, and $\boldsymbol{z}$ is called pre-activation values, and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
-	\fi
+		\hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a)
+	\end{align*}
 	
-	\medskip
+	It can be shown that for all $x \in [\alpha,\beta] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$. Here, $a$ is 0 if $x < 0$, 1 if $x>0$, and can be either if $x=0$~\cite{MILP}. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help in certifying a given input. However, for networks with hundreds of nodes or more, the resulting MILP formulation will contain numerous integer variables and generally cannot be solved efficiently.
 	
-	Concerning the verification problem, we focus on the well studied local-robustness question. Local robustness asks to determine whether the output of a neural network will be affected under small perturbations to the input. 
-	Formally, for an input $\vx$ perturbed by $\varepsilon >0$ under distance $d$, then the DNN is locally $\varepsilon$-robust in $\vx$ whenever:
+	MILP instances can be linearly relaxed into LP over-abstraction, where variables originally restricted to integers in ${0,1}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}
+	
+	The following proposition shows that the LP abstraction refines the DeepPoly abstraction. 
+	The difference between the LP and the DeepPoly abstractions is that LP simultaneous considers the two linear lower bounding functions for the ReLU operation, namely $ReLU(x) \geq 0$ and $ReLU(x) \geq x$, while the DeepPoly abstraction restricts itself to the application of a single one of these linear bounding functions.
+	
+	
+	\begin{proposition}
+		\label{LP}
+		Given $x \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems of constraints 
+		1) for LP and 2) for DeepPoly with both lower bounds are equivalent:
+		\begin{align}
+			& \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, a \in [0,1]  \label{eq:lp}\\
+			&\hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0 \quad \wedge \quad \hat{x} \leq \beta \frac{x-\alpha}{\beta-\alpha} \label{eq:deeppoly}
+		\end{align} 
+	\end{proposition}
+	
+	\begin{proof}
+		We need to show that the two upper bound constraints in Eq~\ref{eq:lp} is equivalent to the upper bound in Eq~\ref{eq:deeppoly}. To this end, we focus on the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ in Eq~\ref{eq:lp} is upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. Furthermore, 
+		The function $\min(\beta \cdot a, x - \alpha (1-a))$ attains its maximum when $\beta \cdot a = x - \alpha (1-a)$, leading to the equation $(\beta - \alpha) a = x - \alpha$ and consequently $a = \frac{x - \alpha}{\beta-\alpha}$. This results in an upper bound of $\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$ \qed
+	\end{proof}
+	
+	\subsubsection*{Constraints for $\gamma$}
+	
+	We could get the following constraints for $\gamma$, using $y_i$ and $\hat{y}_i$ to denote the $x_i-x_i'$ and $\hat{x}_i-\hat{x}_i'$:\begin{align*}
+		\hat{y}_i \leq a \gamma_i \hspace*{2ex} &\wedge \hspace*{2ex}\hat{y}_i \geq y_i - a \gamma_i\\
+		\hat{y}_i \geq (a-1) \gamma_i  \hspace*{2ex} &\wedge \hspace*{2ex} \hat{y}_i \leq y_i + (1-a) \gamma_i,
+	\end{align*} where $a$ is a binary variable, $\gamma_i$ is the upper bound of $x_i-x'_i$.
+	
+	
+	The following plot will show the above constraints:
+	
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel={$y_i$},
+			ylabel={$\hat{y}_i$},
+			xmin=-2, xmax=2,
+			ymin=-2, ymax=2,
+			axis lines=center,
+			samples=100, 
+			unit vector ratio=1 1 1, scale=1, xtick   = {-2,2},
+			xticklabels = {$-\gamma_i$,$\gamma_i$},
+			yticklabels = {},
+			]
+			\addplot[blue, thick, fill=blue, fill opacity=0.4] {x} \closedcycle; 
+			\addplot[blue, thick] {0}; 
+			
+			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(-2,-2)};
+			\node[label={above:$(-\gamma_i,-\gamma_i)$}] at (axis cs: -1.35, -2.1) {};
+			
+			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(2,2)};
+			\node[label={above:$(\gamma_i,\gamma_i)$}] at (axis cs: 1.4, 1.5) {};
+		\end{axis}
+	\end{tikzpicture}
+	
+	
+	
+	The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
+	
+	
+	We can use the following extra constraints (besides 4 constraints about $\hat{x}_i'=\ReLU(x_i')$) to build this relation:
+	
+	
 	\begin{align*}
-		\forall \boldsymbol{x'} \text{ s.t. } d(\vx,\vx')\leq \varepsilon, \text{ we have }  
-		argmax_i (f(\boldsymbol{x'})[i]) = argmax_i(f(\boldsymbol{x})[i])
+		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
+		&\hat{y}_i \geq -\hat{x}'_i+(x_i'+y_i) \hspace*{1ex}\wedge\hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+(x_i'+y_i) +(a-1)\alpha_i \\
 	\end{align*} 
 	
+	
+	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
+	
+	
+	
+	A more direct way to establish the constraints is as follows: \begin{align*}
+		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
+		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
+		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
+		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
+		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
+		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
+	\end{align*}The following two plots show its shape:
+	
 	\iffalse
-	In some cases, the output is a vector but the aim to get the label of dimension with the minimal value. In this case, the problem can be written as:\begin{align*}
-		\forall \boldsymbol{x} \in\mathcal{D} \  \min f(\boldsymbol{x}) = \min f(\boldsymbol{x}_0)
-	\end{align*}
-	
-	If so, the question of verification can turn to the following optimization question: \begin{align*}
-		\min f(\boldsymbol{x}) \ s.t. {\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ b^i\\
-		\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)), \boldsymbol{x}\in\mathcal{D}.
-	\end{align*}
-	
-	In this paper, we only consider $\ReLU$ function as the activation function: $\sigma(a)=\ReLU(a)=\max(0,a)$. 
-	
-	In this paper, we consider $L^{\infty}$ norm the max value of distance of each dimension, that is $d(\vx,\boldsymbol{x}_0)=\max |\boldsymbol{x}(n)-\boldsymbol{x}_0(n)|$. 
+	\hspace*{-10ex}
+	\begin{tikzpicture}
+		\begin{axis}[	axis on top, xlabel = \(x'_i\),
+			ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
+			set layers=default,
+			xmax = 4, xmin = -4,
+			ymax = 1, ymin = -1,		
+			zmax = 1, zmin = -1,
+			unit vector ratio=1 1 1, scale=3,
+			view={60}{50}, ytick   = {-1,0,1},
+			yticklabels = {$-\gamma_i$,$0$,$\gamma_i$}, xtick = {0},
+			xticklabels = {$0$}, ztick   = {-1,0,1},
+			zticklabels = {$-\gamma_i$,$0$,$\gamma_i$},
+			]
+			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4] 
+			coordinates {
+				(0,0,0) (-1,1,0) (-4,1,0) (-4,-1,0) (0,-1,0) (0,0,0)
+			};
+			
+			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
+			coordinates { (0,0,0) (0,1,1) (4, 1, 1) (4, -1, -1) (1,-1,-1) (0,0,0)
+			};
+			
+			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
+			coordinates { (0,0,0)  (-1,1,0) (0,1,1) (0,0,0)
+			};
+			
+			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
+			coordinates { (0,0,0)  (0,-1,0) (1,-1,-1) (0,0,0)
+			};
+			
+			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(1,-1,-1)};
+			\node[label={$(\gamma_i,-\gamma_i, -\gamma_i)$}] at (axis cs: 1.2, -0.5 ,-1) {};
+			
+			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(-1,1,0)};
+			\node[label={$(-\gamma_i,\gamma_i, 0)$}] at (axis cs: -1, 0.8 ,0) {};			
+			
+		\end{axis}
+	\end{tikzpicture}
 	\fi
 	
 	
-
-\input{valabstraction}
-
-
-
-\section{Conclusion}
-
-\newpage
-
-\bibliographystyle{plain}
-\bibliography{references}
-
-\end{document}
-
-
-
-
-
-
-
-\section{Ranking of Compensating Pairs}
-
-In this subsection, we will introduce the method to choose open nodes for MILP model based on compensating pairs.
-
-Based on No Diamond Theorem, for a target node, in its MILP model, if we open all nodes in compensating pairs, then we can get the exact values of upper and lower bound of the target node. However, in practice, this is still too expensive because we will still need to open too many nodes. So we can only choose a limited number of compensating pairs and nodes. This is by setting a parameter $O$ such that the process only choose at most $O$ many nodes to open. Therefore, in this subsection, we will introduce the process of open node chosen: given a target node, choose up to $O$ many nodes to open.
-
-
-Basically, we do the process of open nodes chosen for one target node each time, that is, receive one target node (and other data) as input each time. But in principle, we can develop a method receive more than one nodes as input. But in our experiences, this does not work well.  
-
-This process is not the unique method but the most natural way to choose open nodes. We introduce it in three steps from the simplest case to more complex case.
-
-\subsubsection*{Value of a pair}
-
-
-For a compensating pair, if $V_1,V_2$ are the values of two paths, then the value of this compensating pair is defined by: $V=\min(|V_1|,|V_2|)$.
-
-
-\subsection*{Case: Source node fixed}
-
-The simplest case is when we only consider compensating pairs with a fixed source node. 
-
-In this case, the process is very simple: enumerate all compensating pairs, and then sort them by their values. Finally, from the first to the last compensating pair, pick all unstable nodes in its two paths except the target and source nodes into the list of open nodes, until $O$ many open nodes. 
-
-%\subsubsection*{Sort all paths by values}
-%
-%The first step is to sort all paths by their values and divide paths into two groups, a group of paths with positive values and a group of paths with negative values.
-%
-%Since we have set a bound $O$ for open nodes, we will store  a fixed number of path for each group.
-%
-%\subsubsection*{Sort pairs by values}
-%
-%The second step is to sort all pairs by their values. Enumerate paths from the positive group and the negative group one by one and put the pairs obtained into a new list of pairs. Then sort all pair by their values from largest to the smallest: recall that the value of a pair $\langle P_1,P_2\rangle$ is $\min(|V_1|,|V_2|)$.
-%
-%\subsubsection*{Choosing nodes}
-%
-%The third step is to choose nodes from the list of pairs. According to the sorted list of pairs, enumerate pair one by one; for each pair, pick the nodes unstable in the two paths except the source and target node into the open node list. Repeat this process until $O$ nodes chosen or reach the end of the list.
-%
-%\subsubsection*{Pseudocode}
-%
-%The following needs a chart of pseudo-code
-%
-%\vspace*{1ex}
-%
-%1. Enumerate all path from the fixed source node to the target node. 
-%
-%2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
-%
-%3. Divide all paths into two group: positive paths and negative paths.
-%
-%4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
-%
-%5. For each pair, its value is the min of the weight positive paths and absolute negative values.
-%
-%6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
-%
-%7. Repeat 6 until choosing sufficiently many nodes.
-%
-
-
-
-\subsection*{Case: Source nodes in one layer}
-
-The more general case is when the source node can be any node in a fixed layer. In this case, the process is very similar to previous case, except the value of a pair.
-
-In this case, for a pair $P_1,P_2$ with values $V_1,V_2$ with the source node $a$, its value is $\min(|V_1|,|V_2|)\times \text{upper bound of } a$.
-
-%\subsubsection*{Pseudocode}
-%
-%The following needs a chart of pseudo-code
-%
-%\vspace*{1ex}
-%
-%1. Enumerate all path from the fixed source node to the target node. 
-%
-%2. For each path, compute its weight, that is the products of all $W_{aa'}$ along the path.
-%
-%3. Divide all paths into two group: positive paths and negative paths.
-%
-%4. Pair positive paths and negative paths from those with larger absolute values to smaller. 
-%
-%5. For each pair, its value is the min of the weight positive paths and absolute negative values, times the upper bound (at least 0) of the source node.
-%
-%6. From pairs with larger values to smaller, pick path one by one, and check all intermediate nodes (nodes except source and target) of each path, and if any of them is unstable ($u>0$ and $l<0$), then open this node. 
-%
-%7. Repeat 6 until choosing sufficiently many nodes.
-
-
-\subsection*{Case: Source nodes in different layers}
-
-The general case is that when the location of source nodes can be in different layers. This case is much more complex, because the scale level of values of paths from different layers are very different: usually a weight will be very small since every layer has a large number of nodes, therefore values of longer paths are products of more small numbers, and is definitely much smaller. If we sort all compensating pairs from different layers directly, then a very long initial segment of this list will be occupied by compensating pairs with the shortest length. Therefore, we need use some scale factors when comparing values of compensating pairs of different length.
-
-In our experiments, we only consider the paths of length 3 (the source node is 2 layers before) and length 4 (the source node is 3 layers before). We will dynamically adjust the values during the process of node chosen. In text, the process of node chosen for length 3 plus length 4 is as follows:
-
-\vspace*{1ex}
-
-1. Generate the two lists of pairs sorted by their values for source nodes in 2 layers before the target node and 3 layers before separately as in the previous case.
-
-2. Enumerate pair from two lists one by one by their values and pick nodes as previous case. When comparing the values between pairs of length 4 and pairs of length 3, multiply the numbers of nodes in 1 layer before to the value of pair of length 4.
-
-In formula, when the target node is in layer $L$, for a pair $P_3$ of length 3 with value $V_3$ and a pair $P_4$ of length 4 with value $V_4$, if we have chosen $N$ nodes in layer $L-1$. Then the adjusted values for $P_3$ and $P_4$ are: $$V_3, N\cdot V_4.$$ Then we pick the next pair by the adjust value in two lists.
-
-3. Repeat 2 until choosing sufficiently many nodes.
-
-\vspace*{1ex}
-
-The pseudo-code is as follows ():
-
-\begin{algorithm}
-\caption{Process for length 3 + length 4}
-\KwData{Sorted lists of length 3 + length 4}
-\KwResult{Open node list}
-
-Let $N = 0$ be the number of Chosen length 4 pair.
-
-\While{len(Open node) $<O$}{
-	Pick the first element $P_3$ in the list of length 3\;
+	\hspace*{-15ex}
+	\begin{tikzpicture}
+		\begin{axis}[	axis on top, xlabel = \(x'_i\),
+			ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
+			set layers=default,
+			xmax = 4, xmin = -4,
+			ymax = 1, ymin = -1,		
+			zmax = 1, zmin = -1,
+			unit vector ratio=1 1 1, scale=2.5,  ytick   = {-1,0,1},
+			yticklabels = {$-\gamma_i$,$0$,$\gamma_i$}, xtick = {0},
+			xticklabels = {$0$}, ztick   = {-1,0,1},
+			zticklabels = {$-\gamma_i$,$0$,$\gamma_i$},
+			view={35}{14},
+			]
+			\addplot3[ fill=blue,opacity=0.1, fill opacity=0.4] 
+			coordinates {
+				(0,0,0) (-1,1,0) (-4,1,0) (-4,-1,0) (0,-1,0) (0,0,0)
+			};
+			
+			\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4] 
+			coordinates { (0,0,0) (0,1,1) (4, 1, 1) (4, -1, -1) (1,-1,-1) (0,0,0)
+			};
+			
+			\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4	] 
+			coordinates { (0,0,0)  (-1,1,0) (0,1,1) (0,0,0)
+			};
+			
+			\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4	] 
+			coordinates { (0,0,0)  (0,-1,0) (1,-1,-1) (0,0,0)
+			};
+			
+			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(1,-1,-1)};
+			\node[label={$(\gamma_i,-\gamma_i, -\gamma_i)$}] at (axis cs: 1.2, -0.5 ,-1) {};
+			
+			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(-1,1,0)};
+			\node[label={$(-\gamma_i,\gamma_i, 0)$}] at (axis cs: -1, 0.8 ,0) {};			
+			
+		\end{axis}
+	\end{tikzpicture}
 	
-	Let $V_3$ be the value of $P_3$\;
 	
-	Pick the first element $P_4$ in the list of length 4\;
 	
-	Let $V_4$ be the value of $P_4$\;
+	\section{Conclusion}
 	
-	\If{$V_3 > V_4 \cdot N$}{
-		Add nodes in $P_3$ into Open list\;
-		Number of Chosen lentgh pair $N$ += 1\; 
-	}
-	\Else{
-		Add nodes in $P_4$ into Open list\;
-	}
-}
-\end{algorithm}
-
-
-
+	TODO
+	
+	
+	\bibliography{references}
+	\bibliographystyle{plain}
+	
+	
+	\bigskip
+	
+	\appendix
+	
+	
+	
 \end{document}
 
 
