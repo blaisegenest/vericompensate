@@ -31,10 +31,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \newcommand{\vW}{\boldsymbol{W}}
-
-
 \newcommand{\val}{{\textrm{value}}}
 \newcommand{\Val}{{\textrm{value}}}
 \newcommand{\MILP}{{\textrm{MILP}}}
@@ -43,26 +40,20 @@
 \newcommand{\Utility}{\mathrm{SAS}}
 \newcommand{\Sol}{\mathrm{Sol}}
 \newcommand{\sol}{\mathrm{sol}}
-
 \newcommand{\UB}{\mathrm{UB}}
 \newcommand{\LB}{\mathrm{LB}}
 \newcommand{\ub}{\mathrm{ub}}
 \newcommand{\lb}{\mathrm{lb}}
 \newcommand{\B}{\mathrm{B}}
 \usepackage{amsmath, amssymb, amsfonts}
-
-
 \newcommand{\ReLU}{\mathrm{ReLU}}
-
 \newcommand{\CMP}{{\textrm{CMP}}\ }
-
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
 \newcommand{\toolname}{Hybrid MILP}
 
 
-\title{Solution-aware vs global ReLU selection: \\
-	partial MILP strikes back for DNN verification}
+\title{Global case}
 \date{}
 
 
@@ -209,37 +200,6 @@
 	\section{Global robustness and Lipschitz constant}
 	
 	
-	\subsection{MILP and LP encodings for DNNs}
-	
-	At the other end of the spectrum, we find the Mixed Integer Linear Programming (MILP) value abstraction, which is a priori a complete method (albeit much slower than DeepPoly). 
-	Consider an unstable neuron $n \in[\alpha,\beta]$. The value $x$ of $\ReLU(n)$ can be encoded exactly in an MILP formula with one integer (actually even binary) variable $a$ valued in ${0,1}$, using 4 constraints \cite{MILP}:
-	\vspace{-0.1cm}
-	\begin{align*}
-		\hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a)
-	\end{align*}
-	
-	It can be shown that for all $x \in [\alpha,\beta] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$. Here, $a$ is 0 if $x < 0$, 1 if $x>0$, and can be either if $x=0$~\cite{MILP}. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help in certifying a given input. However, for networks with hundreds of nodes or more, the resulting MILP formulation will contain numerous integer variables and generally cannot be solved efficiently.
-	
-	MILP instances can be linearly relaxed into LP over-abstraction, where variables originally restricted to integers in ${0,1}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}
-	
-	The following proposition shows that the LP abstraction refines the DeepPoly abstraction. 
-	The difference between the LP and the DeepPoly abstractions is that LP simultaneous considers the two linear lower bounding functions for the ReLU operation, namely $ReLU(x) \geq 0$ and $ReLU(x) \geq x$, while the DeepPoly abstraction restricts itself to the application of a single one of these linear bounding functions.
-	
-	
-	\begin{proposition}
-		\label{LP}
-		Given $x \in [\alpha,\beta]$ with $\alpha < 0 < \beta$, the following two systems of constraints 
-		1) for LP and 2) for DeepPoly with both lower bounds are equivalent:
-		\begin{align}
-			& \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \beta \cdot a \quad \wedge \quad \hat{x} \leq x-\alpha \cdot (1-a), \, a \in [0,1]  \label{eq:lp}\\
-			&\hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0 \quad \wedge \quad \hat{x} \leq \beta \frac{x-\alpha}{\beta-\alpha} \label{eq:deeppoly}
-		\end{align} 
-	\end{proposition}
-	
-	\begin{proof}
-		We need to show that the two upper bound constraints in Eq~\ref{eq:lp} is equivalent to the upper bound in Eq~\ref{eq:deeppoly}. To this end, we focus on the upper bound function in the linear variable $a \in  [0,1]$, with $x \in [\alpha,\beta]$ fixed. We have $\hat{x}$ in Eq~\ref{eq:lp} is upper bounded by $max_{a \in [0,1]} (min(\beta \cdot a, x - \alpha (1-a)))$, and this bound can be reached. Furthermore, 
-		The function $\min(\beta \cdot a, x - \alpha (1-a))$ attains its maximum when $\beta \cdot a = x - \alpha (1-a)$, leading to the equation $(\beta - \alpha) a = x - \alpha$ and consequently $a = \frac{x - \alpha}{\beta-\alpha}$. This results in an upper bound of $\beta \cdot a = \beta \frac{x - \alpha}{\beta-\alpha}$ \qed
-	\end{proof}
 	
 	\subsubsection*{Constraints for $\gamma$}
 	
