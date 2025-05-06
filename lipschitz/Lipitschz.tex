@@ -107,15 +107,14 @@
 	\begin{align*}
 		\forall \boldsymbol{x} \forall\boldsymbol{y} (|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|)
 	\end{align*} 
-	
 	In our practice of global robustness, we will consider the following weaker property with respect to a certain number $\epsilon$:
-	
 	\begin{align*}
 		\forall \boldsymbol{x} \forall\boldsymbol{y} &  (|\boldsymbol{x}-\boldsymbol{y}| \geq \epsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|\\
 		&  |\boldsymbol{x}-\boldsymbol{y}| < \epsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K\epsilon)
 	\end{align*} 
-	
-	
+	In terms of the code, it is compute an optimization question respect to a certain number $\epsilon$:	\begin{align*}
+			\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \epsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
+	\end{align*} We can use this maximum value to estimate the Lipschitz constant.
 	
 	\section{pMILP and Local robustness}
 	
