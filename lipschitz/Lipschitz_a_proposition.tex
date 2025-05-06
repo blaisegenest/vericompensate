@@ -71,8 +71,7 @@ partial MILP strikes back for DNN verification}
 \begin{definition}
 	Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is the $L_\infty$ norm. 
 	
-	For a number $\epsilon > 0$, $K_\epsilon$ is the smallest number such that for any $d\geq \epsilon$, any input $x,y$.
-	\begin{align*}
+	For a number $\epsilon > 0$, $K_\epsilon$ is the smallest number such that for any $d\geq \epsilon$, any inputs $x,y$:\begin{align*}
 	 |x-y| \leq d \implies |f(x)-f(y)| \leq dK_\epsilon 
 	\end{align*}
 \end{definition}
@@ -104,10 +103,16 @@ By assumption, $d \in [\epsilon N  , \epsilon(N+1)]$ .
 
 \begin{corollary}
 	\begin{enumerate}
-		\item Continue the definition. Suppose for a number $\epsilon$ we have $K_\epsilon$, then for any number $d\geq \epsilon N$ for an integer $N \geq 1$, we have that $$K_d \leq K_\epsilon\frac{N+1}{N}.$$
+		\item Continue the definition. Suppose for a number $\epsilon$ we have $K_\epsilon$, then for any number $d\geq \epsilon N$ for an integer $N \geq 1$, we have that $$K_d \leq K_\epsilon\frac{N+1}{N}.$$ 
 		
-		\item 	If we care about $\epsilon$ and compute the Lipschitz constant of $0.5 \epsilon$ and get $K$, then we can use Lipschizt constant $\leq K\frac{2+1}{2}$ for general larger $\epsilon$.
-		\item 	Similarly, if we compute Lipschitz constant for any $\epsilon$ and get $K$, then we can use Lipschitz constant $K\frac{1+1}{1}$ for any larger $\epsilon$.
+		\item Therefore, for any inputs $x,y$ that $|x-y|\geq N\epsilon$ for an integer $N\geq 1$, \begin{align*}
+			\dfrac{|f(x)-f(y)|}{|x-y|}\leq K_\epsilon\frac{N+1}{N}
+		\end{align*}
+		
+		\item 	If for a number $\epsilon$, we get the value of $K_{0.5 \epsilon}$, then we will have a Lipschizt constant $\frac{2+1}{2}K_{0.5 \epsilon}$ working for $|x-y|\geq\epsilon$.
+		
+		
+		\item 	Similarly, if for a number $\epsilon$, we get the value of $K_{\epsilon}$, then we will have a Lipschizt constant $\frac{1+1}{1}K_{\epsilon}$ working for $|x-y|\geq\epsilon$.
 	\end{enumerate}
 \end{corollary}
 
@@ -116,8 +121,30 @@ By assumption, $d \in [\epsilon N  , \epsilon(N+1)]$ .
 \end{proof}
 
 \begin{proposition}
+	Continue the definition. Suppose we have a number $K$ that for any $d$ in one of $\epsilon, 1.1\epsilon, 1.2\epsilon, \cdots, 1.9\epsilon$, we have $K_d\leq K$.
 	
+	Then, for any two inputs $x,y$,if $|x-y|\geq \epsilon$, then $\dfrac{|f(x)-f(y)|}{|x-y|}\leq 1.1 K$. 
 \end{proposition}
+
+\begin{proof}
+	Let $x,y$ be any two inputs, we need to show that if $|x-y|\geq \epsilon$, then $\dfrac{|f(x)-f(y)|}{|x-y|}\leq 1.1 K$. 
+	
+	If $|x-y| \geq 10\epsilon$, this is clear by above corollary part 2. So we need to consider $\epsilon\leq |x-y|< 10\epsilon$.
+	
+	For any inputs $x,y$ that $\epsilon\leq|x-y|< 10\epsilon$, there exists a sum $x_1+x_2+\cdots+x_n$ by numbers from (allowing repetitions) $\epsilon, 1.1\epsilon, 1.2\epsilon, \cdots, 1.9\epsilon$ such that \begin{align*}
+	 \epsilon \leq x_1+x_2+\cdots+x_n -0.1\epsilon \leq |x-y| \leq x_1+x_2+\cdots+x_n
+	\end{align*}
+	
+	By assumption, divide the line segment from $x$ to $y$ into pieces according to $x_1, x_2,\cdots,x_n$, then we will have $$|f(x)-f(y)|\leq Kx_1+Kx_2+\cdots+Kx_n.$$
+	
+	Hence,\begin{align*}
+		\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Kx_1+Kx_2+\cdots+Kx_n}{x_1+x_2+\cdots+x_n -0.1\epsilon}\\
+		& = K\cdot( 1+  \dfrac{0.1\epsilon}{x_1+x_2+\cdots+x_n -0.1\epsilon})\\
+		& \leq K\cdot( 1+  \dfrac{0.1\epsilon}{\epsilon})\\
+		& \leq 1.1 K
+	\end{align*}
+	
+\end{proof}
 
 
 \end{document}
