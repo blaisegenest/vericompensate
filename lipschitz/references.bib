@@ -1,12 +1,11 @@
 % Encoding: UTF-8
 
-@Article{prima,
-  author     = {M\"{u}ller, Mark Niklas and Makarchuk, Gleb and Singh, Gagandeep and P\"{u}schel, Markus and Vechev, Martin},
-  journal    = {Proc. ACM Program. Lang.},
+@inProceedings{prima,
+  author     = {Muller, Mark Niklas and Makarchuk, Gleb and Singh, Gagandeep and P\"{u}schel, Markus and Vechev, Martin},
+  journal    = {Proc. ACM Program. Lang. POPL},
   title      = {PRIMA: General and Precise Neural Network Certification via Scalable Convex Hull Approximations},
   year       = {2022},
   month      = {jan},
-  number     = {POPL},
   volume     = {6},
   abstract   = {Formal verification of neural networks is critical for their safe adoption in real-world applications. However, designing a precise and scalable verifier which can handle different activation functions, realistic network architectures and relevant specifications remains an open and difficult challenge. In this paper, we take a major step forward in addressing this challenge and present a new verification framework, called PRIMA. PRIMA is both (i) general: it handles any non-linear activation function, and (ii) precise: it computes precise convex abstractions involving multiple neurons via novel convex hull approximation algorithms that leverage concepts from computational geometry. The algorithms have polynomial complexity, yield fewer constraints, and minimize precision loss. We evaluate the effectiveness of PRIMA on a variety of challenging tasks from prior work. Our results show that PRIMA is significantly more precise than the state-of-the-art, verifying robustness to input perturbations for up to 20\%, 30\%, and 34\% more images than existing work on ReLU-, Sigmoid-, and Tanh-based networks, respectively. Further, PRIMA enables, for the first time, the precise verification of a realistic neural network for autonomous driving within a few minutes.},
   address    = {New York, NY, USA},
@@ -16,7 +15,6 @@
   keywords   = {Polyhedra, Robustness, Abstract Interpretation, Convexity},
   numpages   = {33},
   publisher  = {Association for Computing Machinery},
-  url        = {https://doi.org/10.1145/3498704},
 }
 
 @InProceedings{crown,
@@ -28,7 +26,6 @@
   pages     = {29909--29921},
   publisher = {Curran Associates, Inc.},
   volume    = {34},
-  url       = {https://proceedings.neurips.cc/paper_files/paper/2021/file/fac7fead96dafceaf80c1daffeae82a4-Paper.pdf},
 }
 
 @Article{deeppoly,
@@ -47,7 +44,6 @@
   keywords   = {Adversarial attacks, Deep Learning, Abstract Interpretation},
   numpages   = {30},
   publisher  = {Association for Computing Machinery},
-  url        = {https://doi.org/10.1145/3290354},
 }
 
 @InProceedings{Reluplex,
@@ -64,10 +60,9 @@
 
 @InProceedings{MILP2,
   author    = {Gagandeep Singh and Timon Gehr and Markus Püschel and Martin Vechev},
-  booktitle = {International Conference on Learning Representations},
+  booktitle = {International Conference on Learning Representations (ICLR'19)},
   title     = {Robustness Certification with Refinement},
   year      = {2019},
-  url       = {https://openreview.net/forum?id=HJgeEh09KQ},
 }
 
 @InProceedings{wong2018provable,
@@ -100,14 +95,6 @@
   journal = {arXiv preprint arXiv:2109.00498},
   title   = {The second international verification of neural networks competition (vnn-comp 2021): Summary and results},
   year    = {2021},
-}
-
-@InProceedings{balunovic2020adversarial,
-  author       = {Balunovi{\'c}, Mislav and Vechev, Martin},
-  booktitle    = {8th International Conference on Learning Representations (ICLR 2020)(virtual)},
-  title        = {Adversarial training and provable defenses: Bridging the gap},
-  year         = {2020},
-  organization = {International Conference on Learning Representations},
 }
 
 @InProceedings{botoeva2020efficient,
@@ -197,9 +184,9 @@
   volume  = {33},
 }
 
-@InProceedings{de2021scaling,
+@InProceedings{alessandro,
   author       = {De Palma, Alessandro and Behl, Harkirat S and Bunel, Rudy and Torr, Philip and Kumar, M Pawan},
-  booktitle    = {Proceedings of the ICLR 2021 Conference},
+  booktitle    = {International Conference on Learning Representations (ICLR'21)},
   title        = {Scaling the convex barrier with active sets},
   year         = {2021},
   organization = {Open Review},
@@ -287,7 +274,7 @@
 
 @Article{kingma2014adam,
   author  = {Kingma, Diederik P and Ba, Jimmy},
-  journal = {International Conferenceon Learning Representations (ICLR)},
+  journal = {International Conference on Learning Representations (ICLR'14)},
   title   = {Adam: A method for stochastic optimization},
   year    = {2014},
 }
@@ -300,14 +287,14 @@
 
 @Article{lu2019neural,
   author  = {Lu, Jingyue and Kumar, M Pawan},
-  journal = {8th InternationalConference on Learning Representations, ICLR 2020},
+  journal = {International Conference on Learning Representations (ICLR'20)},
   title   = {Neural network branching for neural network verification},
   year    = {2020},
 }
 
 @Article{PGD,
   author  = {Madry, Aleksander and Makelov, Aleksandar and Schmidt, Ludwig and Tsipras, Dimitris and Vladu, Adrian},
-  journal = {International Conference on Learning Representations(ICLR)},
+  journal = {International Conference on Learning Representations (ICLR'18)},
   title   = {Towards deep learning models resistant to adversarial attacks},
   year    = {2018},
 }
@@ -344,7 +331,7 @@
 
 @Article{shi2020robustness,
   author  = {Shi, Zhouxing and Zhang, Huan and Chang, Kai-Wei and Huang, Minlie and Hsieh, Cho-Jui},
-  journal = {International Conference on Learning Representations (ICLR)},
+  journal = {International Conference on Learning Representations (ICLR'20)},
   title   = {Robustness verification for transformers},
   year    = {2020},
 }
@@ -368,7 +355,7 @@
 
 @InProceedings{singh2018boosting,
   author    = {Singh, Gagandeep and Gehr, Timon and P{\"u}schel, Markus and Vechev, Martin},
-  booktitle = {International conference on learning representations},
+  booktitle = {International Conference on Learning Representations (ICLR'18)},
   title     = {Boosting robustness certification of neural networks},
   year      = {2018},
 }
@@ -383,7 +370,7 @@
 
 @Article{MILP,
   author  = {Tjeng, Vincent and Xiao, Kai and Tedrake, Russ},
-  journal = {Proc. International Conference on Learning Representations (ICLR)},
+  journal = {International Conference on Learning Representations (ICLR'19)},
   title   = {Evaluating robustness of neural networks with mixed integer programming},
   year    = {2019},
 }
@@ -413,7 +400,7 @@
   volume  = {33},
 }
 
-@Article{xu2020fast,
+@inproceedings{xu2020fast,
     author       = {Kaidi Xu and
                   Huan Zhang and
                   Shiqi Wang and
@@ -423,8 +410,7 @@
                   Cho{-}Jui Hsieh},
   title        = {Fast and Complete: Enabling Complete Neural Network Verification with
                   Rapid and Massively Parallel Incomplete Verifiers},
-  booktitle    = {9th International Conference on Learning Representations, {ICLR} 2021,
-                  Virtual Event, Austria, May 3-7, 2021},
+  booktitle    = {International Conference on Learning Representations (ICLR'21)},
   publisher    = {OpenReview.net},
   year         = {2021},
 }
@@ -455,7 +441,7 @@
 
 @Article{zhang2021robust,
   author  = {Zhang, Huan and Chen, Hongge and Boning, Duane and Hsieh, Cho-Jui},
-  journal = {International Conference on Learning Representations(ICLR)},
+  journal = {International Conference on Learning Representations (ICLR'21)},
   title   = {Robust reinforcement learning on state observations with learned optimal adversary},
   year    = {2021},
 }
@@ -758,7 +744,7 @@
 
 @Article{szegedy,
   author  = {Szegedy, Christian and Zaremba, Wojciech and Sutskever, Ilya and Bruna, Joan and Erhan, Dumitru and Goodfellow, Ian and Fergus, Rob},
-  journal = {2nd International Conference on Learning Representations, ICLR},
+  journal = {International Conference on Learning Representations (ICLR'14)},
   title   = {Intriguing properties of neural networks},
   year    = {2014},
 }
@@ -819,7 +805,6 @@
   pages     = {26156--26167},
   publisher = {Curran Associates, Inc.},
   volume    = {34},
-  url       = {https://proceedings.neurips.cc/paper_files/paper/2021/file/dbb422937d7ff56e049d61da730b3e11-Paper.pdf},
 }
 
 @InProceedings{weng2018towards,
@@ -839,6 +824,7 @@
   pages        = {422-443},
   series       = {LNCS 14215}
 }
+
  
 @InProceedings{cutting,
   author    = {Huan Zhang and Shiqi Wang and Kaidi Xu and Linyi Li and Bo Li and Suman Jana and Cho-Jui Hsieh and J. Zico Kolter},
@@ -875,37 +861,29 @@
 }
 
 
-@inproceedings{certification,
-  author       = {Gagandeep Singh},
-  editor       = {Manuel V. Hermenegildo and
-                  Jos{\'{e}} F. Morales},
-  title        = {Building Trust and Safety in Artificial Intelligence with Abstract
-                  Interpretation},
-  booktitle    = {Static Analysis - 30th International Symposium, {SAS} 2023, Cascais,
-                  Portugal, October 22-24, 2023, Proceedings},
-  series       = {Lecture Notes in Computer Science},
-  volume       = {14284},
-  pages        = {28--38},
-  publisher    = {Springer},
-  year         = {2023},
-  url          = {https://doi.org/10.1007/978-3-031-44245-2\_3},
-  doi          = {10.1007/978-3-031-44245-2\_3},
+@InProceedings{certification,
+  author    = {Gagandeep Singh},
+  booktitle = {Static Analysis - 30th International Symposium, {SAS} 2023, Cascais, Portugal, October 22-24, 2023, Proceedings},
+  title     = {Building Trust and Safety in Artificial Intelligence with Abstract Interpretation},
+  year      = {2023},
+  editor    = {Manuel V. Hermenegildo and Jos{\'{e}} F. Morales},
+  pages     = {28--38},
+  publisher = {Springer},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {14284},
+  doi       = {10.1007/978-3-031-44245-2\_3},
 }
 
-@article{incremental,
-  author       = {Shubham Ugare and
-                  Debangshu Banerjee and
-                  Sasa Misailovic and
-                  Gagandeep Singh},
-  title        = {Incremental Verification of Neural Networks},
-  journal      = {Proc. {ACM} Program. Lang.},
-  volume       = {7},
-  number       = {{PLDI}},
-  pages        = {1920--1945},
-  year         = {2023},
-  url          = {https://doi.org/10.1145/3591299},
-  doi          = {10.1145/3591299},
-  }
+@Article{incremental,
+  author  = {Shubham Ugare and Debangshu Banerjee and Sasa Misailovic and Gagandeep Singh},
+  journal = {Proc. {ACM} Program. Lang.},
+  title   = {Incremental Verification of Neural Networks},
+  year    = {2023},
+  number  = {{PLDI}},
+  pages   = {1920--1945},
+  volume  = {7},
+  doi     = {10.1145/3591299},
+}
 
 @misc{VNNcomp,
       title={First Three Years of the International Verification of Neural Networks Competition (VNN-COMP)}, 
@@ -916,3 +894,201 @@
       primaryClass={cs.LG}
 }
 
+@InProceedings{ferrari2022complete,
+  author    = {Claudio Ferrari and Mark Niklas Mueller and Nikola Jovanovi{\'c} and Martin Vechev},
+  booktitle = {International Conference on Learning Representations (ICLR'22)},
+  title     = {Complete Verification via Multi-Neuron Relaxation Guided Branch-and-Bound},
+  year      = {2022},
+}
+
+@Article{9211410,
+  author   = {Huang, Chao and Fan, Jiameng and Chen, Xin and Li, Wenchao and Zhu, Qi},
+  journal  = {IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems},
+  title    = {Divide and Slide: Layer-Wise Refinement for Output Range Analysis of Deep Neural Networks},
+  year     = {2020},
+  number   = {11},
+  pages    = {3323-3335},
+  volume   = {39},
+  doi      = {10.1109/TCAD.2020.3013071},
+  keywords = {Biological neural networks;Programming;Neurons;Microsoft Windows;Convolution;Estimation;Linear programming;Linear programming (LP);mixed-integer linear programming (MILP);neural networks;output range analysis;refinement},
+}
+
+@InProceedings{nnenum,
+  author       = {Bak, Stanley},
+  booktitle    = {NASA Formal Methods Symposium},
+  title        = {nnenum: Verification of ReLU Neural Networks with Optimized Abstraction Refinement},
+  year         = {2021},
+  organization = {Springer},
+  pages        = {19--36}
+}
+
+@InProceedings{Marabou,
+  author    = {Katz, Guy and Huang, Derek A. and Ibeling, Duligur and Julian, Kyle and Lazarus, Christopher and Lim, Rachel and Shah, Parth and Thakoor, Shantanu and Wu, Haoze and Zelji{\'{c}}, Aleksandar and Dill, David L. and Kochenderfer, Mykel J. and Barrett, Clark},
+  booktitle = {Computer Aided Verification},
+  title     = {The Marabou Framework for Verification and Analysis of Deep Neural Networks},
+  year      = {2019},
+  address   = {Cham},
+  editor    = {Dillig, Isil and Tasiran, Serdar},
+  pages     = {443--452},
+  publisher = {Springer International Publishing},
+  abstract  = {Deep neural networks are revolutionizing the way complex systems are designed. Consequently, there is a pressing need for tools and techniques for network analysis and certification. To help in addressing that need, we present Marabou, a framework for verifying deep neural networks. Marabou is an SMT-based tool that can answer queries about a network's properties by transforming these queries into constraint satisfaction problems. It can accommodate networks with different activation functions and topologies, and it performs high-level reasoning on the network that can curtail the search space and improve performance. It also supports parallel execution to further enhance scalability. Marabou accepts multiple input formats, including protocol buffer files generated by the popular TensorFlow framework for neural networks. We describe the system architecture and main components, evaluate the technique and discuss ongoing work.},
+  isbn      = {978-3-030-25540-4},
+}
+
+@InProceedings{Marabou2,
+  author    = {Haoze Wu and Omri Isac and Aleksandar Zelji{\'c} and Teruhiro Tagomori and Matthew Daggitt and Wen Kokke and Idan Refaeli and Guy Amir and Kyle Julian and Shahaf Bassan and Pei Huang and Ori Lahav and Min Wu and Min Zhang and Ekaterina Komendantskaya and Guy Katz and Clark Barrett},
+  booktitle = {Proceedings of the ${\it 36^{th}}$ International Conferenceon Computer Aided Verification (CAV '24)},
+  title     = {Marabou 2.0: A Versatile Formal Analyzer of Neural Networks},
+  year      = {2024},
+  editor    = {Arie Gurfinkel and Vijay Ganesh},
+  month     = jul,
+  note      = {Montreal, Canada},
+  pages     = {249--264},
+  publisher = {Springer},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {14681},
+}
+
+@Misc{VNNcomp23,
+  author        = {Christopher Brix and Stanley Bak and Changliu Liu and Taylor T. Johnson},
+  title         = {The Fourth International Verification of Neural Networks Competition (VNN-COMP 2023): Summary and Results},
+  year          = {2023},
+  archiveprefix = {arXiv},
+  eprint        = {2312.16760},
+  primaryclass  = {cs.LG},
+  url           = {https://sites.google.com/view/vnn2023},
+}
+
+@Misc{VNNcomp22,
+  author        = {Mark Niklas Müller and Christopher Brix and Stanley Bak and Changliu Liu and Taylor T. Johnson},
+  title         = {The Third International Verification of Neural Networks Competition (VNN-COMP 2022): Summary and Results},
+  year          = {2022},
+  archiveprefix = {arXiv},
+  eprint        = {2212.10376},
+  primaryclass  = {cs.LG},
+  url           = {https://sites.google.com/view/vnn2022},
+}
+
+@Misc{VNNcomp24,
+  author = {Christopher Brix and Stanley Bak and Changliu Liu and Taylor T. Johnson and David Shriver and Haoze (Andrew) Wu},
+  title  = {5th International Verification of Neural Networks Competition (VNN-COMP'24)},
+  year   = {2024},
+  url    = {https://sites.google.com/view/vnn2024},
+}
+
+@InProceedings{TrainingforVerification,
+  author    = {Xu, Dong and Mozumder, Nusrat Jahan and Duong, Hai and Dwyer, Matthew B.},
+  booktitle = {Tools and Algorithms for the Construction and Analysis of Systems},
+  title     = {Training for Verification: Increasing Neuron Stability to Scale DNN Verification},
+  year      = {2024},
+  address   = {Cham},
+  editor    = {Finkbeiner, Bernd and Kov{\'a}cs, Laura},
+  pages     = {24--44},
+  publisher = {Springer Nature Switzerland},
+  abstract  = {With the growing use of deep neural networks(DNN) in mission and safety-critical applications, there is an increasing interest in DNN verification. Unfortunately, increasingly complex network structures, non-linear behavior, and high-dimensional input spaces combine to make DNN verification computationally challenging. Despite tremendous advances, DNN verifiers are still challenged to scale to large verification problems. In this work, we explore how the number of stable neurons under the precondition of a specification gives rise to verification complexity. We examine prior work on the problem, adapt it, and develop several novel approaches to increase stability. We demonstrate that neuron stability can be increased substantially without compromising model accuracy and this yields a multi-fold improvement in DNN verifier performance.},
+  isbn      = {978-3-031-57256-2},
+}
+
+@InProceedings{lipshitz,
+  author       = {Wang, Zhilu and Huang, Chao and Zhu, Qi},
+  booktitle    = {2022 Design, Automation \& Test in Europe Conference \& Exhibition (DATE)},
+  title        = {Efficient global robustness certification of neural networks via interleaving twin-network encoding},
+  year         = {2022},
+  organization = {IEEE},
+  pages        = {1087--1092},
+}
+
+@Article{DivideAndSlide,
+  author   = {Huang, Chao and Fan, Jiameng and Chen, Xin and Li, Wenchao and Zhu, Qi},
+  journal  = {IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems},
+  title    = {Divide and Slide: Layer-Wise Refinement for Output Range Analysis of Deep Neural Networks},
+  year     = {2020},
+  number   = {11},
+  pages    = {3323-3335},
+  volume   = {39},
+  doi      = {10.1109/TCAD.2020.3013071},
+  keywords = {Biological neural networks;Programming;Neurons;Microsoft Windows;Convolution;Estimation;Linear programming;Linear programming (LP);mixed-integer linear programming (MILP);neural networks;output range analysis;refinement},
+}
+
+@InProceedings{AdversarialTrainingAndProvableDefenses,
+  author    = {Mislav Balunovic and Martin Vechev},
+  booktitle = {International Conference on Learning Representations (ICLR'20)},
+  title     = {Adversarial Training and Provable Defenses: Bridging the Gap},
+  year      = {2020},
+}
+
+
+@InProceedings{pyrat,
+  author        = {Serge Durand and Augustin Lemesle and Zakaria Chihani and Caterina Urban and Francois Terrier},
+  title         = {ReCIPH: Relational Coefficients for Input Partitioning Heuristic},
+  year          = {2022},
+  booktitle = {1st Workshop on Formal Verification of Machine Learning (WFVML 2022)},
+  url           = {https://pyrat-analyzer.com/}
+}
+
+@Article{10.1145/3656377,
+  author     = {Banerjee, Debangshu and Xu, Changming and Singh, Gagandeep},
+  journal    = {Proc. ACM Program. Lang.},
+  title      = {Input-Relational Verification of Deep Neural Networks},
+  year       = {2024},
+  month      = jun,
+  number     = {PLDI},
+  volume     = {8},
+  abstract   = {We consider the verification of input-relational properties defined over deep neural networks (DNNs) such as robustness against universal adversarial perturbations, monotonicity, etc. Precise verification of these properties requires reasoning about multiple executions of the same DNN. We introduce a novel concept of difference tracking to compute the difference between the outputs of two executions of the same DNN at all layers. We design a new abstract domain, DiffPoly for efficient difference tracking that can scale large DNNs. DiffPoly is equipped with custom abstract transformers for common activation functions (ReLU, Tanh, Sigmoid, etc.) and affine layers and can create precise linear cross-execution constraints. We implement an input-relational verifier for DNNs called RaVeN which uses DiffPoly and linear program formulations to handle a wide range of input-relational properties. Our experimental results on challenging benchmarks show that by leveraging precise linear constraints defined over multiple executions of the DNN, RaVeN gains substantial precision over baselines on a wide range of datasets, networks, and input-relational properties.},
+  address    = {New York, NY, USA},
+  articleno  = {147},
+  doi        = {10.1145/3656377},
+  issue_date = {June 2024},
+  keywords   = {Abstract Interpretation, Deep Learning, Relational Verification},
+  numpages   = {27},
+  publisher  = {Association for Computing Machinery},
+  url        = {https://doi.org/10.1145/3656377},
+}
+
+@InProceedings{DBLP_Ehlers17,
+  author    = {R{\"{u}}diger Ehlers},
+  booktitle = {Automated Technology for Verification and Analysis - 15th International Symposium, {ATVA} 2017, Pune, India, October 3-6, 2017, Proceedings},
+  title     = {Formal Verification of Piece-Wise Linear Feed-Forward Neural Networks},
+  year      = {2017},
+  editor    = {Deepak D'Souza and K. Narayan Kumar},
+  pages     = {269--286},
+  publisher = {Springer},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {10482},
+  bibsource = {dblp computer science bibliography, https://dblp.org},
+  biburl    = {https://dblp.org/rec/conf/atva/Ehlers17.bib},
+  doi       = {10.1007/978-3-319-68167-2\_19},
+  timestamp = {Tue, 21 Mar 2023 20:59:41 +0100},
+  url       = {https://doi.org/10.1007/978-3-319-68167-2\_19},
+}
+
+@InBook{10.5555/3454287.3455169,
+  author    = {Salman, Hadi and Yang, Greg and Zhang, Huan and Hsieh, Cho-Jui and Zhang, Pengchuan},
+  publisher = {Curran Associates Inc.},
+  title     = {A convex relaxation barrier to tight robustness verification of neural networks},
+  year      = {2019},
+  address   = {Red Hook, NY, USA},
+  abstract  = {Verification of neural networks enables us to gauge their robustness against adversarial attacks. Verification algorithms fall into two categories: exact verifiers that run in exponential time and relaxed verifiers that are efficient but incomplete. In this paper, we unify all existing LP-relaxed verifiers, to the best of our knowledge, under a general convex relaxation framework. This framework works for neural networks with diverse architectures and nonlinearities and covers both primal and dual views of neural network verification. Next, we perform large-scale experiments, amounting to more than 22 CPU-years, to obtain exact solution to the convex-relaxed problem that is optimal within our framework for ReLU networks. We find the exact solution does not significantly improve upon the gap between PGD and existing relaxed verifiers for various networks trained normally or robustly on MNIST and CIFAR datasets. Our results suggest there is an inherent barrier to tight verification for the large class of methods captured by our framework. We discuss possible causes of this barrier and potential future directions for bypassing it. Our code and trained models are available at http://github.com/Hadisalman/robust-verify-benchmark2.},
+  articleno = {882},
+  booktitle = {Proceedings of the 33rd International Conference on Neural Information Processing Systems},
+  numpages  = {12},
+}
+
+@Article{FSB,
+  author  = {De Palma, Alessandro and Bunel, Rudy and Desmaison, Alban and Dvijotham, Krishnamurthy and Kohli, Pushmeet and Torr, Philip HS and Kumar, M Pawan},
+  journal = {arXiv preprint arXiv:2104.06718},
+  title   = {Improved branch and bound for neural network verification via lagrangian decomposition},
+  year    = {2021},
+}
+
+@Misc{sensing,
+  author        = {Rudy Bunel and Krishnamurthy Dvijotham and M. Pawan Kumar and Alessandro De Palma and Robert Stanforth},
+  title         = {Verified Neural Compressed Sensing},
+  year          = {2024},
+  archiveprefix = {arXiv},
+  eprint        = {2405.04260},
+  primaryclass  = {cs.LG},
+  url           = {https://arxiv.org/abs/2405.04260},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}
