@@ -237,16 +237,17 @@
 	
 	\subsection{Simplified model}
 	
-	The first simplified model (perhaps not a simplified one), is to use one variable to the difference of each two variables, which we use $\gamma_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then $\gamma_i=x_i-x'_i$. 
+	The first simplified model (perhaps not a simplified one), is to use one variable to the difference of each two variables, which we use $y_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then $y_i=x_i-x'_i$. 
 	
 	Now the constraints for $\gamma$ variables between pre-activation and post-activation is as follows:
 	
-	Constraints for $\gamma$
+	Let $y_i$ and $\hat{y}_i$ be $x_i-x_i'$ and $\hat{x}_i-\hat{x}_i'$. Then we know the relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
 	
-	We could get the following constraints for $\gamma$, using $y_i$ and $\hat{y}_i$ to denote the $x_i-x_i'$ and $\hat{x}_i-\hat{x}_i'$:\begin{align*}
+	Suppose we already know the upper (and lower by symmetry) bound $\gamma_i$ of $y_i$, then
+	we can use the following constraints:\begin{align*}
 		\hat{y}_i \leq a \gamma_i \hspace*{2ex} &\wedge \hspace*{2ex}\hat{y}_i \geq y_i - a \gamma_i\\
 		\hat{y}_i \geq (a-1) \gamma_i  \hspace*{2ex} &\wedge \hspace*{2ex} \hat{y}_i \leq y_i + (1-a) \gamma_i,
-	\end{align*} where $a$ is a binary variable, $\gamma_i$ is the upper bound of $x_i-x'_i$.
+	\end{align*} where $a$ is a binary variable.
 	
 	
 	The following plot will show the above constraints:
@@ -274,10 +275,20 @@
 		\end{axis}
 	\end{tikzpicture}
 	
+	Now we can introduce this simplified model:
 	
+\begin{enumerate}
+	\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable $y_i$. 
+	\item Set constraints for input nodes.
+	\item Set linear constraints . In this case, since the meaning of $y_i$ is $x_i-x'_i$, this constraints will not use the bias.
+	\item Between pre- and post- activation nodes, set the MILP constraint described above.
+\end{enumerate}
 	
-	The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
+	The speed of this model is much faster, comparable to the MILP model for local robustness. However, in practice, this model sometimes lose much accuracy.
 	
+	\subsection{Another simplified model}
+
+	The second simplified model is more complex than the first.
 	
 	We can use the following extra constraints (besides 4 constraints about $\hat{x}_i'=\ReLU(x_i')$) to build this relation:
 	
