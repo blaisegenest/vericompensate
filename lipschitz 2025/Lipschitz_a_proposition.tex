@@ -1,0 +1,152 @@
+\documentclass{llncs}
+\usepackage{hyperref}
+\usepackage{url}
+\pagestyle{plain}
+\usepackage{threeparttable}
+\input{math_commands.tex}
+%\usepackage[latin9]{inputenc}
+%\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{lineno}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{cases}
+\captionsetup{compatibility=false}
+% \usepackage{esint}
+\usepackage{array}
+\usepackage{epstopdf}
+\usepackage{placeins}
+\usepackage{pgfplots}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage{array}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usetikzlibrary{positioning, arrows.meta,calc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\vW}{\boldsymbol{W}}
+
+
+\newcommand{\val}{{\textrm{value}}}
+\newcommand{\Val}{{\textrm{value}}}
+\newcommand{\MILP}{{\textrm{MILP}}}
+\newcommand{\LP}{{\textrm{LP}}}
+\newcommand{\Improve}{\mathrm{Improve}}
+\newcommand{\Utility}{\mathrm{SAS}}
+\newcommand{\Sol}{\mathrm{Sol}}
+\newcommand{\sol}{\mathrm{sol}}
+
+\newcommand{\UB}{\mathrm{UB}}
+\newcommand{\LB}{\mathrm{LB}}
+\newcommand{\ub}{\mathrm{ub}}
+\newcommand{\lb}{\mathrm{lb}}
+\newcommand{\B}{\mathrm{B}}
+\usepackage{amsmath, amssymb, amsfonts}
+
+
+\newcommand{\ReLU}{\mathrm{ReLU}}
+
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+\newcommand{\toolname}{Hybrid MILP}
+
+
+\title{Solution-aware vs global ReLU selection: \\
+partial MILP strikes back for DNN verification}
+\date{}
+
+
+\begin{document}
+
+\begin{definition}
+	Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is the $L_\infty$ norm. 
+	
+	For a number $\epsilon > 0$, $K_\epsilon$ is the smallest number such that for any $d\geq \epsilon$, any inputs $x,y$:\begin{align*}
+	 |x-y| \leq d \implies |f(x)-f(y)| \leq dK_\epsilon 
+	\end{align*}
+\end{definition}
+
+
+
+\begin{proposition}
+	
+	Continue above definition. Suppose for a number $\epsilon$ we have $K_\epsilon$, then for any number $ \epsilon N\leq d\leq \epsilon(N+1)$ for an integer $N \geq 1$, we have that $$K_d \leq K_\epsilon\frac{N+1}{N}.$$
+\end{proposition}
+
+\begin{proof}
+By assumption, $d \in [\epsilon N  , \epsilon(N+1)]$ . 
+
+	For any $x, y$ that $|x-y| \leq d$, we have $|x-y| \leq \epsilon(N+1) $. Then we can divide the line segment between $x, y$ into $N+1$ pieces: $x_0 = x, x_1, x_2, \cdots, x_{N+1} = y$ such that $|x_i-x_{i+1}| \leq \epsilon$. Then we can apply the definition of $K_\epsilon$ for each pieces. 
+	
+	Therefore, we have that, for any two inputs $x,y$:
+		\begin{align*}
+		|x-y| \leq d \implies |f(x)-f(y)| \leq  \epsilon(N+1) K_\epsilon
+	\end{align*}
+	
+	Hence by the definition, we have that $$K_d <= \dfrac{\epsilon(N+1) K_\epsilon }{d}<=\dfrac{\epsilon(N+1)K_\epsilon}{\epsilon N} = K_\epsilon\frac{N+1}{N}.$$
+	
+	This is what we want to show.
+	
+
+\end{proof}
+
+
+\begin{corollary}
+	\begin{enumerate}
+		\item Continue the definition. Suppose for a number $\epsilon$ we have $K_\epsilon$, then for any number $d\geq \epsilon N$ for an integer $N \geq 1$, we have that $$K_d \leq K_\epsilon\frac{N+1}{N}.$$ 
+		
+		\item Therefore, for any inputs $x,y$ that $|x-y|\geq N\epsilon$ for an integer $N\geq 1$, \begin{align*}
+			\dfrac{|f(x)-f(y)|}{|x-y|}\leq K_\epsilon\frac{N+1}{N}
+		\end{align*}
+		
+		\item 	If for a number $\epsilon$, we get the value of $K_{0.5 \epsilon}$, then we will have a Lipschizt constant $\frac{2+1}{2}K_{0.5 \epsilon}$ working for $|x-y|\geq\epsilon$.
+		
+		
+		\item 	Similarly, if for a number $\epsilon$, we get the value of $K_{\epsilon}$, then we will have a Lipschizt constant $\frac{1+1}{1}K_{\epsilon}$ working for $|x-y|\geq\epsilon$.
+	\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+	All three are simply application of the proposition.
+\end{proof}
+
+\begin{proposition}
+	Continue the definition. Suppose we have a number $K$ that for any $d$ in one of $\epsilon, 1.1\epsilon, 1.2\epsilon, \cdots, 1.9\epsilon$, we have $K_d\leq K$.
+	
+	Then, for any two inputs $x,y$, if $|x-y|\geq \epsilon$, then $\dfrac{|f(x)-f(y)|}{|x-y|}\leq 1.1 K$. 
+\end{proposition}
+
+\begin{proof}
+	Let $x,y$ be any two inputs, we need to show that if $|x-y|\geq \epsilon$, then $\dfrac{|f(x)-f(y)|}{|x-y|}\leq 1.1 K$. 
+	
+	If $|x-y| \geq 10\epsilon$, this is clear by above corollary part 2. So we need to consider $\epsilon\leq |x-y|< 10\epsilon$.
+	
+	For any inputs $x,y$ that $\epsilon\leq|x-y|< 10\epsilon$, there exists a sum $x_1+x_2+\cdots+x_n$ by numbers from (allowing repetitions) $\epsilon, 1.1\epsilon, 1.2\epsilon, \cdots, 1.9\epsilon$ such that \begin{align*}
+	 \epsilon \leq x_1+x_2+\cdots+x_n -0.1\epsilon \leq |x-y| \leq x_1+x_2+\cdots+x_n
+	\end{align*}
+	
+	By assumption, divide the line segment from $x$ to $y$ into pieces according to $x_1, x_2,\cdots,x_n$, then we will have $$|f(x)-f(y)|\leq Kx_1+Kx_2+\cdots+Kx_n.$$
+	
+	Hence,\begin{align*}
+		\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Kx_1+Kx_2+\cdots+Kx_n}{x_1+x_2+\cdots+x_n -0.1\epsilon}\\
+		& = K\cdot( 1+  \dfrac{0.1\epsilon}{x_1+x_2+\cdots+x_n -0.1\epsilon})\\
+		& \leq K\cdot( 1+  \dfrac{0.1\epsilon}{\epsilon})\\
+		& = 1.1 K
+	\end{align*}
+	
+\end{proof}
+
+
+\end{document}
+
+
