@@ -231,9 +231,15 @@
 		\item Set optimization target to be the difference of two variables of the same output node in two models $\mathcal{M},\mathcal{M}'$ (since we want to compute $\max|f(\boldsymbol{x}) -f(\boldsymbol{y}) |$).
 	\end{enumerate}
 	
-	This model 
+	This large model contains twice as many binary variables as $\mathcal{M}$. The computational cost of solving an MILP model is known to grow roughly exponentially with the number of binary variables, hence it will cost much more time.
 	
-	\subsection{Simplified models}
+	Therefore we need to relax more binary variables to continue variables, and/or simplify the model.
+	
+	\subsection{Simplified model}
+	
+	The first simplified model (perhaps not a simplified one), is to use one variable to the difference of each two variables, which we use $\gamma_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then $\gamma_i=x_i-x'_i$. 
+	
+	Now the constraints for $\gamma$ variables between pre-activation and post-activation is as follows:
 	
 	Constraints for $\gamma$
 	
