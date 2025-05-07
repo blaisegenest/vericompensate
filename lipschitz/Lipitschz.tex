@@ -135,6 +135,12 @@
 	
 	%For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
 	
+	The global structure is as follows, using Gurobi as an example:
+	\begin{enumerate}
+		\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable. 
+		\item For each pre-activation node in a hidden layer and each output node, set linear constraints relating them to the post-activation or input nodes they connect to.
+		\item Between pre- and post- activation nodes, set the MILP constraint described above.
+	\end{enumerate}
 	MILP instances can be linearly relaxed into LP over-abstraction, where variables originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}. We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof.
 	
 	
