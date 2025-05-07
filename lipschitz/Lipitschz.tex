@@ -138,9 +138,11 @@
 	The global structure is as follows, using Gurobi as an example:
 	\begin{enumerate}
 		\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable. 
-		\item For each pre-activation node in a hidden layer and each output node, set linear constraints relating them to the post-activation or input nodes they connect to.
+		\item Set constraints for input nodes.
+		\item For each pre-activation node in a hidden layer (and each output node), set linear constraints relating them to the post-activation or input nodes in the previous layer they connect to.
 		\item Between pre- and post- activation nodes, set the MILP constraint described above.
-	\end{enumerate}
+	\end{enumerate} We use $\mathcal{M}$ to denote the whole MILP model. In practice, we may only consider the network up to a certain hidden layer. In that case, the pre-activation nodes of that layer serve as the output nodes of the model $\mathcal{M}$.
+	
 	MILP instances can be linearly relaxed into LP over-abstraction, where variables originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}. We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof.
 	
 	
@@ -216,11 +218,20 @@
 	
 	\section{Modeling for global robustness}
 	
-	We can modify the MILP model for local robustness to compute the question of global robustness \ref{global_robustness}.
+
 	
 	\subsection{Cloned model}
+		We can modify the MILP model for local robustness to compute the question of global robustness \ref{global_robustness}.
 	
-	The most straight way is to build two identical MILP models $M_1,M_2$ with completely disjoint variables (including inputs and outputs) with some extra variables and constraints:
+	The most straight way is to build a model $\mathcal{M}^{large}$ based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (including inputs and outputs) with some extra constraints:
+	
+	\begin{enumerate}
+		\item Add constraints for input nodes between $\mathcal{M},\mathcal{M}'$ for the requirement $|\boldsymbol{x}-\boldsymbol{y}| \leq \epsilon$.
+		
+		\item Set optimization target to be the difference of two variables of the same output node in two models $\mathcal{M},\mathcal{M}'$ (since we want to compute $\max|f(\boldsymbol{x}) -f(\boldsymbol{y}) |$).
+	\end{enumerate}
+	
+	This model 
 	
 	\subsection{Simplified models}
 	
