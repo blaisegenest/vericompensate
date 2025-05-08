@@ -112,7 +112,7 @@
 	\begin{align*}
 		\forall \boldsymbol{x} \forall\boldsymbol{y} (|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|)
 	\end{align*} 
-	In our practice of global robustness of computation, we will compute an optimization question respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
+	In our practice, when we need global robustness, we will compute an optimization question respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
 		\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
 	\end{align} And this will lead to the following definition
 
@@ -158,7 +158,7 @@
 			&\leq D\varepsilon + \cdots +D\varepsilon \\
 			&= (M+1)D\varepsilon
 		\end{align*}
-		Hence\begin{align*}
+		Hence,\begin{align*}
 			|f(x)-f(y)| &\leq (M+1)D\varepsilon \\
 			&\leq D\cdot (M+1)\varepsilon \frac{|x-y|}{M\varepsilon}\\
 			&= D\cdot\frac{M+1}{M} |x-y|\\
@@ -169,6 +169,11 @@
 		This is what we want to show.
 	\end{proof}
 	
+	In practice, Lipschitz above $\varepsilon$ constant is already sufficient to use: this is because in most cases, we care about the absolute difference when the input changes, not the ratio. Therefore, the computation of $\varepsilon$-diff bound can satisfy our aim.
+	
+
+	Moreover, we have the following proposition connecting $\varepsilon$-diff bound and Lipschitz above $\varepsilon$ constant.
+	
 	
 	\begin{proposition}
 		For any $N\in\mathbb{Z}^+$, suppose for any $a$ in $\{\frac{N}{N}\varepsilon,\frac{N+1}{N}\varepsilon,\cdots, \frac{2N-1}{N}\varepsilon\}$, $D$ is an $a$-diff bound for $f(x)$. 
@@ -178,7 +183,6 @@
 			|x-y|<\varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot \varepsilon\\
 		\end{align*}
 	\end{proposition}
-	
 	\begin{proof}
 		We fix the number $N\in\mathbb{Z}^+$ and assume we have two inputs $x, y$.
 		
@@ -189,7 +193,7 @@
 		\end{align*}
 		By assumption, divide the line segment from $x$ to $y$ into pieces according to $x_1, x_2,\cdots,x_n$, then we will have $$|f(x)-f(y)|\leq Dx_1+Dx_2+\cdots+Dx_n.$$
 		
-		Hence,\begin{align*}
+			Hence,\begin{align*}
 			\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Dx_1+Dx_2+\cdots+Dx_n}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon}\\
 			& = D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon})\\
 			& \leq D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{\varepsilon})\\
