@@ -112,17 +112,10 @@
 	\begin{align*}
 		\forall \boldsymbol{x} \forall\boldsymbol{y} (|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|)
 	\end{align*} 
-	In our practice of global robustness, we will consider the following weaker property with respect to a certain number $\varepsilon$:
-	\begin{align*}
-		\forall \boldsymbol{x} \forall\boldsymbol{y} &  (|\boldsymbol{x}-\boldsymbol{y}| \geq \varepsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|\\
-		&  |\boldsymbol{x}-\boldsymbol{y}| < \varepsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K\varepsilon)
-	\end{align*} 
-	In terms of the code, it is compute an optimization question respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
+	In our practice of global robustness of computation, we will compute an optimization question respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
 		\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
-	\end{align} We can use this maximum value to estimate the Lipschitz constant.
-	
-	
-	
+	\end{align} And this will lead to the following definition
+
 		\begin{definition}[$\varepsilon$-diff bound]
 		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is the $L_\infty$ norm. 
 		
@@ -132,6 +125,7 @@
 		
 	\end{definition}
 	
+	From $\varepsilon$-diff bound, we cannot directly obtain a Lipschitz bound for the function, but we can get the following weaker bound:
 	
 	\begin{definition}[Lipschitz above $\varepsilon$ constant ]
 		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is the $L_\infty$ norm. 
