@@ -102,21 +102,111 @@
 	Concerning the verification problem, we focus on the global-robustness question. Global robustness asks to determine how the output of a neural network will be affected under a certain kind of small perturbations to any possible input. In this view, Lipschitz continuity is a good characterization of global robustness.
 	
 	
+	
+	
+	\section{Global robustness and Lipschitz constant}
+	
+	
 	Recall the definition of Lipschitz continuity:
-	 under distance $d$, a function $f(x)$ is Lipschitz continuous with respect to constant $K$ if:
+	under distance $d$, a function $f(x)$ is Lipschitz continuous with respect to constant $K$ if:
 	\begin{align*}
 		\forall \boldsymbol{x} \forall\boldsymbol{y} (|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|)
 	\end{align*} 
-	In our practice of global robustness, we will consider the following weaker property with respect to a certain number $\epsilon$:
+	In our practice of global robustness, we will consider the following weaker property with respect to a certain number $\varepsilon$:
 	\begin{align*}
-		\forall \boldsymbol{x} \forall\boldsymbol{y} &  (|\boldsymbol{x}-\boldsymbol{y}| \geq \epsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|\\
-		&  |\boldsymbol{x}-\boldsymbol{y}| < \epsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K\epsilon)
+		\forall \boldsymbol{x} \forall\boldsymbol{y} &  (|\boldsymbol{x}-\boldsymbol{y}| \geq \varepsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|\\
+		&  |\boldsymbol{x}-\boldsymbol{y}| < \varepsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K\varepsilon)
 	\end{align*} 
-	In terms of the code, it is compute an optimization question respect to a certain number $\epsilon$:	\begin{align}\label{global_robustness}
-			\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \epsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
+	In terms of the code, it is compute an optimization question respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
+		\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
 	\end{align} We can use this maximum value to estimate the Lipschitz constant.
 	
-	\section{Local robustness and pMILP}
+	
+	
+		\begin{definition}[$\varepsilon$-diff bound]
+		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is the $L_\infty$ norm. 
+		
+		For a number $\varepsilon\in\mathbb{R}$, an $\varepsilon$-diff bound $D_\varepsilon$ is a number such that for any inputs $x,y$: \begin{align*}
+			|x-y|\leq \varepsilon \implies |f(x)-f(y)| \leq D_\varepsilon \cdot \varepsilon
+		\end{align*}
+		
+	\end{definition}
+	
+	
+	\begin{definition}[Lipschitz above $\varepsilon$ constant ]
+		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is the $L_\infty$ norm. 
+		
+		For a number $\varepsilon\in\mathbb{R}$, a Lipschitz above $\varepsilon$ constant  $K_\varepsilon$,  is a number such that for any inputs $x,y$: \begin{align*}
+			|x-y|\geq \varepsilon &\implies |f(x)-f(y)| \leq K_\varepsilon \cdot |x-y|\\
+			|x-y|<\varepsilon &\implies |f(x)-f(y)| \leq K_\varepsilon \cdot \varepsilon\\
+		\end{align*}
+		
+	\end{definition}
+	
+	
+	\begin{proposition}
+		
+		Suppose $D$ is an $\varepsilon$-diff bound for $f(x)$. Then for any $N\in\mathbb{Z}^+$, $D\frac{N+1}{N}$ is a Lipschitz about $N\varepsilon$ constant.
+		
+		In formula, for any two inputs $x,y$, if \begin{align*}
+			|x-y|\leq \varepsilon \implies |f(x)-f(y)| \leq D \cdot \varepsilon,
+		\end{align*} then 	 \begin{align*}
+			|x-y|\geq N\varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot |x-y|\\
+			|x-y|<N\varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot N\varepsilon\\
+		\end{align*}
+	\end{proposition}
+	
+	\begin{proof} We fix the number $N\in\mathbb{Z}^+$ and assume we have two inputs $x, y$.
+		
+		The first case, $|x-y|\geq N\varepsilon$. Then we assume $|x-y| \in [M\varepsilon ,  (M+1)\varepsilon]$ for another integer $M\geq N$. Then we can divide the line segment between $x, y$ into $M+1$ pieces: $x_0 = x, x_1, x_2, \cdots, x_{M+1} = y$ such that $|x_i-x_{i+1}| \leq \varepsilon$ and apply the definition of $\varepsilon$-diff bound $D$ for each pieces:\begin{align*}
+			|f(x)-f(y)| &= |f(x_{M+1})-f(x_M)+\cdots+f(x_1)-f(x_0)|\\
+			&\leq |f(x_{M+1})-f(x_M)|+\cdots+|f(x_1)-f(x_0)|\\
+			&\leq D\varepsilon + \cdots +D\varepsilon \\
+			&= (M+1)D\varepsilon
+		\end{align*}
+		Hence\begin{align*}
+			|f(x)-f(y)| &\leq (M+1)D\varepsilon \\
+			&\leq D\cdot (M+1)\varepsilon \frac{|x-y|}{M\varepsilon}\\
+			&= D\cdot\frac{M+1}{M} |x-y|\\
+			&\leq   D\cdot\frac{N+1}{N} |x-y|
+		\end{align*}
+		The second case, $|x-y|< N\varepsilon$. Similarly we can divide the line segment between $x, y$ into $N$ pieces and then $|f(x)-f(y)|\leq D N\varepsilon\leq |f(x)-f(y)|\leq D \frac{N+1}{N} N\varepsilon$.
+		
+		This is what we want to show.
+	\end{proof}
+	
+	
+	\begin{proposition}
+		For any $N\in\mathbb{Z}^+$, suppose for any $a$ in $\{\frac{N}{N}\varepsilon,\frac{N+1}{N}\varepsilon,\cdots, \frac{2N-1}{N}\varepsilon\}$, $D$ is an $a$-diff bound for $f(x)$. 
+		
+		Then $D\frac{N+1}{N}$ is a Lipschitz about $\varepsilon$ constant:\begin{align*}
+			|x-y|\geq \varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot |x-y|\\
+			|x-y|<\varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot \varepsilon\\
+		\end{align*}
+	\end{proposition}
+	
+	\begin{proof}
+		We fix the number $N\in\mathbb{Z}^+$ and assume we have two inputs $x, y$.
+		
+		For the case that $|x-y|<\varepsilon$, this is trivial by definition.
+		
+		For the case that $|x-y|\geq \varepsilon$, there exists a sum $x_1+x_2+\cdots+x_n$ by numbers from (allowing repetitions) $\{\frac{N}{N}\varepsilon,\frac{N+1}{N}\varepsilon,\cdots, \frac{2N-1}{N}\varepsilon\}$ such that \begin{align*}
+			\varepsilon \leq x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon \leq |x-y| \leq x_1+x_2+\cdots+x_n
+		\end{align*}
+		By assumption, divide the line segment from $x$ to $y$ into pieces according to $x_1, x_2,\cdots,x_n$, then we will have $$|f(x)-f(y)|\leq Dx_1+Dx_2+\cdots+Dx_n.$$
+		
+		Hence,\begin{align*}
+			\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Dx_1+Dx_2+\cdots+Dx_n}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon}\\
+			& = D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon})\\
+			& \leq D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{\varepsilon})\\
+			& = D \frac{N+1}{N} 
+		\end{align*}
+		
+	\end{proof}
+	
+	
+	
+	\section{pMILP for local robustness}
 	
 	
 	
@@ -226,7 +316,7 @@
 	The most straight way is to build a model $\mathcal{M}^{large}$ based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (including inputs and outputs) with some extra constraints:
 	
 	\begin{enumerate}
-		\item Add constraints for input nodes between $\mathcal{M},\mathcal{M}'$ for the requirement $|\boldsymbol{x}-\boldsymbol{y}| \leq \epsilon$.
+		\item Add constraints for input nodes between $\mathcal{M},\mathcal{M}'$ for the requirement $|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon$.
 		
 		\item Set optimization target to be the difference of two variables of the same output node in two models $\mathcal{M},\mathcal{M}'$ (since we want to compute $\max|f(\boldsymbol{x}) -f(\boldsymbol{y}) |$).
 	\end{enumerate}
