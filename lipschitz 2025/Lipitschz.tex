@@ -155,24 +155,21 @@
 		The first case, $|x-y|\geq N\varepsilon$. Then we assume $|x-y| \in [M\varepsilon ,  (M+1)\varepsilon]$ for another integer $M\geq N$. Then we can divide the line segment between $x, y$ into $M+1$ pieces: $x_0 = x, x_1, x_2, \cdots, x_{M+1} = y$ such that $|x_i-x_{i+1}| \leq \varepsilon$ and apply the definition of $\varepsilon$-diff bound $D$ for each pieces:\begin{align*}
 			|f(x)-f(y)| &= |f(x_{M+1})-f(x_M)+\cdots+f(x_1)-f(x_0)|\\
 			&\leq |f(x_{M+1})-f(x_M)|+\cdots+|f(x_1)-f(x_0)|\\
-			&\leq D\varepsilon + \cdots +D\varepsilon \\
-			&= (M+1)D\varepsilon
+			&\leq D\varepsilon + \cdots +D\varepsilon = (M+1)D\varepsilon
 		\end{align*}
 		Hence,\begin{align*}
-			|f(x)-f(y)| &\leq (M+1)D\varepsilon \\
-			&\leq D\cdot (M+1)\varepsilon \frac{|x-y|}{M\varepsilon}\\
-			&= D\cdot\frac{M+1}{M} |x-y|\\
-			&\leq   D\cdot\frac{N+1}{N} |x-y|
+			|f(x)-f(y)| &\leq (M+1)D\varepsilon \leq D\cdot (M+1)\varepsilon \frac{|x-y|}{M\varepsilon}\\
+			&= D\cdot\frac{M+1}{M} |x-y|	\leq   D\cdot\frac{N+1}{N} |x-y|		
 		\end{align*}
 		The second case, $|x-y|< N\varepsilon$. Similarly we can divide the line segment between $x, y$ into $N$ pieces and then $|f(x)-f(y)|\leq D N\varepsilon\leq |f(x)-f(y)|\leq D \frac{N+1}{N} N\varepsilon$.
 		
 		This is what we want to show.
 	\end{proof}
-	
-	In practice, Lipschitz above $\varepsilon$ constant is already sufficient to use: this is because in most cases, we care about the absolute difference when the input changes, not the ratio. Therefore, the computation of $\varepsilon$-diff bound can satisfy our aim.
+
+	In practice, Lipschitz above $\varepsilon$ constant is already sufficient, since in most cases we care about the absolute difference under input perturbations, not the ratio. By combining the above proposition, the computation of $\varepsilon$-diff bound can satisfy our aim.
 	
 
-	Moreover, we have the following proposition connecting $\varepsilon$-diff bound and Lipschitz above $\varepsilon$ constant.
+	Moreover, we have one more proposition connecting $\varepsilon$-diff bound and Lipschitz above $\varepsilon$ constant.
 	
 	
 	\begin{proposition}
@@ -195,9 +192,7 @@
 		
 			Hence,\begin{align*}
 			\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Dx_1+Dx_2+\cdots+Dx_n}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon}\\
-			& = D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon})\\
-			& \leq D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{\varepsilon})\\
-			& = D \frac{N+1}{N} 
+			& \leq D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{\varepsilon})= D \frac{N+1}{N}\\
 		\end{align*}
 		
 	\end{proof}
