@@ -317,14 +317,13 @@
 	
 	The first simplified model (perhaps not a simplified one), is to use one variable to the difference of each two variables, which we use $y_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
 	
-	Suppose we already know the upper (and lower by symmetry) bound $\gamma_i$ of $y_i$, then
-	we can use the following constraints:\begin{align*}
+	Given  $\gamma_i$ be the upper bound of $y_i$, then constraints for $\hat{y}_i$ are the follows:\begin{align*}
 		\hat{y}_i \leq a \gamma_i \hspace*{2ex} &\wedge \hspace*{2ex}\hat{y}_i \geq y_i - a \gamma_i\\
 		\hat{y}_i \geq (a-1) \gamma_i  \hspace*{2ex} &\wedge \hspace*{2ex} \hat{y}_i \leq y_i + (1-a) \gamma_i,
 	\end{align*} where $a$ is a binary variable.
 	
 	
-	The following plot shows the above constraints:
+	The following plot illustrates the constraints described above.
 	
 	\hspace*{10ex}\begin{tikzpicture}
 		\begin{axis}[
@@ -349,7 +348,7 @@
 		\end{axis}
 	\end{tikzpicture}
 	
-   Using these constraints, we can sketch the simplified model:
+   Based on above constraints, we can sketch this simplified model:
 \begin{enumerate}
 	\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable $y_i$. 
 	\item Set constraints for input nodes.
@@ -357,9 +356,11 @@
 	\item Between pre- and post- activation nodes, set the MILP constraint described above.
 \end{enumerate}
 	
-	The speed of this model is much faster, comparable to the MILP model for local robustness. However, in practice, this model sometimes lose much accuracy.
+	The advantage of this simplified model is that it only contains the number of binary variables as MILP model for local robustness, hence the running speed of this is much faster comparing to the previous one. The cost is a loss of accuracy when the time is infinite. 
 	
-	\subsection{Another simplified model}
+	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
+	
+	\subsection{Strength of the simplified model}
 
 	The second simplified model is more complex than the first.
 	
