@@ -117,7 +117,7 @@
 	\end{align} And this will lead to the following definition
 
 		\begin{definition}[$\varepsilon$-diff bound]
-		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is the $L_\infty$ norm. 
+		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is $L_\infty$ norm. 
 		
 		For a number $\varepsilon\in\mathbb{R}$, an $\varepsilon$-diff bound $D_\varepsilon$ is a number such that for any inputs $x,y$: \begin{align*}
 			|x-y|\leq \varepsilon \implies |f(x)-f(y)| \leq D_\varepsilon \cdot \varepsilon
@@ -127,8 +127,8 @@
 	
 	From $\varepsilon$-diff bound, we cannot directly obtain a Lipschitz bound for the function, but we can get the following weaker bound:
 	
-	\begin{definition}[Lipschitz above $\varepsilon$ constant ]
-		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is the $L_\infty$ norm. 
+	\begin{definition}[Lipschitz above $\varepsilon$ constant]
+		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is $L_\infty$ norm. 
 		
 		For a number $\varepsilon\in\mathbb{R}$, a Lipschitz above $\varepsilon$ constant  $K_\varepsilon$,  is a number such that for any inputs $x,y$: \begin{align*}
 			|x-y|\geq \varepsilon &\implies |f(x)-f(y)| \leq K_\varepsilon \cdot |x-y|\\
@@ -142,7 +142,7 @@
 		
 		Suppose $D$ is an $\varepsilon$-diff bound for $f(x)$. Then for any $N\in\mathbb{Z}^+$, $D\frac{N+1}{N}$ is a Lipschitz about $N\varepsilon$ constant.
 		
-		In formula, for any two inputs $x,y$, if \begin{align*}
+		That is, for any two inputs $x,y$, if \begin{align*}
 			|x-y|\leq \varepsilon \implies |f(x)-f(y)| \leq D \cdot \varepsilon,
 		\end{align*} then 	 \begin{align*}
 			|x-y|\geq N\varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot |x-y|\\
@@ -163,7 +163,7 @@
 		\end{align*}
 		The second case, $|x-y|< N\varepsilon$. Similarly we can divide the line segment between $x, y$ into $N$ pieces and then $|f(x)-f(y)|\leq D N\varepsilon\leq |f(x)-f(y)|\leq D \frac{N+1}{N} N\varepsilon$.
 		
-		This is what we want to show.
+		This ends the proof.
 	\end{proof}
 
 	In practice, Lipschitz above $\varepsilon$ constant is already sufficient, since in most cases we care about the absolute difference under input perturbations, not the ratio. By combining the above proposition, the computation of $\varepsilon$-diff bound can satisfy our aim.
@@ -194,7 +194,7 @@
 			\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Dx_1+Dx_2+\cdots+Dx_n}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon}\\
 			& \leq D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{\varepsilon})= D \frac{N+1}{N}\\
 		\end{align*}
-		
+		This ends the proof.
 	\end{proof}
 	
 	
@@ -303,28 +303,19 @@
 	
 
 	
-	\subsection{Cloned model}
-		We can modify the MILP model for local robustness to compute the question of global robustness \ref{global_robustness}.
-	
-	The most straight way is to build a model $\mathcal{M}^{large}$ based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (including inputs and outputs) with some extra constraints:
-	
+	\subsection{Using Two Identical Models}
+	The most straightforward way is to use two identical MILP models, that is to build a model $\mathcal{M}^{large}$ based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (including inputs and outputs) with extra constraints:
 	\begin{enumerate}
-		\item Add constraints for input nodes between $\mathcal{M},\mathcal{M}'$ for the requirement $|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon$.
-		
-		\item Set optimization target to be the difference of two variables of the same output node in two models $\mathcal{M},\mathcal{M}'$ (since we want to compute $\max|f(\boldsymbol{x}) -f(\boldsymbol{y}) |$).
+		\item Add constraints for connecting input nodes $\mathcal{M},\mathcal{M}'$ to meet the requirement $|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon$.
+		\item Set the optimization objective as the difference between two variables of the same output node in two models $\mathcal{M},\mathcal{M}'$ (because we want to compute $\max|f(\boldsymbol{x}) -f(\boldsymbol{y}) |$).
 	\end{enumerate}
-	
-	This large model contains twice as many binary variables as $\mathcal{M}$. The computational cost of solving an MILP model is known to grow roughly exponentially with the number of binary variables, hence it will cost much more time.
+	This large model contains twice as many binary variables as $\mathcal{M}$. The computational cost of solving an MILP model grows roughly exponentially with the number of binary variables, hence it will cost much more time.
 	
 	Therefore we need to relax more binary variables to continue variables, and/or simplify the model.
 	
 	\subsection{Simplified model}
 	
-	The first simplified model (perhaps not a simplified one), is to use one variable to the difference of each two variables, which we use $y_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then $y_i=x_i-x'_i$. 
-	
-	Now the constraints for $\gamma$ variables between pre-activation and post-activation is as follows:
-	
-	Let $y_i$ and $\hat{y}_i$ be $x_i-x_i'$ and $\hat{x}_i-\hat{x}_i'$. Then we know the relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
+	The first simplified model (perhaps not a simplified one), is to use one variable to the difference of each two variables, which we use $y_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
 	
 	Suppose we already know the upper (and lower by symmetry) bound $\gamma_i$ of $y_i$, then
 	we can use the following constraints:\begin{align*}
@@ -333,9 +324,9 @@
 	\end{align*} where $a$ is a binary variable.
 	
 	
-	The following plot will show the above constraints:
+	The following plot shows the above constraints:
 	
-	\begin{tikzpicture}
+	\hspace*{10ex}\begin{tikzpicture}
 		\begin{axis}[
 			xlabel={$y_i$},
 			ylabel={$\hat{y}_i$},
@@ -358,8 +349,7 @@
 		\end{axis}
 	\end{tikzpicture}
 	
-	Now we can introduce this simplified model:
-	
+   Using these constraints, we can sketch the simplified model:
 \begin{enumerate}
 	\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable $y_i$. 
 	\item Set constraints for input nodes.
