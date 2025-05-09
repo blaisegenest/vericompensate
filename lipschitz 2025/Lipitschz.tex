@@ -356,80 +356,37 @@
 	\item Between pre- and post- activation nodes, set the MILP constraint described above.
 \end{enumerate}
 	
-	The advantage of this simplified model is that it only contains the number of binary variables as MILP model for local robustness, hence the running speed of this is much faster comparing to the previous one. The cost is a loss of accuracy when the time is infinite. 
+	The key point is that, we can relax all other binary variables for $\hat{x}_i = \ReLU(x_i)$ and $\hat{x}'_i = \ReLU(x'_i)$.
+	Then the simplified model is that it only contains the number of binary variables as MILP model for local robustness, hence the running speed of this is much faster comparing to the previous one. The cost is a loss of accuracy when the time is infinite. 
 	
 	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
 	
-	\subsection{Strength of the simplified model}
+	\subsection{Improvement of the simplified model}
 
-	The second simplified model is more complex than the first.
+	We can improve the accuracy of the simplified model by simply changing the constraints, which is a trade-off between accuracy and speed.
 	
-	We can use the following extra constraints (besides 4 constraints about $\hat{x}_i'=\ReLU(x_i')$) to build this relation:
-	
-	
-	\begin{align*}
-		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
-		&\hat{y}_i \geq -\hat{x}'_i+(x_i'+y_i) \hspace*{1ex}\wedge\hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+(x_i'+y_i) +(a-1)\alpha_i \\
-	\end{align*} 
-	
-	
-	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
+%	The exact constraints for $$ \begin{align*}
+%		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
+%		&\hat{y}_i \geq -\hat{x}'_i+(x_i'+y_i) \hspace*{1ex}\wedge\hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+(x_i'+y_i) +(a-1)\alpha_i \\
+%	\end{align*} 
+%	
+%	
+%	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
 	
 	
 	
-	A more direct way to establish the constraints is as follows: \begin{align*}
+	The accurate constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ are the follows: \begin{align*}
 		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
 		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
 		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
 		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
 		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
 		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
-	\end{align*}The following two plots show its shape:
+	\end{align*}Here, $a,a'$ are the binary variables, and $a'$ also play the role binary for $\hat{x}'_i=\ReLU(x'_i)$.
 	
-	\iffalse
+	The following plot illustrates the constraints described above.
+	
 	\hspace*{-10ex}
-	\begin{tikzpicture}
-		\begin{axis}[	axis on top, xlabel = \(x'_i\),
-			ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
-			set layers=default,
-			xmax = 4, xmin = -4,
-			ymax = 1, ymin = -1,		
-			zmax = 1, zmin = -1,
-			unit vector ratio=1 1 1, scale=3,
-			view={60}{50}, ytick   = {-1,0,1},
-			yticklabels = {$-\gamma_i$,$0$,$\gamma_i$}, xtick = {0},
-			xticklabels = {$0$}, ztick   = {-1,0,1},
-			zticklabels = {$-\gamma_i$,$0$,$\gamma_i$},
-			]
-			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4] 
-			coordinates {
-				(0,0,0) (-1,1,0) (-4,1,0) (-4,-1,0) (0,-1,0) (0,0,0)
-			};
-			
-			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
-			coordinates { (0,0,0) (0,1,1) (4, 1, 1) (4, -1, -1) (1,-1,-1) (0,0,0)
-			};
-			
-			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
-			coordinates { (0,0,0)  (-1,1,0) (0,1,1) (0,0,0)
-			};
-			
-			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
-			coordinates { (0,0,0)  (0,-1,0) (1,-1,-1) (0,0,0)
-			};
-			
-			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(1,-1,-1)};
-			\node[label={$(\gamma_i,-\gamma_i, -\gamma_i)$}] at (axis cs: 1.2, -0.5 ,-1) {};
-			
-			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(-1,1,0)};
-			\node[label={$(-\gamma_i,\gamma_i, 0)$}] at (axis cs: -1, 0.8 ,0) {};			
-			
-		\end{axis}
-	\end{tikzpicture}
-	\fi
-	
-	
-	\hspace*{-15ex}
 	\begin{tikzpicture}
 		\begin{axis}[	axis on top, xlabel = \(x'_i\),
 			ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
