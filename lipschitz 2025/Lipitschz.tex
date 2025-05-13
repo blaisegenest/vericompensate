@@ -313,6 +313,8 @@
 	
 	Therefore we need to relax more binary variables to continue variables, and/or simplify the model.
 	
+However, the problem is that even relaxing a few nodes can cause a significant loss of accuracy, which leads us to find another modeling approaches.
+	
 	\subsection{Simplified model}
 	
 	The first simplified model (perhaps not a simplified one), is to use one variable to the difference of each two variables, which we use $y_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
@@ -362,8 +364,9 @@
 	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
 	
 	\subsection{Improvement of the simplified model}
-
-	We can improve the accuracy of the simplified model by simply changing the constraints, which is a trade-off between accuracy and speed.
+	We can improve the accuracy of the simplified model by simply changing the constraints, which is a trade-off between accuracy and speed. (This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
+	
+	
 	
 %	The exact constraints for $$ \begin{align*}
 %		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
@@ -375,14 +378,14 @@
 	
 	
 	
-	The accurate constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ are the follows: \begin{align*}
+	The accurate constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (together with$\hat{x}'_i=\ReLU(x'_i)$) are the follows: \begin{align*}
 		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
 		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
 		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
 		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
 		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
 		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
-	\end{align*}Here, $a,a'$ are the binary variables, and $a'$ also play the role binary for $\hat{x}'_i=\ReLU(x'_i)$.
+	\end{align*}Here, $a,a'$ are the binary variables, and $a'$ also play the role of binary variable for $\hat{x}'_i=\ReLU(x'_i)$. The constraints for $x_i$s are not necessary, or at least their MILP constraints can be relaxed to LP without reducing accuracy. 
 	
 	The following plot illustrates the constraints described above.
 	
@@ -427,6 +430,10 @@
 	\end{tikzpicture}
 	
 	
+	A variant of the above model is to distinguish the binary variables $a'$s in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$, and relax all the latter ones.
+	
+	
+	\section{Experiments}
 	
 	\section{Conclusion}
 	
