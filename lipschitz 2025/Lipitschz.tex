@@ -378,7 +378,8 @@ However, the problem is that even relaxing a few nodes can cause a significant l
 	
 	
 	
-	The accurate constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (together with$\hat{x}'_i=\ReLU(x'_i)$) are the follows:
+	Given $\gamma_i$ as the upper bound of $y_i$, $\alpha_i,\beta_i$ be the upper and lower bound of $x_i,x_i'$, 
+	the accurate constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (together with $\hat{x}'_i=\ReLU(x'_i)$) are the follows:
 	\begin{align*}
 		& \begin{aligned}
 			y_i + x'_i &\leq a\beta_i        &\quad\quad
@@ -453,12 +454,21 @@ However, the problem is that even relaxing a few nodes can cause a significant l
 	A variant of the above model is to distinguish the binary variables $a'$s in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$, and relax all the latter ones.
 	
 	
-	\section{Experiments}
+	\section{Experimental Evaluation}
 	
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD Threadripper 7970X  ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. 
 	
-	\subsection{Comparison of different modeling}
+	We will do experiments on two networks for MNIST dataset and another physical model.
+	
+	Among two MNIST $5\times 100$  full-connected DNN, one is a normally trained neural network and another is for trained for adversarial robustness. We call them MNIST $5\times100$-normal and MNIST $5\times 100$-DiffAI. They have the same structure: 5 hidden layer with 100 neurons each, 10 outputs and 784 inputs.
+	
+	
+	The physical network is a simplified model with 10 input neurons, 26 output neurons, and 2 hidden layers with 50 neurons each.
+	
+	\subsection{Comparison of different modelings}
+	
+	\subsection{Comparison of different scoring algorithms}
 	
 	\section{Conclusion}
 	
