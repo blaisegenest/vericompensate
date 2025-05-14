@@ -378,14 +378,33 @@ However, the problem is that even relaxing a few nodes can cause a significant l
 	
 	
 	
-	The accurate constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (together with$\hat{x}'_i=\ReLU(x'_i)$) are the follows: \begin{align*}
-		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
-		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
-		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
-		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
-		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
-		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
-	\end{align*}Here, $a,a'$ are the binary variables, and $a'$ also play the role of binary variable for $\hat{x}'_i=\ReLU(x'_i)$. The constraints for $x_i$s are not necessary, or at least their MILP constraints can be relaxed to LP without reducing accuracy. 
+	The accurate constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (together with$\hat{x}'_i=\ReLU(x'_i)$) are the follows:
+	\begin{align*}
+		& \begin{aligned}
+			y_i + x'_i &\leq a\beta_i        &\quad\quad
+			y_i + x'_i &\geq (1-a)\alpha_i \\
+			x'_i       &\leq a'\beta_i       & 
+			x'_i       &\geq (1-a')\alpha_i \\
+			\hat{y}_i  &\leq a\gamma_i       &
+			\hat{y}_i  &\geq -a'\gamma_i \\
+			\hat{y}_i  &\leq y_i + (1-a)\gamma_i  &
+			\hat{y}_i  &\geq y_i - (1-a')\gamma_i \\
+			\hat{y}_i  &\leq -x'_i + a\beta_i &
+			\hat{y}_i  &\geq -x'_i + (1-a')\alpha_i \\
+			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
+			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
+		\end{aligned}
+	\end{align*} Here, $a,a'$ are the binary variables, and $a'$ also play the role of binary variable for $\hat{x}'_i=\ReLU(x'_i)$. The constraints for $x_i$s are not necessary, or at least their MILP constraints can be relaxed to LP without reducing accuracy.
+	
+	
+%	\begin{align*}
+%		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
+%		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
+%		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
+%		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
+%		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
+%		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
+%	\end{align*} 
 	
 	The following plot illustrates the constraints described above.
 	
