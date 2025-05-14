@@ -315,13 +315,13 @@
 	
 However, the problem is that even relaxing a few nodes can cause a significant loss of accuracy, which leads us to find another modeling approaches.
 	
-	\subsection{Simplified model}
+	\subsection{A Simplified model}
 	
-	The first simplified model (perhaps not a simplified one), is to use one variable to the difference of each two variables, which we use $y_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
+	To avoid above problem, we introduce a simplified model that is to use one variable to the difference of each two variables, which we use $y_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
 	
 	Given  $\gamma_i$ be the upper bound of $y_i$, then constraints for $\hat{y}_i$ are the follows:\begin{align*}
-		\hat{y}_i \leq a \gamma_i \hspace*{2ex} &\wedge \hspace*{2ex}\hat{y}_i \geq y_i - a \gamma_i\\
-		\hat{y}_i \geq (a-1) \gamma_i  \hspace*{2ex} &\wedge \hspace*{2ex} \hat{y}_i \leq y_i + (1-a) \gamma_i,
+	\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
+	\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
 	\end{align*} where $a$ is a binary variable.
 	
 	
@@ -459,12 +459,7 @@ However, the problem is that even relaxing a few nodes can cause a significant l
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD Threadripper 7970X  ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. 
 	
-	We will do experiments on two networks for MNIST dataset and another physical model.
-	
-	Among two MNIST $5\times 100$  full-connected DNN, one is a normally trained neural network and another is for trained for adversarial robustness. We call them MNIST $5\times100$-normal and MNIST $5\times 100$-DiffAI. They have the same structure: 5 hidden layer with 100 neurons each, 10 outputs and 784 inputs.
-	
-	
-	The physical network is a simplified model with 10 input neurons, 26 output neurons, and 2 hidden layers with 50 neurons each.
+	We will do experiments on two networks for MNIST dataset and another physical model. Two MNIST have the same structure. They are full-connected DNN with 5, 10 outputs and 784 inputs; each hidden layer has 100 neurons. One of them is a normally trained neural network and another is for trained for adversarial robustness. We call them MNIST $5\times100$-Normal and MNIST $5\times 100$-DiffAI. As the name shows MNIST $5\times 100$-DiffAI has a better robustness. The physical network is a simplified model with 10 input neurons, 26 output neurons, and 2 hidden layers with 50 neurons each.
 	
 	\subsection{Comparison of different modelings}
 	
