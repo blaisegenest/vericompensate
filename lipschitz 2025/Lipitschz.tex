@@ -304,22 +304,20 @@
 
 	
 	\subsection{Using Two Identical Models}
-	The most straightforward way is to use two identical MILP models, that is to build a model $\mathcal{M}^{large}$ based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (including inputs and outputs) with extra constraints:
+	The most straightforward way is to use two identical MILP models, i.e., to build a model $\mathcal{M}^{large}$ based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (and their own constraints) plus some extra constraints:
 	\begin{enumerate}
 		\item Add constraints for connecting input nodes $\mathcal{M},\mathcal{M}'$ to meet the requirement $|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon$.
 		\item Set the optimization objective as the difference between two variables of the same output node in two models $\mathcal{M},\mathcal{M}'$ (because we want to compute $\max|f(\boldsymbol{x}) -f(\boldsymbol{y}) |$).
 	\end{enumerate}
-	This large model contains twice as many binary variables as $\mathcal{M}$. The computational cost of solving an MILP model grows roughly exponentially with the number of binary variables, hence it will cost much more time.
+	This large model contains twice as many binary variables as $\mathcal{M}$. The computational cost of solving an MILP model grows roughly exponentially with the number of binary variables, and hence it will cost much more time.
 	
-	Therefore we need to relax more binary variables to continue variables, and/or simplify the model.
-	
-However, the problem is that even relaxing a few nodes can cause a significant loss of accuracy, which leads us to find another modeling approaches.
+We may relax some constraints (by changing binary variables to continuous variables) as in the case of local robustness. However, the problem is that even relaxing a few nodes can cause a significant loss of accuracy, which motivates us to explore other modeling approaches.
 	
 	\subsection{A Simplified model}
 	
-	To avoid above problem, we introduce a simplified model that is to use one variable to the difference of each two variables, which we use $y_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
+	To avoid above problem, we introduce a simplified model that is to use one variable $y_i$ to represent the difference of each two variables: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
 	
-	Given  $\gamma_i$ be the upper bound of $y_i$, then constraints for $\hat{y}_i$ are the follows:\begin{align*}
+	Given  $\gamma_i$ be the upper bound of $y_i$, the constraints for $\hat{y}_i$ are the follows:\begin{align*}
 	\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
 	\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
 	\end{align*} where $a$ is a binary variable.
@@ -358,11 +356,14 @@ However, the problem is that even relaxing a few nodes can cause a significant l
 	\item Between pre- and post- activation nodes, set the MILP constraint described above.
 \end{enumerate}
 	
-	The key point is that, we can relax all other binary variables for $\hat{x}_i = \ReLU(x_i)$ and $\hat{x}'_i = \ReLU(x'_i)$.
-	Then the simplified model is that it only contains the number of binary variables as MILP model for local robustness, hence the running speed of this is much faster comparing to the previous one. The cost is a loss of accuracy when the time is infinite. 
+	The key point is that, although this model sets 3 variables (and their binary variables) for each node in the network, only $y_i$  contributes to the final results, and we can ignore $x_i,x_i'$ (and their binary variables) during the optimization.
 	
-	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
+	As a result, we can relax the binary variables used to $\hat{x}_i = \ReLU(x_i)$ and $\hat{x}'_i = \ReLU(x'_i)$.
 	
+	Now the simplified model contains the same number of binary variables as the MILP model for local robustness. Hence this model runs much faster compared to the previous one. The trade-off is lower accuracy compared to the first model under unlimited time. In practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
+	
+%	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
+%	
 	\subsection{Improving the Accuracy of the Simplified Model}
 	We can improve the accuracy of the simplified model by simply changing the constraints, which is a trade-off between accuracy and speed. (This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
 	
