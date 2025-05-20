@@ -365,7 +365,9 @@ We may relax some constraints (by changing binary variables to continuous variab
 %	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
 %	
 	\subsection{Improving the Accuracy of the Simplified Model}
-	We can improve the accuracy of the simplified model by simply changing the constraints, which is a trade-off between accuracy and speed. (This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
+	We can improve the accuracy of the above simplified model by modifying the constraints, at the cost of increased computational time — a trade-off between accuracy and speed. 
+	
+%	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
 	
 	
 	
@@ -380,7 +382,7 @@ We may relax some constraints (by changing binary variables to continuous variab
 	
 	
 	Given $\gamma_i$ as the upper bound of $y_i$, $\alpha_i,\beta_i$ be the upper and lower bound of $x_i,x_i'$, 
-	the accurate constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (together with $\hat{x}'_i=\ReLU(x'_i)$) are the follows:
+	the precise  constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (along with $\hat{x}'_i=\ReLU(x'_i)$) are as follows:
 	\begin{align*}
 		& \begin{aligned}
 			y_i + x'_i &\leq a\beta_i        &\quad\quad
@@ -396,8 +398,9 @@ We may relax some constraints (by changing binary variables to continuous variab
 			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
 			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
 		\end{aligned}
-	\end{align*} Here, $a,a'$ are the binary variables, and $a'$ also play the role of binary variable for $\hat{x}'_i=\ReLU(x'_i)$. The constraints for $x_i$s are not necessary, or at least their MILP constraints can be relaxed to LP without reducing accuracy.
+	\end{align*} Here, $a,a'$ are binary variables, and $a'$ is also the binary variable in the constraints for $\hat{x}'_i=\ReLU(x'_i)$. 
 	
+	Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$ are not necessary, or at least can be relaxed without any loss in accuracy.
 	
 %	\begin{align*}
 %		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
