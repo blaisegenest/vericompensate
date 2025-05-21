@@ -133,8 +133,7 @@
 		For a number $\varepsilon\in\mathbb{R}$, a Lipschitz above $\varepsilon$ constant  $K_\varepsilon$,  is a number such that for any inputs $x,y$: \begin{align*}
 			|x-y|\geq \varepsilon &\implies |f(x)-f(y)| \leq K_\varepsilon \cdot |x-y|\\
 			|x-y|<\varepsilon &\implies |f(x)-f(y)| \leq K_\varepsilon \cdot \varepsilon\\
-		\end{align*}
-		
+		\end{align*}		
 	\end{definition}
 	
 	
@@ -150,7 +149,7 @@
 		\end{align*}
 	\end{proposition}
 	
-	\begin{proof} We fix the number $N\in\mathbb{Z}^+$ and assume we have two inputs $x, y$.
+	\begin{proof} We fix the number $N\in\mathbb{Z}^+$ and assume that we have two inputs $x, y$.
 		
 		The first case, $|x-y|\geq N\varepsilon$. Then we assume $|x-y| \in [M\varepsilon ,  (M+1)\varepsilon]$ for another integer $M\geq N$. Then we can divide the line segment between $x, y$ into $M+1$ pieces: $x_0 = x, x_1, x_2, \cdots, x_{M+1} = y$ such that $|x_i-x_{i+1}| \leq \varepsilon$ and apply the definition of $\varepsilon$-diff bound $D$ for each pieces:\begin{align*}
 			|f(x)-f(y)| &= |f(x_{M+1})-f(x_M)+\cdots+f(x_1)-f(x_0)|\\
