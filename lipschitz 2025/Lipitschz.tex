@@ -453,9 +453,11 @@ We may relax some constraints (by changing binary variables to continuous variab
 		\end{axis}
 	\end{tikzpicture}
 	
-	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
+	In practice, when we relax the constraints for a node, we will convert $a_i$ and $a_i'$ to continuous variables together. In principle, we can also choose to change  only one of those two binary variables.
 	
-	A variant of the above model is to distinguish the binary variables $a'$s in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$, and relax all the latter ones.
+%	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
+	
+	A special relaxation approach of this model is to treat the binary variables $a'$ appearing in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$ as distinct variables, and relax only the latter.
 	
 	
 	\section{Experimental Evaluation}
