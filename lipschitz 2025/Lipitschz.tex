@@ -362,10 +362,12 @@ We may relax some constraints (by changing binary variables to continuous variab
 	
 	Now the simplified model contains the same number of binary variables as the MILP model for local robustness. Hence this model runs much faster compared to the previous one. The trade-off is lower accuracy compared to the first model under unlimited time. In practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
 	
+	One major disadvantage of this model is that the solution obtained through optimization may not be valid-i.e., the output computed by the network on the optimized inputs may not equal the output value in the solution. Nevertheless, it is meaningful to compute the upper bound. 
+	
 %	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
 %	
 	\subsection{Improving the Accuracy of the Simplified Model}
-	We can improve the accuracy of the above simplified model by modifying the constraints, at the cost of increased computational time — a trade-off between accuracy and speed. 
+	We can remove the disadvantage and improve the accuracy of the above simplified model by modifying the constraints, at the cost of increased computational time — a trade-off between accuracy and speed. 
 	
 %	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
 	
@@ -457,7 +459,9 @@ We may relax some constraints (by changing binary variables to continuous variab
 	
 %	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
 	
-	A special relaxation approach of this model is to treat the binary variables $a'$ appearing in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$ as distinct variables, and relax only the latter.
+	A special relaxation approach of this model is to treat the binary variables $a'$ appearing in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$ as distinct variables, and relax only the latter. 
+	
+	This approach has a similar disadvantage as the model in previous section :the output computed by the network on the optimized inputs may not equal the output value in the solution. Similarly, it is meaningful to compute the upper bound using this approach. 
 	
 	
 	\section{Experimental Evaluation}
