@@ -242,11 +242,11 @@ The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is co
 \subsection{Comparison with $\alpha,\beta$-CROWN}
 
 To assess the verification efficiency and runtime vs $\alpha,\beta$-CROWN, we 
-conducted evaluations  on neural networks tested in \cite{CROWN} which are mostly {\em complex} to verify (as easy instances are already appropriately taken care of). Namely, 6 ReLU-DNNs: 5 MNIST DNN that can be found in the \href{https://github.com/eth-sri/eran}{ERAN GitHub} 
+conducted evaluations  on neural networks tested in \cite{crown} which are mostly {\em complex} to verify (as easy instances are already appropriately taken care of). Namely, 6 ReLU-DNNs: 5 MNIST DNN that can be found in the \href{https://github.com/eth-sri/eran}{ERAN GitHub} 
 (the 4th to the 8th DNNs provided) as well as 1 CIFAR CNN from 
 \cite{AdversarialTrainingAndProvableDefenses}, see also \cite{SDPFI}, 
 which can be downloaded from the \href{https://github.com/Verified-Intelligence/alpha-beta-CROWN}{$\alpha,\beta$-CROWN GitHub}. 
-We commit to the same $\epsilon$ settings as in \cite{CROWN}, that are recalled in Table \ref{table_beta}. 
+We commit to the same $\epsilon$ settings as in \cite{crown}, that are recalled in Table \ref{table_beta}. 
 For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. 
 We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark. 
 The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta} and \ref{table_hybrid}.
@@ -316,7 +316,7 @@ We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cut
 \end{table}
 
 
-Results on other networks from other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported \cite{CROWN} on other tested DNNs, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on complex (even small) instances. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em complex} MNIST DNNs at several time-out settings. Last, Pyrat \cite{pyrat} (2sd in the latest VNNComp) is not open source, which made running it impossible. Details can be found in the appendix. Also, ablation studies showing what each feature of Hybrid MILP is bringing can be found in the appendix.
+Results on other networks from other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported \cite{crown} on other tested DNNs, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on complex (even small) instances. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em complex} MNIST DNNs at several time-out settings. Last, Pyrat \cite{pyrat} (2\textcolor{red}{nd} in the latest VNNComp) is not open source, which made running it impossible. Details can be found in the appendix. Also, ablation studies showing what each feature of Hybrid MILP is bringing can be found in the appendix.
 
 
 

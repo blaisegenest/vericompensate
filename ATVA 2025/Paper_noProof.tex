@@ -157,7 +157,7 @@ Concerning the verification problem, we focus on the well studied local-robustne
 Formally, for an input $\vx$ perturbed by $\varepsilon >0$ under distance $d$, then the DNN is locally $\varepsilon$-robust in $\vx$ whenever:
 \begin{align*}
 	\forall \boldsymbol{x'} \text{ s.t. } d(\vx,\vx')\leq \varepsilon, \text{ we have }  
-	argmax_i (f(\boldsymbol{x'})[i]) = argmax_i(f(\boldsymbol{x})[i])
+	\textcolor{red}{argmax (f(\boldsymbol{x'})) = argmax(f(\boldsymbol{x}))}
 \end{align*} 
 
 \iffalse

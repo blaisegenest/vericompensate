@@ -2,15 +2,15 @@
 
 Deep neural networks (DNNs for short) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks. However, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the verification community to develop various methodologies, each presenting a unique balance between completeness and computational efficiency \cite{Marabou,Reluplex,deeppoly}. This surge in innovation has also led to the inception of competitions such as VNNComp \cite{VNNcomp}, which aim to systematically evaluate the performance of neural network verification tools. While the verification engines are generic, the benchmarks usually focus on local robustness, i.e. given a DNN, an image and a small neighbourhood around this image, is it the case that all the images in the neighbourhood are classified in the same way. 
 For the past 5 years, VNNcomp has focused on rather easy instances, that can be solved within tens of seconds (the typical hard time-out is 300s). For this reason, DNN verifiers in the past years have mainly focused on optimizing for such easy instances. Among them, NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, and PyRAT 
-\cite{pyrat}, respectively 4th, 3rd and 2sd of the last VNNcomp'24 \cite{VNNcomp24}
-and 5th, 2sd and 3rd  of the VNNcomp'23 \cite{VNNcomp23}; MnBAB \cite{ferrari2022complete}, 2sd in VNNcomp'22 \cite{VNNcomp22}, built upon ERAN \cite{deeppoly} and PRIMA \cite{prima}; and importantly, $\alpha,\beta$-CROWN \cite{crown,xu2020fast}, the winner of the last 4 VNNcomp, benefiting from branch-and-bound based methodology \cite{cutting,BaB}.
+\cite{pyrat}, respectively 4th, 3rd and 2\textcolor{red}{nd} of the last VNNcomp'24 \cite{VNNcomp24}
+and 5th, 2\textcolor{red}{nd} and 3rd  of the VNNcomp'23 \cite{VNNcomp23}; MnBAB \cite{ferrari2022complete}, 2\textcolor{red}{nd} in VNNcomp'22 \cite{VNNcomp22}, built upon ERAN \cite{deeppoly} and PRIMA \cite{prima}; and importantly, $\alpha,\beta$-CROWN \cite{crown,xu2020fast}, the winner of the last 4 VNNcomp, benefiting from branch-and-bound based methodology \cite{cutting,BaB}.
 We will thus compare mainly with $\alpha,\beta$-CROWN experiments as gold standard in the following\footnote{GCP-CROWN \cite{cutting} is slightly more accurate than $\alpha,\beta$-CROWN on the DNNs we tested, but necessitates IBM CPLEX solver, which is not available to us}.
 
 \begin{table}[t!]
 	\centering
 	\begin{tabular}{||l|c|c|c||c|c|c||}
 		\hline
-		Network & nbr & Accuracy & Upper  & $\alpha,\beta$-CROWN& $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN \\ 
+		Network & nbr & Accuracy \textcolor{red}{$^*$}  & Upper  \textcolor{red}{$^*$}& $\alpha,\beta$-CROWN& $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN \\ 
 		Perturbation & activ. &  & Bound & TO=10s & TO=30s & TO=2000s\\ \hline
 		MNIST 5$\times$100 & 500 & 99\% & 90\% & 33\% & 35\% & 40\%   \\
 		$\epsilon = 0.026$ & ReLU & &  & 6.9s &  18.9s &  1026s  \\  \hline
@@ -27,6 +27,10 @@ We will thus compare mainly with $\alpha,\beta$-CROWN experiments as gold standa
 		CIFAR ResNet &   107496  & 29\%  & 25\%  & 25\%  & 25\%  & 25\%   \\
 		$\epsilon = 8/255$ & ReLU &  &  & 2s & 2s & 2s  \\ \hline
 	\end{tabular}
+	\begin{minipage}{0.9\linewidth}
+		\footnotesize
+		\textcolor{red}{\textsuperscript{*} Accuracy means the accuracy of the network itself on test set, and Upper Bound is 100\% the percentage of unsafe examples.} \\
+	\end{minipage}
 	\caption{Images verified by $\alpha,\beta$-CROWN with different time-outs (TO) on 7 DNNs, and average runtime per image. The 6 first DNNs are complex instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.
 	\vspace{-0.5cm}}
 	\label{table_beta}

@@ -110,7 +110,7 @@ Firstly, it's important to note that weighted sums represent a linear function, 
 
 Consider the simpler abstraction, termed ``Box abstraction", recalled e.g. in \cite{deeppoly}: it inductively computes the bounds for each neuron in the subsequent layer independently. This is achieved by considering the weighted sum of the bounds from the previous layer, followed by clipping the lower bound at $\max(0,$ lower bound$)$ to represent the ReLU function, and so forth. 
 For all $i \geq 3$, define $x_i=\val_{\vx}(n_i)$, where $\vx=(x_1,x_2)$.
-Taking the DNN example from Fig \ref{fig1}, assume $x_1,x_2 \in [-1,1]$. This implies that $x_3,x_4 \in [-2,2]$. After applying the ReLU function, $\hat{x}_3,\hat{x}_4$ are constrained to $[0,2]$, leading to $x_5 \in [0,6]$ and $x_6 \in [0,2]$. 
+Taking the DNN example from Fig \ref{fig1}, assume $x_1,x_2 \in [-1,1]$. This implies that $x_3,x_4 \in [-2,2]$. After applying the ReLU function, $\hat{x}_3,\hat{x}_4$ are constrained to \textcolor{red}{$[1.5,3.5]$} , leading to $x_5 \in [0,6]$ and $x_6 \in [0,2]$. 
 The bounds for $n_1, \ldots, n_4$ are exact, meaning for every $\alpha$ within the range, an input $\vy$ can be found such that $\val_{\vy}(n_i)=\alpha$. However, this precision is lost from the next layer (beginning with $n_5, n_6$) due to potential dependencies among preceding neurons. For example, it is impossible for $x_5=\Val_{\vx}(n_5)$ to reach $6$, as it would necessitate both $x_3=2$ and $x_4=2$, which is not possible at the same time as 
 $x_3=2$ implies $x_1=x_2=1$ and $x_4=2$ implies $x_2=-1$ (and $x_1=1$), a contradiction.
 
@@ -137,7 +137,7 @@ integer (actually even binary) variable $a$ valued in $\{0,1\}$, using constants
 \label{eq11}
 \end{equation}
 
-For all $x \in [\LB,\UB] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
+For all $x \in [\LB,\UB] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous \textcolor{red}{binary variables} and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
 
 MILP instances can be linearly relaxed into LP over-abstraction, where variables originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}. We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof:
 
@@ -201,7 +201,7 @@ MILP$_X$ is an abstraction of the constraints in the full MILP model. If $X$ cov
 
 \smallskip
 
-To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach similar to the box abstraction or DeepPoly \cite{deeppoly}, computing lower and upper bounds $\LB,\UB$ for neurons $n$ of a each layer iteratively, that are used when computing values of the next layer.
+To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach similar to the box abstraction or DeepPoly \cite{deeppoly}, computing lower and upper bounds $\LB,\UB$ for neurons $n$ of \textcolor{red}{each layer} iteratively, that are used when computing values of the next layer.
 So we trade-off the NP-complexity in $|X|$ with a linear complexity in the number of neurons. Notice that all the neurons of a layer can be treated in parallel.
 
 
@@ -237,7 +237,7 @@ So we trade-off the NP-complexity in $|X|$ with a linear complexity in the numbe
 
 We provide the pseudo code for pMILP$_K$ in Algorithm \ref{algo1}.
 pMILP$_K$ has a worst case complexity bounded by $O(N \cdot \MILP(N,K))$, 
-where $N$ is the number of nodes of the DNN, and $\MILP(N,K)$ is the complexity of solving a MILP program with $K$ integer variables and $N$ linear variables.
+where $N$ is the number of nodes of the DNN, and $\MILP(N,K)$ is the complexity of solving a MILP program with $K$ \textcolor{red}{binary variables} and $N$ linear variables.
 We have $\MILP(N,K) \leq 2^K \LP(N)$ where $\LP(N)$ is the Polynomial time to solve a Linear Program with $N$ variables, $2^K$ being an upper bound. Solvers like Gurobi are quite adept and usually do not need to evaluate all $2^K$ ReLU configurations to deduce the bounds.
 It is worth mentioning that the "for" loop iterating over neurons $n$ in layer $k$ (line 2) can be executed in parallel, because the computation only depends on bounds from preceding layers, not the current layer $k$. This worst-case complexity compares favorably when $K<<N$ with the worst-case complexity of BaB which would be $O(out \times 2^N)$, where $out$ is the number of output neurons. Of course, actual complexity is always much better than the worst case, thanks to different heuristics, such as pruning, which is what happens for easy instances, for which the linear cost $N$ in pMILP (which cannot be avoided) is actually the limiting factor. Only experimental results can tell whether the accuracy lost using reduced variables in pMILP can be a good trade off vs efficiency, both depending on the number $K$ chosen.
 %This parallelization results in a time complexity of $O(\sum_{i=1}^{\ell} \MILP(N_{i-1},K))$, where $\ell$ denotes the total number of layers and $N_i$ the count of neurons in layers $0, ..., i$. 
