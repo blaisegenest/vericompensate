@@ -1,0 +1,254 @@
+\documentclass[runningheads]{llncs}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\pagestyle{plain}
+\usepackage{threeparttable}
+\input{math_commands.tex}
+%\usepackage[latin9]{inputenc}
+%\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{lineno}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{cases}
+\captionsetup{compatibility=false}
+% \usepackage{esint}
+\usepackage{array}
+\usepackage{epstopdf}
+\usepackage{placeins}
+\usepackage{pgfplots}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage{array}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usetikzlibrary{positioning, arrows.meta,calc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\vW}{\boldsymbol{W}}
+
+
+\newcommand{\val}{{\textrm{value}}}
+\newcommand{\Val}{{\textrm{value}}}
+\newcommand{\MILP}{{\textrm{MILP}}}
+\newcommand{\LP}{{\textrm{LP}}}
+\newcommand{\Improve}{\mathrm{Improve}}
+\newcommand{\Utility}{\mathrm{SAS}}
+\newcommand{\Sol}{\mathrm{Sol}}
+\newcommand{\sol}{\mathrm{sol}}
+
+\newcommand{\UB}{\mathrm{UB}}
+\newcommand{\LB}{\mathrm{LB}}
+\newcommand{\ub}{\mathrm{ub}}
+\newcommand{\lb}{\mathrm{lb}}
+\newcommand{\B}{\mathrm{B}}
+\usepackage{amsmath, amssymb, amsfonts}
+
+
+\newcommand{\ReLU}{\mathrm{ReLU}}
+
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+\newcommand{\toolname}{Hybrid MILP}
+
+
+%
+%\date{}
+
+
+\begin{document}
+	
+	\title{Solution-aware vs global ReLU selection: \\
+		partial MILP strikes back for DNN verification}
+	
+\author{Yuke Liao\inst{1}\orcidID{0009-0004-3763-686X} \and
+	Blaise Genest\inst{2,3}\orcidID{0000-0002-5758-1876} \and
+	Kuldeep S. Meel\inst{4}\orcidID{0000-0001-9423-5270}
+	\and
+	Shaan Aryaman\inst{5}\orcidID{0000-0001-7576-0766}}
+%
+\authorrunning{F. Author et al.}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{CNRS@CREATE, Singapore \email{yuke.liao@cnrsatcreate.sg} \and The corresponding author\\
+	CNRS@CREATE, Singapore \email{blaise.genest@cnrsatcreate.sg}\and
+	CNRS, France
+	\email{blaise.genest@cnrs.fr}\\
+ \and
+	University of Toronto,  Toronto, Canada \\\email{meel@cs.toronto.edu}
+	\and
+	NYU Courant Institute of Mathematical Sciences, New York, USA\\ \email{aryaman.shaan@gmail.com}}
+%
+\maketitle              % typeset the header of the contribution
+%
+	
+	
+	\linenumbers
+	\begin{abstract}
+		Branch and Bound (BaB) is considered as the most efficient technique for DNN verification: it can propagate bounds over numerous branches, 
+		to accurately approximate values a given neuron can take even in large DNNs, enabling formal verification of properties such as local robustness. Nevertheless, the number of branches grows {\em exponentially} with important variables, and there are complex instances for which the number of branches is too large to handle even using BaB. In these cases, providing more time to BaB is not efficient, as the number of branches treated is {\em linear} with the time-out. Such cases arise with verification-agnostic DNNs, non-local properties (e.g. global robustness, computing Lipschitz bound), etc. 
+		%The fact that pure BaB is not that efficient for e.g. verification-agnostic (even very small) DNNs has been witnessed before. The workaround, e.g. in {\em refined} $\alpha,\beta$-CROWN, was to precompute very accurate bounds for the first few neurons of the DNN using a complete full MILP encoding. Non-surprisingly, this very slow technique does not scale but to small DNNs.
+		%Indeed, one of its implementation, $\alpha,\beta$-CROWN has won the last 4 VNNcomp(etitions), as the DNN verifier with the best trade-off between accuracy and runtime. 
+		%VNNcomp however is focusing on relatively easy verification problems.
+				
+        To handle complex instances, we revisit a divide-and-conquer approach to break down the complexity: instead of few complex BaB calls, we rely on many small {\em partial} MILP calls. The crucial step is to select very few but very important ReLUs to treat using (costly) binary variables. The previous attempts were suboptimal in that respect. To select these important ReLU variables, we propose a novel {\em solution-aware} ReLU scoring ({\sf SAS}), as well as adapt the BaB-SR and BaB-FSB branching functions as {\em global} ReLU scoring ({\sf GS}) functions. 
+		We compare them theoretically as well as experimentally, and {\sf SAS} is more efficient at selecting a set of variables to open using binary variables.
+		%, while GS is more efficient at {\em ordering} this selection.
+		%Surprisingly perhaps, the most accurate solution (SAS) for {\em selecting} ReLUs to treat as binary variables is different from the most efficient solution (GS) to {\em branch} within this selection. 
+		Compared with previous attempts, SAS reduces the number of binary variables by around 6 times, while maintaining the same level of accuracy. Implemented in {\em Hybrid MILP}, calling first $\alpha,\beta$-CROWN with a short time-out to solve easier instances, and then partial MILP, produces a very accurate yet efficient verifier, reducing by up to $40\%$ the number of undecided instances to low levels ($8-15\%$), while keeping a reasonable runtime ($46s-417s$ on average per instance), 
+		even for fairly large CNNs with 2 million parameters.
+
+		%a novel Utility function that selects few neurons to be encoded with accurate but costly integer variables in a {\em partial MILP} problem. The novelty resides in the use of the solution of {\em one} (efficient LP) solver to accurately compute a selection $\varepsilon$-optimal for a given input.
+		%This allows us to carefully craft a {\em partial MILP} solution which selects automatically few neurons encoded as integer variables, the rest using the LP relaxation. 
+		
+	\end{abstract}
+	
+
+\section{Introduction}
+
+
+
+
+
+
+\input{introduction}
+%
+\input{relatedwork}
+
+\section{Notations and Preliminaries}
+
+In this paper, we will use lower case latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
+capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
+To simplify the notations, we restrict the presentation to feed-forward, 
+fully connected ReLU Deep Neural Networks (DNN for short), where the ReLU function is $\ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
+$\ReLU(x)=x$ for $x \geq 0$ and $\ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
+
+%In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
+
+%\subsection{Neural Network and Verification}
+
+
+% testtesttesttest
+An $\ell$-layer DNN is provided by $\ell$ weight matrices 
+$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
+and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
+We call $d_i$ the number of neurons of hidden layer $i \in \{1, \ldots, \ell-1\}$,
+$d_0$ the input dimension, and $d_\ell$ the output dimension.
+
+Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
+denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
+\begin{align}
+	\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i \qquad \, \qquad
+	\hat{\boldsymbol{z}}^{i} = \ReLU({\boldsymbol{z}}^i).
+\end{align} 
+
+The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
+$\boldsymbol{z}$ is called pre-activation values, 
+and $\boldsymbol{z}^{i}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
+For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, pre- and post-activation neurons are called \emph{nodes}, and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$. 
+%A path $\pi$ is a sequence $\pi=(a_i)_{k \leq  i \leq k'}$ of neurons in consecutive layers, and the weight of $\pi$ is 
+%$weight(\pi)=W_{a_k,a_{k+1}} \times \cdots \times  W_{a_{k'-1},a_{k'}}$.
+
+
+
+\iffalse
+and the $i$-th hidden layer is a vector in $\mathbb{R}^{d_i}$, 
+and the output layer is a vector in $\mathbb{R}^{d'}$ or a scale. 
+The weights, bias and activation functions decide propagate the from previous to the next layer. In formula, from layer $l_{i-1}$ to layer $l_{i}$, the weight 
+$\boldsymbol{W}^i$ is matrix of $d_i\times d_{i-1}$, 
+the bias is a vector $\vb^i$ in $\mathbb{R}^{d_i}$, and the activation function 
+is $\sigma$, then  if the $i-1$-th layer is $\hat{\boldsymbol{z}}^{(i-1)}$, 
+then the value of $i$-th layer is computed by: 
+\begin{align*}
+	{\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ \vb^i\\
+	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)).
+\end{align*} The vector $\hat{\boldsymbol{z}}$ is called post-activation values, and $\boldsymbol{z}$ is called pre-activation values, and $\boldsymbol{z}^{(i)}_j$ is used to call the $j$-th neuron in the $i$-th layer. In our style, we also call neurons \emph{nodes} and use $a,b,c,d$ to denote them. We use $W_{ab}$ to denote the weight from neuron $b$ to $a$. We use $\boldsymbol{x}$ to denote the vector of input and  $f(\boldsymbol{x})$ to denote the output.
+\fi
+
+\medskip
+
+Concerning the verification problem, we focus on the well studied local-robustness question. Local robustness asks to determine whether the output of a neural network will be affected under small perturbations to the input. 
+Formally, for an input $\vx$ perturbed by $\varepsilon >0$ under distance $d$, then the DNN is locally $\varepsilon$-robust in $\vx$ whenever:
+
+	\begin{align}
+	\forall \boldsymbol{x'} \text{ s.t. } d(\vx,\vx')\leq \varepsilon, \text{ we have }  
+	{argmax (f(\boldsymbol{x'})) = argmax(f(\boldsymbol{x}))}
+\end{align} 
+
+
+\iffalse
+In some cases, the output is a vector but the aim to get the label of dimension with the minimal value. In this case, the problem can be written as:\begin{align*}
+	\forall \boldsymbol{x} \in\mathcal{D} \  \min f(\boldsymbol{x}) = \min f(\boldsymbol{x}_0)
+\end{align*}
+
+If so, the question of verification can turn to the following optimization question: \begin{align*}
+	\min f(\boldsymbol{x}) \ s.t. {\boldsymbol{z}}^{i} &= \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{(i-1)}+ b^i\\
+	\hat{\boldsymbol{z}}^{i}(n) &= \sigma({\boldsymbol{z}}^i(n)), \boldsymbol{x}\in\mathcal{D}.
+\end{align*}
+
+In this paper, we only consider $\ReLU$ function as the activation function: $\sigma(a)=\ReLU(a)=\max(0,a)$. 
+
+In this paper, we consider $L^{\infty}$ norm the max value of distance of each dimension, that is $d(\vx,\boldsymbol{x}_0)=\max |\boldsymbol{x}(n)-\boldsymbol{x}_0(n)|$. 
+\fi
+
+
+\input{valabstraction} 
+
+
+\input{Comparison}
+
+
+\input{formula}
+
+
+\input{experiments}
+%\input{Lipschitz}
+
+
+
+
+\section{Conclusion}
+In this paper, we developed a novel solution-aware scoring ({\sf SAS}) function to select few ReLU nodes to consider with binary variables to compute accurately bounds in DNNs. 
+The solution awareness allows SAS to compute an accurate score for each ReLU, which enables partial MILP to be very efficient, necessitating $\approx6$x less binary variables than previous proposals \cite{DivideAndSlide} for the same accuracy, and $\approx2$x less than {\sf GS} scoring adapted from FSB \cite{FSB}. As the worst-case complexity is exponential in the number of binary variables, this has large implication in terms of scalability to larger DNNs, making it possible to verify accurately quite large DNNs such as CNN-B-Adv with 2M parameters. 
+
+While $\alpha,\beta$-CROWN is known to be extremely efficient to solve easier verification instances, we exhibit many cases (complex instances) where its worst-case exponential complexity in the number of ReLUs is tangible, with unfavorable scaling (Table \ref{table_beta}). Resorting to Hybrid MILP, a divide-and-conquer approach \cite{DivideAndSlide}, revisited thanks to the very efficient {\sf SAS}, revealed to be a much better trade-off than augmenting $\alpha,\beta$-CROWN time-outs, with $8\%$ to $40\%$ less undecided images at ISO runtime. Currently, for hard instances, there is no alternative to partial MILP, other methods being $>10$ times slower.
+
+This opens up interesting future research directions, to verify global \cite{lipshitz}, \cite{sensing} rather than local (robustness) properties, which need very accurate methodology
+and give rise to hard instances as the range of each neuron is no more local to a narrow neighborhood (and thus almost all ReLUs are unstable, with both modes possible).
+
+
+%Last, we adapted BaB-SR \cite{BaB} and FSB \cite{FSB} as global scoring (GS) functions. 
+%We compared GS with SAS both theoretically and experimentally with solution-aware scoring: While GS are not as efficient as SAS for ReLU {\em selection} (2x more binary variables needed), GS functions generate {\em static order} more adapted to every branch of a BaB process. 
+
+%{\bf Reproducibility Statement:} We tested twice outlier results to confirm them, making sure of reproducibility on the given hardware. Precise details on the settings used are provided in the appendix. Additional results {\color{blue}(e.g. ablation studies)} are also provided in the appendix. Tested DNNs as well as MNIST and CIFAR10 DataSet are freely available. The source code of Hybrid MILP will be provided on GitHub after acceptance (needing Gurobi as well as $\alpha,\beta$-CROWN).
+
+
+
+\newpage
+
+
+\bibliography{references}
+\bibliographystyle{plain}
+
+
+\bigskip
+
+\appendix
+
+\input{proofsb}
+
+\end{document}
+
+

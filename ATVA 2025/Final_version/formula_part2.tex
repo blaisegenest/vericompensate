@@ -1,0 +1,52 @@
+\section{Three or More Layer before  $z$.}
+
+
+
+Suppose $a$ is a neuron in three or more layers before $z$, we use $b$ to denote neurons in the next layer after $a$ and $c$ to denote neurons in two layers after $a$ and so on.
+
+This formula is based on previous subsection but more complex. In some network, running this formula may cost too much time. 
+
+
+\begin{definition}\label{3layer}
+Let $\UB$ and $\LB$ denote the precomputed upper bounds and lower bounds used in building MILP models. We define the following function $h$ for all neurons $b$ in layers between $a$ and $z$ as follows:
+	\begin{align}
+		&v_0 = sol(\hat{b}), v_1 = \ReLU(sol(b)), v_2 = \frac{\UB(b)sol(b)-\UB(b)\LB(b)}{\UB(b)-\LB(b)}\\
+		&h(b) =
+		\begin{cases}
+			\frac{v_0-v_1}{v_2-v_1}, & \text{if } v_2-v_1 > 0\\
+			0.5, & \text{otherwise.}
+		\end{cases}
+	\end{align} 
+\end{definition} 
+
+\begin{definition}
+	Continue the assumption in Definition \ref{3layer}. We define function $D$ layer by layer.
+	
+	First, $D(a) = \ReLU(sol(a))-sol(\hat{a})$.
+	
+Next we define all neurons $b$ in one layer after $a$: \begin{align}
+	&u_0 = \max(\LB(b),\min(\UB(b),  sol(b)+D(a)W_{ab}))\\
+	&u_1 = \begin{cases}
+		\ReLU(u_0)+h(b)(\frac{\UB(c)u_0-\UB(b)\LB(b)}{\UB(b)-\LB(b)}-\ReLU(u_0)), & \text{if }\LB(b) < 0\\
+	u_0, & \text{if }  \LB(b) \geq 0
+	\end{cases}\\
+	&D(b) = u_1-sol(\hat{b})
+\end{align}
+	
+	Suppose $y$ is a neuron in at least one layer before $z$, and we have defined $D(x)$ for all neurons $x$ in layers before $y$, we define $D(y)$ as follows:
+	\begin{align}
+		&w_0 = \sum_x D(x)W_{xy}\\
+		&w_1 = \min(\UB(y),sol(y)+w_0)\\		
+		&D(y) =
+		\begin{cases}
+			w_1-sol({y}), & \text{if }W_{yz} > 0 \text{ and } \LB(y)\geq 0\\
+		k(y)(w_1-sol({y})), & \text{if }W_{yz} > 0 \text{ and } \LB(y)< 0\\
+		\ReLU(w_1)-sol(\hat{y})	, & \text{if }  W_{yz} < 0
+		\end{cases}\\
+	\end{align}	Finally, 	\begin{align*}
+	&D(z) = \sum_y D(y)W_{yz}\\
+	&Utility\_max^z(a) = -D(z)
+	\end{align*}
+	
+\end{definition}
+		

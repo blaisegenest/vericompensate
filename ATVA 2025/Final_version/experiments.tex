@@ -1,0 +1,616 @@
+\section{Experimental Evaluation}
+
+\begin{figure}[b!]
+	\centering
+	\vspace*{-0.3cm}
+	\includegraphics[height=7cm]{CNN-B-ADV_layer7_comparison_image85.png}.
+	\vspace*{-0.4cm}
+	\caption{Average uncertainty of pMILP for neurons of the fourth layer of CNN-B-Adv, 
+	when selecting between 0 and 30 ReLUs with different scoring functions.}
+	\label{fig_table3}
+\end{figure}
+
+
+%
+We implemented \toolname\ in Python 3.8: it first calls $\alpha,\beta$-CROWN with small time out (10s for small and 30s for larger DNNs), and then call pMILP on the undecided inputs.
+Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD Threadripper 7970X  ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. The  objectives of our evaluation was to answer the following  questions:
+\vspace{-0.1cm}
+
+\begin{enumerate}
+	\item How does the the choice of the set $X$ impacts the accuracy of $\MILP_X$? 
+	\item How accurate is Hybrid MILP, and how efficient is it?
+\end{enumerate}
+
+
+\subsection{Comparison between different scoring functions (accuracy).}
+
+%The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes,  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
+%First, we measured the distance between SAS or GS and real improvement for all nodes in the first two layers of $5 \times 100$ wrt the accuracy of nodes in the third layer. On average, the distance using GS is 4 times larger than using SAS.
+
+%Then, 
+To measure the impact of the scoring function to select neurons to open, 
+we considered the complex CNN-B-Adv, which has 16634 nodes. 
+We tested over the $\vx=85$th image in the CIFAR-10 dataset.
+To measure the accuracy, we measure the uncertainty of all nodes in the 4th layer:
+the uncertainty of a node is the range between its computed lower and upper bound. 
+We then average the uncertainty among all the nodes of the layer.
+Formally, the uncertainty of a node $a$ with bounds $[\LB,\UB]$ is uncert$(a) = \UB(a) - \LB(a)$. The average uncertainty of layer $\ell$ is 
+$\dfrac{\sum_{a\in l} \text{uncert}(a)}{size(\ell)}.$
+
+
+
+
+
+%KSM: I don't think this is really the place for the paragraph below
+% Let $c$ be a node of the second layer.
+%A compensating pair $(\pi,\pi')$ of paths with target $c$ is thus of the form a node $a b c$ and $a b' c$, with $a$ an input node and $b,b'$ on the first layer. The compensating strength for $(b,b')$ is defined as $comp(b,b')=\sum_a \val_{\vx}(a) \min(weight(abc),weight(ab'c))$. Indeed, the pair $(a b c,a b' c)$ of path cannot compensate more than $\val_{\vx}(a) \min(weight(a,b,c),$\newline $weight(a,b',c))$, and $b,b'$ would help compensated the set of pairs of paths $\{(a b c,a b' c) \mid a$ is in the first layer$\}$. After selecting the heaviest $(b_0,b_0')$, we can then compute $comp(b)= \sum_{b' \text{already selected}} comp(b,b')+comp(b',b)$ and select iteratively the heaviest $b$'s one by one till reaching the threshold. 
+%We do this for all node $c$ of the second layer.
+
+\iffalse
+
+\subsubsection*{ReLU Node in the first hidden layer}
+
+
+We first focus on the choice of nodes in the first hidden layer, and its consequences on the accuracy of nodes in the second layer. 
+We report in Table \ref{tab:example0} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly. The range of uncertainty created by inacurate computations is up to $1.17=2.22-1.05$, $2.22$ being the accuracy provided by LP, and $1.05$ by an exact MILP encoding of all the unstable ReLU nodes. Selecting $30$ out of the $61$ unstable ReLU nodes, the uncertainty created by inacurracies is reduced by $80\%$, while a random choice of nodes only leads up to roughly halving this number. We can deduce that selecting nodes based on compensating strength helps to select important ReLU nodes for the accuracy.
+
+
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c||c|c|}
+		\hline
+		\text{Number $K$ of nodes in $Z$}  &  \text{Compensate strength} & \text{Random Choice}  \\ \hline
+		\hline
+		0  &  2.22 & 2.22  \\ \hline
+		10  &  1.84 & 2.03  \\ \hline
+		20  &  1.50 & 1.82  \\ \hline
+		30  &  1.28 & 1.62  \\ \hline
+		40  &  1.14 & 1.44  \\ \hline
+		50  &  1.06 & 1.23  \\ \hline
+		61 (max) & 1.05 &  1.05 \\ \hline
+	\end{tabular}
+	\caption{Average uncertainty of $\MILP_Z$ for nodes of the second layer, for $Z$ with $K$ ReLU nodes of the first layer (compensating strength vs random choice).}
+	\label{tab:example0}
+	%\vspace{-0.8cm}
+\end{table}
+
+
+
+
+\subsubsection*{ReLU Node in the first and second hidden layer}
+\fi
+
+
+%We focus on the uncertainty of nodes in the third layers, wrt ReLU nodes in the first and second layer. The bounds for nodes of the first two layers are computed exactly using the full MILP encoding. 
+We report in Figure \ref{fig_table3} the average uncertainty of $\MILP_X$ following the 
+choice of the $K$ heaviest neurons of {\sf SAS}, compared with a random choice, with Huang \cite{DivideAndSlide}, based on strength$(n) = (\UB(n)-\LB(n))\cdot |W_{nz}|$, and with {\sf GS} (here, $s_{FSB}$).
+
+
+
+\iffalse
+\begin{table}[h!]	
+	\centering
+	\begin{tabular}{|c||c|c|c||c|c|c|}
+		\hline
+			&\multicolumn{3}{c||}{$X \subseteq$ Layer 2, max $=55$}&\multicolumn{3}{c|}{$X \subseteq$ Layers 1\&2, max $=116$}\\\cline{2-7}
+		\text{$|X|$}  & \text{Random} & Huang & \bf Utility& \text{Random} &BSR &\bf Utility\\ \hline
+		\hline
+		0  (LP) &   1.761  &1.761& 1.761 & 1.761  &  1.761& 1.761\\ \hline \hline
+		5  &   1.729&1.704 & 1.603&  1.729& 1.7138 &  \bf 1.532 \\ \hline
+		10  &  1.701 &  1.651 &1.517& 1.696 & 1.6775& \bf  1.371\\ \hline
+		15  & 1.671 &  1.599 &1.466&  1.653& 1.6392& \bf  1.247\\ \hline
+		20  &  1.635 & 1.557&1.438 & 1.619 &1.5938 & \bf  1.145\\ \hline
+		25  &  1.601 & 1.519 &1.427&  1.586 &1.5534 & \bf 1.061\\ \hline
+		30  & 1.574 & 1.489 &1.425& 1.546 & 1.5166& \bf  0.989 \\ \hline
+		35  &  1.542 & 1.465&1.424 & 1.502 & 1.4788 & \bf 0.934 \\ \hline
+		40  & 1.512 & 1.447 &1.424& 1.469 & 1.4395& \bf 0.921 \\ \hline \hline
+		max & 1.424  &1.424& 1.424 & 0.895 & 0.895 & 0.895   \\ \hline
+	\end{tabular}
+	\caption{Average uncertainty of $\MILP_X$ for nodes of the third layer, for $X$ with $K$ ReLU nodes of the (1st and) 2nd layer, chosen by our {\bf Utility} function vs \cite{ DivideAndSlide} vs random choice.}
+	\label{tab:example1}
+	%\vspace{-0.6cm}
+\end{table}
+\fi
+
+
+Overall, {\sf SAS} is more accurate than GS, more accurate than Huang, more accurate than random choice of variables. {\sf SAS} significantly outperforms other solutions, 
+with 2 times less binary variables for the same accuracy (10 vs 22) vs {\sf GS} and 6 times vs Huang \cite{DivideAndSlide} (4 vs 24).
+Each node of the 4th layer displays a similar pattern, and the pattern is similar for different images (see appendix).
+
+\smallskip
+
+Gurobi relies on a BaB procedure to compute bounds. We report in Table \ref{table.order} experiments on changing the ordering on variables in Gurobi, when the selection of ReLUs is fixed by {\sf SAS} on CNN-B-Adv Image 85. We compared 
+the standard Gurobi ordering of variables, which is adaptative in each branch, 
+with the static order provided by {\sf SAS}, as well as the static order provided by GS, wrt runtime at a fixed accuracy (we report the {\em distance} to verify the image).
+
+
+
+
+
+\begin{table}[t!]	
+	\centering
+	\caption{Comparison of different orderings with selection of ReLUs by {\sf SAS}.
+	}
+	\label{table.order}
+	\begin{tabular}{|c||c c|c c|c c|c c|}
+		\hline
+		  Image 85& \multicolumn{2}{c|}{45 open ReLUs} & \multicolumn{2}{c|}{50 open ReLUs} 
+		  & \multicolumn{2}{c|}{55 open ReLUs} & \multicolumn{2}{c|}{60 open ReLUs}\\ 
+		 order & distance & time & distance & time & distance & time & distance & time \\
+		\hline \hline
+		Gurobi & 0.384 & 252s & 0.368&265s  &0.342 & 287s& 0.315  & 306s  \\ 
+		{\sf SAS} (static) & 0.384 & 448s & 0.368&759s  &0.365 &971s & 0.355  & 971s \\
+		{\sf GS} (static) & 0.384 & {\bf 251s} &0.368 &{\bf 253s}  & 0.342 &{\bf 270s} & 0.315 & {\bf 281s} \\ \hline
+	\end{tabular}
+		\vspace{-0.6cm}
+\end{table}
+
+{\sf SAS} ordering is particularly counter-productive because it is accurate only for one branch (the most complicated one), whereas Gurobi can adapt the order to each branch.
+However, the GS {\em ordering} (with the {\sf SAS} {\em selection}) is better as it is general and not local to a solution, with better runtime than Gurobi, despite its staticness whereas Gurobi order is adaptative.
+% Using SAS order for the solution branch, and GS ordering for other branches should be more efficient, but we cannot experiment that within the closed-source Gurobi solver.
+
+\iffalse
+Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
+also choosing nodes in layer $1$. When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. 
+Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier because the trade-off of accuracy vs evaluating the compensating strength of such paths is unclear.
+
+{\color{red} We report in Table \ref{tab:example1} the average uncertainty of $\MILP_Z$ following the choice of the $K$ heaviest compensating ReLU nodes in $Z$, vs choosing $K$ nodes randomly from layers $1$ and $2$. 
+	Moreover, we also compare choosing nodes in the second layer only (using method in paper \cite{ DivideAndSlide}) with choosing nodes in both the first and second layer.
+	
+	
+		The method in paper \cite{ DivideAndSlide} use a formula to value different nodes in a layer, and then choose nodes by their values. We can use the same formula in this comparison experiments. Because we only have $\ReLU$ function, that formula can be simplified to: $$V(n) = (UB(n)-LB(n))\cdot W_{nm}.$$ In this formula, $m$ is the target node, and $n$ is one of source nodes in one layer before. We sort all nodes $n$ by their $V(n)$ values, and choose the nodes with larger values. 
+	
+	
+	
+	Choosing ReLU nodes in the previous layer (layer $2$) only is less accurate than 
+	also choosing nodes in layer $1$. 	When picking in both layer $1$ and $2$, choosing $50$ out of $116$ unstable ReLU nodes allows to reduce by $90\%$ the average uncertainty due to inaccurate computations ($0.059$ vs $0.574$), while it only reduces the uncertainty by $65\%$ when choosing nodes randomly. Notice that applying this layer after layer will even further reduce uncertainty created by accumulation of inaccuracies. 
+	Last, we did not experiment for selecting ReLU nodes in 3+ layers earlier because the trade-off of accuracy vs evaluating the compensating strength of such paths is unclear. 
+	
+}
+\fi
+
+
+
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+
+
+
+\subsection{Comparison with MILP (time and accuracy)}
+
+Restricting the set $X$ of open ReLU nodes potentially hurts accuracy. 
+Another strategy could be to still compute inductively accurate bounds for each nodes,
+replacing pMILP ({\sf SAS, GS}, etc.) with a full MILP model, and stopping it early after some fixed time-out (100s,250s, $\ldots$, 2000s).
+
+We evaluate in Figure \ref{fig555} the full MILP and different pMILP models on the output layer of CNN-B-Adv. The bounds for hidden layers have been computed with the same {\sf SAS} method.
+We compare the {\em distance to verify} the same Image 85, specifically the lower bound of an output neuron, the furthest away from verification.
+%(the local robustness objective asks the difference between the value of the output neuron corresponding to the correct class and the value of any other output neuron to be positive). 
+The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is considered rather than an average over neurons.
+
+\begin{figure}[t!]
+	\hspace*{-0.8cm}
+	\includegraphics[scale=0.5]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
+	\caption{Distance to verify vs runtime: comparison between {\sf SAS}, GS, full MILP and Huang's method for different number of opened ReLUs / time-outs.}
+	\label{fig555}
+\end{figure}
+
+{\sf SAS} (even {\sf GS}$=s_{FSB}$) is much more accurate than full MILP for every reasonable time-outs considered, with $>10$ times fastest runtime at better accuracy. The reason is that even the advanced MILP solver Gurobi struggles to sort out all ReLUs. It is thus particulary important to have accurate scoring functions as {\sf SAS}, in order to optimize both accuracy and runtime. Huang \cite{DivideAndSlide} is limited in ReLUs in the previous layer, reason why it is stuck at relatively poor accuracy. The accuracy/runtime curve from {\sf GS} is closer to {\sf SAS} than the number of nodes / accuracy curve of Fig. \ref{fig_table3}. This is because many ReLU nodes deemed important by {\sf GS} are not relevant for accuracy, but they are also not penalizing runtime. Still, {\sf SAS} is faster than {\sf GS} at  every accuracy. Importantly, {\sf SAS} is more deterministic in its runtime given a number of ReLU nodes, with half the variance in runtime over different output neurons compared with {\sf GS} for similar accuracy (see table \ref{SAS_GS_similarTO} in Appendix), which helps setting a number of ReLU nodes to open.
+
+
+
+
+%	\begin{tabular}{|c|c|c|c|c|}
+%	\hline
+%	NodeID & $\UB$ by SAS& Time cost & $\UB$ by GS  & Time cost \\
+%	\hline
+%	0 & -1.4684063 & 66.9 & -1.3804709 & 71.6 \\
+%	\hline
+%	2 & -4.5550154 & 54.8 & -4.5424599 & 84.9 \\
+%	\hline
+%	3 & -4.4795618 & 69.9 & -4.4459532 & 71.2 \\
+%	\hline
+%	4 & -3.4594076 & 88.8 & -3.4784499 & 113 \\
+%	\hline
+%	5 & -5.5981178 & 94.8 & -5.6955818 & 93.7 \\
+%	\hline
+%	6 & -3.0597499 & 63.3 & -2.9797569 & 68.5 \\
+%	\hline
+%	7 & -4.1742691 & 73.4 & -4.0842553 & 88.6 \\
+%	\hline
+%	8 & 0.63875415 & 56.7 & 0.72631579 & 46.5 \\
+%	\hline
+%	9 & -2.3270878 & 64.6 & -2.2841141 & 69.4 \\
+%	\hline
+%	Average & -3.1647624
+%	& 70.3
+%	& -3.129414017 & 78.6
+%	\\
+%	\hline
+%	Variance & 
+%	& 184
+%	&  & 359
+%	\\
+%	\hline
+%\end{tabular}
+
+
+
+
+
+
+
+\subsection{Comparison with $\alpha,\beta$-CROWN}
+
+To assess the verification efficiency and runtime vs $\alpha,\beta$-CROWN, we 
+conducted evaluations  on neural networks tested in \cite{crown} which are mostly {\em complex} to verify (as easy instances are already appropriately taken care of). Namely, 6 ReLU-DNNs: 5 MNIST DNN that can be found in the \href{https://github.com/eth-sri/eran}{ERAN GitHub} 
+(the 4th to the 8th DNNs provided) as well as 1 CIFAR CNN from 
+\cite{AdversarialTrainingAndProvableDefenses}, see also \cite{SDPFI}, 
+which can be downloaded from the \href{https://github.com/Verified-Intelligence/alpha-beta-CROWN}{$\alpha,\beta$-CROWN GitHub}. 
+We commit to the same $\epsilon$ settings as in \cite{crown}, that are recalled in Table \ref{table_beta}. 
+For reference, we also report an easy but very large ResNet Network for CIFAR10, already tested with $\alpha,\beta$ CROWN. 
+We report in Table \ref{table_hybrid} the $\%$ of undecided images, that is the $\%$ of images than can be neither falsified (by $\alpha,\beta$-CROWN) nor verified by the tested verifier, among the 100 first images for each MNIST or CIFAR10 benchmark. 
+The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta} and \ref{table_hybrid}.
+
+
+\iffalse
+\textcolor{red}{The number of open nodes we considered for the 5 F(ully)C(onnected)NNs depend neither on the image nor on the particular FCNN, only on the depth of the layer, because the runtime depends crucially on this factor. For FCNNs, we use a simple /2 rule between the number of open nodes of layer+1 vs layer (except last layer=14). For other architectures, we set the number of nodes to obtain similar runtime per layer, by testing a couple of neurons per layer, and use it for all images. MNIST FCNN networks use the same open numbers sequence for all images, based on layer depth. CIFAR ConvolutionalNN uses another sequence (the same for all images) [AppendixA, Table6 p22].}
+\fi 
+
+\begin{table}[t!]
+	\centering
+		\caption{Undecided images ($\%$, {\em lower is better}) as computed by $\alpha,\beta$-CROWN, Refined $\beta$-CROWN and Hybrid MILP on 7 DNNs (average runtime per image). The 6 first DNNs are hard instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify), provided for reference.
+	}
+	\label{table_hybrid}
+	\begin{tabular}{||l||c|c|c||c||c||}
+		\hline \hline
+		 & $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN & Refined & \bf Hybrid \\ 
+		 Network & TO=10s & TO=30s & TO=2000s & $\beta$-CROWN & \bf MILP \\ 
+		\hline
+		MNIST 5$\times$100 & 57\% (6.9s) & 55\% (18.9s) & 50\% (1026s) & 13\% 
+		(92s) & 13\% \bf (46s) \\ \hline
+		MNIST 5$\times$200 & 50\% (6.5s) & 47\% (17s) & 46\% (930s) & 9\% (80s) & \bf 8\% (71s) \\ \hline
+		MNIST 8$\times$100 & 63\% (7.2s) & 58\% (20s) & 58\% (1163s) & 21\% (102s) & \bf 15\% (61s) \\ \hline
+		MNIST 8$\times$200 & 56\% (6.8s) & 55\% (18s) & 54\% (1083s) & 16\% (83s) & \bf 8\% (78s) \\ \hline
+		MNIST 6$\times$500 & 53\% (6.4s) & 51\% (16s) & 50\% (1002s) & $-$ & 
+		\bf 10\% (402s) \\ \hline
+		CIFAR CNN-B-Adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & $-$ & \bf 11\% (417s) \\ \hline \hline
+		CIFAR ResNet & 0\% (2s) & 0\% (2s) & 0\% (2s) & $-$ & 0\% (2s) \\ \hline \hline
+	\end{tabular}
+	\vspace*{-0.7cm}
+	\end{table}
+
+
+{\em Analysis}: overall, Hybrid MILP is very accurate, only leaving $8\%$-$15\%$ of images undecided, with runtime taking less than $500s$ in average per image, and even 10 times less on smaller DNNs. It can scale up to quite large hard DNNs, such as CNN-B-Adv with 2M parameters.
+
+Compared with $\alpha,\beta$-CROWN: on easy instances, Hybrid MILP is virtually similar to $\alpha,\beta$-CROWN (e.g. even on the very large ResNet), since Hybrid MILP calls first $\alpha,\beta$-CROWN as it is very efficient for easy instances.
+
+On hard instances (the 6 first DNNs tested), compared with $\alpha,\beta$-CROWN with a time-out of TO=2000s, Hybrid MILP is much more accurate, with a reduction of undecided images by $9\%-43\%$. It is also from 20x faster on smaller networks to similar time on the largest DNN. Compared with $\alpha,\beta$-CROWN with a time-out of TO=30s, the accuracy gap is even larger (e.g. $11\%$ for CNN-B-Adv, i.e. half the undecided images), although the average runtime is also obviously larger (solving hard instances takes longer than solving easy instances).
+
+Last, compared with {\em Refined} $\beta$-CROWN, we can observe three patterns: on the shallowest DNNs (5$\times$100, 5$\times$200), Refined $\beta$-CROWN can run full MILP on almost all nodes, reaching almost the same accuracy than  Hybrid MILP, but with longer runtime (up to 2 times on 5$\times$100). As size of DNNs grows (8$\times$100, 8$\times$200), full MILP invoked by Refined $\beta$-CROWN can only be run on a fraction of the neurons, and the accuracy is not as good as Hybrid MILP, with $6\%-8\%$ more undecided images (that is double on 8$\times$200), while having longer runtime. Last but not least, Refined $\beta$-CROWN cannot scale to larger instances (6$\times$500, CNN-B-Adv), while Hybrid MILP can.
+
+
+
+
+
+\subsection{Comparison with other Verifiers}
+
+We voluntarily limited the comparison so far to $\alpha,\beta$-CROWN because it is one of the most efficient verifier to date, which allowed us to consider a spectrum of parameters to understand $\alpha,\beta$-CROWN scaling without too much clutter.
+
+Interestingly, GCP-CROWN \cite{cutting} is slightly more accurate than $\alpha,\beta$-CROWN on the DNNs we tested, but necessitates IBM CPLEX solver, which is not available to us.
+We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cutting}, experimenting with different verifiers on the most interesting CIFAR CNN-B-Adv. Notice that results are not exactly comparable with ours because the testing images are not the same (ours has $62\%$ upper bound while \cite{cutting} has $65\%$ upper bound, so the image set in \cite{cutting} are slightly easier). There, GCP-CROWN is $2\%$ more accurate (with higher runtime) than $\alpha,\beta$-CROWN with 90s TO, so we can deduce that Hybrid MILP, which is $9\%$ more accurate than $\alpha,\beta$-CROWN with 2000s TO, is significantly more accurate than GCP-CROWN.
+
+
+
+%\textcolor{red}{We did run and reported other tools as best as we could (see also appendixC (Table11...)). Reporting *some* experimental numbers from other papers (Figure5) is standard in the DNN verification community (eg [26]).}
+
+\begin{table}[t!]
+	\vspace{-0.1cm}
+	\centering
+		\caption{Images verified by different verifiers ($\%$, higher is better) on CIFAR CNN-B-Adv. Results, from \cite{cutting}, are not fully comparable with Tables \ref{table_beta},\ref{table_hybrid}.}
+	\label{table_gcp}
+	\begin{tabular}{||c||c|c|c|c|c||}
+		\hline
+		Upper Bound & SDP-FO & PRIMA & refined $\beta$-CROWN & $\beta$-CROWN & GCP-CROWN \\  \hline
+		65\% & 32.8\% & 38\% & 27\% & 46.5\% & 48.5\% \\
+		$\epsilon = 2/255$ & $>25$h & $344$s & $361$s & $32$s &  $58$s  \\  \hline
+	\end{tabular}
+	\vspace{-0.6cm}
+\end{table}
+
+
+Results on other networks from other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported \cite{crown} on other tested DNNs, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on complex (even small) instances. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em complex} MNIST DNNs at several time-out settings. Last, Pyrat \cite{pyrat} (2\textcolor{red}{nd} in the latest VNNComp) is not open source, which made running it impossible. Details can be found in the appendix. Also, ablation studies showing what each feature of Hybrid MILP is bringing can be found in the appendix.
+
+
+
+\iffalse
+\subsection{Finer Grain evaluation of Accuracy}
+
+\begin{figure}[b!]
+	\begin{centering}
+\includegraphics[scale=0.6]{epsilon.png}.
+\caption{$\epsilon$-robustness proved after $10 000s$ for $6 \times 500$ for the 20 first images.}
+\label{fig2}
+	\end{centering}
+\end{figure}
+
+In order to evaluate the accuracy of Hybrid MILP in a finer way, showcasing 
+the capabilities to have a very accurate and efficient verifier, we consider
+a quantitative questions for each image, rather than a pure yes (verified)/ no (not verified) question. Namely, we compute the $\epsilon$ for which the verifier can certify local-robustness around a given image, which makes sense as there is little rationale in setting a particular $\epsilon$ (which is however the usual local-robustness setting).
+
+For that, we considered the challenging DNN MNIST $6 \times 500$, and the 20 first images from the MNIST benchmark. We first run the attack from $\alpha,\beta$-CROWN for varying $\epsilon$, using a binary search, to set up an upper bound on $\epsilon$ (the initialization is $\epsilon \in [0,1]$).
+Then we run binary search with a global time-out of $10 000s$, initialized from $0$ to this upper bound, where each call is either to $\alpha,\beta$-CROWN with TO=2000s, or Hybrid MILP.
+We report the results (upper bound, best bound verified by $\alpha,\beta$-CROWN and by Hybrid MILP) for each image. We report the results in Fig. \ref{fig2}.
+
+
+
+{\em Analysis}: in 90\% of the cases, Hybrid MILP is very close to the upper bound. On 2 images (10, 13), Hybrid MILP is far from the upper bound: these are also the ones where the upper bound is the highest, so the falsifier may have missed a closer attack to robustness. On average, the $\epsilon$-gap to upper bound is $0.014$ for Hybrid MILP, 3 times smaller than the $0.042$ gap for $\alpha,\beta$-CROWN.
+
+\fi
+
+\iffalse
+
+These verification-agnostic DNNs have varying sizes: $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$ and $6 \times 500$. We selected the 4 first because they have been tested in both \cite{prima} and \cite{CROWN}, they have good accuracy ($>94\%$ \cite{prima}), 
+and depite their small sizes there is still a large portion ($12\%$ to $20\%$) of images which are {\em undetermined} by these SOTA methods, that is images neither verified nor for which an attack has been found  \cite{attack}. Hence more accurate methods are useful. 
+The next DNN in the list was the larger $6 \times 500$ DNN, which seemed an interesting challenge (very high accuracy and few attacks) to understand the scaling of CMP. Interestingly, tests on $6 \times 500$ were not reported in \cite{prima} nor in \cite{CROWN}. All these DNNs tackle the MNIST benchmark, which is not a limitation as we want to validate that focusing on compensating strength improves the accuracy: we do not claim that the particular CMP implementation is the most efficient in all the situations.
+
+To obtain results comparable with \cite{prima,CROWN}, 
+we evaluated CMP on $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$ for the first 1000 images of the dataset. For $6\times 500$ (results not reported in \cite{prima,CROWN}), we run all the tools ourselves for the first 200 images, given the computational overhead associated with such larger network. Each DNN is associated with a $\varepsilon>0$ for the $L^\infty$ norm.
+
+\smallskip
+
+\noindent{\bf Baseline}: 
+We compare the following verifiers performing value-abstraction:
+\begin{itemize}
+	\item DeepPoly \cite{deeppoly}/ CROWN \cite{CROWN}. We report the runtime from our  implementation in CMP. 
+	%It shows that our purely Python implementation is not optimal ($10$ to $100$ times slower than the implementation in ($\alpha$)($\beta$)CROWN, ERAN and PRIMA). 
+	\item PRIMA~\cite{prima} and $(\alpha)\beta$ CROWN \cite{CROWN}. We use the results reported in \cite{prima} and \cite{CROWN} respectively for 
+	$5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$.
+	We report our experimental results for the $6\times500$ DNN as they are not available in prior work. Notice that PRIMA and CROWN use massively parallel (>4000 threads) GPUs, and run 16 CPU threads for the first 4 benchmarks, compared with 20 CPU threads and no GPU for CMP.
+	\item We also tested MN-BaB \cite{ferrari2022complete} on $6\times500$
+	(slightly lower accuracy and slower than $\alpha$,$\beta$-CROWN), 
+	in line with results reported in \cite{ferrari2022complete} for other DNNs. Further, results for MN-BaB on $5\times 100$, $5\times 200$, $8 \times 100$, $8 \times 200$	are not reported in \cite{ferrari2022complete} or elsewhere. 
+	We thus do not include MN-BaB results in Table \ref{tab:example}, to avoid clutter.
+%	They use GPU while we do not. When computing the whole correlated space, 
+%	parallelization is difficult.
+%	Notice that on these DNNs, PRIMA resort to refined bounds on the first few layers (3 or 4) using exact MILP encoding of all the nodes (which is easily parallelized - 16 nodes considered in parallel in PRIMA). This is doable on the first few layers as the number of integer variable is not too large. By comparison, we run MILP on all the layers, but with a bounded number of integer variables to control the runtime and to scale to all the layers.
+%	Its main idea is to implement a very efficient Branch and Bound (BaB) verification tool, subsuming BaBSR \cite{BaB}, and using GPU implementation (while we do not). Performance of pure BaB on these 
+%	"hard to verify" DNNs is however impaired by the large number of branchs to consider. Similarly as PRIMA, $\beta$-CROWN resorts to refining the bounds of the first few layers using an exact MILP encoding, also computing 16 nodes in parallel, before running the branching heuristic BaB-FSB. 
+%	\item We also experimented with the latest versions of $\alpha$-$\beta$-CROWN (October 2023) and PRIMA (2022) on MLP $6 \times 500$ (results not reported in \cite{CROWN,prima}).
+	\item We do not report results from kPoly \cite{kpoly}, OptC2V \cite{optC2V}, 
+	SDPFO \cite{SDPFI}, MIPplanet \cite{MIPplanet}, as $(\alpha)\beta$-CROWN has been shown to outperform these methods in accuracy and time \cite{CROWN}.
+	
+\end{itemize}
+
+
+We present the accuracy analysis of various techniques in Table~\ref{tab:example}, and provide runtime for reference. Further, for each DNN, a PGD-attack \cite{attack} is run 
+on all the images. We report the $\%$ of images without attack, giving an {\em Upper Bound} on the $\%$ of images that can be certified.
+
+Several observations are noteworthy: DeepPoly (or CROWN) is by far the fastest, yet it is also the least accurate, certifying robustness for fewer than $30\%$ of the images. In contrast, there are at least $82\%$ of the images for which no attack is found. Similarly, PRIMA achieves better accuracy than DeepPoly/CROWN but falls short of \toolname. 
+
+Next, we shift focus to the comparison with ($\alpha$)$\beta$-CROWN, where we observe intriguing trade-offs. On the shallowest DNNs (5 layers, $5 \times 100$, $5 \times 200$), \toolname accuracy is close to $\beta$-CROWN, within 1.5\%. Here, RefinedBaB used by $\beta$-CROWN, has the time to refine most of the nodes, and thus the number of branches BaB has to explore is small enough that it is very accurate.
+As the network size increases, \toolname demonstrates better accuracy in comparison to $\beta$-CROWN: For $8 \times 100$ and $8 \times 200$, 
+RefinedBaB used by $\beta$-CROWN can only consider half of the layers. 
+On many images, there are too many branches for BaB left to consider, and it times-out.
+As expected, there's a trade-off between runtime and accuracy: \toolname can verify more images, albeit with increased computation time. Overall, on $8 \times 200$, CMP closes the gap of {\em undetermined} images from $17.6\%$ ($\beta$-CROWN) to $10.4\%$ (CMP).
+
+
+\begin{table}[t!]
+	\centering
+	\begin{tabularx}{\textwidth}{|C||C||C|C|C||C|}
+		
+		\hline
+		\text{DNN} & \shortstack{Upper\\Bound} & \shortstack{DeepPoly/\\CROWN} & PRIMA & \shortstack{($\alpha$)$\beta$-\\CROWN} & \toolname \\ 
+		\hline \hline
+		
+		$5 \times100$\  & $84.2 \%$ & $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & $68.4\%$\\ 
+		$\epsilon = 0.026$ &  & 5s & 159s & 102s & 142s\\
+		\hline	
+		
+		$5 \times 200$ \  & $90.1 \%$ & $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & {$76.8\%$}\\ 
+		$\epsilon = 0.015$ &  & 11s & 224s & 86s & {279s} \\ \hline \hline
+		
+		
+		$8\times100$\  & $82.0 \%$ & $29.2\%$ & $42.8\%$ & $62\%$ & {$\mathbf{65.8\%}$}\\ 
+		$\epsilon = 0.026$ &  & 8s & 301s & 103s & {346s}\\
+		\hline
+		
+		$8\times200$\  & $91.1 \%$ & $25.9\%$ & $62.4\%$ & $73.5\%$ & {$\mathbf{80.7\%}$}\\ 
+		$\epsilon = 0.015$ &  & 17s & 395s & 95s  & {697s}\\ \hline \hline
+		
+		$6\times500$\  & $92\%$ & $26\%$ & $32.5\%$ & $41\%$ & {$\mathbf{65\%}$}\\ 
+		$\epsilon = 0.035$ &  & 34s & 119s & 18.4s & {925s} \\ \hline 
+		
+	\end{tabularx}
+	
+	\caption{$\%$ of verified images and average runtime in seconds.
+		Results for PRIMA, $\beta$-CROWN and the upper bound on the $\%$ are from \cite{CROWN}, except for $6 \times 500$ for which we run every verifier ourselves.
+	}
+	\vspace{-0.8cm}
+	\label{tab:example}
+\end{table}
+
+
+
+
+
+The last network $6 \times 500$ (verification-agnostic) is the largest one. 
+Results for CMP are good, at $65\%$ of verified images, comparable with $8\times 100$, taking less than $0.3s$ per neuron to perform the verification in average per image (there are more neurons, so longer runtime was expected). For comparison, results for $6 \times 500$ were not reported in \cite{CROWN,prima}. On this larger network, it is unclear whether the {\em refined strategy} of PRIMA and of $(\alpha)\beta$-CROWN is applicable, as the number of binary variables to encode even the first few layers is very large. As a matter of fact, refinedBaB is "NotImplemented" in $(\alpha),\beta$-CROWN for this network, and the results are surprisingly inaccurate and fast in refinedPRIMA (even faster than for $5 \times 100$), probably because few/no nodes are actually refined. We thus resort and reported the standard pureBaB setting of $\alpha,\beta$-CROWN, with the usual 30s timeout. Accuracy on $\alpha,\beta$-CROWN is very low, only $15\%$ more images verified than DeepPoly. 
+We also tested $\alpha,\beta$-CROWN with longer time-out, to understand $\alpha,\beta$-CROWN scaling. With time-out=$2000s$, the runtime of $\alpha,\beta$-CROWN is $954s$, comparable with $925s$ for CMP. This only improved the accuracy of $\alpha,\beta$-CROWN by $3.5\%$, at $44.5\%$, with a runtime $50$ times longer. We conclude that the number of branches is often too high for $\alpha,\beta$-CROWN to tackle such a hard verification-agnostic DNN. We also experimented MN-BaB \cite{ferrari2022complete} on $6 \times 500$. Results were similar to $\alpha,\beta$-CROWN: $40\%$ (18s) [30s Time-out] and $43\%$ (1036s) [2000s Time-out]; within 1.5\% of $\alpha,\beta$-CROWN. For comparison, CMP could verify more than $20\%$ more images than $\alpha,\beta$-CROWN (or MN-BaB) with similar runtime (around 17min per image).
+
+
+
+
+% BaB focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence {\toolname} will spend a lot of time on nodes which are not necessary for the verification. 
+% 
+%It is worth remarking that our prototype implementation (in Python)  Therefore, our naive implementation is not as efficient as the highly optimized $\beta$-CROWN: our slow setting is $1.4$ to 
+%$6.5$ times slower than $\beta$-CROWN. Notice {\toolname} it is not using GPUs. 
+%Concerning accuracy: on shallower DNNs ($5 \times 100$ and $5 \times 200$ with $5$ hidden layers), refined BaB uses MILP on all but the last $2$ layers, leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accurate than using the slow fixed setting of {\toolname}, with a small difference of less than $1.5\%$. On deeper DNNs ($8 \times 100$ and $8 \times 200$ with $8$ hidden layers), the full MILP used in refined BaB cannot treat the last $4$ layers, and BaB has more ReLU nodes to branch on: 
+%the most accurate setting (slow fixed) of {\toolname} is more accurate than $\beta$-CROWN, closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
+%and from $17.6\%$ to $10.4\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than in {\toolname} (see Section \ref{Discussion}).
+
+%Further, unlike PRIMA, we do not resort to a GPU, and our purely Python implementation is not optimal. This is very promising for this idea of compensation, which indirectly treats dependencies between the variables, which PRIMA represents explicitly.
+
+
+
+
+
+%In Table \ref{tab:example}, we report the accuracy and runtime of these different methods.
+%DeepPoly/CROWN is by far the fastest, but also the most inaccurate, certifying robustness for less than $30\%$ of the images, whereas there are at least $82\%$ of the images for which no attacked is found (attacks computed by \cite{attack} in $\beta$-CROWN).
+%This is because these DNNs, although of reasonable size, are hard to verify (they are trained in a natural way, with high compensation strength, see Section \ref{Sec.comp}).
+
+
+%Compared with PRIMA (using refinement of the first few layers by exact MILP), the overall pipeline is quite similar, looking at all the nodes one by one from the beginning of the network till the end. 
+%Now, moving on to PRIMA, our 
+%Our method compare favorably, both in terms of time and accuracy: our fast adaptive setting is always faster than PRIMA, sometimes by a large margin ($>3$ times faster on $8 \times 100$ while verifying $10\%$ more images), and also more accurate (except for $5 \times 200$ which is quite pointless on this shallow DNN - the fast fixed method is both faster and more accurate than PRIMA), sometimes by a large margin (by $14 \%$  for $5 \times 100$ while being $30\%$ faster). Further, unlike PRIMA, we do not resort to a GPU, and our purely Python implementation is not optimal. This is very promising for this idea of compensation, which indirectly treats dependencies between the variables, which PRIMA represents explicitly.
+
+
+
+%\begin{table}[t!]
+%	\centering
+%	\begin{tabular}{|c||c|c|c||cc|cc||c|}
+%		
+%		\hline
+%		\text{DNN}  & DeepPoly & PRIMA & $\beta$-CROWN &\multicolumn{2}{@{}c@{}|}{\color{blue}\text{ Comp (adapt.) }} & \multicolumn{2}{@{}c@{}|}{\color{blue} \text{ Comp (fixed) }} & Upper\\ 
+%		& / CROWN & (refined) & (refined BaB) & {\color{blue}fast} & {\color{blue}slow} & {\color{blue}fast} &{\color{blue}slow} & Bound\\
+%		\hline \hline
+%		
+%		$5 \times100$\  &   $16\%$ & $51\%$ & $\mathbf{69.9\%}$ & {\color{blue}$57.5\%$} & {\color{blue}$66.1\%$} & {\color{blue}$65.3\%$} & {\color{blue}$68.4\%$} &  $84.2 \%$ \\ 
+%		$\epsilon = 0.026$ & 5s & 159s & 102s& {\color{blue}75s} & {\color{blue}140s} & {\color{blue}117s} & {\color{blue}142s} &  \\
+%		\hline	
+%		
+%		$5 \times 200$ \  &  $18.2\%$ & $69\%$ & $\mathbf{77.4\%}$ & {\color{blue}$64.3\%$} & {\color{blue}$74.7\%$} & {\color{blue}$72\%$} & {\color{blue}$76.8\%$} & 
+%		$90.1 \%$\\ 
+%		$\epsilon = 0.015$ & 11s & 224s & 86s & {\color{blue}163s} & {\color{blue}285s} & {\color{blue}206s} & {\color{blue}279s}  &\\ \hline \hline
+%		
+%		
+%		$8\times100$\  &   $29.2\%$ & $42.8\%$ & $62\%$ & {\color{blue}$52.7\%$} & {\color{blue}$59.7\%$} & {\color{blue}$61.4\%$} & {\color{blue}$\mathbf{65.8\%}$}  & $82.0 \%$ \\ 
+%		$\epsilon = 0.026$ & 8s & 301s & 103s & {\color{blue}92.3s} & {\color{blue}179s} & {\color{blue}170s} & {\color{blue}346s} & \\
+%		\hline
+%		
+%		
+%		$8\times200$\  &   $25.9\%$ & $62.4\%$ & $73.5\%$ & {\color{blue}$68.1\%$} & 
+%		{\color{blue}$79.1\%$} & {\color{blue}$72.6\%$} & {\color{blue}$\mathbf{80.7\%}$} & $91.1 \%$ \\ 
+%		$\epsilon = 0.015$ & 17s & 395s & 95s  & {\color{blue}297s} & {\color{blue}535s} & {\color{blue}$480s$} & {\color{blue}697s$^\star$} & \\ \hline
+%		
+%		%6$\times$500\  &   0.035& 1.758 & time & 1.758 & time &    1.758 & time & 1.758 & time & \\ 
+%		%$\epsilon = 0.035$ & & & & & & & & & &\\ \hline
+%	\end{tabular}
+%	\caption{$\%$ of verified images and average runtime in seconds, over 1000 images. 
+%		Results for PRIMA, $\beta$-CROWN and the upper bound on the $\%$ are from \cite{CROWN}.
+%		\newline $^\star$ For $8 \times 200$, slow fixed results are obtained after running slow adaptative.}
+%	\label{tab:example}
+%%	\vspace{-1cm}
+%\end{table}
+
+
+%Compared with $\beta$-CROWN (also using a refinement on the first few layers using exact MILP), the picture is more balanced, because the fundamentals of both algorithms are different. BaB focuses on the output neuron, computing bounds for it, and refining the different ReLU as necessary. Instead, we consider every node one by one from the input layer till the final layer, with the same accuracy. Hence {\toolname} will spend a lot of time on nodes which are not necessary for the verification. Therefore, our naive implementation is not as efficient as the highly optimized $\beta$-CROWN: our slow setting is $1.4$ to 
+%$6.5$ times slower than $\beta$-CROWN. Notice {\toolname} it is not using GPUs. 
+%Concerning accuracy: on shallower DNNs ($5 \times 100$ and $5 \times 200$ with $5$ hidden layers), refined BaB uses MILP on all but the last $2$ layers, leaving BaB with few ReLU nodes to branch on, and $\beta$-CROWN (refined BaB) is slightly more accurate than using the slow fixed setting of {\toolname}, with a small difference of less than $1.5\%$. On deeper DNNs ($8 \times 100$ and $8 \times 200$ with $8$ hidden layers), the full MILP used in refined BaB cannot treat the last $4$ layers, and BaB has more ReLU nodes to branch on: 
+%the most accurate setting (slow fixed) of {\toolname} is more accurate than $\beta$-CROWN, closing the gap with the upper bound from $20\%$ to $16.2\%$ ($8 \times 100$)
+%and from $17.6\%$ to $10.4\%$ ($8 \times 200$). This is very promising for the compensation idea, which could be used in many different ways than in {\toolname} (see Section \ref{Discussion}).
+
+
+%KSM: I think this paragraph doesn't make very convincing case. 
+%Importantly, ($\alpha$)$\beta$-CROWN, while efficient, can face a (complexity) wall, when the number of branches becomes too extreme for BaB to work: either BaB succeds fast, or it will not suceed even with very long timeouts ({\em refined} BaB is more accurate than pureBaB on these networks). We verify that in Table \ref{tab:example3}, on a larger DNN learnt in a natural way, namely MLP $6 \times 500$.
+%We tested PureBaB with two timeouts (TO), from standard 30s to an extreme 2000s, to match the average runtime of our adaptative implementation (fast mode). Only $3.5\%$ more images could be ceritifed by extending the TO from 30s to 2000s, certifying $20\%$ less images than our prototype in the same time. Notice that the refined BaB mode of ($\alpha$)$\beta$-CROWN (first few layers using MILP) failed to run on this DNN (error code: NoImplementation), and we were unable to fix the problem, which is not really surprising as running exact MILP with so many integer variables is not likely to be efficient, as confirmed while running PRIMA (refined).
+
+
+
+% test
+
+%
+%\begin{table}[t!]
+%	\centering
+%	\begin{tabular}{|c||c|c|cc||c||c|}
+%		
+%		\hline
+%		\text{DNN}  & DeepPoly & PRIMA &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (pureBaB) \,}} & 
+%		{\color{blue}Comp (adapt.)} & Upper\\ 
+%		& / CROWN & (refined) & TO=30s & TO=2000s & {\color{blue}fast} & Bound\\
+%		\hline \hline
+%		$6\times500$\  &   $26\%$ & $32.5\%$ & $41\%$ & $44.5\%$  & {\color{blue}$\mathbf{65\%}$} & $92\%$ \\ 
+%		$\epsilon = 0.035$ & 34s & 119s & 18.4s & 954s & {\color{blue}925s} &\\ \hline
+%	\end{tabular}
+%	\caption{$\%$ of verified images and average runtime in seconds, over 200 images.}
+%	\label{tab:example3}
+%	
+%\end{table}
+
+%\begin{table}[]
+%	\centering
+%	\begin{tabular}{|c|c|cc||cc||c|}
+%		\hline
+%		\text{DNN}  & DeepPoly &  \multicolumn{2}{@{}c@{}|}{\text{ $\alpha$-$\beta$-CROWN (refinedBaB) \,}} & 
+%		\multicolumn{2}{@{}c@{}|}{\text{ \color{blue}\CMP slow \,}}
+%		& Upper\\ 
+%		& / CROWN & TO=300s & TO=3000s & {\color{blue}adapt} & {\color{blue}fixed} & Bound\\
+%		\hline \hline
+%		$8\times200$\  &   $25\%$? & $72\%$? & $\mathbf{79.5\%}$ & {\color{blue}$75.5\%$}  & {\color{blue}$77\%$} & $91\%$ \\ 
+%		$\epsilon = 0.015$ & 17s & 95s? & 451s & {\color{blue}391s} & {\color{blue}562s} &\\ \hline
+%	\end{tabular}
+%	\caption{WIP! $\%$ of verified images over 200 images. To see how refined BAB scale with TimeOut.}
+%	\label{tab:example4}
+%\end{table}
+
+
+\iffalse
+
+\subsection{Scalability of {\toolname} with Size of DNNs}
+
+\begin{figure}[b!]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[width=10cm,height=6cm,
+			xlabel={},
+			ylabel={},
+			legend pos=south east,
+			ymin=0,
+			xtick={1,2,3,4,5}, 
+			xticklabels={$5\times 100$, $8\times 100$, $5\times 200$, $8\times 200$, $6\times 500$},
+			]
+			
+			
+			\addplot[mark=triangle, blue] coordinates {
+				(1, 0.234)
+				(2, 0.2125)
+				(3, 0.206)
+				(4, 0.3)
+			};
+			\addlegendentry{fast fixed}
+			
+			
+			\addplot[mark=square, red] coordinates {
+				(1, 0.15)
+				(2, 0.115)
+				(3, 0.163)
+				(4, 0.1856)
+				(5, 0.308)
+			};
+			\addlegendentry{fast adaptative}
+			
+			
+		\end{axis}
+	\end{tikzpicture}
+	\caption{runtime (seconds per node)}
+	\label{fig2}
+\end{figure}
+
+
+
+We now focus on understanding the potential of {\toolname} for even larger networks than those that are usually considered in the verification community. To this end, Figure~\ref{fig2} presents the  average runtime per node across various DNNS. Observe that while  the average runtime per node isn't fixed (attributable to $\LP(N,K)$), it remains regulated, avoiding exponential increases — from 0.1s per node for the smallest DNN to 0.3s per node for the largest. This suggests that {\toolname} is scalable to larger DNNs, bypassing the high complexity barrier often encountered with approaches such as those based on pure branch and bound.
+
+\fi
+
+
+\section{Discussion}
+\label{Discussion}
+
+CMP ranks highly in terms of accuracy, on the moderately large network (but challenging verification-agnostic) DNNs we experimented with. Even if the CMP complexity is not subject to combinatorial explosion, its runtime, particularly for larger DNNs, can be relatively slow, as CMP needs to consider every node one by one. Tackling much larger networks may thus need different implementation than CMP, while still benefitting from the novel compensation notion we uncovered and validated thanks to CMP. Numerous avenues exist:
+
+A primary strategy involves utilizing $\alpha$-$\beta$-CROWN initially in the sequence, reserving {\toolname} for images unresolved by $\alpha$-$\beta$-CROWN, potentially enhancing this with parallel node computation across additional CPU cores. Another tactic could involve adapting the refined branch-and-bound approach of $\beta$-CROWN to permit {\toolname} to process additional layers beyond MILP's capability, concluding the verification with BaB. More complex strategies might include modifying BaB to branch on unstable ReLU nodes, driven by compensation strength, or analyzing crucial nodes linked to uncertain outputs, enabling quicker computation of less precise bounds for less critical nodes. Furthermore, implementing a Refinement Abstraction framework, akin to methodologies in \cite{atva}, \cite{elboher}, or \cite{SRGR}, could be beneficial.
+
+In terms of neuron correlation, a key feature explicitly encoded by PRIMA, our findings suggest that leveraging compensation strength for network abstraction is generally more effective. Although precise local accuracy is achieved by directly considering ReLU nodes, the accuracy diminishes when correlations originate from distant layers. Retaining a select few significant correlations, in the style of PRIMA, as explicit linear constraints in the MILP model, might offer a strategy to further improve accuracy while keeping the number of binary variables limited. 
+
+Finally, we focused on DNNs employing ReLU activation functions since our approached on usage of MILP, which is naturally suited for ReLU activation function. However, it is worth remarking that the notion of compensation strength is independent of activation function, and therefore, an interesting direction of future work would be to explore the impact of compensation strength-based approaches for other activation functions. 
+\fi
