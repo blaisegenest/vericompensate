@@ -27,7 +27,7 @@ Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer 
 
 
 
-\begin{align*}
+\begin{align}
 	\bm{s}_{SR}(k) =& %\bm{1}_{\bm{u}_k>0,\bm{l}_k<0} \odot
 	\Biggl\lvert r(\bm{u}_k) \odot \LB(\bm{u}_k) \odot \max(\bm{\lambda}_{k},0)
 	+ \max\{0,\bm{\lambda}_{k}\odot\bm{b}_{k}\}-r(\bm{u}_k) \odot\bm{\lambda}_{k}\odot\bm{{b}}_{k}
@@ -35,7 +35,7 @@ Then, the scoring functions $\bm{s}_{SR}$ and $\bm{s}_{FSB}$ for ReLUs in layer 
 	\bm{s}_{FSB}(k) =& \Biggl\lvert r(\bm{u}_k) \odot \LB(\bm{u}_k) \odot \max(\bm{\lambda}_{k},0)
 	+ \min\{0,\bm{\lambda}_{k}\odot\bm{b}_{k}\}-r(\bm{u}_k) \odot\bm{\lambda}_{k}\odot\bm{{b}}_{k}
 	\Biggr\rvert
-\end{align*}
+\end{align}
 
 
 
