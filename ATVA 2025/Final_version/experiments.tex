@@ -2,9 +2,9 @@
 
 \begin{figure}[b!]
 	\centering
-	\vspace*{-0.3cm}
+%	\vspace*{-0.3cm}
 	\includegraphics[height=7cm]{CNN-B-ADV_layer7_comparison_image85.png}.
-	\vspace*{-0.4cm}
+%	\vspace*{-0.4cm}
 	\caption{Average uncertainty of pMILP for neurons of the fourth layer of CNN-B-Adv, 
 	when selecting between 0 and 30 ReLUs with different scoring functions.}
 	\label{fig_table3}
@@ -143,7 +143,7 @@ with the static order provided by {\sf SAS}, as well as the static order provide
 		{\sf SAS} (static) & 0.384 & 448s & 0.368&759s  &0.365 &971s & 0.355  & 971s \\
 		{\sf GS} (static) & 0.384 & {\bf 251s} &0.368 &{\bf 253s}  & 0.342 &{\bf 270s} & 0.315 & {\bf 281s} \\ \hline
 	\end{tabular}
-		\vspace{-0.6cm}
+%		\vspace{-0.6cm}
 \end{table}
 
 {\sf SAS} ordering is particularly counter-productive because it is accurate only for one branch (the most complicated one), whereas Gurobi can adapt the order to each branch.
@@ -189,7 +189,7 @@ We compare the {\em distance to verify} the same Image 85, specifically the lowe
 The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is considered rather than an average over neurons.
 
 \begin{figure}[t!]
-	\hspace*{-0.8cm}
+%	\hspace*{-0.8cm}
 	\includegraphics[scale=0.5]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
 	\caption{Distance to verify vs runtime: comparison between {\sf SAS}, GS, full MILP and Huang's method for different number of opened ReLUs / time-outs.}
 	\label{fig555}
@@ -277,7 +277,7 @@ The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta
 		CIFAR CNN-B-Adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & $-$ & \bf 11\% (417s) \\ \hline \hline
 		CIFAR ResNet & 0\% (2s) & 0\% (2s) & 0\% (2s) & $-$ & 0\% (2s) \\ \hline \hline
 	\end{tabular}
-	\vspace*{-0.7cm}
+%	\vspace*{-0.7cm}
 	\end{table}
 
 
@@ -305,7 +305,7 @@ We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cut
 %\textcolor{red}{We did run and reported other tools as best as we could (see also appendixC (Table11...)). Reporting *some* experimental numbers from other papers (Figure5) is standard in the DNN verification community (eg [26]).}
 
 \begin{table}[t!]
-	\vspace{-0.1cm}
+%	\vspace{-0.1cm}
 	\centering
 		\caption{Images verified by different verifiers ($\%$, higher is better) on CIFAR CNN-B-Adv. Results, from \cite{cutting}, are not fully comparable with Tables \ref{table_beta},\ref{table_hybrid}.}
 	\label{table_gcp}
@@ -315,7 +315,7 @@ We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cut
 		65\% & 32.8\% & 38\% & 27\% & 46.5\% & 48.5\% \\
 		$\epsilon = 2/255$ & $>25$h & $344$s & $361$s & $32$s &  $58$s  \\  \hline
 	\end{tabular}
-	\vspace{-0.6cm}
+%	\vspace{-0.6cm}
 \end{table}
 
 

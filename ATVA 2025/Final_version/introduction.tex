@@ -8,7 +8,7 @@ We will thus compare mainly with $\alpha,\beta$-CROWN experiments as gold standa
 
 	
 \begin{table}[t!]
-	\vspace{-1.0cm}
+%	\vspace{-1.0cm}
 	\centering
 		\caption{Images verified by $\alpha,\beta$-CROWN with different time-outs (TO) on 7 DNNs, and average runtime per image. The 6 first DNNs are complex instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.
 	}
@@ -36,7 +36,7 @@ We will thus compare mainly with $\alpha,\beta$-CROWN experiments as gold standa
 		{\textsuperscript{*} Accuracy means the accuracy of the network itself on test set, and Upper Bound is 100\% the percentage of unsafe examples.} \\
 	\end{minipage}
 	\label{table_beta}
-		\vspace{-0.5cm}
+%		\vspace{-0.5cm}
 \end{table}
 
 $\alpha,\beta$-CROWN, as well as BaBSR \cite{BaB} and MN-BaB \cite{ferrari2022complete},
@@ -55,7 +55,7 @@ rely on Branch and Bound technique (BaB), which call BaB once per output neuron 
 
 \begin{table}[t!]
 	\centering
-	\vspace{-0.35cm}
+%	\vspace{-0.35cm}
 	\caption{Result of non-BaB methods on the hard $5 \times 100$ with TO = 10 000s. 
 		%Because the instances are hard, most test time-out at the global threshold of 10.000s per image, and 
 		Only NNenum verifies more instances (9\% out of 50\% undecided images) than $\alpha,\beta$-CROWN (40\%), at the cost of a much larger runtime (4995s vs 1026s).
@@ -69,7 +69,7 @@ rely on Branch and Bound technique (BaB), which call BaB once per output neuron 
 		%  MNIST 5$\times$100 & 99\% & 90\% & 28\% & $46\%$ & 37 \%    \\
 		%  TO=2000s & &  & 1250s  & 1194s & 1466s \\  \hline	
 	\end{tabular}
-	\vspace{-0.65cm}
+%	\vspace{-0.65cm}
 \label{table_complete}
 \end{table}
 
