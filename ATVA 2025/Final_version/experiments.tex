@@ -116,7 +116,7 @@ choice of the $K$ heaviest neurons of {\sf SAS}, compared with a random choice, 
 
 Overall, {\sf SAS} is more accurate than GS, more accurate than Huang, more accurate than random choice of variables. {\sf SAS} significantly outperforms other solutions, 
 with 2 times less binary variables for the same accuracy (10 vs 22) vs {\sf GS} and 6 times vs Huang \cite{DivideAndSlide} (4 vs 24).
-Each node of the 4th layer displays a similar pattern, and the pattern is similar for different images (see appendix).
+Each node of the 4th layer displays a similar pattern, and the pattern is similar for different images.
 
 \smallskip
 
@@ -188,14 +188,14 @@ We compare the {\em distance to verify} the same Image 85, specifically the lowe
 %(the local robustness objective asks the difference between the value of the output neuron corresponding to the correct class and the value of any other output neuron to be positive). 
 The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is considered rather than an average over neurons.
 
-\begin{figure}[t!]
+\begin{figure}[b!]
 %	\hspace*{-0.8cm}
 	\includegraphics[scale=0.5]{CNN-B-ADV_layer7_comparison_image85_4methods.png}
 	\caption{Distance to verify vs runtime: comparison between {\sf SAS}, GS, full MILP and Huang's method for different number of opened ReLUs / time-outs.}
 	\label{fig555}
 \end{figure}
 
-{\sf SAS} (even {\sf GS}$=s_{FSB}$) is much more accurate than full MILP for every reasonable time-outs considered, with $>10$ times fastest runtime at better accuracy. The reason is that even the advanced MILP solver Gurobi struggles to sort out all ReLUs. It is thus particulary important to have accurate scoring functions as {\sf SAS}, in order to optimize both accuracy and runtime. Huang \cite{DivideAndSlide} is limited in ReLUs in the previous layer, reason why it is stuck at relatively poor accuracy. The accuracy/runtime curve from {\sf GS} is closer to {\sf SAS} than the number of nodes / accuracy curve of Fig. \ref{fig_table3}. This is because many ReLU nodes deemed important by {\sf GS} are not relevant for accuracy, but they are also not penalizing runtime. Still, {\sf SAS} is faster than {\sf GS} at  every accuracy. Importantly, {\sf SAS} is more deterministic in its runtime given a number of ReLU nodes, with half the variance in runtime over different output neurons compared with {\sf GS} for similar accuracy (see table \ref{SAS_GS_similarTO} in Appendix), which helps setting a number of ReLU nodes to open.
+{\sf SAS} (even {\sf GS}$=s_{FSB}$) is much more accurate than full MILP for every reasonable time-outs considered, with $>10$ times fastest runtime at better accuracy. The reason is that even the advanced MILP solver Gurobi struggles to sort out all ReLUs. It is thus particulary important to have accurate scoring functions as {\sf SAS}, in order to optimize both accuracy and runtime. Huang \cite{DivideAndSlide} is limited in ReLUs in the previous layer, reason why it is stuck at relatively poor accuracy. The accuracy/runtime curve from {\sf GS} is closer to {\sf SAS} than the number of nodes / accuracy curve of Fig. \ref{fig_table3}. This is because many ReLU nodes deemed important by {\sf GS} are not relevant for accuracy, but they are also not penalizing runtime. Still, {\sf SAS} is faster than {\sf GS} at  every accuracy. Importantly, {\sf SAS} is more deterministic in its runtime given a number of ReLU nodes, with half the variance in runtime over different output neurons compared with {\sf GS} for similar accuracy, which helps setting a number of ReLU nodes to open.
 
 
 
@@ -237,6 +237,31 @@ The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is co
 
 
 
+\subsection{Ablation study: on usefulness of computing previous layers accurately}	
+
+We explore the usefulness of computing accurately bounds for each neuron inductively on the layers, 
+even on small networks. For that, we consider MNIST $5 \times 100$, computing bounds for nodes of layer 3, comparing when bounds for neurons of layer 2
+have been computed inaccurately using LP rather than with the more accurate (partial) MILP.
+
+
+\begin{figure}[b!]
+	\vspace*{-0.8cm}
+	\includegraphics[scale=0.55]{Layer3_comparison_LP}.
+	\caption{Comparison of accuracy in layer 3 when bounds for neurons in layer 2 is computed inaccurately using LP vs when bounds of layer 2 are computed accurately using pMILP.
+	Time is using logscale.}
+	\label{fig3LP}
+\end{figure}
+
+
+This experiment explains the rationale to use divide and conquer methodology, 
+using many calls (one for each neuron) of pMILP with relatively small number $|X|$ of open ReLUs 
+rather than few calls (one per output neuron) of pMILP with larger number $|X|$ of open nodes. 
+The benefit is clear already from layer 3, obtaining much tighter bounds (lower uncertainty) when bounds for neurons in layer 2 have been computed accurately using pMILP.
+
+
+
+
+
 
 
 
@@ -257,11 +282,8 @@ The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta
 \textcolor{red}{The number of open nodes we considered for the 5 F(ully)C(onnected)NNs depend neither on the image nor on the particular FCNN, only on the depth of the layer, because the runtime depends crucially on this factor. For FCNNs, we use a simple /2 rule between the number of open nodes of layer+1 vs layer (except last layer=14). For other architectures, we set the number of nodes to obtain similar runtime per layer, by testing a couple of neurons per layer, and use it for all images. MNIST FCNN networks use the same open numbers sequence for all images, based on layer depth. CIFAR ConvolutionalNN uses another sequence (the same for all images) [AppendixA, Table6 p22].}
 \fi 
 
-\begin{table}[t!]
+\begin{table}[b!]
 	\centering
-		\caption{Undecided images ($\%$, {\em lower is better}) as computed by $\alpha,\beta$-CROWN, Refined $\beta$-CROWN and Hybrid MILP on 7 DNNs (average runtime per image). The 6 first DNNs are hard instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify), provided for reference.
-	}
-	\label{table_hybrid}
 	\begin{tabular}{||l||c|c|c||c||c||}
 		\hline \hline
 		 & $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN & Refined & \bf Hybrid \\ 
@@ -274,9 +296,12 @@ The exact same DNNs, image set and $\epsilon$ are used in Tables \ref{table_beta
 		MNIST 8$\times$200 & 56\% (6.8s) & 55\% (18s) & 54\% (1083s) & 16\% (83s) & \bf 8\% (78s) \\ \hline
 		MNIST 6$\times$500 & 53\% (6.4s) & 51\% (16s) & 50\% (1002s) & $-$ & 
 		\bf 10\% (402s) \\ \hline
-		CIFAR CNN-B-Adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & $-$ & \bf 11\% (417s) \\ \hline \hline
-		CIFAR ResNet & 0\% (2s) & 0\% (2s) & 0\% (2s) & $-$ & 0\% (2s) \\ \hline \hline
+		CNN-B-Adv & 28\% (4.3s) & 22\% (8.7s) & 20\% (373s) & $-$ & \bf 11\% (417s) \\ \hline \hline
+		ResNet & 0\% (2s) & 0\% (2s) & 0\% (2s) & $-$ & 0\% (2s) \\ \hline \hline
 	\end{tabular}
+	\caption{Undecided images ($\%$, {\em lower is better}) as computed by $\alpha,\beta$-CROWN, Refined $\beta$-CROWN and Hybrid MILP on 7 DNNs (average runtime per image). The 6 first DNNs are hard instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify), provided for reference.
+	}
+	\label{table_hybrid}
 %	\vspace*{-0.7cm}
 	\end{table}
 
@@ -304,7 +329,7 @@ We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cut
 
 %\textcolor{red}{We did run and reported other tools as best as we could (see also appendixC (Table11...)). Reporting *some* experimental numbers from other papers (Figure5) is standard in the DNN verification community (eg [26]).}
 
-\begin{table}[t!]
+\begin{table}[b!]
 %	\vspace{-0.1cm}
 	\centering
 		\caption{Images verified by different verifiers ($\%$, higher is better) on CIFAR CNN-B-Adv. Results, from \cite{cutting}, are not fully comparable with Tables \ref{table_beta},\ref{table_hybrid}.}
@@ -319,7 +344,8 @@ We provide in Table \ref{table_gcp} results from the Table 3 page 9 of \cite{cut
 \end{table}
 
 
-Results on other networks from other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported \cite{crown} on other tested DNNs, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on complex (even small) instances. Concerning MnBAB \cite{ferrari2022complete}, we tested it in appendix, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em complex} MNIST DNNs at several time-out settings. Last, Pyrat \cite{pyrat} (2\textcolor{red}{nd} in the latest VNNComp) is not open source, which made running it impossible. Details can be found in the appendix. Also, ablation studies showing what each feature of Hybrid MILP is bringing can be found in the appendix.
+Results on other networks from other verifiers (PRIMA \cite{prima}, SDP-FO \cite{SDPFI}, etc) were already reported \cite{crown} on other tested DNNs, with unfavorable comparison vs $\alpha,\beta$-CROWN. Further, we reported accuracy of NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, respectively 4th, 3rd of the last VNNcomp'24 \cite{VNNcomp24}, as well as full MILP \cite{MILP} in Table \ref{table_complete}, showing that these verifiers are not competitive on complex (even small) instances. Concerning MnBAB \cite{ferrari2022complete}, and it compares slightly unfavorably in time and accuracy towards $\alpha,\beta$-CROWN on CNN-B-Adv and {\em complex} MNIST DNNs at several time-out settings. Last, Pyrat \cite{pyrat} (2nd in the latest VNNComp) is not open source, which made running it impossible. 
+%Details can be found in the appendix. Also, ablation studies showing what each feature of Hybrid MILP is bringing can be found in the appendix.
 
 
 

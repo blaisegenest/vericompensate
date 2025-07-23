@@ -10,11 +10,9 @@ We will thus compare mainly with $\alpha,\beta$-CROWN experiments as gold standa
 \begin{table}[t!]
 %	\vspace{-1.0cm}
 	\centering
-		\caption{Images verified by $\alpha,\beta$-CROWN with different time-outs (TO) on 7 DNNs, and average runtime per image. The 6 first DNNs are complex instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.
-	}
 	\begin{tabular}{||l|c|c|c||c|c|c||}
 		\hline
-		Network & nbr & Accuracy {$^*$}  & Upper  {$^*$}& $\alpha,\beta$-CROWN& $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN \\ 
+		Network & nbr & Accur.  & Upper & $\alpha,\beta$-CROWN& $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN \\ 
 		Perturbation & activ. &  & Bound & TO=10s & TO=30s & TO=2000s\\ \hline
 		MNIST 5$\times$100 & 500 & 99\% & 90\% & 33\% & 35\% & 40\%   \\
 		$\epsilon = 0.026$ & ReLU & &  & 6.9s &  18.9s &  1026s  \\  \hline
@@ -31,11 +29,13 @@ We will thus compare mainly with $\alpha,\beta$-CROWN experiments as gold standa
 		CIFAR ResNet &   107496  & 29\%  & 25\%  & 25\%  & 25\%  & 25\%   \\
 		$\epsilon = 8/255$ & ReLU &  &  & 2s & 2s & 2s  \\ \hline
 	\end{tabular}
-	\begin{minipage}{0.9\linewidth}
-		\footnotesize
-		{\textsuperscript{*} Accuracy means the accuracy of the network itself on test set, and Upper Bound is 100\% the percentage of unsafe examples.} \\
-	\end{minipage}
-	\label{table_beta}
+%	\begin{minipage}{0.9\linewidth}
+%		\footnotesize
+%		{\textsuperscript{*} Accuracy means the accuracy of the network itself on test set, and Upper Bound is 100\% the percentage of unsafe examples.} \\
+%	\end{minipage}
+		\caption{Accuracy of DNN (class predicted vs ground truth), upper bound on robustness (robustness attacks found on remaining images), and $\%$ of images verified by $\alpha,\beta$-CROWN with different time-outs (TO) on 7 DNNs, and average runtime per image. The 6 first DNNs are complex instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.
+	}
+\label{table_beta}
 %		\vspace{-0.5cm}
 \end{table}
 
@@ -53,13 +53,9 @@ rely on Branch and Bound technique (BaB), which call BaB once per output neuron 
 
 
 
-\begin{table}[t!]
+\begin{table}[b!]
 	\centering
 %	\vspace{-0.35cm}
-	\caption{Result of non-BaB methods on the hard $5 \times 100$ with TO = 10 000s. 
-		%Because the instances are hard, most test time-out at the global threshold of 10.000s per image, and 
-		Only NNenum verifies more instances (9\% out of 50\% undecided images) than $\alpha,\beta$-CROWN (40\%), at the cost of a much larger runtime (4995s vs 1026s).
-		}
 	\begin{tabular}{||l|c|c||c|c|c||}
 		\hline
 		Network &  Accuracy & Upper  & Marabou 2.0 & NNenum &  Full MILP  \\ \hline
@@ -70,6 +66,10 @@ rely on Branch and Bound technique (BaB), which call BaB once per output neuron 
 		%  TO=2000s & &  & 1250s  & 1194s & 1466s \\  \hline	
 	\end{tabular}
 %	\vspace{-0.65cm}
+	\caption{Result of non-BaB methods on the hard $5 \times 100$ with TO = 10 000s. 
+		%Because the instances are hard, most test time-out at the global threshold of 10.000s per image, and 
+		Only NNenum verifies more instances (9\% out of 50\% undecided images) than $\alpha,\beta$-CROWN (40\%), at the cost of a much larger runtime (4995s vs 1026s).
+		}
 \label{table_complete}
 \end{table}
 
@@ -123,7 +123,7 @@ Our main contributions address the challenges to verify {\em complex} instances 
 Limitation: We consider DNNs employing the standard ReLU activation function, though our findings can be extended to other activation functions, following similar extention by \cite{DivideAndSlide}, with updated MILP models e.g. for maxpool. 
 
 
-\newpage
+%\newpage
 
 %   
 % 
