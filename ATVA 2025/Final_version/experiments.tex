@@ -1,14 +1,5 @@
 \section{Experimental Evaluation}
 
-\begin{figure}[b!]
-	\centering
-%	\vspace*{-0.3cm}
-	\includegraphics[height=7cm]{CNN-B-ADV_layer7_comparison_image85.png}.
-%	\vspace*{-0.4cm}
-	\caption{Average uncertainty of pMILP for neurons of the fourth layer of CNN-B-Adv, 
-	when selecting between 0 and 30 ReLUs with different scoring functions.}
-	\label{fig_table3}
-\end{figure}
 
 
 %
@@ -23,6 +14,18 @@ Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluati
 
 
 \subsection{Comparison between different scoring functions (accuracy).}
+
+
+\begin{figure}[t!]
+	\centering
+%	\vspace*{-0.3cm}
+	\includegraphics[height=7cm]{CNN-B-ADV_layer7_comparison_image85.png}.
+%	\vspace*{-0.4cm}
+	\caption{Average uncertainty of pMILP for neurons of the fourth layer of CNN-B-Adv, 
+	when selecting between 0 and 30 ReLUs with different scoring functions.}
+	\label{fig_table3}
+\end{figure}
+
 
 %The first group of experiments we run, tests the accuracy of choosing a set $Z$ of $K$ nodes using compensation strength, compared with randomly choosing the same number $K$ of nodes,  to understand if the choice is meaningful or any set $Z$ with the same size will result in a similar accuracy.
 %First, we measured the distance between SAS or GS and real improvement for all nodes in the first two layers of $5 \times 100$ wrt the accuracy of nodes in the third layer. On average, the distance using GS is 4 times larger than using SAS.
@@ -114,25 +117,8 @@ choice of the $K$ heaviest neurons of {\sf SAS}, compared with a random choice, 
 \fi
 
 
-Overall, {\sf SAS} is more accurate than GS, more accurate than Huang, more accurate than random choice of variables. {\sf SAS} significantly outperforms other solutions, 
-with 2 times less binary variables for the same accuracy (10 vs 22) vs {\sf GS} and 6 times vs Huang \cite{DivideAndSlide} (4 vs 24).
-Each node of the 4th layer displays a similar pattern, and the pattern is similar for different images.
-
-\smallskip
-
-Gurobi relies on a BaB procedure to compute bounds. We report in Table \ref{table.order} experiments on changing the ordering on variables in Gurobi, when the selection of ReLUs is fixed by {\sf SAS} on CNN-B-Adv Image 85. We compared 
-the standard Gurobi ordering of variables, which is adaptative in each branch, 
-with the static order provided by {\sf SAS}, as well as the static order provided by GS, wrt runtime at a fixed accuracy (we report the {\em distance} to verify the image).
-
-
-
-
-
-\begin{table}[t!]	
+\begin{table}[b!]	
 	\centering
-	\caption{Comparison of different orderings with selection of ReLUs by {\sf SAS}.
-	}
-	\label{table.order}
 	\begin{tabular}{|c||c c|c c|c c|c c|}
 		\hline
 		  Image 85& \multicolumn{2}{c|}{45 open ReLUs} & \multicolumn{2}{c|}{50 open ReLUs} 
@@ -143,8 +129,27 @@ with the static order provided by {\sf SAS}, as well as the static order provide
 		{\sf SAS} (static) & 0.384 & 448s & 0.368&759s  &0.365 &971s & 0.355  & 971s \\
 		{\sf GS} (static) & 0.384 & {\bf 251s} &0.368 &{\bf 253s}  & 0.342 &{\bf 270s} & 0.315 & {\bf 281s} \\ \hline
 	\end{tabular}
+	\caption{Comparison of different orderings with selection of ReLUs by {\sf SAS}.
+	}
+	\label{table.order}
 %		\vspace{-0.6cm}
 \end{table}
+
+
+Overall, {\sf SAS} is more accurate than GS, more accurate than Huang, more accurate than random choice of variables. {\sf SAS} significantly outperforms other solutions, 
+with 2 times less binary variables for the same accuracy (10 vs 22) vs {\sf GS} and 6 times vs Huang \cite{DivideAndSlide} (4 vs 24).
+Each node of the 4th layer displays a similar pattern, and the pattern is similar for different images.
+
+\smallskip
+
+Gurobi relies on a Branch and Bound procedure to compute bounds. We report in Table \ref{table.order} experiments on changing the ordering on variables in Gurobi, when the selection of ReLUs is fixed by {\sf SAS} on CNN-B-Adv Image 85. We compared 
+the standard Gurobi ordering of variables, which is adaptative in each branch, 
+with the static order provided by {\sf SAS}, as well as the static order provided by GS, wrt runtime at a fixed accuracy (we report the {\em distance} to verify the image).
+
+
+
+
+
 
 {\sf SAS} ordering is particularly counter-productive because it is accurate only for one branch (the most complicated one), whereas Gurobi can adapt the order to each branch.
 However, the GS {\em ordering} (with the {\sf SAS} {\em selection}) is better as it is general and not local to a solution, with better runtime than Gurobi, despite its staticness whereas Gurobi order is adaptative.
@@ -239,11 +244,6 @@ The curve is not as smooth as in Fig.~\ref{fig_table3}, as a unique neuron is co
 
 \subsection{Ablation study: on usefulness of computing previous layers accurately}	
 
-We explore the usefulness of computing accurately bounds for each neuron inductively on the layers, 
-even on small networks. For that, we consider MNIST $5 \times 100$, computing bounds for nodes of layer 3, comparing when bounds for neurons of layer 2
-have been computed inaccurately using LP rather than with the more accurate (partial) MILP.
-
-
 \begin{figure}[b!]
 	\vspace*{-0.8cm}
 	\includegraphics[scale=0.55]{Layer3_comparison_LP}.
@@ -251,6 +251,13 @@ have been computed inaccurately using LP rather than with the more accurate (par
 	Time is using logscale.}
 	\label{fig3LP}
 \end{figure}
+
+
+We explore the usefulness of computing accurately bounds for each neuron inductively on the layers, 
+even on small networks. For that, we consider MNIST $5 \times 100$, computing bounds for nodes of layer 3, comparing when bounds for neurons of layer 2
+have been computed inaccurately using LP rather than with the more accurate (partial) MILP.
+
+
 
 
 This experiment explains the rationale to use divide and conquer methodology, 
