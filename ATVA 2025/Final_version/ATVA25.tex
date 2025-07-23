@@ -28,6 +28,7 @@
 \usepackage{calc}
 \usepackage{array}
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage[misc]{ifsym}
 \usetikzlibrary{positioning, arrows.meta,calc}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,7 +73,7 @@
 	\title{Solution-aware vs global ReLU selection: \\
 		partial MILP strikes back for DNN verification}
 	
-\author{Yuke Liao\inst{1}\orcidID{0009-0004-3763-686X} \and
+\author{Yuke Liao \Letter \inst{1}\orcidID{0009-0004-3763-686X} \and
 	Blaise Genest\inst{2,3}\orcidID{0000-0002-5758-1876} \and
 	Kuldeep Meel\inst{4}\orcidID{0000-0001-9423-5270}
 	\and
@@ -82,10 +83,9 @@
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
-\institute{CNRS@CREATE, Singapore \email{yuke.liao@cnrsatcreate.sg} \and The corresponding author\\
-	CNRS@CREATE, Singapore \email{blaise.genest@cnrsatcreate.sg}\and
-	CNRS, France
-	\email{blaise.genest@cnrs.fr}\\
+\institute{CNRS@CREATE, Singapore \email{yuke.liao@cnrsatcreate.sg} 
+\and CNRS@CREATE \& IPAL, Singapore \email{blaise.genest@cnrsatcreate.sg}\and
+	CNRS, IPAL, France \email{blaise.genest@cnrs.fr}\\
  \and
 	University of Toronto,  Toronto, Canada \\\email{meel@cs.toronto.edu}
 	\and
@@ -226,8 +226,10 @@ The solution awareness allows SAS to compute an accurate score for each ReLU, wh
 
 While $\alpha,\beta$-CROWN is known to be extremely efficient to solve easier verification instances, we exhibit many cases (complex instances) where its worst-case exponential complexity in the number of ReLUs is tangible, with unfavorable scaling (Table \ref{table_beta}). Resorting to Hybrid MILP, a divide-and-conquer approach \cite{DivideAndSlide}, revisited thanks to the very efficient {\sf SAS}, revealed to be a much better trade-off than augmenting $\alpha,\beta$-CROWN time-outs, with $8\%$ to $40\%$ less undecided images at ISO runtime. Currently, for hard instances, there is no alternative to partial MILP, other methods being $>10$ times slower.
 
-This opens up interesting future research directions, to verify global \cite{lipshitz}, \cite{sensing} rather than local (robustness) properties, which need very accurate methodology
-and give rise to hard instances as the range of each neuron is no more local to a narrow neighborhood (and thus almost all ReLUs are unstable, with both modes possible).
+This opens up interesting future research directions, 
+to verify global \cite{lipshitz}, rather than local (robustness) properties, which need very accurate methodology
+and give rise to hard instances as the range of each neuron is no more local to a narrow neighborhood 
+(most ReLUs are unstable, with both modes possible).
 
 
 %Last, we adapted BaB-SR \cite{BaB} and FSB \cite{FSB} as global scoring (GS) functions. 
@@ -235,6 +237,12 @@ and give rise to hard instances as the range of each neuron is no more local to 
 
 %{\bf Reproducibility Statement:} We tested twice outlier results to confirm them, making sure of reproducibility on the given hardware. Precise details on the settings used are provided in the appendix. Additional results {\color{blue}(e.g. ablation studies)} are also provided in the appendix. Tested DNNs as well as MNIST and CIFAR10 DataSet are freely available. The source code of Hybrid MILP will be provided on GitHub after acceptance (needing Gurobi as well as $\alpha,\beta$-CROWN).
 
+\smallskip
+{\bf Acknowledgement:} 
+This research was conducted as part of the DesCartes program and 
+was supported by the National Research Foundation, Prime Minister's Office, Singapore, 
+under the Campus for Research Excellence and Technological Enterprise
+(CREATE) program, and partially supported by ANR-23-PEIA-0006 SAIF.
 
 
 \bibliography{references}
