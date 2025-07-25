@@ -65,7 +65,11 @@
 		TODO
 	\end{abstract}
 	
+	
+	
 	\section{Introduction}
+	
+	\input{introduction}
 	
 	\section{Notations and Preliminaries}
 	
@@ -102,21 +106,103 @@
 	Concerning the verification problem, we focus on the global-robustness question. Global robustness asks to determine how the output of a neural network will be affected under a certain kind of small perturbations to any possible input. In this view, Lipschitz continuity is a good characterization of global robustness.
 	
 	
+	
+	
+	\section{Global robustness and Lipschitz constant}
+	
+	
 	Recall the definition of Lipschitz continuity:
-	 under distance $d$, a function $f(x)$ is Lipschitz continuous with respect to constant $K$ if:
+	under distance $d$, a function $f(x)$ is Lipschitz continuous with respect to constant $K$ if:
 	\begin{align*}
 		\forall \boldsymbol{x} \forall\boldsymbol{y} (|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|)
 	\end{align*} 
-	In our practice of global robustness, we will consider the following weaker property with respect to a certain number $\epsilon$:
-	\begin{align*}
-		\forall \boldsymbol{x} \forall\boldsymbol{y} &  (|\boldsymbol{x}-\boldsymbol{y}| \geq \epsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|\\
-		&  |\boldsymbol{x}-\boldsymbol{y}| < \epsilon \implies|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K\epsilon)
-	\end{align*} 
-	In terms of the code, it is compute an optimization question respect to a certain number $\epsilon$:	\begin{align}\label{global_robustness}
-			\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \epsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
-	\end{align} We can use this maximum value to estimate the Lipschitz constant.
+	In our practice, when we need global robustness, we will compute an optimization question respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
+		\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
+	\end{align} And this will lead to the following definition
+
+		\begin{definition}[$\varepsilon$-diff bound]
+		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is $L_\infty$ norm. 
+		
+		For a number $\varepsilon\in\mathbb{R}$, an $\varepsilon$-diff bound $D_\varepsilon$ is a number such that for any inputs $x,y$: \begin{align*}
+			|x-y|\leq \varepsilon \implies |f(x)-f(y)| \leq D_\varepsilon \cdot \varepsilon
+		\end{align*}
+		
+	\end{definition}
 	
-	\section{Local robustness and pMILP}
+	From $\varepsilon$-diff bound, we cannot directly obtain a Lipschitz bound for the function, but we can get the following weaker bound:
+	
+	\begin{definition}[Lipschitz above $\varepsilon$ constant]
+		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is $L_\infty$ norm. 
+		
+		For a number $\varepsilon\in\mathbb{R}$, a Lipschitz above $\varepsilon$ constant  $K_\varepsilon$,  is a number such that for any inputs $x,y$: \begin{align*}
+			|x-y|\geq \varepsilon &\implies |f(x)-f(y)| \leq K_\varepsilon \cdot |x-y|\\
+			|x-y|<\varepsilon &\implies |f(x)-f(y)| \leq K_\varepsilon \cdot \varepsilon\\
+		\end{align*}		
+	\end{definition}
+	
+	
+	\begin{proposition}
+		
+		Suppose $D$ is an $\varepsilon$-diff bound for $f(x)$. Then for any $N\in\mathbb{Z}^+$, $D\frac{N+1}{N}$ is a Lipschitz about $N\varepsilon$ constant.
+		
+		That is, for any two inputs $x,y$, if \begin{align*}
+			|x-y|\leq \varepsilon \implies |f(x)-f(y)| \leq D \cdot \varepsilon,
+		\end{align*} then 	 \begin{align*}
+			|x-y|\geq N\varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot |x-y|\\
+			|x-y|<N\varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot N\varepsilon\\
+		\end{align*}
+	\end{proposition}
+	
+	\begin{proof} We fix the number $N\in\mathbb{Z}^+$ and assume that we have two inputs $x, y$.
+		
+		The first case, $|x-y|\geq N\varepsilon$. Then we assume $|x-y| \in [M\varepsilon ,  (M+1)\varepsilon]$ for another integer $M\geq N$. Then we can divide the line segment between $x, y$ into $M+1$ pieces: $x_0 = x, x_1, x_2, \cdots, x_{M+1} = y$ such that $|x_i-x_{i+1}| \leq \varepsilon$ and apply the definition of $\varepsilon$-diff bound $D$ for each pieces:\begin{align*}
+			|f(x)-f(y)| &= |f(x_{M+1})-f(x_M)+\cdots+f(x_1)-f(x_0)|\\
+			&\leq |f(x_{M+1})-f(x_M)|+\cdots+|f(x_1)-f(x_0)|\\
+			&\leq D\varepsilon + \cdots +D\varepsilon = (M+1)D\varepsilon
+		\end{align*}
+		Hence,\begin{align*}
+			|f(x)-f(y)| &\leq (M+1)D\varepsilon \leq D\cdot (M+1)\varepsilon \frac{|x-y|}{M\varepsilon}\\
+			&= D\cdot\frac{M+1}{M} |x-y|	\leq   D\cdot\frac{N+1}{N} |x-y|		
+		\end{align*}
+		The second case, $|x-y|< N\varepsilon$. Similarly we can divide the line segment between $x, y$ into $N$ pieces and then $|f(x)-f(y)|\leq D N\varepsilon\leq |f(x)-f(y)|\leq D \frac{N+1}{N} N\varepsilon$.
+		
+		This ends the proof.
+	\end{proof}
+
+	In practice, Lipschitz above $\varepsilon$ constant is already sufficient, since in most cases we care about the absolute difference under input perturbations, not the ratio. By combining the above proposition, the computation of $\varepsilon$-diff bound can satisfy our aim.
+	
+
+	Moreover, we have one more proposition connecting $\varepsilon$-diff bound and Lipschitz above $\varepsilon$ constant.
+	
+	
+	\begin{proposition}
+		For any $N\in\mathbb{Z}^+$, suppose for any $a$ in $\{\frac{N}{N}\varepsilon,\frac{N+1}{N}\varepsilon,\cdots, \frac{2N-1}{N}\varepsilon\}$, $D$ is an $a$-diff bound for $f(x)$. 
+		
+		Then $D\frac{N+1}{N}$ is a Lipschitz about $\varepsilon$ constant:\begin{align*}
+			|x-y|\geq \varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot |x-y|\\
+			|x-y|<\varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot \varepsilon\\
+		\end{align*}
+	\end{proposition}
+	\begin{proof}
+		We fix the number $N\in\mathbb{Z}^+$ and assume we have two inputs $x, y$.
+		
+		For the case that $|x-y|<\varepsilon$, this is trivial by definition.
+		
+		For the case that $|x-y|\geq \varepsilon$, there exists a sum $x_1+x_2+\cdots+x_n$ by numbers from (allowing repetitions) $\{\frac{N}{N}\varepsilon,\frac{N+1}{N}\varepsilon,\cdots, \frac{2N-1}{N}\varepsilon\}$ such that \begin{align*}
+			\varepsilon \leq x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon \leq |x-y| \leq x_1+x_2+\cdots+x_n
+		\end{align*}
+		By assumption, divide the line segment from $x$ to $y$ into pieces according to $x_1, x_2,\cdots,x_n$, then we will have $$|f(x)-f(y)|\leq Dx_1+Dx_2+\cdots+Dx_n.$$
+		
+			Hence,\begin{align*}
+			\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Dx_1+Dx_2+\cdots+Dx_n}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon}\\
+			& \leq D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{\varepsilon})= D \frac{N+1}{N}\\
+		\end{align*}
+		This ends the proof.
+	\end{proof}
+	
+	
+	
+	\section{pMILP for local robustness}
 	
 	
 	
@@ -220,39 +306,29 @@
 	
 
 	
-	\subsection{Cloned model}
-		We can modify the MILP model for local robustness to compute the question of global robustness \ref{global_robustness}.
-	
-	The most straight way is to build a model $\mathcal{M}^{large}$ based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (including inputs and outputs) with some extra constraints:
-	
+	\subsection{Using Two Identical Models}
+	The most straightforward way is to use two identical MILP models, i.e., to build a model $\mathcal{M}^{large}$ based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (and their own constraints) plus some extra constraints:
 	\begin{enumerate}
-		\item Add constraints for input nodes between $\mathcal{M},\mathcal{M}'$ for the requirement $|\boldsymbol{x}-\boldsymbol{y}| \leq \epsilon$.
-		
-		\item Set optimization target to be the difference of two variables of the same output node in two models $\mathcal{M},\mathcal{M}'$ (since we want to compute $\max|f(\boldsymbol{x}) -f(\boldsymbol{y}) |$).
+		\item Add constraints for connecting input nodes $\mathcal{M},\mathcal{M}'$ to meet the requirement $|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon$.
+		\item Set the optimization objective as the difference between two variables of the same output node in two models $\mathcal{M},\mathcal{M}'$ (because we want to compute $\max|f(\boldsymbol{x}) -f(\boldsymbol{y}) |$).
 	\end{enumerate}
+	This large model contains twice as many binary variables as $\mathcal{M}$. The computational cost of solving an MILP model grows roughly exponentially with the number of binary variables, and hence it will cost much more time.
 	
-	This large model contains twice as many binary variables as $\mathcal{M}$. The computational cost of solving an MILP model is known to grow roughly exponentially with the number of binary variables, hence it will cost much more time.
+We may relax some constraints (by changing binary variables to continuous variables) as in the case of local robustness. However, the problem is that even relaxing a few nodes can cause a significant loss of accuracy, which motivates us to explore other modeling approaches.
 	
-	Therefore we need to relax more binary variables to continue variables, and/or simplify the model.
+	\subsection{A Simplified model}
 	
-	\subsection{Simplified model}
+	To avoid above problem, we introduce a simplified model that is to use one variable $y_i$ to represent the difference of each two variables: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
 	
-	The first simplified model (perhaps not a simplified one), is to use one variable to the difference of each two variables, which we use $y_i$ to  denote it: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then $y_i=x_i-x'_i$. 
-	
-	Now the constraints for $\gamma$ variables between pre-activation and post-activation is as follows:
-	
-	Let $y_i$ and $\hat{y}_i$ be $x_i-x_i'$ and $\hat{x}_i-\hat{x}_i'$. Then we know the relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
-	
-	Suppose we already know the upper (and lower by symmetry) bound $\gamma_i$ of $y_i$, then
-	we can use the following constraints:\begin{align*}
-		\hat{y}_i \leq a \gamma_i \hspace*{2ex} &\wedge \hspace*{2ex}\hat{y}_i \geq y_i - a \gamma_i\\
-		\hat{y}_i \geq (a-1) \gamma_i  \hspace*{2ex} &\wedge \hspace*{2ex} \hat{y}_i \leq y_i + (1-a) \gamma_i,
+	Given  $\gamma_i$ be the upper bound of $y_i$, the constraints for $\hat{y}_i$ are the follows:\begin{align*}
+	\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
+	\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
 	\end{align*} where $a$ is a binary variable.
 	
 	
-	The following plot will show the above constraints:
+	The following plot illustrates the constraints described above.
 	
-	\begin{tikzpicture}
+	\hspace*{10ex}\begin{tikzpicture}
 		\begin{axis}[
 			xlabel={$y_i$},
 			ylabel={$\hat{y}_i$},
@@ -275,8 +351,7 @@
 		\end{axis}
 	\end{tikzpicture}
 	
-	Now we can introduce this simplified model:
-	
+   Based on above constraints, we can sketch this simplified model:
 \begin{enumerate}
 	\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable $y_i$. 
 	\item Set constraints for input nodes.
@@ -284,78 +359,66 @@
 	\item Between pre- and post- activation nodes, set the MILP constraint described above.
 \end{enumerate}
 	
-	The speed of this model is much faster, comparable to the MILP model for local robustness. However, in practice, this model sometimes lose much accuracy.
+	The key point is that, although this model sets 3 variables (and their binary variables) for each node in the network, only $y_i$  contributes to the final results, and we can ignore $x_i,x_i'$ (and their binary variables) during the optimization.
 	
-	\subsection{Another simplified model}
-
-	The second simplified model is more complex than the first.
+	As a result, we can relax the binary variables used to $\hat{x}_i = \ReLU(x_i)$ and $\hat{x}'_i = \ReLU(x'_i)$.
 	
-	We can use the following extra constraints (besides 4 constraints about $\hat{x}_i'=\ReLU(x_i')$) to build this relation:
+	Now the simplified model contains the same number of binary variables as the MILP model for local robustness. Hence this model runs much faster compared to the previous one. The trade-off is lower accuracy compared to the first model under unlimited time. In practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
+	
+	One major disadvantage of this model is that the solution obtained through optimization may not be valid-i.e., the output computed by the network on the optimized inputs may not equal the output value in the solution. Nevertheless, it is meaningful to compute the upper bound. 
+	
+%	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
+%	
+	\subsection{Improving the Accuracy of the Simplified Model}
+	We can remove the disadvantage and improve the accuracy of the above simplified model by modifying the constraints, at the cost of increased computational time — a trade-off between accuracy and speed. 
+	
+%	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
 	
 	
+	
+%	The exact constraints for $$ \begin{align*}
+%		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
+%		&\hat{y}_i \geq -\hat{x}'_i+(x_i'+y_i) \hspace*{1ex}\wedge\hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+(x_i'+y_i) +(a-1)\alpha_i \\
+%	\end{align*} 
+%	
+%	
+%	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
+	
+	
+	
+	Given $\gamma_i$ as the upper bound of $y_i$, $\alpha_i,\beta_i$ be the upper and lower bound of $x_i,x_i'$, 
+	the precise  constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (along with $\hat{x}'_i=\ReLU(x'_i)$) are as follows:
 	\begin{align*}
-		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
-		&\hat{y}_i \geq -\hat{x}'_i+(x_i'+y_i) \hspace*{1ex}\wedge\hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+(x_i'+y_i) +(a-1)\alpha_i \\
-	\end{align*} 
+		& \begin{aligned}
+			y_i + x'_i &\leq a\beta_i        &\quad\quad
+			y_i + x'_i &\geq (1-a)\alpha_i \\
+			x'_i       &\leq a'\beta_i       & 
+			x'_i       &\geq (1-a')\alpha_i \\
+			\hat{y}_i  &\leq a\gamma_i       &
+			\hat{y}_i  &\geq -a'\gamma_i \\
+			\hat{y}_i  &\leq y_i + (1-a)\gamma_i  &
+			\hat{y}_i  &\geq y_i - (1-a')\gamma_i \\
+			\hat{y}_i  &\leq -x'_i + a\beta_i &
+			\hat{y}_i  &\geq -x'_i + (1-a')\alpha_i \\
+			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
+			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
+		\end{aligned}
+	\end{align*} Here, $a,a'$ are binary variables, and $a'$ is also the binary variable in the constraints for $\hat{x}'_i=\ReLU(x'_i)$. 
 	
+	Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$ are not necessary, or at least can be relaxed without any loss in accuracy.
 	
-	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
+%	\begin{align*}
+%		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
+%		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
+%		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
+%		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
+%		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
+%		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
+%	\end{align*} 
 	
+	The following plot illustrates the constraints described above.
 	
-	
-	A more direct way to establish the constraints is as follows: \begin{align*}
-		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
-		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
-		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
-		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
-		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
-		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
-	\end{align*}The following two plots show its shape:
-	
-	\iffalse
 	\hspace*{-10ex}
-	\begin{tikzpicture}
-		\begin{axis}[	axis on top, xlabel = \(x'_i\),
-			ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
-			set layers=default,
-			xmax = 4, xmin = -4,
-			ymax = 1, ymin = -1,		
-			zmax = 1, zmin = -1,
-			unit vector ratio=1 1 1, scale=3,
-			view={60}{50}, ytick   = {-1,0,1},
-			yticklabels = {$-\gamma_i$,$0$,$\gamma_i$}, xtick = {0},
-			xticklabels = {$0$}, ztick   = {-1,0,1},
-			zticklabels = {$-\gamma_i$,$0$,$\gamma_i$},
-			]
-			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4] 
-			coordinates {
-				(0,0,0) (-1,1,0) (-4,1,0) (-4,-1,0) (0,-1,0) (0,0,0)
-			};
-			
-			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
-			coordinates { (0,0,0) (0,1,1) (4, 1, 1) (4, -1, -1) (1,-1,-1) (0,0,0)
-			};
-			
-			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
-			coordinates { (0,0,0)  (-1,1,0) (0,1,1) (0,0,0)
-			};
-			
-			\addplot3[fill=blue,opacity=0.1, fill opacity=0.4	] 
-			coordinates { (0,0,0)  (0,-1,0) (1,-1,-1) (0,0,0)
-			};
-			
-			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(1,-1,-1)};
-			\node[label={$(\gamma_i,-\gamma_i, -\gamma_i)$}] at (axis cs: 1.2, -0.5 ,-1) {};
-			
-			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(-1,1,0)};
-			\node[label={$(-\gamma_i,\gamma_i, 0)$}] at (axis cs: -1, 0.8 ,0) {};			
-			
-		\end{axis}
-	\end{tikzpicture}
-	\fi
-	
-	
-	\hspace*{-15ex}
 	\begin{tikzpicture}
 		\begin{axis}[	axis on top, xlabel = \(x'_i\),
 			ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
@@ -395,7 +458,25 @@
 		\end{axis}
 	\end{tikzpicture}
 	
+	In practice, when we relax the constraints for a node, we will convert $a_i$ and $a_i'$ to continuous variables together. In principle, we can also choose to change  only one of those two binary variables.
 	
+%	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
+	
+	A special relaxation approach of this model is to treat the binary variables $a'$ appearing in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$ as distinct variables, and relax only the latter. 
+	
+	This approach has a similar disadvantage as the model in the previous section: the output computed by the network on the optimized inputs may not equal the output value in the solution. Similarly, it is meaningful to compute the upper bound using this approach. 
+	
+	
+	\section{Experimental Evaluation}
+	
+	We implemented our code in Python 3.8.
+	Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD Threadripper 7970X  ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. 
+	
+	We will do experiments on two networks for MNIST dataset and another physical model. Two MNIST have the same structure. They are full-connected DNN with 5, 10 outputs and 784 inputs; each hidden layer has 100 neurons. One of them is a normally trained neural network and another is for trained for adversarial robustness. We call them MNIST $5\times100$-Normal and MNIST $5\times 100$-DiffAI. As the name shows MNIST $5\times 100$-DiffAI has a better robustness. The physical network is a simplified model with 10 input neurons, 26 output neurons, and 2 hidden layers with 50 neurons each.
+	
+	\subsection{Comparison of different modelings}
+	
+	\subsection{Comparison of different scoring algorithms}
 	
 	\section{Conclusion}
 	
