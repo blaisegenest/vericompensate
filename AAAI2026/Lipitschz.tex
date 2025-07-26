@@ -54,7 +54,7 @@
 
 
 \title{Order reduction and partial MILP models \\
-for Global Robustness of DNNs.}
+for certifying Robustness of DNNs globally.}
 \date{}
 
 
@@ -73,14 +73,15 @@ The verification process takes too long and requires too much ressources to be p
 In this paper, we consider global robustness, that is guarantees on robustness irrespective of a (set of) local images.
 For that, we consider the switch of values between the different decision classes of a DNN due to a given perturbation. 
 The verification question is much more complex, as the number of complex variables doubles (from the deviation image to the image and its deviation).
-Further, the values each neuron can take is no more in a small neighbourhood. 
+Further, the values each neuron can take is no more in a small neighborhood. 
 Therefore, the global verification process becomes much harder.
 To obtain useable bounds, we use the most accurate process to date, 
-using partial MILP (pMILP) methodology. We propose several such pMILP models for global robustness, with different trade-offs.
+using partial MILP (pMILP) methodology. 
+We propose several such pMILP models for global robustness, with different trade-offs.
 Last, we use order reduction techniques to reduce the space of image considered, 
 avoiding unrealistic inputs, by using linear PCA. 
-This results into usable bounds, allowing in real time to certify robustness for $>83\%$ of incoming images 
-in the MNIST benchmark, as well as for a surrogate computing the hidden plastic strain 
+This results into usable bounds, allowing in real time to certify robustness for $>87\%$ of incoming images 
+in the MNIST benchmark for a L1 perturbation of $\frac{1}{2}$, as well as for a surrogate computing the hidden plastic strain 
 associated to a deformation map of a pipe.
 	\end{abstract}
 	
