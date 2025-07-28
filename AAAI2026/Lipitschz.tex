@@ -529,7 +529,7 @@
 	The following plot illustrates the constraints described above.
 	
 	\hspace*{-10ex}
-	\begin{tikzpicture}
+	\begin{tikzpicture}[scale=0.65]
 		\begin{axis}[	axis on top, xlabel = \(x'_i\),
 			ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
 			set layers=default,
@@ -594,7 +594,7 @@
 	We will compare the results of different modeling methods.
 	
 	\begin{tabular}{|l|l|l|l|l|}\hline
-		L1 Diff <= 0.82378 &        Bound &  Solution &                          Real &  Time \\\hline
+		$L_{1,diff}\leq 0.83$ &        Bound &  Solution &                          Real &  Time \\\hline
 		1v,open 100 &     0.035613 &  0.035613 &                       0.01288 & 10608 \\\hline
 		3v,open 100 &     0.040074 &  0.028934 &                      0.021441 & 10922 \\\hline
 		3v,open 100 &     0.039824 &  0.028832 &                      0.022255 & 22153 \\\hline
@@ -604,7 +604,7 @@
 	And 
 	
 	\begin{tabular}{|l|l|l|l|l|}\hline
-		L1 Diff <= 0.82378 &        Bound &  Solution &                          Real &  Time \\\hline
+		$L_{1,diff}\leq 0.83$ &        Bound &  Solution &                          Real &  Time \\\hline
 		1v,open 100 &     0.035613 &  0.035613 &                      0.019141 &   984 \\\hline
 		3v,open 100 &     0.041382 &  0.025433 &                      0.016638 &  1082 \\\hline
 		3v,open 100 &      0.03496 &  0.027206 &                      0.021607 & 14523 \\\hline
