@@ -507,7 +507,7 @@
 	
 	
 	
-	\begin{figure}[b!]
+	\begin{figure}[t!]
 		\centering
 	\hspace*{-10ex}
 	\begin{tikzpicture}[scale=0.65]
@@ -611,27 +611,108 @@ Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$
 
 	
 	\begin{table}[h!]
-	\begin{tabular}{|l|c|c|c|c|}\hline
-		 $L_1 \leq 0.5$ & Bound & Solution & Real & Time \\\hline
-		 2v,open 75x5 & 21.0135 & 8.4672& 0.2229 & 43200 \\\hline
-		2v,open 90x5 & 12.0097 & 3.4408 & 0.2584 & 43200 \\\hline
-	 2v,open 97x5 & 20.6460 & 1.9152 & 0.3722 & 129626 \\\hline
-	 2v,open 100x5 & 8.7608 & nan & nan & 43200 \\\hline
-		 2v,open 100x5 & 8.2573 & nan & nan & 259200 \\\hline
-		 1v,open 75x5 & 17.4724 & 0.9089 & 0.0917 & 43200 \\\hline
+	\begin{tabular}{|l|c|c|c|c|}\hline\hline
+		$L_1\leq 0.5$ &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ &  Time \\\hline \hline
+		1v, $375 \times 1$ & 17.4724 & 0.9089  ?? & 0.0917 & 43200s \\\hline 
+		2v, $375 \times 2$ & 21.0135 & 8.4672& 0.2229 & 43200s \\\hline		
+		2v, $450 \times 2$ & 12.0097 & 3.4408 & {\bf 0.2584} & 43200s \\\hline
+		1v, $500 \times 1$ & ?? & ?? & ?? & 43200s \\\hline 
+		3v, $500 \times 3$ & ?? & ?? & ?? & 43200s \\\hline 
+	 2v, $500 \times 2$ & {\bf 8.7608} & nan & nan & 43200s \\\hline\hline
+
+	 2v, $485 \times 2$ & 20.6460 & 1.9152 & {\bf 0.3722} & 130000s \\\hline\hline
+
+		 2v, $500 \times 2$ & {\bf 8.2573} & nan & nan & 260000s \\\hline\hline
+		 
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models on the full dimension MNIST DNN. with a fixed timeout of 1000s, 14523s and 72126s, where 90 ($\times 2$, $\times 3$) or all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.}
+	\caption{Comparison of "1v", "3v" and "2v" models 
+	to obtain bounds on $\beta^{0.5}_{0,1}$ on the {\bf full dimension} MNIST DNN, for timeouts of 43200s, 130000s and 260000s, where 375, 450, 485 or 500 ($\times 1$, $\times 2$, $\times 3$) neurons use binary variables.}
 \end{table}
+
+On the full space, we reach bounds of $8.2$ (on $\beta^{.5}_{0,1}$), which is too pessimistic as it allows to certify 0 image robust. The worst-case found by the "2v" $485 \times 2$ binary variables after 130000s only displays a difference of 
+$0.37$, $20 \times$ away from the bound found.
+
+\begin{figure*}[t!]
+	\centering
+\includegraphics[scale=0.5]{image.png} \hspace{0.8cm}
+\includegraphics[scale=0.5]{perturb.png}
+\caption{An improbable image and its perturbation (difference around x=11, y=18) 
+with maximal $\beta^{.5}_{0,1}=0.37$ for MNIST as obtained by the "2v" $485 \times 2$ model in full 758 dimension image space.}
+\end{figure*}	
+
+
+
+
+\paragraph{Reduced space}
+
+We now consider a PCA model order reduction to avoid considering improbable images, 
+speed up obtaining the bounds, and obtain less pessimistic bounds.
+We settle on 20 orders, as the MNIST DNN considered run on a images obtained from projecting to the reduced order and projected back to the full dimension 
+display the same accuracy of $97$\% as the DNN on the original images, meaning no accuracy is lost from reducing to 20 dimensions, which is the only thing which matters. On such a reduced space, bounds obtained are much more precise, and one can certify robustness of images online.
+
+
+
+	\begin{table}[h!]
+	\begin{tabular}{|l|c|c|c|c|}\hline\hline
+		$L_1\leq 0.5$ &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ &  Time \\\hline \hline
+		
+1v, $?? \times 1$ & ?? & ?? & ?? & ?? \\\hline 
+		3v, $?? \times 3$ & ?? & ?? & ?? & ?? \\\hline 
+	 2v, $?? \times 2$ & ?? & ?? & ?? & ?? \\\hline\hline
+	 
+		1v, $?? \times 1$ & ?? & ?? & ?? & ?? \\\hline 
+		3v, $?? \times 3$ & ?? & ?? & ?? & ?? \\\hline 
+	 2v, $?? \times 2$ & ?? & ?? & ?? & ?? \\\hline\hline
+	 
+	\end{tabular}
+	\caption{Comparison of "1v", "3v" and "2v" models 
+	to obtain bounds on $\beta^{0.5}_{0,1}$ on the {\bf 20 dimension}  reduced order MNIST DNN, for timeouts of ??s, and ??s , where ??,  or 500 ($\times 1$, $\times 2$, $\times 3$) neurons use binary variables.}
+\end{table}
+
+
+
+
+
+
+\begin{figure*}[t!]
+	\centering
+\includegraphics[scale=0.5]{redimage.png} \hspace{0.8cm}
+\includegraphics[scale=0.5]{redperturb.png}
+\caption{An image and its perturbation from the 20-dimension reduced space with maximal $\beta^{.5}_{0,1}=0.17$ for MNIST as obtained by the "2v" $500 \times 2$ model.}
+\end{figure*}	
+
 	
+	
+\begin{table}[h!]
+	\begin{tabular}{|l|c|c|c|c|}\hline\hline
+		model &    $L_1\leq 0.5$ & $L_1\leq 1$ & $L_1\leq 1.5$ &  $L_1\leq 2$ \\\hline \hline
+		1v, $? \times 1$ & $80 \%$ & $32\%$ & $7\%$ & $0\%$ \\\hline
+		3v, $? \times 3$ & {\bf 86 \%} & {\bf 53\%} & {\bf 20\%} & {\bf 4\%} \\\hline
+		2v, $? \times 2$ & ?? & ?? & ?? & ?? \\\hline \hline
+	\end{tabular}
+	\caption{Comparison of "1v", "3v" and "2v" models 
+	in the percentage of images they can certify in real-time for different values of $L_1$ perturbations.}
+\end{table}
+
+
 	
 
 
-	\subsection{Experiment results for regression (Pipe strain)}
+\subsection{Experiment results for regression (Pipe strain)}
 	
 	For the pipe system, to find a example of large difference on outputs is one of the main aims.
-	
+
+	\begin{figure*}[t!]
+\includegraphics[scale=0.5]{deform.png} \hspace{0.8cm}
+\includegraphics[scale=0.5]{strain.png}
+\caption{2 slightly different deformations and their associated quite different strain as obtained by the "2v" $100 \times 2$ model.}
+\end{figure*}	
+
+
 	The network of Pipe system is relatively simple and in the tests, we will open all $\ReLU$ nodes.
+
 	
+
 	We will compare the results of different modeling methods.
 	
 	\vspace*{1ex}
@@ -651,9 +732,9 @@ Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$
 	
 		
 	\begin{table}[h!]
-	\begin{tabular}{|l|l|l|l|l|}\hline
+	\begin{tabular}{|l|c|c|c|c|}\hline\hline
 		$L_1\leq 0.83$ &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ &  Time \\\hline \hline
-		1v, $100 \times 1$ &     {\bf 0.0356} &  0.0356 & 0.0191 &   1000s \\\hline
+		1v, $100 \times 1$ &     {\bf 0.0356} &  $0.0356$ & $0.0191$ &   1000s \\\hline
 		3v, $100 \times 3$&     0.0414 &  0.0254 &  0.0166 &  1000s \\\hline
 		2v, $100 \times 2$&     0.0418 &  0.0229 &   {\bf 0.0229} &  1000s \\\hline \hline
 		3v, $90 \times 3$&      ?? &  ?? &  ?? & 14523s \\\hline
@@ -661,11 +742,12 @@ Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$
 		2v, $90 \times 2$&     ?? &  ?? &   ?? & 14523s \\\hline
 		2v, $100 \times 2$&     0.0360 &  0.0236 &    {\bf 0.0236} & 14523s \\\hline \hline
 		3v, $100 \times 3$&     {\bf 0.0329} &  0.0277 &  0.0165 & 72126s \\\hline
-		2v, $100 \times 2$&     ?? &  ?? &  {\bf ??} & 72126s \\\hline
+		2v, $100 \times 2$&     ?? &  ?? &  {\bf ??} & 72126s \\\hline\hline
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with a fixed timeout of 1000s, 14523s and 72126s, where 90 ($\times 2$, $\times 3$) or all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.}
+	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with a fixed timeout of 1000s, 14523s and 72126s, where 90 ($\times 2$, $\times 3$) or all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.
+	L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
 \end{table}
-	
+
 	
 	
 	
@@ -674,7 +756,11 @@ Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$
 	 
 	
 	
-	\bigskip
+	\newpage
+
+	\hfill
+
+	\newpage
 	
 	
 	\bibliography{references}
