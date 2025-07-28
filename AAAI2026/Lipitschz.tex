@@ -1,36 +1,125 @@
-\documentclass{llncs}
-\usepackage{hyperref}
-\usepackage{url}
+%File: anonymous-submission-latex-2026.tex
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+\usepackage[submission]{aaai2026}  % DO NOT CHANGE THIS
+\usepackage{times}  % DO NOT CHANGE THIS
+\usepackage{helvet}  % DO NOT CHANGE THIS
+\usepackage{courier}  % DO NOT CHANGE THIS
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in} % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in} % DO NOT CHANGE THIS
+%
+% These are recommended to typeset algorithms but not required. See the subsubsection on algorithms. Remove them if you don't have algorithms in your paper.
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \pagestyle{plain}
 \usepackage{threeparttable}
 \input{math_commands.tex}
-%\usepackage[latin9]{inputenc}
-%\usepackage[T1]{fontenc}
-\usepackage{float}
-\usepackage{wrapfig}
 \usepackage{lineno}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{tabularx}
 \usepackage{cases}
 \captionsetup{compatibility=false}
-% \usepackage{esint}
-\usepackage{array}
 \usepackage{epstopdf}
 \usepackage{placeins}
 \usepackage{pgfplots}
-\usepackage{url}
 \usepackage{tikz}
 \usepackage{calc}
 \usepackage{array}
-\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+%\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usetikzlibrary{positioning, arrows.meta,calc}
+\usepackage{newfloat}
+\usepackage{listings}
+\DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
+\lstset{%
+	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
+	numbers=left,numberstyle=\footnotesize,xleftmargin=2em,% show line numbers, remove this entire line if you don't want the numbers.
+	aboveskip=0pt,belowskip=0pt,%
+	showstringspaces=false,tabsize=2,breaklines=true}
+\floatstyle{ruled}
+\newfloat{listing}{tb}{lst}{}
+\floatname{listing}{Listing}
+%
+% Keep the \pdfinfo as shown here. There's no need
+% for you to add the /Title and /Author tags.
+\pdfinfo{
+	/TemplateVersion (2026.1)
+}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Order reduction and partial MILP models \\
+	for certifying Robustness of DNNs globally.}
+\date{}
+\author{
+	%Authors
+	% All authors must be in the same font size and format.
+	Written by AAAI Press Staff\textsuperscript{\rm 1}\thanks{With help from the AAAI Publications Committee.}\\
+	AAAI Style Contributions by Pater Patel Schneider,
+	Sunil Issar,\\
+	J. Scott Penberthy,
+	George Ferguson,
+	Hans Guesgen,
+	Francisco Cruz\equalcontrib,
+	Marc Pujol-Gonzalez\equalcontrib
+}
+\affiliations{
+	%Afiliations
+	\textsuperscript{\rm 1}Association for the Advancement of Artificial Intelligence\\
+	% If you have multiple authors and multiple affiliations
+	% use superscripts in text and roman font to identify them.
+	% For example,
+	
+	% Sunil Issar\textsuperscript{\rm 2},
+	% J. Scott Penberthy\textsuperscript{\rm 3},
+	% George Ferguson\textsuperscript{\rm 4},
+	% Hans Guesgen\textsuperscript{\rm 5}
+	% Note that the comma should be placed after the superscript
+	
+	1101 Pennsylvania Ave, NW Suite 300\\
+	Washington, DC 20004 USA\\
+	% email address must be in roman text type, not monospace or sans serif
+	proceedings-questions@aaai.org
+	%
+	% See more examples next
+}
 
+%Example, Single Author, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+\iffalse
+\title{My Publication Title --- Single Author}
+\author {
+	Author Name
+}
+\affiliations{
+	Affiliation\\
+	Affiliation Line 2\\
+	name@example.com
+}
+\fi
+
+\iffalse
+%Example, Multiple Authors, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+\title{My Publication Title --- Multiple Authors}
+\author {
+	% Authors
+	First Author Name\textsuperscript{\rm 1},
+	Second Author Name\textsuperscript{\rm 2},
+	Third Author Name\textsuperscript{\rm 1}
+}
+\affiliations {
+	% Affiliations
+	\textsuperscript{\rm 1}Affiliation 1\\
+	\textsuperscript{\rm 2}Affiliation 2\\
+	firstAuthor@affiliation1.com, secondAuthor@affilation2.com, thirdAuthor@affiliation1.com
+}
+\fi
+
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
 \newcommand{\vW}{\boldsymbol{W}}
 \newcommand{\val}{{\textrm{value}}}
 \newcommand{\Val}{{\textrm{value}}}
@@ -52,32 +141,30 @@
 \newcommand{\new}{\marginpar{NEW}}
 \newcommand{\toolname}{Hybrid MILP}
 
-
-\title{Order reduction and partial MILP models \\
-for certifying Robustness of DNNs globally.}
-\date{}
-
+% REMOVE THIS: bibentry
+% This is only needed to show inline citations in the guidelines document. You should not need it and can safely delete it.
+\usepackage{bibentry}
+% END REMOVE bibentry
 
 \begin{document}
 	
 	\maketitle
-	\linenumbers
-	\begin{abstract}
-\input{abstract.tex}
-\iffalse
-Most DNNs are brittle to small perturbations. Extensive works have thus been performed to verify robustness for DNNs.
-However, these works mostly consider local robustness, i.e. in the neighborhood of an image.
-While local robustness is useful to have an idea how often non robust images happen, by repeating the verification on 1000 or 10000 pre-obtained images, the main shortcoming is that we have no guarantee that a specific new incoming image, e.g. in a video feed, is robust: The verification process takes too long and requires too much resources to be performed online on embedded systems.
-
-In this paper, we consider {\em global} robustness, that is, guarantees not restricted to a set of local images. For that, we consider {\em bounds} on the switch of values between the different decision classes of a DNN due to a given perturbation. 
-The verification question is much harder than local robustness, as the number of complex variables doubles (from the deviation image to the image and its deviation).
-Further, the values each neuron can take is no more in a small neighborhood.
-Therefore, the global verification process is very complex.
-To obtain useable bounds, we develop several novel partial MILP models for global robustness, with different trade-offs. Last, we use order reduction techniques to reduce the space of images considered, avoiding unrealistic inputs, by using linear PCA. 
-This results into usable bounds, allowing in real time to certify robustness for $87\%$ of incoming images in the MNIST benchmark for a L1-perturbation of $0.5$, as well as for a surrogate computing the hidden plastic strain associated to a deformation map of a pipe.
-\fi
-    \end{abstract}
 	
+	\begin{abstract}
+		\input{abstract.tex}
+		\iffalse
+		Most DNNs are brittle to small perturbations. Extensive works have thus been performed to verify robustness for DNNs.
+		However, these works mostly consider local robustness, i.e. in the neighborhood of an image.
+		While local robustness is useful to have an idea how often non robust images happen, by repeating the verification on 1000 or 10000 pre-obtained images, the main shortcoming is that we have no guarantee that a specific new incoming image, e.g. in a video feed, is robust: The verification process takes too long and requires too much resources to be performed online on embedded systems.
+		
+		In this paper, we consider {\em global} robustness, that is, guarantees not restricted to a set of local images. For that, we consider {\em bounds} on the switch of values between the different decision classes of a DNN due to a given perturbation. 
+		The verification question is much harder than local robustness, as the number of complex variables doubles (from the deviation image to the image and its deviation).
+		Further, the values each neuron can take is no more in a small neighborhood.
+		Therefore, the global verification process is very complex.
+		To obtain useable bounds, we develop several novel partial MILP models for global robustness, with different trade-offs. Last, we use order reduction techniques to reduce the space of images considered, avoiding unrealistic inputs, by using linear PCA. 
+		This results into usable bounds, allowing in real time to certify robustness for $87\%$ of incoming images in the MNIST benchmark for a L1-perturbation of $0.5$, as well as for a surrogate computing the hidden plastic strain associated to a deformation map of a pipe.
+		\fi
+	\end{abstract}
 	
 	
 	\section{Introduction}
@@ -121,6 +208,7 @@ This results into usable bounds, allowing in real time to certify robustness for
 	
 	
 	
+	
 	\section{Global robustness and Lipschitz constant}
 	
 	
@@ -132,8 +220,8 @@ This results into usable bounds, allowing in real time to certify robustness for
 	In our practice, when we need global robustness, we will compute an optimization question respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
 		\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
 	\end{align} And this will lead to the following definition
-
-		\begin{definition}[$\varepsilon$-diff bound]
+	
+	\begin{definition}[$\varepsilon$-diff bound]
 		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is $L_\infty$ norm. 
 		
 		For a number $\varepsilon\in\mathbb{R}$, an $\varepsilon$-diff bound $D_\varepsilon$ is a number such that for any inputs $x,y$: \begin{align*}
@@ -166,25 +254,25 @@ This results into usable bounds, allowing in real time to certify robustness for
 		\end{align*}
 	\end{proposition}
 	
-	\begin{proof} We fix the number $N\in\mathbb{Z}^+$ and assume that we have two inputs $x, y$.
-		
-		The first case, $|x-y|\geq N\varepsilon$. Then we assume $|x-y| \in [M\varepsilon ,  (M+1)\varepsilon]$ for another integer $M\geq N$. Then we can divide the line segment between $x, y$ into $M+1$ pieces: $x_0 = x, x_1, x_2, \cdots, x_{M+1} = y$ such that $|x_i-x_{i+1}| \leq \varepsilon$ and apply the definition of $\varepsilon$-diff bound $D$ for each pieces:\begin{align*}
-			|f(x)-f(y)| &= |f(x_{M+1})-f(x_M)+\cdots+f(x_1)-f(x_0)|\\
-			&\leq |f(x_{M+1})-f(x_M)|+\cdots+|f(x_1)-f(x_0)|\\
-			&\leq D\varepsilon + \cdots +D\varepsilon = (M+1)D\varepsilon
-		\end{align*}
-		Hence,\begin{align*}
-			|f(x)-f(y)| &\leq (M+1)D\varepsilon \leq D\cdot (M+1)\varepsilon \frac{|x-y|}{M\varepsilon}\\
-			&= D\cdot\frac{M+1}{M} |x-y|	\leq   D\cdot\frac{N+1}{N} |x-y|		
-		\end{align*}
-		The second case, $|x-y|< N\varepsilon$. Similarly we can divide the line segment between $x, y$ into $N$ pieces and then $|f(x)-f(y)|\leq D N\varepsilon\leq |f(x)-f(y)|\leq D \frac{N+1}{N} N\varepsilon$.
-		
-		This ends the proof.
-	\end{proof}
-
+	\textbf{Proof.} We fix the number $N\in\mathbb{Z}^+$ and assume that we have two inputs $x, y$.
+	
+	The first case, $|x-y|\geq N\varepsilon$. Then we assume $|x-y| \in [M\varepsilon ,  (M+1)\varepsilon]$ for another integer $M\geq N$. Then we can divide the line segment between $x, y$ into $M+1$ pieces: $x_0 = x, x_1, x_2, \cdots, x_{M+1} = y$ such that $|x_i-x_{i+1}| \leq \varepsilon$ and apply the definition of $\varepsilon$-diff bound $D$ for each pieces:\begin{align*}
+		|f(x)-f(y)| &= |f(x_{M+1})-f(x_M)+\cdots+f(x_1)-f(x_0)|\\
+		&\leq |f(x_{M+1})-f(x_M)|+\cdots+|f(x_1)-f(x_0)|\\
+		&\leq D\varepsilon + \cdots +D\varepsilon = (M+1)D\varepsilon
+	\end{align*}
+	Hence,\begin{align*}
+		|f(x)-f(y)| &\leq (M+1)D\varepsilon \leq D\cdot (M+1)\varepsilon \frac{|x-y|}{M\varepsilon}\\
+		&= D\cdot\frac{M+1}{M} |x-y|	\leq   D\cdot\frac{N+1}{N} |x-y|		
+	\end{align*}
+	The second case, $|x-y|< N\varepsilon$. Similarly we can divide the line segment between $x, y$ into $N$ pieces and then $|f(x)-f(y)|\leq D N\varepsilon\leq |f(x)-f(y)|\leq D \frac{N+1}{N} N\varepsilon$.
+	
+	This ends the proof.
+	\hfill $\square$
+	
 	In practice, Lipschitz above $\varepsilon$ constant is already sufficient, since in most cases we care about the absolute difference under input perturbations, not the ratio. By combining the above proposition, the computation of $\varepsilon$-diff bound can satisfy our aim.
 	
-
+	
 	Moreover, we have one more proposition connecting $\varepsilon$-diff bound and Lipschitz above $\varepsilon$ constant.
 	
 	
@@ -196,22 +284,23 @@ This results into usable bounds, allowing in real time to certify robustness for
 			|x-y|<\varepsilon &\implies |f(x)-f(y)| \leq D\frac{N+1}{N} \cdot \varepsilon\\
 		\end{align*}
 	\end{proposition}
-	\begin{proof}
-		We fix the number $N\in\mathbb{Z}^+$ and assume we have two inputs $x, y$.
-		
-		For the case that $|x-y|<\varepsilon$, this is trivial by definition.
-		
-		For the case that $|x-y|\geq \varepsilon$, there exists a sum $x_1+x_2+\cdots+x_n$ by numbers from (allowing repetitions) $\{\frac{N}{N}\varepsilon,\frac{N+1}{N}\varepsilon,\cdots, \frac{2N-1}{N}\varepsilon\}$ such that \begin{align*}
-			\varepsilon \leq x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon \leq |x-y| \leq x_1+x_2+\cdots+x_n
-		\end{align*}
-		By assumption, divide the line segment from $x$ to $y$ into pieces according to $x_1, x_2,\cdots,x_n$, then we will have $$|f(x)-f(y)|\leq Dx_1+Dx_2+\cdots+Dx_n.$$
-		
-			Hence,\begin{align*}
-			\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Dx_1+Dx_2+\cdots+Dx_n}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon}\\
-			& \leq D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{\varepsilon})= D \frac{N+1}{N}\\
-		\end{align*}
-		This ends the proof.
-	\end{proof}
+	
+	\textbf{Proof.}
+	We fix the number $N\in\mathbb{Z}^+$ and assume we have two inputs $x, y$.
+	
+	For the case that $|x-y|<\varepsilon$, this is trivial by definition.
+	
+	For the case that $|x-y|\geq \varepsilon$, there exists a sum $x_1+x_2+\cdots+x_n$ by numbers from (allowing repetitions) $\{\frac{N}{N}\varepsilon,\frac{N+1}{N}\varepsilon,\cdots, \frac{2N-1}{N}\varepsilon\}$ such that \begin{align*}
+		\varepsilon \leq x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon \leq |x-y| \leq x_1+x_2+\cdots+x_n
+	\end{align*}
+	By assumption, divide the line segment from $x$ to $y$ into pieces according to $x_1, x_2,\cdots,x_n$, then we will have $$|f(x)-f(y)|\leq Dx_1+Dx_2+\cdots+Dx_n.$$
+	
+	Hence,\begin{align*}
+		\dfrac{|f(x)-f(y)|}{|x-y|} &\leq \dfrac{Dx_1+Dx_2+\cdots+Dx_n}{x_1+x_2+\cdots+x_n -\frac{1}{N}\varepsilon}\\
+		& \leq D\cdot( 1+  \dfrac{\frac{1}{N}\varepsilon}{\varepsilon})= D \frac{N+1}{N}\\
+	\end{align*}
+	This ends the proof.
+	\hfill $\square$
 	
 	
 	
@@ -315,9 +404,17 @@ This results into usable bounds, allowing in real time to certify robustness for
 	\end{proposition}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
 	\section{Modeling for global robustness}
 	
-
+	
 	
 	\subsection{Using Two Identical Models}
 	The most straightforward way is to use two identical MILP models, i.e., to build a model $\mathcal{M}^{large}$ based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (and their own constraints) plus some extra constraints:
@@ -327,15 +424,15 @@ This results into usable bounds, allowing in real time to certify robustness for
 	\end{enumerate}
 	This large model contains twice as many binary variables as $\mathcal{M}$. The computational cost of solving an MILP model grows roughly exponentially with the number of binary variables, and hence it will cost much more time.
 	
-We may relax some constraints (by changing binary variables to continuous variables) as in the case of local robustness. However, the problem is that even relaxing a few nodes can cause a significant loss of accuracy, which motivates us to explore other modeling approaches.
+	We may relax some constraints (by changing binary variables to continuous variables) as in the case of local robustness. However, the problem is that even relaxing a few nodes can cause a significant loss of accuracy, which motivates us to explore other modeling approaches.
 	
 	\subsection{A Simplified model}
 	
 	To avoid above problem, we introduce a simplified model that is to use one variable $y_i$ to represent the difference of each two variables: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
 	
 	Given  $\gamma_i$ be the upper bound of $y_i$, the constraints for $\hat{y}_i$ are the follows:\begin{align*}
-	\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
-	\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
+		\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
+		\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
 	\end{align*} where $a$ is a binary variable.
 	
 	
@@ -364,13 +461,13 @@ We may relax some constraints (by changing binary variables to continuous variab
 		\end{axis}
 	\end{tikzpicture}
 	
-   Based on above constraints, we can sketch this simplified model:
-\begin{enumerate}
-	\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable $y_i$. 
-	\item Set constraints for input nodes.
-	\item Set linear constraints . In this case, since the meaning of $y_i$ is $x_i-x'_i$, this constraints will not use the bias.
-	\item Between pre- and post- activation nodes, set the MILP constraint described above.
-\end{enumerate}
+	Based on above constraints, we can sketch this simplified model:
+	\begin{enumerate}
+		\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable $y_i$. 
+		\item Set constraints for input nodes.
+		\item Set linear constraints . In this case, since the meaning of $y_i$ is $x_i-x'_i$, this constraints will not use the bias.
+		\item Between pre- and post- activation nodes, set the MILP constraint described above.
+	\end{enumerate}
 	
 	The key point is that, although this model sets 3 variables (and their binary variables) for each node in the network, only $y_i$  contributes to the final results, and we can ignore $x_i,x_i'$ (and their binary variables) during the optimization.
 	
@@ -380,22 +477,22 @@ We may relax some constraints (by changing binary variables to continuous variab
 	
 	One major disadvantage of this model is that the solution obtained through optimization may not be valid-i.e., the output computed by the network on the optimized inputs may not equal the output value in the solution. Nevertheless, it is meaningful to compute the upper bound. 
 	
-%	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
-%	
+	%	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
+	%	
 	\subsection{Improving the Accuracy of the Simplified Model}
 	We can remove the disadvantage and improve the accuracy of the above simplified model by modifying the constraints, at the cost of increased computational time — a trade-off between accuracy and speed. 
 	
-%	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
+	%	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
 	
 	
 	
-%	The exact constraints for $$ \begin{align*}
-%		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
-%		&\hat{y}_i \geq -\hat{x}'_i+(x_i'+y_i) \hspace*{1ex}\wedge\hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+(x_i'+y_i) +(a-1)\alpha_i \\
-%	\end{align*} 
-%	
-%	
-%	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
+	%	The exact constraints for $$ \begin{align*}
+		%		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
+		%		&\hat{y}_i \geq -\hat{x}'_i+(x_i'+y_i) \hspace*{1ex}\wedge\hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+(x_i'+y_i) +(a-1)\alpha_i \\
+		%	\end{align*} 
+	%	
+	%	
+	%	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
 	
 	
 	
@@ -420,14 +517,14 @@ We may relax some constraints (by changing binary variables to continuous variab
 	
 	Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$ are not necessary, or at least can be relaxed without any loss in accuracy.
 	
-%	\begin{align*}
-%		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
-%		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
-%		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
-%		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
-%		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
-%		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
-%	\end{align*} 
+	%	\begin{align*}
+		%		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
+		%		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
+		%		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
+		%		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
+		%		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
+		%		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
+		%	\end{align*} 
 	
 	The following plot illustrates the constraints described above.
 	
@@ -473,11 +570,12 @@ We may relax some constraints (by changing binary variables to continuous variab
 	
 	In practice, when we relax the constraints for a node, we will convert $a_i$ and $a_i'$ to continuous variables together. In principle, we can also choose to change  only one of those two binary variables.
 	
-%	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
+	%	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
 	
 	A special relaxation approach of this model is to treat the binary variables $a'$ appearing in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$ as distinct variables, and relax only the latter. 
 	
 	This approach has a similar disadvantage as the model in the previous section: the output computed by the network on the optimized inputs may not equal the output value in the solution. Similarly, it is meaningful to compute the upper bound using this approach. 
+	
 	
 	
 	\section{Experimental Evaluation}
@@ -495,18 +593,18 @@ We may relax some constraints (by changing binary variables to continuous variab
 	
 	We will compare the results of different modeling methods.
 	
-\begin{tabular}{|l|l|l|l|l|}\hline
-L1 Diff <= 0.82378 &        Bound &  Solution &                          Real &  Time \\\hline
-	1v,open 100 &     0.035613 &  0.035613 &                       0.01288 & 10608 \\\hline
-	3v,open 100 &     0.040074 &  0.028934 &                      0.021441 & 10922 \\\hline
-	3v,open 100 &     0.039824 &  0.028832 &                      0.022255 & 22153 \\\hline
-	2v,open 100 &     0.046719 &  0.024364 &                      0.024436 & 10922 \\\hline
-\end{tabular}
+	\begin{tabular}{|l|l|l|l|l|}\hline
+		L1 Diff <= 0.82378 &        Bound &  Solution &                          Real &  Time \\\hline
+		1v,open 100 &     0.035613 &  0.035613 &                       0.01288 & 10608 \\\hline
+		3v,open 100 &     0.040074 &  0.028934 &                      0.021441 & 10922 \\\hline
+		3v,open 100 &     0.039824 &  0.028832 &                      0.022255 & 22153 \\\hline
+		2v,open 100 &     0.046719 &  0.024364 &                      0.024436 & 10922 \\\hline
+	\end{tabular}
 	
 	And 
-
+	
 	\begin{tabular}{|l|l|l|l|l|}\hline
-	 L1 Diff <= 0.82378 &        Bound &  Solution &                          Real &  Time \\\hline
+		L1 Diff <= 0.82378 &        Bound &  Solution &                          Real &  Time \\\hline
 		1v,open 100 &     0.035613 &  0.035613 &                      0.019141 &   984 \\\hline
 		3v,open 100 &     0.041382 &  0.025433 &                      0.016638 &  1082 \\\hline
 		3v,open 100 &      0.03496 &  0.027206 &                      0.021607 & 14523 \\\hline
@@ -530,21 +628,17 @@ L1 Diff <= 0.82378 &        Bound &  Solution &                          Real & 
 	\end{tabular}
 	
 	
-	\section{Conclusion}
-	
-	TODO
 	
 	
-	\bibliography{references}
-	\bibliographystyle{plain}
+	
+	
+	
 	
 	
 	\bigskip
 	
-	\appendix
 	
+	\bibliography{references}
 	
 	
 \end{document}
-
-
