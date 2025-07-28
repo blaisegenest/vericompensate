@@ -440,6 +440,8 @@
 	
 	The following plot illustrates the constraints described above.
 	
+	\begin{figure}[b!]
+		\centering
 	\hspace*{10ex}\begin{tikzpicture}
 		\begin{axis}[
 			xlabel={$y_i$},
@@ -462,6 +464,11 @@
 			\node[label={above:$(\gamma_i,\gamma_i)$}] at (axis cs: 1.4, 1.5) {};
 		\end{axis}
 	\end{tikzpicture}
+\caption{The possible values of $\val(\hat{y}_i)=\ReLU(\val(x_i))-\ReLU(\val(x'_i))$ depending on $\val(y_i) = \val(x_i)-\val(x'_i)$.}
+	\label{fig.1v}
+\end{figure}
+
+
 	
 	Based on above constraints, we can sketch this simplified model:
 	\begin{enumerate}
@@ -498,38 +505,10 @@
 	
 	
 	
-	Given $\gamma_i$ as the upper bound of $y_i$, $\alpha_i,\beta_i$ be the upper and lower bound of $x_i,x_i'$, 
-	the precise  constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (along with $\hat{x}'_i=\ReLU(x'_i)$) are as follows:
-	\begin{align*}
-		& \begin{aligned}
-			y_i + x'_i &\leq a\beta_i        &
-			y_i &+ x'_i \geq (1-a)\alpha_i \\
-			x'_i       &\leq a'\beta_i       & 
-			x'_i       &\geq (1-a')\alpha_i \\
-			\hat{y}_i  &\leq a\gamma_i       &
-			\hat{y}_i  &\geq -a'\gamma_i \\
-			\hat{y}_i  &\leq y_i + (1-a)\gamma_i  &
-			\hat{y}_i  &\geq y_i - (1-a')\gamma_i \\
-			\hat{y}_i  &\leq -x'_i + a\beta_i &
-			\hat{y}_i  &\geq -x'_i + (1-a')\alpha_i \\
-			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
-			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
-		\end{aligned}
-	\end{align*} Here, $a,a'$ are binary variables, and $a'$ is also the binary variable in the constraints for $\hat{x}'_i=\ReLU(x'_i)$. 
 	
-	Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$ are not necessary, or at least can be relaxed without any loss in accuracy.
 	
-	%	\begin{align*}
-		%		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
-		%		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
-		%		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
-		%		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
-		%		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
-		%		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
-		%	\end{align*} 
-	
-	The following plot illustrates the constraints described above.
-	
+	\begin{figure}[b!]
+		\centering
 	\hspace*{-10ex}
 	\begin{tikzpicture}[scale=0.65]
 		\begin{axis}[	axis on top, xlabel = \(x'_i\),
@@ -569,7 +548,45 @@
 			
 		\end{axis}
 	\end{tikzpicture}
+	\caption{The outcome $\val(\hat{y}_i)=\ReLU(\val(x_i))-\ReLU(\val(x'_i))$ 
+	depending on $\val(y_i) = \val(x_i)-\val(x'_i)$ and on $\val(x'_i)$.}
+	\label{fig.2v}
+\end{figure}
 	
+Given $\gamma_i$ as the upper bound of $y_i$, $\alpha_i,\beta_i$ be the upper and lower bound of $x_i,x_i'$, 
+	the precise  constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (along with $\hat{x}'_i=\ReLU(x'_i)$) are as follows:
+	\begin{align*}
+		& \begin{aligned}
+			y_i + x'_i &\leq a\beta_i        &
+			y_i &+ x'_i \geq (1-a)\alpha_i \\
+			x'_i       &\leq a'\beta_i       & 
+			x'_i       &\geq (1-a')\alpha_i \\
+			\hat{y}_i  &\leq a\gamma_i       &
+			\hat{y}_i  &\geq -a'\gamma_i \\
+			\hat{y}_i  &\leq y_i + (1-a)\gamma_i  &
+			\hat{y}_i  &\geq y_i - (1-a')\gamma_i \\
+			\hat{y}_i  &\leq -x'_i + a\beta_i &
+			\hat{y}_i  &\geq -x'_i + (1-a')\alpha_i \\
+			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
+			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
+		\end{aligned}
+	\end{align*} Here, $a,a'$ are binary variables, and $a'$ is also the binary variable in the constraints for $\hat{x}'_i=\ReLU(x'_i)$. 
+	
+
+Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$ are not necessary, or at least can be relaxed without any loss in accuracy.
+	
+	%	\begin{align*}
+		%		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
+		%		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
+		%		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
+		%		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
+		%		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
+		%		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
+		%	\end{align*} 
+	
+	The following plot illustrates the constraints described above.
+	
+
 	In practice, when we relax the constraints for a node, we will convert $a_i$ and $a_i'$ to continuous variables together. In principle, we can also choose to change  only one of those two binary variables.
 	
 	%	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
@@ -580,6 +597,8 @@
 	
 	
 	
+
+
 	\section{Experimental Evaluation}
 	
 	We implemented our code in Python 3.8.
