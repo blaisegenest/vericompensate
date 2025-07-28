@@ -1,43 +1,12 @@
 
 
-Deep neural networks (DNNs for short) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks. However, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the verification community to develop various methodologies, each presenting a unique balance between completeness and computational efficiency \cite{Marabou,Reluplex,deeppoly}. This surge in innovation has also led to the inception of competitions such as VNNComp \cite{VNNcomp}, which aim to systematically evaluate the performance of neural network verification tools. While the verification engines are generic, the benchmarks usually focus on local robustness, i.e. given a DNN, an image and a small neighbourhood around this image, is it the case that all the images in the neighbourhood are classified in the same way. 
-For the past 5 years, VNNcomp has focused on rather easy instances, that can be solved within tens of seconds (the typical hard time-out is 300s). For this reason, DNN verifiers in the past years have mainly focused on optimizing for such easy instances. Among them, NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, and PyRAT 
-\cite{pyrat}, respectively 4th, 3rd and 2{nd} of the last VNNcomp'24 \cite{VNNcomp24}
-and 5th, 2{nd} and 3rd  of the VNNcomp'23 \cite{VNNcomp23}; MnBAB \cite{ferrari2022complete}, 2{nd} in VNNcomp'22 \cite{VNNcomp22}, built upon ERAN \cite{deeppoly} and PRIMA \cite{prima}; and importantly, $\alpha,\beta$-CROWN \cite{crown,xu2020fast}, the winner of the last 4 VNNcomp, benefiting from branch-and-bound based methodology \cite{cutting,BaB}.
-We will thus compare mainly with $\alpha,\beta$-CROWN experiments as gold standard in the following\footnote{GCP-CROWN \cite{cutting} is slightly more accurate than $\alpha,\beta$-CROWN on the DNNs we tested, but necessitates IBM CPLEX solver, which is not available to us}.
+Deep neural networks (DNNs for short) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks. However, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the verification community to develop various methodologies, each presenting a unique balance between completeness and computational efficiency \cite{Marabou,Reluplex,deeppoly}. This surge in innovation has also led to the inception of competitions such as VNNComp \cite{VNNcomp}, which aim to systematically evaluate the performance of neural network verification tools. Among them, NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, and PyRAT \cite{pyrat} MnBAB \cite{ferrari2022complete}, built upon ERAN \cite{deeppoly} and PRIMA \cite{prima}; and importantly, $\alpha,\beta$-CROWN \cite{crown,xu2020fast}, the winner of the last 4 VNNcomp, benefiting from branch-and-bound based methodology \cite{cutting,BaB}.
 
-	
-\begin{table}[t!]
-%	\vspace{-1.0cm}
-	\centering
-	\begin{tabular}{||l|c|c|c||c|c|c||}
-		\hline
-		Network & nbr & Accur.  & Upper & $\alpha,\beta$-CROWN& $\alpha,\beta$-CROWN & $\alpha,\beta$-CROWN \\ 
-		Perturbation & activ. &  & Bound & TO=10s & TO=30s & TO=2000s\\ \hline
-		MNIST 5$\times$100 & 500 & 99\% & 90\% & 33\% & 35\% & 40\%   \\
-		$\epsilon = 0.026$ & ReLU & &  & 6.9s &  18.9s &  1026s  \\  \hline
-		MNIST 5$\times$200 & 1000 & 99\%  & 96\%  & 46\%  & 49\%  & 50\%   \\ 
-		$\epsilon = 0.015$ & ReLU & &  & 6.5s &  16.6s &  930s  \\  \hline
-		MNIST 8$\times$100 & 800 & 97\%  & 86\%  & 23\%  & 28\%  & 28\%   \\
-		$\epsilon = 0.026$ & ReLU &  &  & 7.2s &  20.1s &  930s  \\  \hline
-		MNIST 8$\times$200 & 1600 & 97\%  & 91\%  & 35\%  & 36\%  & 37\%   \\ 
-		$\epsilon = 0.015$ & ReLU & &  & 6.8s &  18.2s &  1083s  \\  \hline
-		MNIST 6$\times$500 & 3000 & 100\%  & 94\%  & 41\%  & 43\%  & 44\%   \\ 
-		$\epsilon = 0.035$ & ReLU & &  & 6.4s &  16.4s &  1003s  \\  \hline
-		CIFAR CNN-B--Adv &  16634  &   78\%  & 62\%  &  34\% & 40\%  & 42\%   \\
-		$\epsilon = 2/255$& ReLU &  &  & 4.3s & 8.7s & 373s  \\ \hline \hline
-		CIFAR ResNet &   107496  & 29\%  & 25\%  & 25\%  & 25\%  & 25\%   \\
-		$\epsilon = 8/255$ & ReLU &  &  & 2s & 2s & 2s  \\ \hline
-	\end{tabular}
-%	\begin{minipage}{0.9\linewidth}
-%		\footnotesize
-%		{\textsuperscript{*} Accuracy means the accuracy of the network itself on test set, and Upper Bound is 100\% the percentage of unsafe examples.} \\
-%	\end{minipage}
-		\caption{Accuracy of DNN (class predicted vs ground truth), upper bound on robustness (robustness attacks found on remaining images), and $\%$ of images verified by $\alpha,\beta$-CROWN with different time-outs (TO) on 7 DNNs, and average runtime per image. The 6 first DNNs are complex instances. The last DNN (ResNet) is an easy instance (trained using Wong to be easy to verify, but with a very low accuracy level), provided for reference.
-	}
-\label{table_beta}
-%		\vspace{-0.5cm}
-\end{table}
+
+The benchmarks usually focus on local robustness, i.e. given a DNN, an image and a small neighborhood around this image, is it the case that all the images in the neighborhood are classified in the same way. 
+
+
+
 
 $\alpha,\beta$-CROWN, as well as BaBSR \cite{BaB} and MN-BaB \cite{ferrari2022complete},
 rely on Branch and Bound technique (BaB), which call BaB once per output neuron (few calls). In the worst case, this involves considering all possible ReLU configurations, though branch and bound typically circumvents most possibilities. For easy instances, BaB is highly efficient as all branches can be pruned early. However, BaB methods hit a complexity barrier when verifying more complex instances, due to an overwhelming number of branches (exponential in the height of branches that cannot be pruned as they need too many variables to branch over). This can be clearly witnessed on the verification-agnostic \cite{SDPFI} DNNs of Table \ref{table_beta} (6 first DNNs), where vastly enlarging the time-out only enables to verify few more \% of images, leaving a large proportion ($20\%-50\%$) of images undecided despite the large runtime. As argued in \cite{SDPFI}, there are many situations (workflow, no access to the dataset...) where using specific trainers to learn easy to verify DNN is simply not possible, leading to  {\em verification-agnostic} networks, and such cases should be treated as well as DNNs specifically trained to be easy to verify, e.g. using \cite{TrainingforVerification}. Verification-agnostic are the simplest instances to demonstrate the scaling behavior of BaB on complex instances using standard local robustness implementations. Other complex instances include solving non-local properties, e.g. global robustness computed through Lipschitz bound \cite{lipshitz}, etc. The bottom line is that one cannot expect to have only easy instances to verify. It is important to notice that the number of activation functions of the DNN is a poor indicator of the hardness of the instance, e.g. $5 \times 100$ with 500 ReLUs is far more complex to certify ($50\%$ undecided images) than 100 times bigger ResNet ($0\%$ undecided images), see Table \ref{table_beta}.
