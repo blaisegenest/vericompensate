@@ -1,36 +1,24 @@
-\subsection*{A trick of $L_1$ norm constraints on input}
+\subsection*{Encoding $L_1$-perturbations with linear variables}
 
-A trick to set $L_1$ norm constraints on the input space into linear constraints is described below.
+Let $\vec{x}=(x_i)_{i\leq n}$ be an input vector, with $n$ dimensions.
 
-Suppose the dimension of input space is $n$, and $x_i,i\leq n$ are the input variables, $\vec{x}$ is the input vector, and we hope to set a constraints of $\vec{x}$ that $\|\vec{x}\| \leq c$,  then we can set the constraints by add variables $A_i,i<n$ with the only constraints \begin{align}\label{L1constraint}\begin{cases}
+\begin{proposition}
+	\label{prop.l1}
+Define $n$ linear variables $(A_i)_{i<n}$ with the constraints 
+\begin{align}\label{L1constraint}\begin{cases}
 	A_i \geq x_i &\text{ for }i \leq n\\ 
 	A_i\geq -x_i &\text{ for }i \leq n\\
-	\Sigma_{i\leq n} A_i \leq c	&\end{cases}
+	\sum_{i\leq n} A_i \leq c	&\end{cases}
 \end{align}
 
-We show that this constraint is equivalent to $\|\vec{x}\| \leq c$.
+This is equivalent with asking $||\vec{x}||_{L_1} = \sum_{i\leq n} |x_i| \leq c$.
+\end{proposition}
 
-The first two lines of constraints \ref{L1constraint} is equivalent to that $A_i\geq |x_i|$. So the whole constraints is non-weaker than $\|\vec{x}\| \leq c$.
+The proof is simple: the first two lines of constraints (\ref{L1constraint}) are equivalent with $A_i \geq |x_i|$. So the whole constraint (\ref{L1constraint}) 
+implies that $\sum_{i\leq n} |x_i| \leq c$.
 
-Next, for every instance that satisfy $\|\vec{x}\| \leq c$, then there is also an instance which satisfy constraints \ref{L1constraint}: simply let all $A_i = |x_i|$. And this shows that $\|\vec{x}\| \leq c$ is non-weaker than constraints \ref{L1constraint}. Therefore they are equivalent.
+Conversely, for every instance that satisfies $\sum_{i\leq n} |x_i| \leq c$, then there is also an instance which satisfies constraints (\ref{L1constraint}),  by defining $A_i = |x_i|$ for all $i \leq n$.
 
+This shows that constraints (\ref{L1constraint}) is equivalent with 
+$||\vec{x}||_{L_1} = \sum_{i\leq n} |x_i| \leq c$.
 
-
-
-\subsection*{A proof of constraints}
-
-
-We will show that the constraints corresponding to \ref{fig.2v} is exact.
-
-We only need to consider all cases of binary variable. First, we know the constraints for $\hat{x_i}'=\ReLU(x_i')$ are exact. 
-
-We have 2 binary variables and 4 cases in total. We only need to check that, in all 4 cases, $$\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$$
-
-Case 1: if $a = 1$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 4.
-
-Case 2: if $a = 1$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i+x'_i$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 6.
-
-Case 3: if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = 0$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 3.
-
-
-Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
