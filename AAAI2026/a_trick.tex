@@ -13,3 +13,24 @@ We show that this constraint is equivalent to $\|\vec{x}\| \leq c$.
 The first two lines of constraints \ref{L1constraint} is equivalent to that $A_i\geq |x_i|$. So the whole constraints is non-weaker than $\|\vec{x}\| \leq c$.
 
 Next, for every instance that satisfy $\|\vec{x}\| \leq c$, then there is also an instance which satisfy constraints \ref{L1constraint}: simply let all $A_i = |x_i|$. And this shows that $\|\vec{x}\| \leq c$ is non-weaker than constraints \ref{L1constraint}. Therefore they are equivalent.
+
+
+
+
+\subsection*{A proof of constraints}
+
+
+We will show that the constraints corresponding to \ref{fig.2v} is exact.
+
+We only need to consider all cases of binary variable. First, we know the constraints for $\hat{x_i}'=\ReLU(x_i')$ are exact. 
+
+We have 2 binary variables and 4 cases in total. We only need to check that, in all 4 cases, $$\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$$
+
+Case 1: if $a = 1$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 4.
+
+Case 2: if $a = 1$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i+x'_i$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 6.
+
+Case 3: if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = 0$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 3.
+
+
+Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
