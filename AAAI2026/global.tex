@@ -26,23 +26,7 @@
     We will check that in table \ref{table.classical} in Section Experimental Evaluation.
 
 
-    	\begin{table}[h!]
-	\begin{tabular}{|l|c|c|c|}\hline\hline
-		models &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
-	Classical, $50 \times 2$ &    $.320$ &  $.320$ & $.017$ 
-    \\\hline
-    2v model, $50 \times 2$ &    {\bf .040} &  $.037$ & {\bf .018} 
-    \\\hline \hline
-    Classical, $100 \times 2$ &  .186  &  $.022$ & $.022$ 
-    \\\hline
-	2v model, $100 \times 2$&     {\bf .042} &  $.023$ &   {\bf .023} 
-    \\\hline \hline
-	\end{tabular}
-	\caption{Comparison of the classical encoding with our "2v" model on the pipe system with a fixed timeout of 1000s, with either $50 \times 2$, 
-    or the full $100 \times 2$ binary variables.}
-    \label{table.classical}
-\end{table}
-
+ 
 
 
 	\subsection{A novel "2v" model with {\em diff variables}}
@@ -71,7 +55,9 @@
 	%	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
 	
 	We first display on Figure \ref{fig.2v} the function $f(x'_i,y_i)=\hat{y}_i$, when we know that $y_i \in [- \gamma_i, \gamma_i]$. When $x'_i < -\gamma_i$, then $x_i <0$ and we have $\hat{y}_i = \ReLU(x_i) - \ReLU(x'_i) = 0-0=0$.
-    For $x'_i > \gamma_i$, we have $x_i >0$ and $\hat{y}_i=y_i$. Between these two linear planes, we have two more linear planes presenting intermediate cases, so 4 linear planes in total.
+    For $x'_i > \gamma_i$, we have $x_i >0$ and $\hat{y}_i=
+    \ReLU(x_i)-\ReLU(x'_i)=x_i - x'_i = y_i$. 
+    Between these two linear planes, we have two more linear planes presenting intermediate cases, so 4 linear planes in total.
 	
 	
 	
@@ -115,16 +101,21 @@
 			\node[label={$(-\gamma_i,\gamma_i, 0)$}] at (axis cs: -1, 0.8 ,0) {};			
 		\end{axis}
 	\end{tikzpicture}
-	\caption{The outcome $\val(\hat{y}_i)=\ReLU(\val(x_i))-\ReLU(\val(x'_i))$ 
-	depending on $\val(y_i) = \val(x_i)-\val(x'_i)$ and on $\val(x'_i)$.}
+	\caption{The function computing $\hat{y}_i=\ReLU(x_i)-\ReLU(x'_i)$ 
+	depending on $y_i = x_i- x'_i$ and on $x'_i$.}
 	\label{fig.2v}
 \end{figure}
 	
 
+Recall first that we use the classical MILP encoding 
+for $\hat{x}'_i=\ReLU(x'_i)$, using one binary variable $a'$. We reuse 
+$a'$ (with its value already settled, see Proposition \ref{Prop1}) 
+in the encoding of $\hat{y}_i = \ReLU(x_i)-\ReLU(x'_i)$:
 
+\begin{proposition}
 Assuming that $y_i \in [-\gamma_i, \gamma_i]$,
 and that $x'_i \in [\alpha_i,\beta_i]$,
-we have that $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ is the solution of:
+we have that $\hat{y}_i = \ReLU(x_i=x'_i+y_i)-\ReLU(x'_i)$ is the solution of:
 	\begin{align*}
 		& \begin{aligned}
 			y_i + x'_i &\leq a\beta_i        &
@@ -140,7 +131,17 @@ we have that $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ is the solution of:
 			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
 			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
 		\end{aligned}
-	\end{align*} Here, $a,a'$ are binary variables, and $a'$ is also the binary variable in the constraints for $\hat{x}'_i=\ReLU(x'_i)$. 
+	\end{align*} 
+    where $a,a'$ are binary variables, 
+    and $a'$ is shared with the classical MILP
+    encoding for $\hat{x}'_i=\ReLU(x'_i)$.
+\end{proposition}
+
+So to encode both $\hat{y}_i$ and $\hat{x}_i$, we need 2 binary variables altogether, as the classical encoding.
+
+%\begin{proof}
+PROOF????
+%\end{proof}
 	
 
 Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$ are not necessary, or at least can be relaxed without any loss in accuracy.
