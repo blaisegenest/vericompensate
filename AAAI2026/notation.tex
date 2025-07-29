@@ -30,11 +30,20 @@
 	and $\boldsymbol{z}^{i}_j$ is used to call the $j$-th neuron in the $i$-th layer. 
 	For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, pre- and post-activation neurons are called \emph{nodes}, and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$.	For convenience, we write $n < z$ if neuron $n$ is on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$.
 	
-	Concerning the verification problem, we focus on the global-robustness question. Global robustness asks to determine how the output of a neural network will be affected under a certain kind of small perturbations to any possible input. In this view, Lipschitz continuity is a good characterization of global robustness.
+    In this paper, we consider the global verification problem, where we optimize over all image $I$ and all perturbation $I'$ of $I$ with $|I-I'| \leq \varepsilon$. 	We will consider three kinds of variables: 
+    \begin{itemize}
+    \item $x_j,\hat{x}_j$, for nodes $j$ with input image $I$, 
+    \item $x'_j,\hat{x}'_j$, for nodes $j$ with input the perturbed $I'$, 
+    \item  $y_j = x_j - x'_j$ the {\em diff variable}, with 
+    $\hat{y}_j = \hat{x}_j - \hat{x}'_j$ (and {\em not} 
+    $\hat{y}_i = \ReLU(x_j-x'_j)$). 
+    \end{itemize}
+     
+    %Concerning the verification problem, we focus on the global-robustness question. Global robustness asks to determine how the output of a neural network will be affected under a certain kind of small perturbations to any possible input. In this view, Lipschitz continuity is a good characterization of global robustness.
 	
 	
 	
-	
+	\iffalse
 	
 	\section{Global robustness and Lipschitz constant}
 	
@@ -129,56 +138,65 @@
 	This ends the proof.
 	\hfill $\square$
 	
+	\fi
+
+	
+	\section{(partial) MILP}
 	
 	
-	\section{pMILP for local robustness}
 	
+	\subsection{MILP encoding for local ReLU and LP relaxation}
 	
-	
-	\subsection{MILP and LP encodings for DNNs}
-	
-	First we introduce some concepts for local robustness question.
-	
-	Mixed Integer Linear Programming (MILP) value abstraction is a complete (but inefficient) method. 
-	For an unstable neuron $n$ that its value $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one 
-	integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
+	Mixed Integer Linear Programming (MILP) value abstraction is an accurate encoding of ReLU DNNs. For an unstable neuron $n$, that is with values 
+    $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, 
+    the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one binary / integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
 	
 	\vspace{-0.4cm}
-	\begin{equation}\quad \hat{x} \geq x \quad \wedge \quad \hat{x} \geq 0, \quad \wedge \quad \hat{x} \leq \UB(n) \cdot a \quad \wedge \quad \hat{x} \leq x-\LB(n) \cdot (1-a)
+	\begin{equation} 
+        \hat{x} \geq x \, \wedge \, \hat{x} \geq 0 \, \wedge \, \hat{x} \leq \UB(n) a \, \wedge \, \hat{x} \leq x-\LB(n) (1-a)
 		\label{eq11}
 	\end{equation}
 	
+\begin{proposition}
+\cite{MILP}
+A solution $x,\hat{x},a$  of the above MILP program satisfies $\hat{x} = \ReLU(x)$,
+and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both are possible if $x=0$).
+\end{proposition}
+
 	%For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
 	
+    \iffalse
 	The global structure is as follows, using Gurobi as an example:
 	\begin{enumerate}
 		\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable. 
 		\item Set constraints for input nodes.
 		\item For each pre-activation node in a hidden layer (and each output node), set linear constraints relating them to the post-activation or input nodes in the previous layer they connect to.
 		\item Between pre- and post- activation nodes, set the MILP constraint described above.
-	\end{enumerate} We use $\mathcal{M}$ to denote the whole MILP model. In practice, we may only consider the network up to a certain hidden layer. In that case, the pre-activation nodes of that layer serve as the output nodes of the model $\mathcal{M}$.
+	\end{enumerate} 
+    
+    \fi
+    
+    We use $\mathcal{M}$ to denote the whole MILP model, where each unstable ReLU are encoded in the above way with one integer variable. This is often too computationally intensive, as the worst-case complexity of MILP is exponential in the number of integer variables \cite{DivideAndSlide}.
+    
+    
+	MILP instances can be linearly relaxed into LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}.
+    % We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof.
 	
-	MILP instances can be linearly relaxed into LP over-abstraction, where variables originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}. We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof.
 	
+	%\subsection{partial MILP}
 	
-	\subsection{partial MILP}
-	
-	We will use {\em partial MILP} (pMILP for short, see \cite{DivideAndSlide}) to get trade-offs between accuracy and runtime. Here, we extract the explanation from paper CITE.
-	
-	
-	Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: the partial MILP based on $X$ to compute neuron $n$ simply calls Gurobi to minimize/maximize the value of $n$ with the MILP model encoding, where variable $a$ is:
+	Intermediate between these 2 extreme cases, there is {\em partial MILP} 
+    (pMILP for short) to get trade-offs between accuracy and runtime:
+	Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: the pMILP based on $X$ to compute neuron $n$ uses the MILP encpoding (\ref{eq11}), where variable $a$ is:
 	\begin{itemize}
 		\item binary for neurons in $X$ (exact encoding of the ReLU),
 		\item linear for neurons not in $X$ (linear relaxation).
 	\end{itemize}
-	We will denote above case by MILP$_X$ or $\mathcal{M}_X$. Informally, we say that a node is opened if it is in $X$. 
+	We will denote the above model by MILP$_X$. We say that a node is {\em opened} if it is in $X$. 
 	
-	If $X$ covers all unstable neurons, then MILP$_X$ is exact. But then the time cost may be very large (exponential growth).
+	%To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach: computing lower and upper bounds $\LB,\UB$ for neurons $n$ of a each layer iteratively, that are used when computing values of the next layer.
 	
-	
-	To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach: computing lower and upper bounds $\LB,\UB$ for neurons $n$ of a each layer iteratively, that are used when computing values of the next layer.
-	
-	
+	\iffalse
 	\subsection{SAS}
 	
 	
@@ -232,4 +250,4 @@
 	\begin{proposition}
 		$0 \leq \Improve\max^z(a) \leq \Utility\max^z(a)$. 
 	\end{proposition}
-	
+	\fi
