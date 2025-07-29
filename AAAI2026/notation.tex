@@ -15,7 +15,8 @@
 	An $\ell$-layer DNN is provided by $\ell$ weight matrices 
 	$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
 	and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
-	We call $d_i$ the number of neurons of hidden layer $i \in \{1, \ldots, \ell-1\}$,
+	We call $d_i$ the number of neurons of hidden layer 
+	$i \in \{1, \ldots, \ell-1\}$,
 	$d_0$ the input dimension, and $d_\ell$ the output dimension.
 	
 	Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
@@ -176,7 +177,11 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both are possible if $x=0$).
     
     \fi
     
-    We use $\mathcal{M}$ to denote the whole MILP model, where each unstable ReLU are encoded in the above way with one integer variable. This is often too computationally intensive, as the worst-case complexity of MILP is exponential in the number of integer variables \cite{DivideAndSlide}.
+    We use $\mathcal{M}$ to denote the whole MILP model, where each unstable ReLU are encoded in the above way with one integer variable. 
+	The encoding from $(\hat{x}_j)_{j \text{ in layer } i}$ to 
+	$(x_{j'})_{j' \text{ in layer } i+1}$ variables is simply the linear combination 
+	$\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i$.
+	This exact MILP encoding is often too computationally intensive, as the worst-case complexity of MILP is exponential in the number of integer variables \cite{DivideAndSlide}.
     
     
 	MILP instances can be linearly relaxed into LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP abstraction}.
@@ -186,7 +191,8 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both are possible if $x=0$).
 	%\subsection{partial MILP}
 	
 	Intermediate between these 2 extreme cases, there is {\em partial MILP} 
-    (pMILP for short) to get trade-offs between accuracy and runtime:
+    (pMILP for short) to get trade-offs between accuracy and runtime
+	\cite{DivideAndSlide}:
 	Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: the pMILP based on $X$ to compute neuron $n$ uses the MILP encpoding (\ref{eq11}), where variable $a$ is:
 	\begin{itemize}
 		\item binary for neurons in $X$ (exact encoding of the ReLU),

@@ -2,24 +2,156 @@
 	
 	
 	
-	\subsection{Classical encoding}
+	\subsection{Extending the classical encoding}
 	
     The most straightforward idea to encode the global verification question is to 
     consider variable $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ for nodes of the image $I$ and of its perturbation $I'$,
-    using the classical encoding (\ref{eq11}) for each variable, that we call $\mathcal{M}^{classical}$.
-    
-    use two identical MILP models, one for 
-    , i.e., to build a model  
-    
-    based on two identical MILP models $\mathcal{M},\mathcal{M}'$ with completely disjoint variables (and their own constraints) plus some extra constraints:
-	\begin{enumerate}
-		\item Add constraints for connecting input nodes $\mathcal{M},\mathcal{M}'$ to meet the requirement $|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon$.
-		\item Set the optimization objective as the difference between two variables of the same output node in two models $\mathcal{M},\mathcal{M}'$ (because we want to compute $\max|f(\boldsymbol{x}) -f(\boldsymbol{y}) |$).
+    using the classical encoding (\ref{eq11}) \cite{MILP} for each variable, 
+    that we call $\mathcal{M}^{classical}$.
+    Further:
+    \begin{enumerate}
+		\item For each input nodes $x_j,x'_j$ of $I,I'$, we add constraints
+        $|x_j-x'_j| \leq \varepsilon$ 
+        ($L_\infty$-perturbation - see next section for $L_1$).
+		\item We set the optimization objective as maximize $x_i - x_j +x'_j - x'_i$ to compute $\beta^\varepsilon_{i,j}=\beta^\varepsilon_{j,i}$.
 	\end{enumerate}
-	This large model contains twice as many binary variables as $\mathcal{M}$. The computational cost of solving an MILP model grows roughly exponentially with the number of binary variables, and hence it will cost much more time.
+
+	This model contains twice as many (binary) variables as for local robustness. As the worst-case complexity of solving an MILP model 
+    is exponential in the number of binary variables, it will be computationally intractable to compute $\beta^\varepsilon_{i,j}$ in this way, but for very small DNNs. As explained in the previous section, the standard way is to rely on relaxing at least some of the binary variables into linear variables.
+
+    The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost.
+
+    On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when all variables are opened and the MILP model is fully accurate, the classical encoding will likely not be efficient as well. 
+
+    We will check that in table \ref{table.classical} in Section Experimental Evaluation.
+
+
+
+	\subsection{A novel "2v" model with {\em diff variables}}
+
+    The idea to circumvent the loss of dependencies when applying linear relaxation is to switch the variables towards $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em diff variables}, with
+    $y_j = x_j - x'_j$ and $\hat{y}_j= \hat{x}_j - \hat{x}'_j$. Intuitively, the diff variables will be small as they will be carrying the difference between both the image $I$ and its perturbation $I'$.
+    We will use the classical MILP encoding for $\hat{x}'_j$.
+    However, we cannot apply the classical MILP encoding (\ref{eq11}) \cite{MILP} on the diff variable $\hat{y}_j$. Instead we study the function of 
+    $\hat{y}_j$ given $y_j$ and $x'_j$, and encode it into a novel MILP model.
+    A first important observation is that $I,I'$ being perfectly symetrical,
+    for $\gamma_i$ being a upper bound of $y_i$, then $-\gamma_i$ is a lower bound 
+    for $y_i$.
+
 	
-	We may relax some constraints (by changing binary variables to continuous variables) as in the case of local robustness. However, the problem is that even relaxing a few nodes can cause a significant loss of accuracy, which motivates us to explore other modeling approaches.
+
+	%	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
 	
+	
+	
+	%	The exact constraints for $$ \begin{align*}
+		%		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
+		%		&\hat{y}_i \geq -\hat{x}'_i+(x_i'+y_i) \hspace*{1ex}\wedge\hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+(x_i'+y_i) +(a-1)\alpha_i \\
+		%	\end{align*} 
+	%	
+	%	
+	%	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
+	
+	We first display on Figure \ref{fig.2v} the function $f(x'_i,y_i)=\hat{y}_i$, when we know that $y_i \in [- \gamma_i, \gamma_i]$. When $x'_i < -\gamma_i$, then $x_i <0$ and we have $\hat{y}_i = \ReLU(x_i) - \ReLU(x'_i) = 0-0=0$.
+    For $x'_i > \gamma_i$, we have $x_i >0$ and $\hat{y}_i=y_i$. Between these two linear planes, we have two more linear planes presenting intermediate cases, so 4 linear planes in total.
+	
+	
+	
+	\begin{figure}[b!]
+		\centering
+	\hspace*{-5ex}
+	\begin{tikzpicture}[scale=0.65]
+		\begin{axis}[	axis on top, xlabel = \(x'_i\),
+			ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
+			set layers=default,
+			xmax = 4, xmin = -4,
+			ymax = 1, ymin = -1,		
+			zmax = 1, zmin = -1,
+			unit vector ratio=1 1 1, scale=2.5,  ytick   = {-1,0,1},
+			yticklabels = {$-\gamma_i$,$0$,$\gamma_i$}, xtick = {0},
+			xticklabels = {$0$}, ztick   = {-1,0,1},
+			zticklabels = {$-\gamma_i$,$0$,$\gamma_i$},
+			view={35}{14},
+			]
+			\addplot3[ fill=blue,opacity=0.1, fill opacity=0.4] 
+			coordinates {
+				(0,0,0) (-1,1,0) (-4,1,0) (-4,-1,0) (0,-1,0) (0,0,0)
+			};
+			
+			\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4] 
+			coordinates { (0,0,0) (0,1,1) (4, 1, 1) (4, -1, -1) (1,-1,-1) (0,0,0)
+			};
+			
+			\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4	] 
+			coordinates { (0,0,0)  (-1,1,0) (0,1,1) (0,0,0)
+			};
+			
+			\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4	] 
+			coordinates { (0,0,0)  (0,-1,0) (1,-1,-1) (0,0,0)
+			};
+			
+			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(1,-1,-1)};
+			\node[label={$(\gamma_i,-\gamma_i, -\gamma_i)$}] at (axis cs: 1.2, -0.5 ,-1) {};
+			
+			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(-1,1,0)};
+			\node[label={$(-\gamma_i,\gamma_i, 0)$}] at (axis cs: -1, 0.8 ,0) {};			
+			
+		\end{axis}
+	\end{tikzpicture}
+	\caption{The outcome $\val(\hat{y}_i)=\ReLU(\val(x_i))-\ReLU(\val(x'_i))$ 
+	depending on $\val(y_i) = \val(x_i)-\val(x'_i)$ and on $\val(x'_i)$.}
+	\label{fig.2v}
+\end{figure}
+	
+
+
+Assuming that $y_i \in [-\gamma_i, \gamma_i]$,
+and that $x'_i \in [\alpha_i,\beta_i]$,
+we have that $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ is the solution of:
+	\begin{align*}
+		& \begin{aligned}
+			y_i + x'_i &\leq a\beta_i        &
+			y_i &+ x'_i \geq (1-a)\alpha_i \\
+			x'_i       &\leq a'\beta_i       & 
+			x'_i       &\geq (1-a')\alpha_i \\
+			\hat{y}_i  &\leq a\gamma_i       &
+			\hat{y}_i  &\geq -a'\gamma_i \\
+			\hat{y}_i  &\leq y_i + (1-a)\gamma_i  &
+			\hat{y}_i  &\geq y_i - (1-a')\gamma_i \\
+			\hat{y}_i  &\leq -x'_i + a\beta_i &
+			\hat{y}_i  &\geq -x'_i + (1-a')\alpha_i \\
+			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
+			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
+		\end{aligned}
+	\end{align*} Here, $a,a'$ are binary variables, and $a'$ is also the binary variable in the constraints for $\hat{x}'_i=\ReLU(x'_i)$. 
+	
+
+Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$ are not necessary, or at least can be relaxed without any loss in accuracy.
+	
+	%	\begin{align*}
+		%		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
+		%		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
+		%		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
+		%		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
+		%		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
+		%		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
+		%	\end{align*} 
+	
+	The following plot illustrates the constraints described above.
+	
+
+	In practice, when we relax the constraints for a node, we will convert $a_i$ and $a_i'$ to continuous variables together. In principle, we can also choose to change  only one of those two binary variables.
+	
+	%	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
+	
+	A special relaxation approach of this model is to treat the binary variables $a'$ appearing in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$ as distinct variables, and relax only the latter. 
+	
+	This approach has a similar disadvantage as the model in the previous section: the output computed by the network on the optimized inputs may not equal the output value in the solution. Similarly, it is meaningful to compute the upper bound using this approach. 
+	
+
+
+
+
 	\subsection{A Simplified model}
 	
 	To avoid above problem, we introduce a simplified model that is to use one variable $y_i$ to represent the difference of each two variables: that is, if $x_i$ and $x'_i$ are two variables in $\mathcal{M}$ and $\mathcal{M}'$ representing the same node, then we set $y_i=x_i-x'_i$ and and $\hat{y}_i=\hat{x}_i-\hat{x}_i'$. The relation between $y_i$, $x'_i$ and $\hat{y}_i$ is $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$ 
@@ -80,110 +212,6 @@
 	
 	%	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
 	%	
-	\subsection{Improving the Accuracy of the Simplified Model}
-	We can remove the disadvantage and improve the accuracy of the above simplified model by modifying the constraints, at the cost of increased computational time — a trade-off between accuracy and speed. 
-	
-	%	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
-	
-	
-	
-	%	The exact constraints for $$ \begin{align*}
-		%		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
-		%		&\hat{y}_i \geq -\hat{x}'_i+(x_i'+y_i) \hspace*{1ex}\wedge\hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+(x_i'+y_i) +(a-1)\alpha_i \\
-		%	\end{align*} 
-	%	
-	%	
-	%	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
-	
-	
-	
-	
-	
-	\begin{figure}[t!]
-		\centering
-	\hspace*{-10ex}
-	\begin{tikzpicture}[scale=0.65]
-		\begin{axis}[	axis on top, xlabel = \(x'_i\),
-			ylabel = {\(y_i\)}, zlabel = \(\hat{y}_i\),
-			set layers=default,
-			xmax = 4, xmin = -4,
-			ymax = 1, ymin = -1,		
-			zmax = 1, zmin = -1,
-			unit vector ratio=1 1 1, scale=2.5,  ytick   = {-1,0,1},
-			yticklabels = {$-\gamma_i$,$0$,$\gamma_i$}, xtick = {0},
-			xticklabels = {$0$}, ztick   = {-1,0,1},
-			zticklabels = {$-\gamma_i$,$0$,$\gamma_i$},
-			view={35}{14},
-			]
-			\addplot3[ fill=blue,opacity=0.1, fill opacity=0.4] 
-			coordinates {
-				(0,0,0) (-1,1,0) (-4,1,0) (-4,-1,0) (0,-1,0) (0,0,0)
-			};
-			
-			\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4] 
-			coordinates { (0,0,0) (0,1,1) (4, 1, 1) (4, -1, -1) (1,-1,-1) (0,0,0)
-			};
-			
-			\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4	] 
-			coordinates { (0,0,0)  (-1,1,0) (0,1,1) (0,0,0)
-			};
-			
-			\addplot3[	fill=blue,opacity=0.1, fill opacity=0.4	] 
-			coordinates { (0,0,0)  (0,-1,0) (1,-1,-1) (0,0,0)
-			};
-			
-			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(1,-1,-1)};
-			\node[label={$(\gamma_i,-\gamma_i, -\gamma_i)$}] at (axis cs: 1.2, -0.5 ,-1) {};
-			
-			\addplot3[only marks, mark=*, mark size=2pt, blue] coordinates {(-1,1,0)};
-			\node[label={$(-\gamma_i,\gamma_i, 0)$}] at (axis cs: -1, 0.8 ,0) {};			
-			
-		\end{axis}
-	\end{tikzpicture}
-	\caption{The outcome $\val(\hat{y}_i)=\ReLU(\val(x_i))-\ReLU(\val(x'_i))$ 
-	depending on $\val(y_i) = \val(x_i)-\val(x'_i)$ and on $\val(x'_i)$.}
-	\label{fig.2v}
-\end{figure}
-	
-Given $\gamma_i$ as the upper bound of $y_i$, $\alpha_i,\beta_i$ be the upper and lower bound of $x_i,x_i'$, 
-	the precise  constraints for $\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i)$ (along with $\hat{x}'_i=\ReLU(x'_i)$) are as follows:
-	\begin{align*}
-		& \begin{aligned}
-			y_i + x'_i &\leq a\beta_i        &
-			y_i &+ x'_i \geq (1-a)\alpha_i \\
-			x'_i       &\leq a'\beta_i       & 
-			x'_i       &\geq (1-a')\alpha_i \\
-			\hat{y}_i  &\leq a\gamma_i       &
-			\hat{y}_i  &\geq -a'\gamma_i \\
-			\hat{y}_i  &\leq y_i + (1-a)\gamma_i  &
-			\hat{y}_i  &\geq y_i - (1-a')\gamma_i \\
-			\hat{y}_i  &\leq -x'_i + a\beta_i &
-			\hat{y}_i  &\geq -x'_i + (1-a')\alpha_i \\
-			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
-			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
-		\end{aligned}
-	\end{align*} Here, $a,a'$ are binary variables, and $a'$ is also the binary variable in the constraints for $\hat{x}'_i=\ReLU(x'_i)$. 
-	
 
-Similar to the second model, the constraints on $x_i$ for $\hat{x}_i=\ReLU(x_i)$ are not necessary, or at least can be relaxed without any loss in accuracy.
-	
-	%	\begin{align*}
-		%		& y_i+x'_i \leq a\beta_i \quad\wedge \quad y_i+x'_i\geq (1-a)\alpha_i\\	
-		%		& x_i' \leq a'\beta_i \quad\wedge \quad x_i'\geq (1-a')\alpha_i\\
-		%		&\hat{y}_i \leq a\gamma_i \quad\wedge \quad	\hat{y}_i \geq -a'\gamma_i \\
-		%		&	\hat{y}_i \leq y_i+(1-a)\gamma_i \quad\wedge \quad	\hat{y}_i \geq y_i - (1-a')\gamma_i \\
-		%		&	\hat{y}_i \leq -x'_i+a\beta_i \quad\wedge \quad	\hat{y}_i \geq -x'_i+(1-a')\alpha_i \\
-		%		&	\hat{y}_i \leq y_i+x'_i+(1-a)(-\alpha_i)\quad\wedge \quad	\hat{y}_i \geq y_i+x'_i+a'(-\beta_i) \\
-		%	\end{align*} 
-	
-	The following plot illustrates the constraints described above.
-	
 
-	In practice, when we relax the constraints for a node, we will convert $a_i$ and $a_i'$ to continuous variables together. In principle, we can also choose to change  only one of those two binary variables.
-	
-	%	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
-	
-	A special relaxation approach of this model is to treat the binary variables $a'$ appearing in the above constraints and the binary variables for $\hat{x}'_i=\ReLU(x'_i)$ as distinct variables, and relax only the latter. 
-	
-	This approach has a similar disadvantage as the model in the previous section: the output computed by the network on the optimized inputs may not equal the output value in the solution. Similarly, it is meaningful to compute the upper bound using this approach. 
-	
+    
