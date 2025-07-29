@@ -26,6 +26,20 @@
     We will check that in table \ref{table.classical} in Section Experimental Evaluation.
 
 
+    	\begin{table}[h!]
+	\begin{tabular}{|l|c|c|c|}\hline\hline
+		$L_1\leq 0.83$ &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+	Classical, $50 \times 2$ &     {\bf 0.0356} &  $0.0356$ & $0.0191$ \\\hline
+    2v model, $50 \times 2$&     0.0418 &  0.0229 &   {\bf 0.0229} \\\hline \hline
+    Classical, $100 \times 2$ &    0.186?  &  $0.0221$? & $0.0221$ \\\hline
+	2v model, $100 \times 2$&     {\bf 0.0418} &  $0.0229$ &   {\bf 0.0229} \\\hline \hline
+	\end{tabular}
+	\caption{Comparison of classical encoding with our novel "2v" model on the pipe system with a fixed timeout of 1000s, with either $50 \times 2$, 
+    or the full $100 \times 2$ binary variables.}
+    \label{table.classical}
+\end{table}
+
+
 
 	\subsection{A novel "2v" model with {\em diff variables}}
 
