@@ -1,21 +1,24 @@
-
-
 	\section{Experimental Evaluation}
 	
 	We implemented our code in Python 3.8.
-	Gurobi 9.52 was used for solving LP and MILP problems. We conducted our evaluation on an AMD Threadripper 7970X  ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. 
+	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. 
 	
-	We will do experiments on two networks for MNIST dataset and another physical model. Two MNIST have the same structure. They are full-connected DNN with 5, 10 outputs and 784 inputs; each hidden layer has 100 neurons. One of them is a normally trained neural network and another is for trained for adversarial robustness. We call them MNIST $5\times100$-Normal and MNIST $5\times 100$-DiffAI. As the name shows MNIST $5\times 100$-DiffAI has a better robustness. The physical network is a simplified model with 10 input neurons, 26 output neurons, and 2 hidden layers with 50 neurons each.
+	We consider two DNNs: one for MNIST, namely a pre-trained $5\times 100$ (available at \url{https://github.com/eth-sri/eran}), a 5 fully connected layers DNN, with 100 neurons each,	trained with diff AI \cite{deeppoly}. 
+	Although it is relatively small, it is also of good quality with $97\%$ accuracy on classification, but it is not easy to certify for global robustness (the size of a network can be deceptive to know whether they are easy or hard to verify \cite{ATVA25}).  
+	The second one is a 2 fully connected layers, 50 neurons each, learnt as a surrogate model, with 10 reduced input and 10 reduced output, that predict the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of this 3000 points (through a PCA order reduction encoding all 3000 points with 10 dimensions in input and 26 dimensions in output), from \cite{aiware}.
+	
+	MNIST is a classification benchmark, we thus report different bound $\beta^{\epsilon}_{i,j}$
+	for an $L_1$-deformation $\leq .5$. The pipe considers a mixture of $L_1 \leq 3.9$ and $L_\infty \leq 0.2$ perturbations, corresponding to physically pertinent dimensions, and 
+	maximizes the sum of the difference in output of 10 selected points in the mesh between an input and its deformation.
 
-	
 For each benchmark, we report three value: the bound obtained (lower value is better),
 the solution obtained (distance to the bound depicts how close the model has converged),
-and worst-case (higher is better) which is taking the the solution as input to the DNN. For a fully accurate model ("2v" or classical and all variables binary),
+and worst-case (higher is better) which is taking the solution as input to the DNN. For a fully accurate model ("2v" or classical and all variables binary),
 the worst-case will equal the solution, otherwise, it will be smaller.
 
 \subsection{Classical vs our "2v" model}
 
-
+We start by evaluating how accurate the 2v model is vs the classical encoding, both when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We use the pipe models which is easier to handle, and set the time-out at 1000s for both models.
 
 \begin{table}[h!]
 	\begin{tabular}{|l|c|c|c|}\hline\hline
@@ -34,6 +37,7 @@ the worst-case will equal the solution, otherwise, it will be smaller.
     \label{table.classical}
 \end{table}
 
+We confirm both that the LP relaxation of the classical model is extremely poor, with bounds 8 times worst than using our "2v" model. Further, even using a fully accurate mode with all 100x2 variables encoded as binary variables, the "2v" model produces bounds $>4$ times better than the classical model, due to the internal Branch and Bound process to compute bounds, which uses linear relaxation.
 
 	\subsection{Experimental results for robustness (MNIST)}
 	
