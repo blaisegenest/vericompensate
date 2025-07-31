@@ -1,51 +1,48 @@
-	\section{MILP Models for global verification}
+	\section{MILP Models for global robustness}
 	
 	
 	
 	\subsection{Extending the classical encoding}
 	
-    The most straightforward idea to encode the global verification question is to 
-    consider variable $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ for nodes of the image $I$ and of its perturbation $I'$,
-    using the classical encoding (\ref{eq11}) \cite{MILP} for each variable, 
-    that we call $\mathcal{M}^{classical}$.
+    To encode global robustness, \cite{lipshitz,vhagar} consider 
+	variable $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ for nodes of the image $I$ 
+	and of its perturbation $I'$,
+    using the classical encoding (\ref{eq11}) \cite{MILP} for each variable.
     Further:
     \begin{enumerate}
-		\item For each input nodes $x_j,x'_j$ of $I,I'$, we add constraints
+		\item For each input nodes $x_j,x'_j$ of $I,I'$, add constraints
         $|x_j-x'_j| \leq \varepsilon$ 
-        ($L_\infty$-perturbation - see next section for $L_1$).
-		\item We set the optimization objective as maximize $x_i - x_j +x'_j - x'_i$ to compute $\beta^\varepsilon_{i,j}=\beta^\varepsilon_{j,i}$.
+        ($L_\infty$-perturbation - see later for $L_1$).
+		\item The optimization objective is to maximize $x_C - x_D +x'_D - x'_C$ 
+		to compute $\beta^\varepsilon_{C,D}=\beta^\varepsilon_{D,C}$, 
+		for $C \neq D$ two decision classes.
 	\end{enumerate}
 
-	This model contains twice as many (binary) variables as for local robustness. As the worst-case complexity of solving an MILP model 
-    is exponential in the number of binary variables, it will be computationally intractable to compute $\beta^\varepsilon_{i,j}$ in this way, but for very small DNNs. As explained in the previous section, the standard way is to rely on relaxing at least some of the binary variables into linear variables.
+	We call this encoding $\mathcal{M}^{classical}$.
+	It contains twice as many (binary) variables as for local robustness. 
+	%As the worst-case complexity of solving an MILP model is exponential in the number of binary variables, it will be computationally intractable to compute $\beta^\varepsilon_{i,j}$ in this way, but for very small DNNs. 
+	As explained in the previous section, the standard way to make the model more efficient is to rely on relaxing at least some of the binary variables into linear variables.
 
-    The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost.
+    The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when all variables are opened and the MILP model is fully accurate, the classical encoding will likely not be efficient as well. Notice that this was already witnessed in \cite{lipshitz}, and some additional constraints were added to make the classical model more accurate. We will compare the different methods in table \ref{table.classical}.
 
-    On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when all variables are opened and the MILP model is fully accurate, the classical encoding will likely not be efficient as well. 
-
-    We will check that in table \ref{table.classical} in Section Experimental Evaluation.
-
+	
 
  
 
 
 	\subsection{A novel "2v" model with {\em diff variables}}
 
-    The idea to circumvent the loss of dependencies when applying linear relaxation is to switch the variables towards 
-    $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em diff variables}, with
-    $y_j = x_j - x'_j$ and $\hat{y}_j= \hat{x}_j - \hat{x}'_j$. Intuitively, the diff variables will be small as they will be carrying the difference between both the image $I$ and its perturbation $I'$.
+	We now present our novel faithful "2v" model.
+    First, we consider variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em diff variables}, with     $y_j = x_j - x'_j$ and $\hat{y}_j= \hat{x}_j - \hat{x}'_j$, as already proposed in \cite{lipshitz}. 	Intuitively, the diff variables will be small as they will be carrying the difference between both the image $I$ and its perturbation $I'$.
     We will use the classical MILP encoding for $\hat{x}'_j$.
-    However, we cannot apply the classical MILP encoding (\ref{eq11}) \cite{MILP} on the diff variable $\hat{y}_j$. Instead we study the function of 
+
+    However, unlike \cite{lipshitz}, we do not apply the classical MILP encoding (\ref{eq11}) \cite{MILP} on the diff variable $\hat{y}_j$. Instead we study the function of 
     $\hat{y}_j$ given $y_j$ and $x'_j$, and encode it into a novel MILP model.
     A first important observation is that $I,I'$ being perfectly symetrical,
     for $\gamma_i$ being a upper bound of $y_i$, then $-\gamma_i$ is a lower bound 
     for $y_i$.
 
-	
-
 	%	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
-	
-	
 	
 	%	The exact constraints for $$ \begin{align*}
 		%		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
@@ -60,9 +57,7 @@
     \ReLU(x_i)-\ReLU(x'_i)=x_i - x'_i = y_i$. 
     Between these two linear planes, we have two more linear planes presenting intermediate cases, so 4 linear planes in total.
 	
-	
-	
-	\begin{figure}[b!]
+	\begin{figure}[t!]
 		\centering
 	\hspace*{-5ex}
 	\begin{tikzpicture}[scale=0.65]
@@ -146,6 +141,7 @@ The LP relaxation of this model contains important bounds, including
     (see subsection "1v" model), which is not the case of the classical model.
 	
 
+	\iffalse
 \paragraph{A proof of Prop.~\ref{Prop2}}
 
 We do a case analysis depending on the value of both binary variables. 
@@ -162,6 +158,8 @@ Case 3: if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then 
 
 
 Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
+
+\fi
 
 %\begin{proof}
 
@@ -184,7 +182,17 @@ Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then 
     
     
 
-	\begin{figure}[b!]
+
+    \subsection{A decoupled "3v" model}
+
+	Besides doing LP relaxation on some of the binary variables, we propose a 
+    variant of the "2v" model: the binary variables $a'$ appearing in 
+    Prop. \ref{Prop2} can be decoupled from the binary variable appearing in the classical encoding of $x'_i = \ReLU(x'_i)$. While this means having 3 binary variables per unstable ReLU (which warrants the name "3v" model), the fact that these variables are decouples remove a lot of constraints in the MILP encoding, and actually helps the solver. The decoupling also means that the "3v" model is not as accurate as the "2v" model.
+
+
+	\subsection{The efficient "1v" model}
+
+		\begin{figure}[t!]
 		\centering
 	\hspace*{10ex}\begin{tikzpicture}
 		\begin{axis}[
@@ -213,15 +221,7 @@ Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then 
 \end{figure}
 
 
-    \subsection{A decoupled "3v" model}
 
-	Besides doing LP relaxation on some of the binary variables, we propose a 
-    variant of the "2v" model: the binary variables $a'$ appearing in 
-    Prop. \ref{Prop2} can be decoupled from the binary variable appearing in the classical encoding of $x'_i = \ReLU(x'_i)$. While this means having 3 binary variables per unstable ReLU (which warrants the name "3v" model), the fact that these variables are decouples remove a lot of constraints in the MILP encoding, and actually helps the solver. The decoupling also means that the "3v" model is not as accurate as the "2v" model.
-
-
-	\subsection{The efficient "1v" model}
-	
 	To simplify further and limit the number of (binary) variables, 
     we introduce an efficient "1v" model which only uses the diff variables $y_i,\hat{y}_i$. Again, we study the range of values $\hat{y}_i$ can take according to the value of $y_i$, as depicted in Fig.~\ref{fig.1v}. This is a projection of Fig.~\ref{fig.2v} onto $y_i,\hat{y}_i$.
     

@@ -37,7 +37,7 @@
     \item $x'_j,\hat{x}'_j$, for nodes $j$ with input the perturbed $I'$, 
     \item  $y_j = x_j - x'_j$ the {\em diff variable}, with 
     $\hat{y}_j = \hat{x}_j - \hat{x}'_j$ (and {\em not} 
-    $\hat{y}_i = \ReLU(x_j-x'_j)$). 
+    $\hat{y}_i = \ReLU(x_j-x'_j)$), similarly than in the ITNE model \cite{lipshitz}. 
     \end{itemize}
      
     %Concerning the verification problem, we focus on the global-robustness question. Global robustness asks to determine how the output of a neural network will be affected under a certain kind of small perturbations to any possible input. In this view, Lipschitz continuity is a good characterization of global robustness.
@@ -142,13 +142,14 @@
 	\fi
 
 	
-	\section{(partial) MILP}
+	%\section{MILP for local robustness}
 	
 	
 	
 	\subsection{MILP encoding for local ReLU and LP relaxation}
 	
-	Mixed Integer Linear Programming (MILP) value abstraction is an accurate encoding of ReLU DNNs. For an unstable neuron $n$, that is with values 
+	Mixed Integer Linear Programming (MILP) can encode faithfully ReLU DNNs:
+	For an unstable neuron $n$, that is with values 
     $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, 
     the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one binary / integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
 	
@@ -178,7 +179,7 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both are possible if $x=0$).
     
     \fi
     
-    We use $\mathcal{M}$ to denote the whole MILP model, where each unstable ReLU are encoded in the above way with one integer variable. 
+    Let $\mathcal{M}$ denote the whole MILP model, where each unstable ReLU are encoded in the above way with one integer variable. 
 	The encoding from $(\hat{x}_j)_{j \text{ in layer } i}$ to 
 	$(x_{j'})_{j' \text{ in layer } i+1}$ variables is simply the linear combination 
 	$\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i$.

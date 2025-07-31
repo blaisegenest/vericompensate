@@ -11,7 +11,7 @@
 	for an $L_1$-deformation $\leq .5$. The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq 0.2$ perturbations, corresponding to physically pertinent dimensions, and 
 	maximizes the sum of the difference in output of 10 selected points in the mesh between an input and its deformation.
 
-For each benchmark, we report three value: the bound obtained (lower value is better),
+For each benchmark, we report three values: the bound obtained (lower value is better),
 the solution obtained (distance to the bound depicts how close the model has converged),
 and worst-case (higher is better) which is taking the solution as input to the DNN. For a fully accurate model ("2v" or classical and all variables binary),
 the worst-case will equal the solution, otherwise, it will be smaller due to abstraction.
@@ -41,7 +41,7 @@ We confirm that the LP relaxation of the classical model is extremely poor, with
 
 	\subsection{Experimental results for robustness (MNIST)}
 	
-
+We then turn to the MNIST classification benchmark, and report one particular bound $\beta^{.5}_{i,j}$, namely for $i=6,j=8$ as a confusion between a 6 and a 8 is possible, provided in Table \ref{table.mnist}.
 	
 	\begin{table}[h!]
 	\begin{tabular}{|l|c|c|c|c|}\hline\hline
@@ -58,12 +58,13 @@ We confirm that the LP relaxation of the classical model is extremely poor, with
 		 2v, $500 \times 2$ & {\bf 8.257} & nan & nan & 260000 \\\hline\hline
 		 
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models 
+	\caption{TO BE UPDATED. Comparison of "1v", "3v" and "2v" models 
 	to obtain bounds on $\beta^{.5}_{6,8}$ on the {\bf full dimension} MNIST DNN, for timeouts of 43200s, 130000s and 260000s, where 375, 450, 485 or 500 ($\times 1$, $\times 2$, $\times 3$) neurons use binary variables.}
+	\label{table.mnist}
 \end{table}
 
-On the full space, we reach bounds of $8.2$ (on $\beta^{.5}_{6,8}$), which is too pessimistic as it allows to certify 0 image robust. The worst-case found by the "2v" $485 \times 2$ binary variables after 130000s only displays a difference of 
-$0.37$, $20 \times$ away from the bound found.
+On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached are too pessimistic: they allow to certify no image robust in real-time. One of the reason, besides that the verification question is very complicated with 1000 binary variables for the accurate model, is that working in the full $784$ dimensional space allow for very unlikely inputs, far away from what the DNN has learnt from, making the search very long and the bound very pessimistic.
+As an illustration of that, we display on Fig.~\ref{fig3} the worst-case as found by our models, which is very improbable to be ever encountered in the MNIST benchmark.
 
 \begin{figure*}[t!]
 	\centering
@@ -71,19 +72,15 @@ $0.37$, $20 \times$ away from the bound found.
 \includegraphics[scale=0.5]{perturb.png}
 \caption{An improbable image and its perturbation (difference at x=13, y=18) 
 with maximal $\beta^{.5}_{6,8}=0.37$ for MNIST as obtained by the "2v" $485 \times 2$ model in full 784 dimension image space.}
+\label{fig3}
 \end{figure*}	
-
-
 
 
 \paragraph{Reduced space}
 
-We now consider a PCA model order reduction to avoid considering improbable images, 
-speed up obtaining the bounds, and obtain less pessimistic bounds.
-We settle on 20 orders, as the MNIST DNN considered run on a images obtained from projecting to the reduced order and projected back to the full dimension 
-display the same accuracy of $97$\% as the DNN on the original images, meaning no accuracy is lost from reducing to 20 dimensions, which is the only thing which matters. On such a reduced space, bounds obtained are much more precise, and one can certify robustness of images online.
-
-
+To remove improbable images and limit the space of search, 
+we consider a PCA model order reduction: We settled on reduction to 20 dimensions, because the MNIST $100 \times 5$ DNN considered, once run on images obtained from projecting to the reduced order and projected back to the full dimensional space displays the same accuracy of $97$\% as the DNN on the original images. This means that considering the reduced 20 dimensional space
+does not incur any loss in accuracy, which is the only thing which matters. On this reduced space, bounds obtained are much more precise, and one can concretly certify in real-time robustness of images.
 
 	\begin{table}[h!]
 	\begin{tabular}{||l||c|c|c||}\hline\hline
@@ -104,10 +101,13 @@ display the same accuracy of $97$\% as the DNN on the original images, meaning n
 	\end{tabular}
 	\caption{Comparison of "1v", "3v" and "2v" models 
 	to obtain bounds on $\beta^{.5}_{6,8}$ on the {\bf 20 dimension}  reduced order MNIST DNN, for timeouts of 14400s, where 400, 475,  or 500 ($\times 1$, $\times 2$, $\times 3$) neurons use binary variables.}
+	\label{table.reduced}
 \end{table}
 
 
-
+We report in Table \ref{table.reduced} the same $\beta^{.5}_{6,8}$
+as in Table \ref{table.mnist}, obtained with the same time-out. The bounds are directly comparable: $\beta^{.5}_{6,8}$ obtained using the reduced dimension is $\approx 8$ times smaller
+than when using the full dimension. With these bounds, most images ($86\%$) can be certified in real-time robust for a perturbation $L_1 \leq .5$, and even $53\%$ with a perturbation $L_1 \leq 1$ twice as large, see Table \ref{table.cert}. We illustrate that improbable images are removed by displaying in Fig.~\ref{fig4} the worst-case obtained for $\beta^{.5}_{6,8}$, which indeed looks like a realistic MNIST instance.
 
 
 
@@ -116,6 +116,7 @@ display the same accuracy of $97$\% as the DNN on the original images, meaning n
 \includegraphics[scale=0.5]{redimage.png} \hspace{0.8cm}
 \includegraphics[scale=0.5]{redperturb.png}
 \caption{An image and its perturbation from the 20-dimension reduced space with maximal $\beta^{.5}_{6,8}=.084$ for MNIST as obtained by the "2v" $500 \times 2$ model.}
+\label{fig4}
 \end{figure*}	
 
 	
@@ -138,20 +139,16 @@ display the same accuracy of $97$\% as the DNN on the original images, meaning n
 
 \subsection{Experiment results for regression (Pipe strain)}
 	
-	For the pipe system, to find a example of large difference on outputs is one of the main aims.
+	For the pipe system, we compared in Table \ref{table.pipe} the different models "1v","2v","3v" to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. The bounds we found are quite accurate, with a best bound of ".0329" obtained by the "3v" model, slightly better than the bound $.0337$ found within the same time by the "2v" model, and better than the bound found $0.356$ by the "1v" model, although this bound has been found 70 times faster due to the simpler model. The certified lower bound is not so far, at $.245$, found by the fully accurate "2v" model when all the variables are binary. We did chcek that this worst-case found, displayed in Fig. \ref{fig5}, which is not too far from the actual worst case $<.0337$, is coherent wit the physical Finite Element system the DNN has been learnt from, hence this is not an hallucination due to the brittleness of the DNN learnt.
 
 	\begin{figure*}[t!]
 \includegraphics[scale=0.5]{deform.png} \hspace{0.8cm}
 \includegraphics[scale=0.5]{strain.png}
 \caption{2 slightly different deformations and their associated quite different strain as obtained by the "2v" $100 \times 2$ model.}
+\label{fig5}
 \end{figure*}	
 
 
-	The network of Pipe system is relatively simple and in the tests, we will open all $\ReLU$ nodes.
-
-	
-
-	We will compare the results of different modeling methods.
 	
 	\vspace*{1ex}
 	
@@ -182,6 +179,7 @@ display the same accuracy of $97$\% as the DNN on the original images, meaning n
 		3v, $100 \times 3$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
 		2v, $100 \times 2$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline\hline
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with a fixed timeout of 1000s, 14440s and 72126s, where 90 ($\times 2$, $\times 3$) or all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.
-	L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
+	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with a fixed timeout of 1000s, 14440s and 72126s, where 90 ($\times 2$, $\times 3$) or all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.}
+	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
+	\label{table.pipe}
 \end{table}
