@@ -1,5 +1,47 @@
 % Encoding: UTF-8
 
+
+@inproceedings{ITNE,
+  author       = {Zhilu Wang and
+                  Chao Huang and
+                  Qi Zhu},
+  title        = {Efficient Global Robustness Certification of Neural Networks via Interleaving
+                  Twin-Network Encoding (Extended Abstract)},
+  booktitle    = {Proceedings of the Thirty-Second International Joint Conference on
+                  Artificial Intelligence, {IJCAI} 2023, 19th-25th August 2023, Macao,
+                  SAR, China},
+  pages        = {6498--6503},
+  publisher    = {ijcai.org},
+  year         = {2023},
+  url          = {https://doi.org/10.24963/ijcai.2023/727},
+  doi          = {10.24963/IJCAI.2023/727}
+}
+
+@inproceedings{REGLO,
+  author       = {Feisi Fu and
+                  Zhilu Wang and
+                  Weichao Zhou and
+                  Yixuan Wang and
+                  Jiameng Fan and
+                  Chao Huang and
+                  Qi Zhu and
+                  Xin Chen and
+                  Wenchao Li},
+  editor       = {Michael J. Wooldridge and
+                  Jennifer G. Dy and
+                  Sriraam Natarajan},
+  title        = {{REGLO:} Provable Neural Network Repair for Global Robustness Properties},
+  booktitle    = {Thirty-Eighth {AAAI} Conference on Artificial Intelligence, {AAAI}
+                  2024, Thirty-Sixth Conference on Innovative Applications of Artificial
+                  Intelligence, {IAAI} 2024, Fourteenth Symposium on Educational Advances
+                  in Artificial Intelligence, {EAAI} 2014, February 20-27, 2024, Vancouver,
+                  Canada},
+  pages        = {12061--12071},
+  publisher    = {{AAAI} Press},
+  year         = {2024},
+  url          = {https://doi.org/10.1609/aaai.v38i11.29094},
+}
+
 @inProceedings{atva25,
   author    = {Liao, Yuke and Genest, Blaise and Meel, Kuldeep and Aryaman, Shaan},
   booktitle = {ATVA'25},
@@ -1114,15 +1156,13 @@
   url           = {https://arxiv.org/abs/2405.04260},
 }
 
-@Article{VHAGaR,
+@Article{vhagar,
   author     = {Kabaha, Anan and Cohen, Dana Drachsler},
   journal    = {Proc. ACM Program. Lang.},
-  title      = {Verification of Neural Networks’ Global Robustness},
+  title      = {{Verification of Neural Networks' Global Robustness}},
   year       = {2024},
-  month      = apr,
   number     = {OOPSLA1},
   volume     = {8},
-  abstract   = {Neural networks are successful in various applications but are also susceptible to adversarial attacks. To show the safety of network classifiers, many verifiers have been introduced to reason about the local robustness of a given input to a given perturbation. While successful, local robustness cannot generalize to unseen inputs. Several works analyze global robustness properties, however, neither can provide a precise guarantee about the cases where a network classifier does not change its classification. In this work, we propose a new global robustness property for classifiers aiming at finding the minimal globally robust bound, which naturally extends the popular local robustness property for classifiers. We introduce VHAGaR, an anytime verifier for computing this bound. VHAGaR relies on three main ideas: encoding the problem as a mixed-integer programming and pruning the search space by identifying dependencies stemming from the perturbation or the network’s computation and generalizing adversarial attacks to unknown inputs. We evaluate VHAGaR on several datasets and classifiers and show that, given a three hour timeout, the average gap between the lower and upper bound on the minimal globally robust bound computed by VHAGaR is 1.9, while the gap of an existing global robustness verifier is 154.7. Moreover, VHAGaR is 130.6x faster than this verifier. Our results further indicate that leveraging dependencies and adversarial attacks makes VHAGaR 78.6x faster.},
   address    = {New York, NY, USA},
   articleno  = {130},
   doi        = {10.1145/3649847},
