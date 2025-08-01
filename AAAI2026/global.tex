@@ -216,7 +216,8 @@ Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then 
 			\node[label={above:$(\gamma_i,\gamma_i)$}] at (axis cs: 1.4, 1.5) {};
 		\end{axis}
 	\end{tikzpicture}
-\caption{The possible values of $\hat{y}_i=\ReLU(x_i)-\ReLU(x'_i)$ depending on $y_i = x_i-x'_i$ for the "1v" model.}
+\caption{The possible values of $\hat{y}_i=\ReLU(x_i)-\ReLU(x'_i)$ depending on $y_i = x_i-x'_i$ for the "1v" model. {\bf LIAO please depict LP relaxation in broken lines}.
+    }
 	\label{fig.1v}
 \end{figure}
 
@@ -236,9 +237,18 @@ Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then 
 	\end{align*} where $a \in \{0,1\}$ is a binary variable.
 	\end{proposition}
 
-    We can easily check that the LP relaxation of this MILP program is exactly 
-    $\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$, 
-    {\bf LIAO please do on Fig2: as depicted in broken lines on Fig.~\ref{fig.1v}}.
+    We can easily check that the LP relaxation of this MILP program,
+	depicted in broken lines on Fig.~\ref{fig.1v}, is exactly: 
+    \begin{equation}
+		\label{eq.lpr}
+	  \frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}
+	\end{equation}
+
+	As the "1v" model is a projection of the "2v" and the "3v" models, 
+	the LP relaxations of the "2v" and the "3v" models contain (\ref{eq.lpr}).
+	Notice that (\ref{eq.lpr}) corresponds to Eq. (3) in \cite{lipshitz}, 
+	which is added explicitly to the classical model in their ITNE model.
+	
     
 	
 	
@@ -257,7 +267,7 @@ Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then 
 	As a result, we can relax the binary variables used to $\hat{x}_i = \ReLU(x_i)$ and $\hat{x}'_i = \ReLU(x'_i)$.
 	\fi
 
-	The "1v" model contains the same number of (binary) variables as the MILP model for local robustness, but it is not as accurate as the "3v" or "2v" models. 
+	%The "1v" model contains the same number of (binary) variables as the MILP model for local robustness, but it is not as accurate as the "3v" or "2v" models. 
     
 	%	However, in practice, with a reasonable timeout, this simplified model can usually obtain a better bound.
 	%	

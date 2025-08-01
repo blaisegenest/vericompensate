@@ -8,8 +8,8 @@
 	The second one is a 2 fully connected layers, 50 neurons each, learnt as a surrogate model, with 10 reduced input and 10 reduced output, that predict the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of this 3000 points (through a PCA order reduction encoding all 3000 points with 10 dimensions in input and 26 dimensions in output), from \cite{aiware}.
 	
 	MNIST is a classification benchmark, we thus report different bound $\beta^{\epsilon}_{i,j}$
-	for an $L_1$-deformation $\leq .5$. The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq 0.2$ perturbations, corresponding to physically pertinent dimensions, and 
-	maximizes the sum of the difference in output of 10 selected points in the mesh between an input and its deformation.
+	for an $L_1$-deformation $\leq .5$. The pipe considers a conjunction of 
+	$L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, corresponding to physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between an input and its deformation.
 
 For each benchmark, we report three values: the bound obtained (lower value is better),
 the solution obtained (distance to the bound depicts how close the model has converged),
@@ -18,9 +18,9 @@ the worst-case will equal the solution, otherwise, it will be smaller due to abs
 
 \subsection{Classical vs our "2v" model vs ITNE}
 
-We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz}, that we reimplement in Gurobi by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{lipshitz} (and also to the relaxation of our "1v" model). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We use the pipe models which is easier to verify, and set the time-out at 1000s for all models.
 
-\begin{table}[h!]
+\begin{table}[b!]
+	\centering
 	\begin{tabular}{|l|c|c|c|}\hline\hline
 		model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
 	Classical, $50 \times 2$ &    $.320$ &  $.320$ & $.017$ 
@@ -31,15 +31,18 @@ We start by evaluating how accurate the 2v model is vs the classical encoding vs
     \\\hline \hline
     Classical, $100 \times 2$ &  .186  &  $.022$ & $.022$ 
     \\\hline
-	ITNE, $100 \times 2$ &    $.045$ &  $.023$ & {\bf .023} 
+	ITNE, $100 \times 2$ &    $.045$ &  $.023$ & .023
     \\\hline
-	2v model, $100 \times 2$&     {\bf .042} &  $.023$ &   {\bf .023} 
+	2v model, $100 \times 2$&     {\bf .042} &  $.023$ &   .023 
     \\\hline \hline
 	\end{tabular}
 	\caption{Comparison of the classical encoding, ITNE and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $50 \times 2$, 
     or the full $100 \times 2$ binary variables.}
     \label{table.classical}
 \end{table}
+
+We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz}, that we reimplement in Gurobi by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{lipshitz} (and also to the relaxation of our "1v" model). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We use the pipe models which is easier to verify, and set the time-out at 1000s for all models.
+
 
 Table \ref{table.classical}, $50 \times 2$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation only. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{lipshitz} recovers most but not all the bound of the "2v" model.
 
@@ -58,10 +61,11 @@ in Table \ref{table.mnist} one particular bound $\beta^{.5}_{i,j}$, namely for $
 		model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
 		1v, $500 \times 1$ & $15.67$ & $.620$ & $.012$ \\\hline 
 		3v, $500 \times 3$ & $16.09$ & $.755$ & {\bf .207} \\\hline 
-	    2v, $500 \times 2$ & {\bf 8.99} & nan & nan \\\hline\hline	 
+	    2v, $500 \times 2$ & {\bf 8.99} & n/a & n/a \\\hline\hline	 
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models 
-	to obtain bounds on $\beta^{.5}_{6,8}$ on the {\bf full dimension} MNIST DNN, 
+	\caption{Bounds on $\beta^{.5}_{6,8}$ 
+	obtained by the "1v", "3v" and "2v" models 
+	on the {\bf full dimension} MNIST DNN, 
 	for timeouts of $14400$s, when all 500 ($\times 1$, $\times 2$, $\times 3$) variables are binary.}
 	\label{table.mnist}
 \end{table}
@@ -87,8 +91,6 @@ with maximal $\beta^{.5}_{6,8}=0.207$ for MNIST as obtained by the "3v" $500 \ti
 \end{figure*}	
 
 
-\paragraph{Reduced space}
-
 \begin{table}[b!]
 	\centering
 	\begin{tabular}{||l||c|c|c||}\hline\hline
@@ -107,16 +109,16 @@ with maximal $\beta^{.5}_{6,8}=0.207$ for MNIST as obtained by the "3v" $500 \ti
 	 
 	\end{tabular}
 	\caption{Comparison of "1v", "3v" and "2v" models 
-	to obtain bounds on $\beta^{.5}_{6,8}$ on the {\bf 20 dimension}  reduced order MNIST DNN, for timeouts of 14400s, where 
-	all the %400, 475,  or 
+	to obtain bounds on $\beta^{.5}_{6,8}$ on the {\bf 20 dimension} reduced order MNIST DNN, for timeout of 14400s, where 
+	all %400, 475,  or 
 	500 ($\times 1$, $\times 2$, $\times 3$) neurons use binary variables.}
 	\label{table.reduced}
 \end{table}
 
 
-To remove improbable images and limit the space of search, 
-we consider a PCA model order reduction: We settled on reduction to 20 dimensions, because the MNIST $100 \times 5$ DNN considered, once run on images obtained from projecting to the reduced order and projected back to the full dimensional space displays the same accuracy of $97$\% as the DNN on the original images. This means that considering the reduced 20 dimensional space
-does not incur any loss in accuracy, which is the only thing which matters. On this reduced space, bounds obtained are much more precise, and one can concretly certify in real-time robustness of images.
+\paragraph{Reduced Space}
+
+
 
 \begin{table}[b!]
 	\begin{tabular}{||l||c|c|c|c||}\hline\hline
@@ -125,11 +127,17 @@ does not incur any loss in accuracy, which is the only thing which matters. On t
 		3v, $500 \times 3$ & {\bf 86 \%} & {\bf 53\%} & {\bf 20\%} & {\bf 4\%} \\\hline
 		2v, $500 \times 2$ & 84\% & 51\% & 16\% & {\bf 4\%} \\\hline \hline
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models 
-	in the percentage of images certified robust in real-time 
-	using the computed $(\beta^{.5}_{i,j})_{i < j \leq 10}$  for different values of $L_1$-perturbations.}
+	\caption{Percentage of images certified robust in real-time 
+	using the computed $(\beta^{.5}_{i,j})_{i < j \leq 10}$ 
+	by the "1v", "3v" and "2v" models, for different values of $L_1$-perturbations.}
     \label{table.cert}
 \end{table}
+
+
+To remove improbable images and limit the space of search, 
+we consider a PCA model order reduction: We reduced to 20 dimensions, because the MNIST $100 \times 5$ DNN considered, once run on images obtained from projecting to the 20 dimension space and projected back to the full dimension space displays the same accuracy of $97$\% as the DNN on the original images. This means that considering the reduced 20 dimensional space
+does not incur any loss in accuracy, which is the only thing which matters. On this reduced space, bounds obtained are much more precise, and one can certify in real-time robustness of images.
+
 
 
 
@@ -158,7 +166,7 @@ as in Table \ref{table.mnist}, obtained with the same time-out. The bounds are d
 \end{figure*}	
 
 
-	For the pipe system, we compared in Table \ref{table.pipe} the different models "1v","2v","3v" to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. The bounds we found are quite accurate, with a best bound of ".0329" obtained by the "3v" model, slightly better than the bound $.0337$ found within the same time by the "2v" model, and better than the bound found $0.356$ by the "1v" model, although this bound has been found 70 times faster due to the simpler model. The certified lower bound is not so far, at $.245$, found by the fully accurate "2v" model when all the variables are binary. We did check that this worst-case found, displayed in Fig. \ref{fig5}, which is not too far from the actual worst case $<.0337$, is coherent wit the physical Finite Element system the DNN has been learnt from, hence this is not an hallucination due to the brittleness of the DNN learnt.
+	For the pipe system, we compared in Table \ref{table.pipe} the different models "1v","2v","3v" to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. The bounds we found are quite accurate, with a best bound of ".0329" obtained by the "3v" model, slightly better than the bound $.0337$ found within the same time by the "2v" model, and better than the bound found $0.356$ by the "1v" model, although this bound has been found 70 times faster due to the simpler model. The certified lower bound is not so far, at $.245$, found by the fully accurate "2v" model when all the variables are binary. We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.0329$, is coherent wit the physical Finite Element system the DNN has been learnt from, hence this is not an hallucination due to the brittleness of the DNN learnt.
 
 
 	
@@ -191,7 +199,7 @@ as in Table \ref{table.mnist}, obtained with the same time-out. The bounds are d
 		3v, $100 \times 3$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
 		2v, $100 \times 2$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline\hline
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with a fixed timeout of 1000s, 14440s and 72126s, where 90 ($\times 2$, $\times 3$) or all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.}
+	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, where all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.}
 	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
 	\label{table.pipe}
 \end{table}
