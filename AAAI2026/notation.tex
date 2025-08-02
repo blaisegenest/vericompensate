@@ -164,8 +164,8 @@
 \begin{proposition}
 \cite{MILP}
 \label{Prop1}
-A solution $x,\hat{x},a$  of the above MILP program satisfies $\hat{x} = \ReLU(x)$,
-and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both are possible if $x=0$).
+A solution $x,\hat{x},a$  of the above MILP program (\ref{eq11}) satisfies $\hat{x} = \ReLU(x)$,
+and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 \end{proposition}
 
 	%For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
@@ -181,9 +181,11 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both are possible if $x=0$).
     
     \fi
     
-    In the whole MILP model, each unstable ReLU is encoded in the above way with one integer variable. The encoding from $(\hat{x}_j)_{j \text{ in layer } i}$ to 
+    The encoding from $(\hat{x}_j)_{j \text{ in layer } i}$ to 
 	$(x_{j'})_{j' \text{ in layer } i+1}$ variables is simply the linear combination 
 	$\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i$.
+	Hence the full MILP model uses exactly as many binary variables as 
+	unstable ReLUs.
 	%This exact MILP encoding is often too computationally intensive, as the worst-case complexity of MILP is exponential in the number of integer variables \cite{DivideAndSlide}.
     
     \subsection{LP relaxation}
@@ -197,7 +199,7 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both are possible if $x=0$).
 	Intermediate between these 2 extreme cases, there is {\em partial MILP} 
     (pMILP for short) to get trade-offs between accuracy and runtime
 	\cite{DivideAndSlide}:
-	Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: the pMILP based on $X$ to compute neuron $n$ uses the MILP encpoding (\ref{eq11}), where variable $a$ is:
+	Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: the pMILP based on $X$ to compute neuron $n$ uses the MILP encoding (\ref{eq11}), where variable $a$ is:
 	\begin{itemize}
 		\item binary for neurons in $X$ (exact encoding of the ReLU),
 		\item linear for neurons not in $X$ (linear relaxation).

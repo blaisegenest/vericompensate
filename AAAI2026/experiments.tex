@@ -3,9 +3,9 @@
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. 
 	
-	We consider two DNNs: one for MNIST, namely a pre-trained $5\times 100$ (available at \url{https://github.com/eth-sri/eran}), a 5 fully connected layers DNN, with 100 neurons each,	trained with diff AI \cite{deeppoly}. 
+	We consider two DNNs: one for MNIST, namely a pre-trained $5\times 100$ (available at \url{https://github.com/eth-sri/eran}), a 5 fully connected layers DNN, with 100 neurons each,	trained with diffAI \cite{deeppoly}. 
 	Although it is relatively small, it is also of good quality with $97\%$ accuracy on classification, but it is not easy to certify for global robustness (the size of a network can be deceptive to know whether they are easy or hard to verify \cite{ATVA25}).  
-	The second one is a 2 fully connected layers, 50 neurons each, learnt as a surrogate model, with 10 reduced input and 26 reduced output, that predictS the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of this 3000 points (through a PCA order reduction \cite{Paco} encoding all 3000 points with 10 dimensions in input and 26 dimensions in output), from \cite{aiware}.
+	The second one is a 2 fully connected layers, 50 neurons each, learnt as a surrogate model, with 10 reduced input and 26 reduced output, that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of this 3000 points (through a PCA order reduction \cite{Paco} encoding all 3000 points with 10 dimensions in input and 26 dimensions in output), from \cite{aiware}.
 	
 	MNIST is a classification benchmark, we thus compute the different $\beta^{\varepsilon}_{i,j}$ bounds, for an $L_1$-deformation $\varepsilon = \leq .5$. 
 	The pipe considers a conjunction of 
@@ -38,7 +38,7 @@ For each benchmark, we report three values: the bound obtained (lower value is b
     \label{table.classical}
 \end{table}
 
-We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz}, that we reimplement in Gurobi by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We use the pipe models which is easier to verify, and set the time-out at 1000s for all models.
+We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
 
 
 Table \ref{table.classical}, $50 \times 2$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{ITNE} recovers most but not all the bound of the "2v" model.
@@ -67,7 +67,7 @@ in Table \ref{table.mnist} one particular bound $\beta^{.5}_{i,j}$, namely for $
 	\label{table.mnist}
 \end{table}
 
-On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached are too pessimistic: no image can be certified robust in real-time. One of the reason, besides that the verification question is very complicated with 1000 binary variables for the accurate model, is that working in the full $784$ dimensional space allows for very unlikely inputs, far away from what the DNN has learnt from, making the search very long and the bound very pessimistic. As an illustration of that, we display on Fig.~\ref{fig3} the worst-case as found by our models, which is very improbable to be ever encountered in the MNIST benchmark.
+On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached are too pessimistic: no image can be certified robust in real-time. One of the reason, besides that the verification question is very complicated with 1000 binary variables for the accurate model, is that working in the full $784$ dimensional space allows for very unlikely inputs, far away from the training dataset, making the search space overly large. As an illustration of that, we display on Fig.~\ref{fig3} the worst-case as found by our models, which is very improbable to be ever encountered in the MNIST benchmark.
 
 \begin{figure*}[t!]
 	\centering
