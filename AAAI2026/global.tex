@@ -28,7 +28,7 @@
 
     The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when all variables are binary, the classical MILP encoding 
 	of \cite{MILP}, while fully accurate, will likely not result into accurate bounds as well. Notice that this was already witnessed in \cite{ITNE}, and some additional constraints were added to make the classical model more accurate:
-	the diff variables were defined, although to pass the ReLU the classical  
+	the {\em diff variables} were defined, although to pass the ReLU the classical  
 	MILP encoding was used, but with added specific constraints (Eq. (3) in 
 	\cite{ITNE}). We will compare the different methods in Table \ref{table.classical}.
 
@@ -40,7 +40,7 @@
 	\subsection{A novel "2v" model with {\em diff variables}}
 
 	We now present our novel faithful "2v" model.
-    First, we consider variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em diff variables}, with     $y_j = x_j - x'_j$ and $\hat{y}_j= \hat{x}_j - \hat{x}'_j$, as already proposed in \cite{lipshitz,ITNE}. 	Intuitively, the diff variables will be small as they will be carrying the difference between both the image $I$ and its perturbation $I'$.
+    First, we consider variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em diff variables}, with     $y_j = x_j - x'_j$ and $\hat{y}_j= \hat{x}_j - \hat{x}'_j$, as already proposed in \cite{lipshitz,ITNE}. 	Intuitively, the {\em diff values} will be small as they will be carrying the difference between both the image $I$ and its perturbation $I'$.
     We will use the classical MILP encoding for $\hat{x}'_j$.
 
     However, unlike the Interleaving Twin-Network Encoding (ITNE) of \cite{lipshitz,ITNE} which relies on the classical MILP encoding (\ref{eq11}) \cite{MILP} to compute $\hat{y}_j$ from the difference between 
@@ -198,7 +198,7 @@ Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then 
 
 	Besides doing LP relaxation on some of the binary variables, we propose a 
     variant of the "2v" model: the binary variables $a'$ appearing in 
-    Prop. \ref{Prop2} can be decoupled from the binary variable appearing in the classical encoding of $x'_i = \ReLU(x'_i)$. While this means having 3 binary variables per unstable ReLU (which warrants the name "3v" model), the fact that these variables are decoupled removes a lot of constraints in the MILP encoding, and actually helps the solver. The decoupling also means that the "3v" model is not as accurate as the "2v" model.
+    Prop. \ref{Prop2} can be decoupled from the binary variable appearing in the classical encoding of $\hat{x}'_i = \ReLU(x'_i)$. While this means having 3 binary variables per unstable ReLU (which warrants the name "3v" model), the fact that these variables are decoupled removes a lot of constraints in the MILP encoding, and actually helps the solver. The decoupling also means that the "3v" model is not as accurate as the "2v" model.
 
 
 	\subsection{The efficient "1v" model}
