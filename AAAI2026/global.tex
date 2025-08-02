@@ -210,10 +210,14 @@ Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then 
 			\addplot[blue, thick] {0}; 
 			
 			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(-2,-2)};
-			\node[label={above:$(-\gamma_i,-\gamma_i)$}] at (axis cs: -1.35, -2.1) {};
+			\node[label={above:$(-\gamma_i,-\gamma_i)$}] at (axis cs: -1.24, -2.2) {};
 			
 			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(2,2)};
-			\node[label={above:$(\gamma_i,\gamma_i)$}] at (axis cs: 1.4, 1.5) {};
+			\node[label={above:$(\gamma_i,\gamma_i)$}] at (axis cs: 1.4, 1.65) {};
+		\addplot[dashed, thick, blue] coordinates {(-2,-2) (2,0)};
+			\addplot[dashed, thick, blue] coordinates {(-2,0) (2,2)};
+			\node[label={above:\scriptsize $LP\ relaxation$}] at (axis cs: -0.7, 0.8) {};
+			\node[label={above:\scriptsize $LP\ relaxation$}] at (axis cs: 0.5, -1.4) {};
 		\end{axis}
 	\end{tikzpicture}
 \caption{The possible values of $\hat{y}_i=\ReLU(x_i)-\ReLU(x'_i)$ depending on $y_i = x_i-x'_i$ for the "1v" model. {\bf LIAO please depict LP relaxation in broken lines}.
