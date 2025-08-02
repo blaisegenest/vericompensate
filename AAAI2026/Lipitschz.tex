@@ -179,16 +179,18 @@
 	\input{experiments}
 
 
-	\vspace{-0.5cm}
+	%\vspace{-0.5cm}
 	\input{related}
 	
 	
 	
 \section{Conclusion}
 
-In this paper, we introduced a novel "2v" MILP model for global verification question, which is 4 to 8 times more accurate than the classical MILP model,
-and more accurate than the ITNE model of \cite{lipshitz}, see Table \ref{table.classical}. Using our "3v" or "1v" models abstracting away some features,
- even better bounds are reached (Tables 3, 4, 5). We also explained how to support $L_1$ perturbations efficiently on top of classical $L_\infty$ perturbations (Prop \ref{prop.l1}). To further lower the bounds by $\approx 8$ times, we resort to model order reduction, reducing the space of search closer to the space of the training dataset, without sacrificing DNN accuracy ($97\%$). This results into, to the best of our knowledge, the first time real-time robustness certification is reported for a DNN, with $86\%$ of robustness for a $L_1$-perturbation of $.5$ and $53\%$ of robustness for a $L_1$-perturbation of $1$. Still, global verification is only at its beginning, and combining different methods is necessary to scale to more complex DNNs.
+In this paper, we introduced a novel "2v" MILP model for global verification questions, which is 4 to 8 times more accurate than the classical MILP model,
+and more accurate than the ITNE model of \cite{lipshitz}, see 
+Table \ref{table.classical}. 
+Using our "3v" or "1v" models abstracting away some features of the "2v" model,
+ even better bounds are reached (Tables 3, 4, 5). We also explained how to support $L_1$-perturbations efficiently on top of classical $L_\infty$ perturbations (Prop \ref{prop.l1}). To further lower the bounds by $> 10$ times, we resort to model order reduction, reducing the space of search closer to the space of the training dataset, without sacrificing DNN accuracy ($97\%$). This results into, to the best of our knowledge, the first time real-time robustness certification is reported for a DNN, with $86\%$ of robustness for a $L_1$-perturbation of $.5$ and $53\%$ of robustness for a $L_1$-perturbation twice as large of $1$. Still, global verification is only at its beginning, and combining different methods is necessary to scale to more complex DNNs.
 
 	
 	

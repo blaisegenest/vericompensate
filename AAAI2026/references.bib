@@ -1,6 +1,16 @@
 % Encoding: UTF-8
 
 
+
+@Article{Sun22,
+  author     = {Weidi Sun and Yuteng Lu and Xiyue Zhang and and Meng Sun},
+  journal    = {In J. Syst. Archit.},
+  title      = {{DeepGlobal: A framework for global robustness veri  cation of feedforward neural networks.}},
+  year       = {2022},
+  url = {https://doi.org/10.1016/J.SYSARC.2022.102582}
+  }
+
+
 @inproceedings{ITNE,
   author       = {Zhilu Wang and
                   Chao Huang and
@@ -16,6 +26,109 @@
   url          = {https://doi.org/10.24963/ijcai.2023/727},
   doi          = {10.24963/IJCAI.2023/727}
 }
+
+
+@inproceedings{Leino,
+  author       = {Klas Leino and Zifan Wang and Matt Fredrikson},
+  title        = {{Globally-Robust Neural Networks}},
+  booktitle    = {ICML 2021},
+  year         = {2021},
+  url          = {http://proceedings.mlr.press/v139/leino21a.html},
+}
+
+
+@inproceedings{GROCET,
+  author       = {Zhilu Wang and Yixuan Wang and Feisi Fu and Ruochen Jiao and Chao Huang and Wenchao Li and Qi Zhu},
+  title        = {{A Tool for Neural Network Global Robustness Certification and Training}},
+  booktitle    = {arXiv 2208.07289},
+  year         = {2022},
+  url          = {https://doi.org/10.48550/arXiv.2208.07289},
+}
+
+
+
+@inproceedings{Bastani16,
+  author       = {Osbert Bastani and Yani Ioannou and Leonidas Lampropoulos and Dimitrios Vytiniotis and Aditya V. Nori and Antonio Criminisi},
+  title        = {{Measuring Neural Net Robustness with Constraints}},
+  booktitle    = {NeurIPS 2016},
+  year         = {2016},
+  url          = {https://proceedings.neurips.cc/paper/2016/hash/ 980ecd059122ce2e50136bda65c25e07-Abstract.html},
+}
+
+@inproceedings{Ruan19,
+  author       = {Wenjie Ruan and Min Wu and Youcheng Sun and Xiaowei Huang and Daniel Kroening and Marta Kwiatkowska},
+  title        = {{Global Robustness Evaluation of Deep Neural Networks with Provable Guarantees for the Hamming Distance}},
+  booktitle    = {IJCAI 2019},
+  year         = {2019},
+  url          = {https: //doi.org/10.24963/IJCAI.2019/824},
+}
+
+
+@inproceedings{Gopinath18,
+  author       = {Divya Gopinath and Guy Katz and Corina S. Pasareanu and Clark W. Barrett.},
+  title        = {{DeepSafe: A Data-Driven Approach for Assessing Robustness of Neural Networks}},
+  booktitle    = {ATVA 2018},
+  year         = {2018},
+  url          = {https://doi.org/10.1007/978-3-030-01090-4_1},
+}
+
+
+
+
+@inproceedings{Levy23,
+  author       = {Natan Levy and Raz Yerushalmi and Guy Katz},
+  title        = {{gRoMA: a Tool for Measuring Deep Neural Networks Global Robustness}},
+  booktitle    = {arXiv.2301.02288},
+  year         = {2023},
+  url          = {https://doi.org/10.48550/arXiv.2301.02288},
+}
+
+
+
+@inproceedings{Mangal19,
+  author       = {Ravi Mangal and Aditya V. Nori and Alessandro Orso},
+  title        = {{Robustness of neural networks: a probabilistic and practical
+approach}},
+  booktitle    = {ICSE 2019},
+  year         = {2019},
+  url          = {https://doi.org/10.1109/ICSE-NIER.2019.00032},
+}
+
+
+@inproceedings{Bibi19,
+  author       = {},
+  title        = {{}},
+  booktitle    = {},
+  year         = {2019},
+  url          = {},
+}
+
+
+
+
+
+@inproceedings{Chen21,
+  author       = {Yizheng Chen and Shiqi Wang and Yue Qin and Xiaojing Liao and Suman Jana and David A. Wagner},
+  title        = {{Learning Security Classifiers with Verified Global Robustness Properties}},
+  booktitle    = {CCS 2021},
+  year         = {2021},
+  url          = {https://doi.org/10.1145/3460120.3484776},
+}
+
+
+
+
+
+@inproceedings{Zhang22a,
+  author       = {Bohang Zhang and Du Jiang and Di He and Liwei Wang},
+  title        = {{Rethinking Lipschitz Neural Networks and Certi  ed Robustness: A Boolean Function Perspective}},
+  booktitle    = {NeurIPS 2022},
+  url          = {http://papers.nips.cc/paper_les/paper/2022/hash/7b04ec5f2b89d7f601382c422dfe07af-Abstract-Conference.html},
+}
+
+
+2022a In NeurIPS (2022). 
+
 
 @inproceedings{REGLO,
   author       = {Feisi Fu and
@@ -51,6 +164,7 @@
   pages     = {},
   publisher = {Springer},
   volume    = {LNCS},
+  url = {https://arxiv.org/abs/2507.23197}
 }
 
 @inProceedings{aiware,
@@ -99,7 +213,6 @@
   month      = {jan},
   number     = {POPL},
   volume     = {3},
-  abstract   = {We present a novel method for scalable and precise certification of deep neural networks. The key technical insight behind our approach is a new abstract domain which combines floating point polyhedra with intervals and is equipped with abstract transformers specifically tailored to the setting of neural networks. Concretely, we introduce new transformers for affine transforms, the rectified linear unit (ReLU), sigmoid, tanh, and maxpool functions. We implemented our method in a system called DeepPoly and evaluated it extensively on a range of datasets, neural architectures (including defended networks), and specifications. Our experimental results indicate that DeepPoly is more precise than prior work while scaling to large networks. We also show how to combine DeepPoly with a form of abstraction refinement based on trace partitioning. This enables us to prove, for the first time, the robustness of the network when the input image is subjected to complex perturbations such as rotations that employ linear interpolation.},
   address    = {New York, NY, USA},
   articleno  = {41},
   doi        = {10.1145/3290354},
@@ -108,6 +221,17 @@
   numpages   = {30},
   publisher  = {Association for Computing Machinery},
 }
+
+
+
+
+  
+
+
+
+
+
+
 
 @InProceedings{Reluplex,
   author    = {Katz, Guy and Barrett, Clark and Dill, David L. and Julian, Kyle and Kochenderfer, Mykel J.},

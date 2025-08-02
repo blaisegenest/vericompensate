@@ -21,7 +21,7 @@ the worst-case will equal the solution, otherwise, it will be smaller due to abs
 
 \begin{table}[b!]
 	\centering
-	\begin{tabular}{|l|c|c|c|}\hline\hline
+	\begin{tabular}{||l|c|c|c||}\hline\hline
 		model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
 	Classical, $50 \times 2$ &    $.320$ &  $.320$ & $.017$ 
     \\\hline
@@ -41,7 +41,7 @@ the worst-case will equal the solution, otherwise, it will be smaller due to abs
     \label{table.classical}
 \end{table}
 
-We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz}, that we reimplement in Gurobi by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{lipshitz} (and also to the relaxation of our "1v" model). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We use the pipe models which is easier to verify, and set the time-out at 1000s for all models.
+We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz}, that we reimplement in Gurobi by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{lipshitz} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We use the pipe models which is easier to verify, and set the time-out at 1000s for all models.
 
 
 Table \ref{table.classical}, $50 \times 2$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation only. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{lipshitz} recovers most but not all the bound of the "2v" model.
@@ -59,9 +59,9 @@ in Table \ref{table.mnist} one particular bound $\beta^{.5}_{i,j}$, namely for $
 		\centering
 	\begin{tabular}{||l||c|c|c||}\hline\hline
 		model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
-		1v, $500 \times 1$ & $15.67$ & $.620$ & $.012$ \\\hline 
-		3v, $500 \times 3$ & $16.09$ & $.755$ & {\bf .207} \\\hline 
-	    2v, $500 \times 2$ & {\bf 8.99} & n/a & n/a \\\hline\hline	 
+		1v, $500 \times 1$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
+		3v, $500 \times 3$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
+	    2v, $500 \times 2$ & $16.49$ & n/a & n/a \\\hline\hline	 
 	\end{tabular}
 	\caption{Bounds on $\beta^{.5}_{6,8}$ 
 	obtained by the "1v", "3v" and "2v" models 
@@ -75,16 +75,15 @@ As an illustration of that, we display on Fig.~\ref{fig3} the worst-case as foun
 
 \begin{figure*}[t!]
 	\centering
-\includegraphics[scale=0.5]{image.png} \hspace{0.8cm}
-\includegraphics[scale=0.5]{perturb.png}
-\caption{An improbable image and its perturbation (difference at x=13, y=18) 
-with maximal $\beta^{.5}_{6,8}=0.207$ for MNIST as obtained by the "3v" $500 \times 2$ model in {\bf full 784 dimension} image space.}
+\includegraphics[scale=0.6]{image.png} \hspace{1.5cm}
+\includegraphics[scale=0.6]{perturb.png}
+\caption{An improbable image and its perturbation ($L1$-difference of $.5$ in a unique pixel at x=14, y=8 from top) with maximal $\beta^{.5}_{6,8}=0.518$ for MNIST as obtained by the "3v" $500 \times 2$ model in {\bf full 784 dimension} image space.}
 \label{fig3}
 \end{figure*}	
 
 \begin{figure*}[t!]
 	\centering
-\includegraphics[scale=0.5]{redimage.png} \hspace{0.8cm}
+\includegraphics[scale=0.5]{redimage.png} \hspace{1.5cm}
 \includegraphics[scale=0.5]{redperturb.png}
 \caption{An image and its perturbation from the {\bf 20-dimension reduced space} with maximal $\beta^{.5}_{6,8}=.084$ for MNIST as obtained by the "2v" $500 \times 2$ model.}
 \label{fig4}
@@ -143,7 +142,8 @@ does not incur any loss in accuracy, which is the only thing which matters. On t
 
 
 We report in Table \ref{table.reduced} the same $\beta^{.5}_{6,8}$
-as in Table \ref{table.mnist}, obtained with the same time-out. The bounds are directly comparable: the best $\beta^{.5}_{6,8}$ obtained using the reduced dimension is $\approx 8$ times smaller than when using the full dimension ($1.137$ vs $8.99$). With these bounds, most images ($86\%$) can be certified in real-time robust for a perturbation $L_1 \leq .5$, and even $53\%$ with a perturbation $L_1 \leq 1$ twice as large, see Table \ref{table.cert}. We illustrate that improbable images are removed by displaying in Fig.~\ref{fig4} the worst-case obtained for $\beta^{.5}_{6,8}$, which indeed looks like a realistic MNIST instance.
+as in Table \ref{table.mnist}, obtained with the same time-out. The bounds are directly comparable: the best $\beta^{.5}_{6,8}$ obtained using the reduced dimension is $>10$ times smaller than when using the full dimension ($1.137$ vs $14.97$). 
+With these bounds, most images ($86\%$) can be certified in real-time robust for a perturbation $L_1 \leq .5$, and even $53\%$ with a perturbation $L_1 \leq 1$ twice as large, see Table \ref{table.cert}. We illustrate that improbable images are removed by displaying in Fig.~\ref{fig4} the worst-case obtained for $\beta^{.5}_{6,8}$, which indeed looks like a realistic MNIST instance.
 
 
 
@@ -203,3 +203,7 @@ as in Table \ref{table.mnist}, obtained with the same time-out. The bounds are d
 	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
 	\label{table.pipe}
 \end{table}
+
+\newpage
+
+\noindent {\bf Supplementary material content:} We provide in supplementary materials additional content, in particular results with reduced number of binary variables. We also provide the proof of Prop.~\ref{Prop2}, and explanations on the reduced-order dimension pipeline.
