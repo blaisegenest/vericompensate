@@ -6,9 +6,9 @@ Other works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds
 
 Closer to our paper, several works  \cite{Marabou,lipshitz,GROCET} consider a global certified restricted Lipschitz bound, to understand how the output change with input perturbations. However, they do not consider whether the classification changes. 
 
-The most related work is Vhagar \cite{vhagar}, which also computes $\beta^\varepsilon_{i,j}$ bounds, but limited to $L_\infty$ perturbations (and variants). They do not however report real-time certified robust percentage, as in Table \ref{table.cert}. Last, their hyper-adversarial attack to find better lower bounds seems very efficient, and we will consider it in the future.
+The most related work is Vhagar \cite{vhagar}, which also computes $\beta^\varepsilon_{i,j}$ bounds, but limited to $L_\infty$-perturbations (and variants). They do not however report {\em real-time} certified robust percentage, as in Table \ref{table.cert}. Last, their hyper-adversarial attack to find better lower bounds seems very efficient, and we will consider it in the future.
 
 Technically, none of the MILP base work \cite{vhagar,ITNE} 
-consider $L_1$ bounds. Further, they use the classical MILP encoding from \cite{MILP}, and not our novel "2v" model, nor even our "1v" model. However, \cite{ITNE} 
-defines the {\em diff variables} $y,\hat{y}$, adding explicitely the linear relaxation $\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ implied by our models, Eq. (3) in \cite{ITNE} corresponding essentially to it. \cite{vhagar} does things differently, adding per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$ perturbations. 
+consider $L_1$-perturbations. Further, they use the classical MILP encoding from \cite{MILP}, and not our novel "2v" model, nor even our "1v" model. However, \cite{ITNE} 
+defines the {\em diff variables} $y,\hat{y}$, adding explicitly the linear relaxation $\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ implied by our models, Eq. (3) in \cite{ITNE} corresponding essentially to it. \cite{vhagar} does things differently, adding per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations. 
 
