@@ -32,14 +32,14 @@
 	For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. Finally, pre- and post-activation neurons are called \emph{nodes}.
 	% and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$.	For convenience, we write $n < z$ if neuron $n$ is on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$.
 	
-    In this paper, we consider the {\em global} verification problem, where we optimize over all image $I$ and all perturbation $I'$ of $I$ with $|I-I'| \leq \varepsilon$. 	We will consider three kinds of variables: 
+    In this paper, we consider the {\em global} verification problem, where we optimize over all images $I$ and perturbations $I'$ of $I$ with $|I-I'| \leq \varepsilon$. We will consider three kinds of variables: 
     \begin{itemize}
     \item $x_j,\hat{x}_j$, for nodes $j$ with input image $I$, 
     \item $x'_j,\hat{x}'_j$, for nodes $j$ with input the perturbed $I'$, 
     \item  $y_j = x_j - x'_j$ the {\em diff variable}, with 
     $\hat{y}_j = \hat{x}_j - \hat{x}'_j$ (and {\em not} 
     $\hat{y}_i = \ReLU(x_j-x'_j)$), similarly than in the 
-	Interleaving Twin-Network Encoding (ITNE) model \cite{lipshitz}. 
+	Interleaving Twin-Network Encoding (ITNE) model of \cite{lipshitz, ITNE}. 
     \end{itemize}
      
     %Concerning the verification problem, we focus on the global-robustness question. Global robustness asks to determine how the output of a neural network will be affected under a certain kind of small perturbations to any possible input. In this view, Lipschitz continuity is a good characterization of global robustness.
