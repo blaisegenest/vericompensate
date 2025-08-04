@@ -166,8 +166,42 @@
 	\fi
 	
 	
-	
+
 	\section{Proof of Proposition 2}
+
+Recall first that we use the classical MILP encoding 
+for $\hat{x}'_i=\ReLU(x'_i)$, using one binary variable $a'$. We reuse 
+$a'$ (with its value already settled, see Proposition 1 in the main paper) 
+in the encoding of $\hat{y}_i = \ReLU(x_i)-\ReLU(x'_i)$:
+
+\addtocounter{proposition}{1}
+
+\begin{proposition}
+Assuming that $y_i \in [-\gamma_i, \gamma_i]$,
+and that $x'_i \in [\alpha_i,\beta_i]$,
+we have that $\hat{y}_i = \ReLU(x_i=x'_i+y_i)-\ReLU(x'_i)$ is the solution of:
+	\begin{align*}
+		& \begin{aligned}
+			y_i + x'_i &\leq a\beta_i        &
+			y_i &+ x'_i \geq (1-a)\alpha_i \\
+			x'_i       &\leq a'\beta_i       & 
+			x'_i       &\geq (1-a')\alpha_i \\
+			\hat{y}_i  &\leq a\gamma_i       &
+			\hat{y}_i  &\geq -a'\gamma_i \\
+			\hat{y}_i  &\leq y_i + (1-a)\gamma_i  &
+			\hat{y}_i  &\geq y_i - (1-a')\gamma_i \\
+			\hat{y}_i  &\leq -x'_i + a\beta_i &
+			\hat{y}_i  &\geq -x'_i + (1-a')\alpha_i \\
+			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
+			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
+		\end{aligned}
+	\end{align*} 
+    where $a,a' \in \{0,1\}$ are binary variables, 
+    and $a'$ is shared with the classical MILP
+    encoding for $\hat{x}'_i=\ReLU(x'_i)$.
+\end{proposition}
+
+
 
 	We do a case analysis depending on the value of both binary variables. 
 First, we know the constraints for $\hat{x_i}'=\ReLU(x_i')$ are exact. 
@@ -182,6 +216,8 @@ Case 3: if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then 
 
 
 Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
+
+\newpage
 
 \input{PCA}
 

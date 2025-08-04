@@ -1,9 +1,9 @@
 	\section{Additional Experimental Evaluation}
 	
 
+\iffalse
+
 \subsection{Classical vs our "2v" model vs ITNE}
-
-
 
 
 \begin{table}[h!]
@@ -36,7 +36,7 @@
     \label{table.classical}
 \end{table}
 
-
+\fi
 
 
 
@@ -51,9 +51,9 @@
 		3v, $0 \times 3$ (LP) & {\bf 20.2614}  & 20.2614  & .125 \\\hline 
 	    2v, $0 \times 2$ (LP) & {\bf 20.2614}  & 20.2614  & {\bf .145} \\\hline\hline	 
 
-		1v, $200 \times 1$ & ? & ? & ? \\\hline 
-		3v, $200 \times 3$ & ? & ? & ? \\\hline 
-	    2v, $200 \times 2$ & ? & ? & ? \\\hline\hline	 
+		1v, $300 \times 1$ & ? & ? & ? \\\hline 
+		3v, $300 \times 3$ & ? & ? & ? \\\hline 
+	    2v, $300 \times 2$ & ? & ? & ? \\\hline\hline	 
 
 		1v, $400 \times 1$ & {\bf 14.87} & 6.456 & .032 \\\hline 
 		3v, $400 \times 3$ & 16.62 & 6.343 & .254 \\\hline 
@@ -66,7 +66,7 @@
 	\caption{Bounds on $\beta^{.5}_{6,8}$ 
 	obtained by the "1v", "3v" and "2v" models 
 	on the {\bf full dimension} MNIST DNN, 
-	for timeouts of $14400$s, when 0, 200, 400 or 500 ($\times 1$, $\times 2$, $\times 3$) variables are binary.}
+	for timeouts of $14400$s, when 0, 300, 400 or 500 ($\times 1$, $\times 2$, $\times 3$) variables are binary.}
 	\label{table.mnist}
 \end{table}
 
@@ -102,7 +102,7 @@ far insufficient to prove that any image is robust in real-time. Notice that LP
 Notice that the MILP process is far from converging (large difference between the Bound and the Solution) after 4hours (14400s), and we could use much longer 
 runtime in order to obtain better bounds. As this task is performed only once offline, this is not limiting.
 
-Further, we report in table {table.pair} the bounds obtained for every pair of class $C < D \in \{0, \ldots, 9\}$
+Further, we report in table \ref{table.pair} the bounds obtained for every pair of class $C < D \in \{0, \ldots, 9\}$
 using all $500 (\times 1,2,3) $ binary variables.
 
 
@@ -159,10 +159,10 @@ The tests with restricted number of binary variables do not improve the percenta
 		1v, $100 \times 1$ &     {\bf .0356} &  $.0356$ & $.0191$ &  1000 \\\hline
 		3v, $100 \times 3$&     .0414 &  .0254 &  .0166 &  1000 \\\hline
 		2v, $100 \times 2$&     .0418 &  .0229 &   {\bf .0229} &  1000 \\\hline \hline
-	3v, $97 \times 3$&      ?? &  ?? &  ?? & 14440 \\\hline
+	3v, $97 \times 3$&     .0352 &  .0284 &  .0196 & 14440 \\\hline
 		3v, $100 \times 3$&      {\bf .0350} &  .0272 &  .0216 & 14440 \\\hline
-	2v, $97 \times 2$&     ?? &  ?? &   ?? & 14440 \\\hline
-		2v, $100 \times 2$&     .0360 &  .0236 &    {\bf .0236} & 14440 \\\hline \hline
+	2v, $97 \times 2$&     .0393 &  .0240 &   {\bf .0237} & 14440 \\\hline
+		2v, $100 \times 2$&     .0360 &  .0236 &   .0236 & 14440 \\\hline \hline
 		3v, $100 \times 3$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
 		2v, $100 \times 2$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline\hline
 	\end{tabular}
@@ -173,6 +173,7 @@ The tests with restricted number of binary variables do not improve the percenta
 
 
 \begin{table*}
+	\centering
 	\begin{tabular}{|l||c|c|c|c|c|c|c|c|c|c|}\hline
 		{\bf "1v"} & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\\hline\hline
 		0 &  & 1.11 & 2.11 & 3.11 & 4.11 & 5.11 & 6.11 & 7.11 & 8.11 & 9.11 \\\hline
@@ -220,6 +221,7 @@ The tests with restricted number of binary variables do not improve the percenta
 	\end{tabular}
 	
 	\caption{Bounds $(\beta^{.5}_{C,D})_{C < D \leq 9}$ 
-	reached by the "1v", "3v" and "2v" models with 500 $(\times 1,2,3)$ binary variables.}
+	for MNIST on {\bf reduced 20 dimensions}, as reached by the "1v", "3v" and "2v" models
+	with 500 $(\times 1,2,3)$ binary variables.}
     \label{table.pair}
 \end{table*}
