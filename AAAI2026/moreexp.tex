@@ -1,0 +1,213 @@
+	\section{Experimental Evaluation}
+	
+
+\subsection{Classical vs our "2v" model vs ITNE}
+
+
+
+
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{||l|c|c|c||}\hline\hline
+		model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+	Classical, $0 \times 2$ (LP)&  ? & ? & ?
+    \\\hline
+	ITNE, $0 \times 2$ (LP) &    ? & ? & ?
+    \\\hline
+	2v model, $0 \times 2$ (LP) &    ? & ? & ?
+    \\\hline \hline
+	
+		Classical, $50 \times 2$ &    $.320$ &  $.320$ & $.017$ 
+    \\\hline
+	ITNE, $50 \times 2$ &    $.042$ &  $.037$ & $.022$
+	\\ \hline
+    2v model, $50 \times 2$ &    {\bf .040} &  $.037$ &  $.018$ 
+    \\\hline \hline
+    Classical, $100 \times 2$ &  .186  &  $.022$ & $.022$ 
+    \\\hline
+	ITNE, $100 \times 2$ &    $.045$ &  $.023$ & .023
+    \\\hline
+	2v model, $100 \times 2$&     {\bf .042} &  $.023$ &   .023 
+    \\\hline \hline
+	\end{tabular}
+	\caption{Comparison of the classical encoding, ITNE and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $50 \times 2$, 
+    or the full $100 \times 2$ binary variables.}
+    \label{table.classical}
+\end{table}
+
+
+
+
+
+	\subsection{Experimental results for robustness (MNIST)}
+	
+	
+	\begin{table}[h!]
+		\centering
+	\begin{tabular}{||l||c|c|c||}\hline\hline
+		model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+		1v, $0 \times 1$ & ? & ? & ? \\\hline 
+		3v, $0 \times 3$ & ? & ? & ? \\\hline 
+	    2v, $0 \times 2$ & ? & ? & ? \\\hline\hline	 
+
+		1v, $100 \times 1$ & ? & ? & ? \\\hline 
+		3v, $100 \times 3$ & ? & ? & ? \\\hline 
+	    2v, $100 \times 2$ & ? & ? & ? \\\hline\hline	 
+
+		1v, $400 \times 1$ & ? & ? & ? \\\hline 
+		3v, $400 \times 3$ & ? & ? & ? \\\hline 
+	    2v, $400 \times 2$ & ? & ? & ? \\\hline\hline	 
+
+1v, $450 \times 1$ & ? & ? & ? \\\hline 
+		3v, $450 \times 3$ & ? & ? & ? \\\hline 
+	    2v, $450 \times 2$ & ? & ? & ? \\\hline\hline	 
+
+
+		
+		1v, $500 \times 1$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
+		3v, $500 \times 3$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
+	    2v, $500 \times 2$ & $16.49$ & n/a & n/a \\\hline\hline	 
+	\end{tabular}
+	\caption{Bounds on $\beta^{.5}_{6,8}$ 
+	obtained by the "1v", "3v" and "2v" models 
+	on the {\bf full dimension} MNIST DNN, 
+	for timeouts of $14400$s, when all 500 ($\times 1$, $\times 2$, $\times 3$) variables are binary.}
+	\label{table.mnist}
+\end{table}
+
+On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached are too pessimistic: no image can be certified robust in real-time. One of the reason, besides that the verification question is very complicated with 1000 binary variables for the accurate model, is that working in the full $784$ dimensional space allows for very unlikely inputs, far away from the training dataset, making the search space overly large. As an illustration of that, we display on Fig.~\ref{fig3} the worst-case as found by our models, which is very improbable to be ever encountered in the MNIST benchmark.
+
+\begin{figure*}[t!]
+	\centering
+\includegraphics[scale=0.6]{image.png} \hspace{1.5cm}
+\includegraphics[scale=0.6]{perturb.png}
+\caption{An improbable image for MNIST and its perturbation ($L1$-difference of $.5$ in a unique pixel at x=14, y=8 from top) with maximal $\beta^{.5}_{6,8}=0.518$, as obtained by the "3v" $500 \times 2$ model in {\bf full 784 dimension} image space.}
+\label{fig3}
+\end{figure*}	
+
+\begin{figure*}[t!]
+	\centering
+\includegraphics[scale=0.5]{redimage.png} \hspace{1.5cm}
+\includegraphics[scale=0.5]{redperturb.png}
+\caption{An image for MNIST and its perturbation from the {\bf 20-dimension reduced space} with maximal $\beta^{.5}_{6,8}=.084$, as obtained by the "2v" $500 \times 2$ model.}
+\label{fig4}
+\end{figure*}	
+
+
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{||l||c|c|c||}\hline\hline
+		model &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ \\\hline \hline
+%1v, $400 \times 1$ & $1.414$ &  $.691$ & $.010$ \\\hline 
+%3v, $400 \times 3$ & $1.186$ & $.600$ & $.003$ \\\hline 
+%2v, $400 \times 2$ & $1.274$ & $.566$ & $.002$ \\\hline\hline
+	 
+%1v, $475 \times 1$ &  $1.408$ & $.301$ & $.008$  \\\hline 
+%3v, $475 \times 3$ &  $1.153$ & $.250$ & $.006$ \\ \hline 
+%2v, $475 \times 2$ &  $1.247$ & $.1957$ & $.019$ \\\hline\hline
+
+1v, $500 \times 1$ & $1.412$ & $.161$ & .057 \\\hline 
+3v, $500 \times 3$ & {\bf 1.137} & $.103$ & $.065$\\\hline 
+2v, $500 \times 2$ &  $1.182$ & $.084$& {\bf .084}  \\\hline\hline
+	 
+	\end{tabular}
+	\caption{Comparison of "1v", "3v" and "2v" models 
+	to obtain bounds on $\beta^{.5}_{6,8}$ on the {\bf 20 dimension} reduced order MNIST DNN, for timeout of 14400s, where 
+	all %400, 475,  or 
+	500 ($\times 1$, $\times 2$, $\times 3$) neurons use binary variables.}
+	\label{table.reduced}
+\end{table}
+
+
+\paragraph{Reduced Space}
+
+
+
+\begin{table}[b!]
+	\begin{tabular}{||l||c|c|c|c||}\hline\hline
+		model &    $L_1\leq 0.5$ & $L_1\leq 1$ & $L_1\leq 1.5$ &  $L_1\leq 2$ \\\hline \hline
+		1v, $500\times1$ & $80 \%$ & $32\%$ & $7\%$ & $0\%$ \\\hline
+		3v, $500 \times 3$ & {\bf 86 \%} & {\bf 53\%} & {\bf 20\%} & {\bf 4\%} \\\hline
+		2v, $500 \times 2$ & 84\% & 51\% & 16\% & {\bf 4\%} \\\hline \hline
+	\end{tabular}
+	\caption{Percentage of images certified robust in real-time 
+	using the computed $(\beta^{.5}_{i,j})_{i < j \leq 10}$ 
+	by the "1v", "3v" and "2v" models, for different values of $L_1$-perturbations.}
+    \label{table.cert}
+\end{table}
+
+
+To remove improbable images and limit the space of search, 
+we consider a PCA model order reduction \cite{Paco}: We reduced to 20 dimensions, because the MNIST $100 \times 5$ DNN considered, once run on images obtained from projecting to the 20 dimension space and projected back to the full dimension space displays the same accuracy of $97$\% as the DNN on the original images. This means that considering the reduced 20 dimensional space
+does not incur any loss in accuracy, which is the only thing which matters. On this reduced space, bounds obtained are much more precise, and one can certify in real-time robustness of images.
+
+
+
+
+
+We report in Table \ref{table.reduced} the same $\beta^{.5}_{6,8}$
+as in Table \ref{table.mnist}, obtained with the same time-out. The bounds are directly comparable: the best $\beta^{.5}_{6,8}$ obtained using the reduced dimension is $>10$ times smaller than when using the full dimension ($1.137$ vs $14.97$). 
+With these bounds, most images ($86\%$) can be certified in real-time robust for a perturbation $L_1 \leq .5$, and even $53\%$ with a perturbation $L_1 \leq 1$ twice as large, see Table \ref{table.cert}. We illustrate that improbable images are removed by displaying in Fig.~\ref{fig4} the worst-case obtained for $\beta^{.5}_{6,8}$, which indeed looks like a realistic MNIST instance.
+
+
+
+
+	
+	
+
+
+	
+
+
+\subsection{Experimental results for regression (Pipe strain)}
+
+
+	\begin{figure*}[t!]
+\includegraphics[scale=0.5]{deform.png} \hspace{0.8cm}
+\includegraphics[scale=0.5]{strain.png}
+\caption{2 slightly different deformations and their associated quite different strain as obtained by the "2v" $100 \times 2$ model.}
+\label{fig5}
+\end{figure*}	
+
+
+	For the pipe system, we compared in Table \ref{table.pipe} the different models "1v","2v","3v" to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the "3v" model, slightly better than the bound $.0337$ found within the same time by the "2v" model, and better than the bound found $0.356$ by the "1v" model, although this bound has been found 70 times faster due to the simpler model. The certified lower bound is not too far, at $.245$, found by the fully accurate "2v" model when all the variables are binary. We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.0329$, is coherent with the physical dinite element model the DNN surrogate has been learnt from, hence this is not an hallucination due to the brittleness of the learnt DNN.
+
+
+	
+	\vspace*{1ex}
+	
+	\iffalse
+	\begin{table}[h!]
+	\begin{tabular}{|l|l|l|l|l|}\hline
+		$L_1\leq 0.83$ &        Bound $\downarrow$ &  Solution $\uparrow$ &      Real $\uparrow$ &  Time \\\hline
+		1v,open 100 &     {\bf 0.035613} &  0.035613 &                       0.01288 & 10608 \\\hline
+		3v,open 100 &     0.040074 &  0.028934 &                      0.021441 & 10922 \\\hline
+		%3v,open 100 &     0.039824 &  0.028832 &                      0.022255 & 22153 \\\hline
+		2v,open 100 &     0.046719 &  0.024364 &  {\bf 0.024436} & 10922 \\\hline
+	\end{tabular}
+	\caption{Comparison of 1v,2v and 3v models on the pipe system with a fixed timeout of 10.000s.}
+\end{table}
+\fi
+	
+		
+	\begin{table}[h!]
+	\begin{tabular}{||l||c|c|c|c||}\hline\hline
+		model &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ &  Time(s) \\\hline \hline
+		1v, $100 \times 1$ &     {\bf .0356} &  $.0356$ & $.0191$ &  1000 \\\hline
+		3v, $100 \times 3$&     .0414 &  .0254 &  .0166 &  1000 \\\hline
+		2v, $100 \times 2$&     .0418 &  .0229 &   {\bf .0229} &  1000 \\\hline \hline
+		%3v, $97 \times 3$&      ?? &  ?? &  ?? & 14440 \\\hline
+		3v, $100 \times 3$&      {\bf .0350} &  .0272 &  .0216 & 14440 \\\hline
+		%2v, $97 \times 2$&     ?? &  ?? &   ?? & 14440 \\\hline
+		2v, $100 \times 2$&     .0360 &  .0236 &    {\bf .0236} & 14440 \\\hline \hline
+		3v, $100 \times 3$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
+		2v, $100 \times 2$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline\hline
+	\end{tabular}
+	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, where all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.}
+	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
+	\label{table.pipe}
+\end{table}
+
+\newpage
+
+\noindent {\bf Supplementary material content:} We provide in supplementary materials additional content, in particular results with reduced number of binary variables. We also provide the proof of Prop.~\ref{Prop2}, and explanations on the reduced-order dimension pipeline.

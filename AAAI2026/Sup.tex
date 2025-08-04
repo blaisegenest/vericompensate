@@ -1,0 +1,181 @@
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+\usepackage[submission]{aaai2026}  % DO NOT CHANGE THIS
+\usepackage{times}  % DO NOT CHANGE THIS
+\usepackage{helvet}  % DO NOT CHANGE THIS
+\usepackage{courier}  % DO NOT CHANGE THIS
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in} % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in} % DO NOT CHANGE THIS
+%
+% These are recommended to typeset algorithms but not required. See the subsubsection on algorithms. Remove them if you don't have algorithms in your paper.
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\pagestyle{plain}
+\usepackage{threeparttable}
+\input{math_commands.tex}
+\usepackage{lineno}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{cases}
+\captionsetup{compatibility=false}
+\usepackage{epstopdf}
+\usepackage{placeins}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage{array}
+%\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usetikzlibrary{positioning, arrows.meta,calc}
+\usepackage{newfloat}
+\usepackage{listings}
+\DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
+\lstset{%
+	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
+	numbers=left,numberstyle=\footnotesize,xleftmargin=2em,% show line numbers, remove this entire line if you don't want the numbers.
+	aboveskip=0pt,belowskip=0pt,%
+	showstringspaces=false,tabsize=2,breaklines=true}
+\floatstyle{ruled}
+\newfloat{listing}{tb}{lst}{}
+\floatname{listing}{Listing}
+%
+% Keep the \pdfinfo as shown here. There's no need
+% for you to add the /Title and /Author tags.
+\pdfinfo{
+	/TemplateVersion (2026.1)
+}
+
+\title{Order reduction and MILP models for real-time DNN robustness certification. \\ Supplementary Material}
+\date{}
+\author{
+	%Authors
+	% All authors must be in the same font size and format.
+	Written by AAAI Press Staff\textsuperscript{\rm 1}\thanks{With help from the AAAI Publications Committee.}\\
+	AAAI Style Contributions by Pater Patel Schneider,
+	Sunil Issar,\\
+	J. Scott Penberthy,
+	George Ferguson,
+	Hans Guesgen,
+	Francisco Cruz\equalcontrib,
+	Marc Pujol-Gonzalez\equalcontrib
+}
+\affiliations{
+	%Afiliations
+	\textsuperscript{\rm 1}Association for the Advancement of Artificial Intelligence\\
+	% If you have multiple authors and multiple affiliations
+	% use superscripts in text and roman font to identify them.
+	% For example,
+	
+	% Sunil Issar\textsuperscript{\rm 2},
+	% J. Scott Penberthy\textsuperscript{\rm 3},
+	% George Ferguson\textsuperscript{\rm 4},
+	% Hans Guesgen\textsuperscript{\rm 5}
+	% Note that the comma should be placed after the superscript
+	
+	1101 Pennsylvania Ave, NW Suite 300\\
+	Washington, DC 20004 USA\\
+	% email address must be in roman text type, not monospace or sans serif
+	proceedings-questions@aaai.org
+	%
+	% See more examples next
+}
+
+%Example, Single Author, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+\iffalse
+\title{My Publication Title --- Single Author}
+\author {
+	Author Name
+}
+\affiliations{
+	Affiliation\\
+	Affiliation Line 2\\
+	name@example.com
+}
+\fi
+
+\iffalse
+%Example, Multiple Authors, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+\title{My Publication Title --- Multiple Authors}
+\author {
+	% Authors
+	First Author Name\textsuperscript{\rm 1},
+	Second Author Name\textsuperscript{\rm 2},
+	Third Author Name\textsuperscript{\rm 1}
+}
+\affiliations {
+	% Affiliations
+	\textsuperscript{\rm 1}Affiliation 1\\
+	\textsuperscript{\rm 2}Affiliation 2\\
+	firstAuthor@affiliation1.com, secondAuthor@affilation2.com, thirdAuthor@affiliation1.com
+}
+\fi
+
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+\newcommand{\vW}{\boldsymbol{W}}
+\newcommand{\val}{{\textrm{value}}}
+\newcommand{\Val}{{\textrm{value}}}
+\newcommand{\MILP}{{\textrm{MILP}}}
+\newcommand{\LP}{{\textrm{LP}}}
+\newcommand{\Improve}{\mathrm{Improve}}
+\newcommand{\Utility}{\mathrm{SAS}}
+\newcommand{\Sol}{\mathrm{Sol}}
+\newcommand{\sol}{\mathrm{sol}}
+\newcommand{\UB}{\mathrm{UB}}
+\newcommand{\LB}{\mathrm{LB}}
+\newcommand{\ub}{\mathrm{ub}}
+\newcommand{\lb}{\mathrm{lb}}
+\newcommand{\B}{\mathrm{B}}
+\usepackage{amsmath, amssymb, amsfonts}
+\newcommand{\ReLU}{\mathrm{ReLU}}
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+\newcommand{\toolname}{Hybrid MILP}
+
+% REMOVE THIS: bibentry
+% This is only needed to show inline citations in the guidelines document. You should not need it and can safely delete it.
+\usepackage{bibentry}
+% END REMOVE bibentry
+
+\begin{document}
+	
+	\maketitle
+	
+	\iffalse
+	\begin{abstract}
+		\input{abstract.tex}
+		
+		Most DNNs are brittle to small perturbations. Extensive works have thus been performed to verify robustness for DNNs.
+		However, these works mostly consider local robustness, i.e. in the neighborhood of an image.
+		While local robustness is useful to have an idea how often non robust images happen, by repeating the verification on 1000 or 10000 pre-obtained images, the main shortcoming is that we have no guarantee that a specific new incoming image, e.g. in a video feed, is robust: The verification process takes too long and requires too much resources to be performed online on embedded systems.
+		
+		In this paper, we consider {\em global} robustness, that is, guarantees not restricted to a set of local images. For that, we consider {\em bounds} on the switch of values between the different decision classes of a DNN due to a given perturbation. 
+		The verification question is much harder than local robustness, as the number of complex variables doubles (from the deviation image to the image and its deviation).
+		Further, the values each neuron can take is no more in a small neighborhood.
+		Therefore, the global verification process is very complex.
+		To obtain useable bounds, we develop several novel partial MILP models for global robustness, with different trade-offs. Last, we use order reduction techniques to reduce the space of images considered, avoiding unrealistic inputs, by using linear PCA. 
+		This results into usable bounds, allowing in real time to certify robustness for $87\%$ of incoming images in the MNIST benchmark for a L1-perturbation of $0.5$, as well as for a surrogate computing the hidden plastic strain associated to a deformation map of a pipe.
+	\end{abstract}
+	\fi
+	
+	
+
+	
+	
+	
+	
+	
+	
+	 
+	
+	
+	
+	
+\end{document}
