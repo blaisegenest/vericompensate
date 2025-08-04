@@ -1,4 +1,4 @@
-	\section{Additional Experimental Evaluation}
+	\section{Additional Experimental Evaluations}
 	
 
 \iffalse
@@ -70,7 +70,9 @@
 	\label{table.mnist}
 \end{table}
 
-In Table \ref{table.mnist}, we further tested different number of reduced variables. 400 shows a very slight improvement in the bound over 500 variables, 
+In Table \ref{table.mnist}, we further tested different number of reduced variables. 
+With 0 binary variables (full LP), the "1v" model converges in 20 seconds, and the "2v" and "3v" models in 200s.
+Opening $400 (\times 1,2,3)$ variables shows a very slight improvement in the bound over 500 variables, 
 far insufficient to prove that any image is robust in real-time. Notice that LP
 
 \subsection{Reduced dimension}
