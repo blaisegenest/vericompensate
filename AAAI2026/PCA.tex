@@ -1,20 +1,24 @@
 \section{Explanations on PCA model order reduction}
 
-Some words on PCA, learn of 2 Matrix full-dim to reduced-dim and back.
+%Some words on PCA, learn of 2 Matrix full-dim to reduced-dim and back.
+%Then how we use it (pictures and text).
 
-
-
-
-
-
-Then how we use it (pictures and text).
+Figure~\ref{fig.MNIST} illustrates the pipeline used for MNIST benchmark. The MNIST dataset was used to directly train a MNIST DNN, achieving 97\% accuracy, as denoted by ``Training''. 
+%
+It was also used to obtain the PCA encoding and decoding, transforming the images into a reduced basis. The number of PCA dimensions was chosen such that the exploitation accuracy remains constant. That is, encoding into a PCA basis and decoding it results in the same accuracy, as illustrated in ``Exploitation''. 
+%
+Last, for the ``bound computation'', we determine an $L_1$-perturbation $\varepsilon$. The search space for bound computation is 20-dimensional. However, the bound itself is computed on the full-space. This is possible since PCA is a \emph{linear operation} based on the eigenvectors of the covariance matrix and its transpose for the PCA decoding (inverse).
 
 \begin{figure*}[]
 	\centering
 	\includegraphics[scale=0.9]{MNIST.pdf} \hspace{1.5cm}
-	\caption{MNIST.}
+	\caption{Training, exploitation and bound computation on the MNIST dataset. Note that PCA encoding/decoding used back-to-back allow to maintain the same accuracy. In addition, the bound is computed on the full-space even though the analysis is performed on the reduced space.}
 	\label{fig.MNIST}
 \end{figure*}	
+
+Figure~\ref{fig.PIPE} illsutrates the same pipeline used in the pipe strain case. In this case, two different PCA are used. The first one is learned with the deformation training dataset and the second is learned with the plastic strain one. 
+
+The surrogate is then learned from the reduced deformation to the reduced plastic strain. ETC ETC
 
 \begin{figure*}[]
 	\centering
