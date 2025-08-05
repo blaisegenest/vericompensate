@@ -34,6 +34,9 @@
 \usetikzlibrary{positioning, arrows.meta,calc}
 \usepackage{newfloat}
 \usepackage{listings}
+% allow to type " and get latex to handle it
+\usepackage[autostyle=false, style=english]{csquotes}
+\MakeOuterQuote{"}
 \DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
 \lstset{%
 	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
@@ -155,7 +158,7 @@ This paper:
 \begin{itemize}
 \item Includes a conceptual outline and/or pseudocode description of AI methods introduced {\bf yes}
 \item Clearly delineates statements that are opinions, hypothesis, and speculation from objective facts and results {\bf yes}
-\item Provides well marked pedagogical references for less-familiare readers to gain background necessary to replicate the paper {\bf yes}
+\item Provides well marked pedagogical references for less-familiar readers to gain background necessary to replicate the paper {\bf yes}
 \item Does this paper make theoretical contributions? {\bf yes}
 \end{itemize}
 

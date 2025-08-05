@@ -20,19 +20,19 @@
 
 
 PCA (Chinesta et al. 2017) is a linear technique to reduce the dimension of a dataset while keeping its main information.
-From a dataset, the eigen vectors are computed, depicting the most important linear components of this dataset.
-Projecting over the first few main eigen vectors is a powerful model order reduction technique ({\em encoding} / {\em reducing from the full dimension}). 
-It is easy to go from the reduce dimension back to the full dimension
-by making the product between the reduced vector and the first few eigen vectors ({\em decoding}).
+From a dataset, the eigenvectors are computed, defining the most important linear components of this dataset.
+Projecting over the first few main eigenvectors is a powerful model order reduction technique ({\em encoding} / {\em reducing from the full dimension}). 
+It is easy to go from the reduced dimension back to the full dimension
+by making the product between the reduced vector and the first few eigenvectors ({\em decoding}).
 
 Figure~\ref{fig.MNIST} depicts the MNIST pipeline on reduced dimensions, computing:
 
 \begin{enumerate}
-\item  the PCA encoding and decoding as well as the MNSIT DNN from the MNIST Training DataSet ({\em Training}).
-We choose to reduce the dimension from 784 to 20, using the 20 first eigen vectors from PCA, with a PCA encoder and a PCA decoder.
+\item the PCA encoding and decoding as well as the MNIST DNN from the MNIST Training DataSet ({\em Training}).
+We choose to reduce the dimension from 784 to 20, using the first 20 eigen vectors from PCA, with a PCA encoder and a PCA decoder.
 
 \item {\em In exploitation}, we check whether a test dataset has the same accuracy (class predicted matches the ground truth) 
-going directly through the MNIST DNN than when being encoded and decoded by the PCA decoding first.
+going directly through the MNIST DNN rather than being encoded and decoded by the PCA decoding first.
 The number of retained PCA dimensions (20) is selected to ensure that the MNIST DNN's classification accuracy on reconstructed images (i.e., after PCA encoding and decoding) remains the same $97$\% as the MNIST DNN used directly on the full-dimensional MNIST images.
 It ensures no loss of accuracy.
 %
@@ -51,16 +51,14 @@ Finally, the goal is to optimize the value of $o_6 -o_8+ o'_8 - o'_6$,  where $o
 
 
 Figure~\ref{fig.PIPE} illustrates the pipeline used in the pipe strain case. 
-Two different PCA reductions are used. The first one on the deformation training dataset, 
-and the second on the plastic strain one.
+Two different PCA reductions are used. The first one is on the deformation training dataset, 
+and the second is on the plastic strain one.
 %
 The surrogate is then learned from the reduced deformation to the reduced plastic strain. 
 %
 
-To predict the plastic strain (which is not directly observable), we thus consider the deformation (which is directly observable), reduce it using the PCA reduction to obtain the reduced deformation, call the surrogate model, obtain the associated predicted reduced strain, and decode the reduced strain, obtaining the strain of the pipe in the full 3000 dimensions. Similarly to the MNIST case, we consider as input the 10 $\times 2$ dimensions of reduced deformation, but also consider 3000 $\times 2$ linear variables corresponding to the deformation and its perturbation, with linear constraints between them and the inputs (provided by the PCA encoder, which is given under the form of a matrix), and set the $L_1$ perturbation $\varepsilon$ over the Deformation and its perturbation, where it is physically meaningful.
-The surrogate outputs 26 output dimensions ($\times 2$) of reduced strain, but again 
-as we have the linear PCA decoder explicitly, we can define the optimization goal 
-in terms of optimizing the difference over 10 specific points in the full geometry (where thigs are physically relevant), rather than on the reduced strain space.
+To predict the plastic strain (which is not directly observable), we thus consider the deformation (which is directly observable), reduce it using the PCA reduction to obtain the reduced deformation, call the surrogate model, obtain the associated predicted reduced strain, and decode the reduced strain, obtaining the strain of the pipe in the full 3000 dimensions. Similarly to the MNIST case, we consider as input the 10 $\times 2$ dimensions of reduced deformation, but also consider 3000 $\times 2$ linear variables corresponding to the deformation and its perturbation, with linear constraints between them and the inputs (provided by the PCA encoder, which is given under the form of a matrix), and set the $L_1$ perturbation $\varepsilon$ over the deformation and its perturbation, where it is physically meaningful.
+The surrogate outputs 26 output dimensions ($\times 2$) of reduced strain, but again, as we have the linear PCA decoder explicitly, we can define the optimization goal in terms of optimizing the difference over 10 specific points in the full geometry (where it is are physically relevant), rather than on the reduced strain space.
 
 \newpage
 
