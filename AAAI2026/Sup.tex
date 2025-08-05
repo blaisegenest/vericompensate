@@ -148,6 +148,32 @@
 	
 \maketitle
 
+
+\section{Reproducibility Checklist}
+
+This paper:
+\begin{itemize}
+\item Includes a conceptual outline and/or pseudocode description of AI methods introduced {\bf yes}
+\item Clearly delineates statements that are opinions, hypothesis, and speculation from objective facts and results {\bf yes}
+\item Provides well marked pedagogical references for less-familiare readers to gain background necessary to replicate the paper {\bf yes}
+\item Does this paper make theoretical contributions? {\bf yes}
+\end{itemize}
+
+if yes, then:
+
+\begin{itemize}
+\item All assumptions and restrictions are stated clearly and formally. {\bf yes}
+\item All novel claims are stated formally (e.g., in theorem statements). {\bf yes}
+\item Proofs of all novel claims are included. {\bf yes} (in the supplementary material)
+\item Proof sketches or intuitions are given for complex and/or novel results. {\bf yes}
+\item Appropriate citations to theoretical tools used are given. {\bf yes}
+\item All theoretical claims are demonstrated empirically to hold. {\bf yes}
+\item All experimental code used to eliminate or disprove claims is included. {\bf yes}
+\end{itemize}
+
+
+
+
 \section{Proof of Proposition 2}
 
 Recall first that we use the classical MILP encoding 
@@ -197,8 +223,6 @@ We have 2 binary variables and 4 cases in total. We only need to check that, in 
 \textbf{Case 3:} if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = 0$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 3.
 
 \textbf{Case 4:} if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
-
-\newpage
 
 \input{PCA}
 

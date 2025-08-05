@@ -1,38 +1,65 @@
-\section{PCA for Model Order Reduction and Bound Computation}
+\section{PCA Model Order Reduction for Bound Computation}
 
 %Some words on PCA, learn of 2 Matrix full-dim to reduced-dim and back.
 %Then, how we use it (pictures and text).
 
-Figure~\ref{fig.MNIST} depicts the pipeline used for computing global bounds on the MNIST dataset. Firstly, the MNIST dataset is used to train an MNIST DNN, obtaining 97\% of classification accuracy, as denoted in ``Training''. 
-%
-In parallel, principal component analysis (PCA) is used to obtain a lower-dimensional representation of the input images, yielding the PCA encoding and the PCA decoding. The PCA encoding transforms the input space (784-dimensional) into a 20-dimensional output image, and the PCA decoding reverses that operation, reconstructing a 784-dimensional image. 
-%
-The number of retained PCA components is selected to ensure that the MNIST DNN's classification accuracy on reconstructed images (i.e., after PCA encoding and decoding) remains the same as the MNIST DNN used directly on the full-dimensional MNIST images. This phase is referred to as ``Exploitation''. 
-%
-Lastly, in the ``Bound Computation'' step, we compute an $L_1$ perturbation bound $\varepsilon$. Note that the bound itself is calculated on the full space, even though the bound computation is performed on the 20-dimensional latent space. This is possible since PCA is a \emph{linear operation} based on the eigenvectors of the covariance matrix and its transpose for the PCA decoding (inverse).
+\begin{figure*}[h!]
+    \centering
+    \includegraphics[scale=0.9]{MNIST.pdf} \hspace{1.5cm}
+    \caption{Training, exploitation, and bound computation on the MNIST dataset.}
+    \label{fig.MNIST}
+\end{figure*}	
 
+\begin{figure*}[h!]
+    \centering
+    \includegraphics[scale=0.9]{PIPE.pdf} \hspace{1.5cm}
+    \caption{Training and bound computation on the pipe use case. 
+    Note that two PCAs are used, one for the input space (deformation) and another for the output space (plastic strain). The exploitation and bound computation must then use a pipeline that: (1) reduces the deformation; (2) obtains a reduced strain with the surrogate, and (3) decodes the reduced strain from the reduced to the full dimension.}
+    \label{fig.PIPE}
+\end{figure*}	
+
+
+PCA (Chinesta et al. 2017) is a linear technique to reduce the dimension of a dataset while keeping its main information.
+From a dataset, the eigen vectors are computed, depicting the most important linear components of this dataset.
+projecting over the first few main eigen vectors is a powerful model order reduction technique ({\em encoding} / {\em reducing from the full dimension}). 
+It is easy to go from the reduce dimension back to the full dimension
+by adding each of the first few eigen vectors times the coefficient in the reduced basis ({\em decoding}).
+
+Figure~\ref{fig.MNIST} depicts the pipeline used for computing:
+
+\begin{enumerate}
+\item  the PCA encoding and decoding as well as the MNSIT DNN from the MNIST Training DataSet ({\em Training}).
+We choose to reduce the dimension from 784 to 20, using the 20 first eigen vectors from PCA, with a PCA encoder and a PCA decoder.
+
+\item {\em In exploitation}, we check whether a test dataset has the same accuracy (class predicted matches the ground truth) 
+going directly through the MNIST DNN than when being encoded and decoded by the PCA decoding first.
+The number of retained PCA dimensions (20) is selected to ensure that the MNIST DNN's classification accuracy on reconstructed images (i.e., after PCA encoding and decoding) remains the same $97$\% as the MNIST DNN used directly on the full-dimensional MNIST images.
+%
+\item {\em In Bound Computation}, we consider as input the 20 ($\times 2$: input and perturbed input) reduced PCA dimensions, from which all other variables are fixed.
+However, we can define 784 $\times 2$ linear variables corresponding to the original image $I$ and its perturbation $I'$ before PCA encoding, as the constraints between these and the input are linear.
+We fix the $L_1$-perturbation $\varepsilon$ on the image $I$ and its deformation $I'$, rather than on the inputs, as its where it is meaningful.
+Finally, the goal is to optimize the value of $o_6 -o_8+ o'_8 - o'-6$,  where $o_C$ is the output neuron of the DNN corresponding to class $C \in \{0,\ldots, 9\}$.
+\end{enumerate}
 
 %
 %It was also used to obtain the PCA encoding and decoding, transforming the images into a reduced basis. The number of PCA dimensions was chosen such that the exploitation accuracy remains constant. That is, encoding into a PCA basis and decoding it results in the same accuracy, as illustrated in ``Exploitation''. 
 %
 %Last, for the ``bound computation'', we determine an $L_1$-perturbation $\varepsilon$. The search space for bound computation is 20-dimensional. However, the bound itself is computed on the full space. This is possible since PCA is a \emph{linear operation} based on the eigenvectors of the covariance matrix and its transpose for the PCA decoding (inverse).
 
-\begin{figure*}
-    \centering
-    \includegraphics[scale=0.9]{MNIST.pdf} \hspace{1.5cm}
-    \caption{Training, exploitation, and bound computation on the MNIST dataset. Note that PCA encoding/decoding used back-to-back can maintain the same accuracy as the original network where PCA is not used. In addition, the bound is computed on the full space even though the analysis is performed on the reduced space. dim = dimension.}
-    \label{fig.MNIST}
-\end{figure*}	
+\newpage
 
-Figure~\ref{fig.PIPE} illustrates the same pipeline used in the pipe strain case. In this case, two different PCAs are used. The first one is learned with the deformation training dataset, and the second is learned with the plastic strain one.
+
+Figure~\ref{fig.PIPE} illustrates the pipeline used in the pipe strain case. 
+Two different PCA reductions are used. The first one on the deformation training dataset, 
+and the second on the plastic strain one.
 %
 The surrogate is then learned from the reduced deformation to the reduced plastic strain. 
 %
-For exploitation, we obtain the deformation, use the PCA basis to obtain a reduced deformation, feed the reduced deformation to the surrogate, obtain the reduced strain, and decode the strain (apply PCA inverse), obtaining the strain in the full pipe geometry. Similarly to the MNIST case, we obtain a bound $\varepsilon$ on the input space by solving the MILP problem as proposed on the input dimension.
 
-\begin{figure*}
-    \centering
-    \includegraphics[scale=0.9]{PIPE.pdf} \hspace{1.5cm}
-    \caption{Training and bound computation on the pipe use case. Note that two PCAs are used, one for the input space (deformation) and another for the output space (plastic strain). The exploitation and bound computation must then use a pipeline that: (1) reduces the deformation; (2) obtains a reduced strain with the surrogate, and (3) decodes the reduced strain using the PCA inverse. dim = dimension.}
-    \label{fig.PIPE}
-\end{figure*}	
+To predict the plastic strain (which is not directly observable), we thus consider the deformation (which is directly observable), reduce it using the PCA reduction to obtain the reduced deformation, call the surrogate model, obtain the associated predicted reduced strain, and decode the reduced strain, obtaining the strain of the pipe in the full 3000 dimensions. Similarly to the MNIST case, we consider as input the 10 $\times 2$ dimensions of reduced deformation, but also consider 3000 $\times 2$ linear variables corresponding to the deformation and its perturbation, with linear constraints between them and the inputs (provided by the PCA matrix), and set the $L_1$ perturbation $\varepsilon$ over the Deformation and its perturbation, on which things are physically meaningful.
+The surrogate outputs 26 output dimensions ($\times 2$) of reduced strain, but again 
+as we have the linear PCA decoder explicitly, we can define the optimization goal 
+in terms of optimizing the difference over 10 specific points in the full geometry (where thigs are physically relevant), rather than on the reduced strain space.
+
+\newpage
+
