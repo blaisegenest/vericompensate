@@ -50,7 +50,7 @@
 	/TemplateVersion (2026.1)
 }
 
-\title{Order reduction and MILP models for real-time DNN robustness certification. \\ Supplementary Material}
+\title{Order Reduction and MILP Models for Real-Time DNN Robustness Certification \\ Supplementary Material}
 \date{}
 \author{
 	%Authors
@@ -146,28 +146,9 @@
 
 \begin{document}
 	
-	\maketitle
-	
-	\iffalse
-	\begin{abstract}
-		\input{abstract.tex}
-		
-		Most DNNs are brittle to small perturbations. Extensive works have thus been performed to verify robustness for DNNs.
-		However, these works mostly consider local robustness, i.e. in the neighborhood of an image.
-		While local robustness is useful to have an idea how often non robust images happen, by repeating the verification on 1000 or 10000 pre-obtained images, the main shortcoming is that we have no guarantee that a specific new incoming image, e.g. in a video feed, is robust: The verification process takes too long and requires too much resources to be performed online on embedded systems.
-		
-		In this paper, we consider {\em global} robustness, that is, guarantees not restricted to a set of local images. For that, we consider {\em bounds} on the switch of values between the different decision classes of a DNN due to a given perturbation. 
-		The verification question is much harder than local robustness, as the number of complex variables doubles (from the deviation image to the image and its deviation).
-		Further, the values each neuron can take is no more in a small neighborhood.
-		Therefore, the global verification process is very complex.
-		To obtain useable bounds, we develop several novel partial MILP models for global robustness, with different trade-offs. Last, we use order reduction techniques to reduce the space of images considered, avoiding unrealistic inputs, by using linear PCA. 
-		This results into usable bounds, allowing in real time to certify robustness for $87\%$ of incoming images in the MNIST benchmark for a L1-perturbation of $0.5$, as well as for a surrogate computing the hidden plastic strain associated to a deformation map of a pipe.
-	\end{abstract}
-	\fi
-	
-	
+\maketitle
 
-	\section{Proof of Proposition 2}
+\section{Proof of Proposition 2}
 
 Recall first that we use the classical MILP encoding 
 for $\hat{x}'_i=\ReLU(x'_i)$, using one binary variable $a'$. We reuse 
@@ -208,33 +189,18 @@ First, we know the constraints for $\hat{x_i}'=\ReLU(x_i')$ are exact.
 
 We have 2 binary variables and 4 cases in total. We only need to check that, in all 4 cases, $$\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$$
 
-Case 1: if $a = 1$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 4.
+\textbf{Case 1:} if $a = 1$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 4.
 
-Case 2: if $a = 1$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i+x'_i$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 6.
+\textbf{Case 2:}  if $a = 1$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i+x'_i$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 6.
 
-Case 3: if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = 0$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 3.
+\textbf{Case 3:} if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = 0$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 3.
 
-
-Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
+\textbf{Case 4:} if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
 
 \newpage
 
 \input{PCA}
 
 \input{moreexp}
-
-
-	
-
-	
-	
-	
-	
-	
-	
-	 
-	
-	
-	
 	
 \end{document}
