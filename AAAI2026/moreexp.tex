@@ -30,7 +30,7 @@
 	2v model, $100 \times 2$&     {\bf .042} &  $.023$ &   .023 
     \\\hline \hline
 	\end{tabular}
-	\caption{Comparison of the classical encoding, ITNE and our "2v" model on the pipe system 
+	\caption{Comparison of the classical encoding, ITNE, and our "2v" model on the pipe system 
 	with a fixed timeout of 1000s, with either 0 (LP), $50 \times 2$, 
     or the full $100 \times 2$ binary variables.}
     \label{table.classical}
@@ -107,11 +107,11 @@ far insufficient to prove that any image is robust in real-time. As expected, th
 
 
 We also experimented reducing the number of binary variables (by considering some with linear relaxation) from 500 ($\times 1,2,3$) to 475 ($\times 1,2,3$) and 400 ($\times 1,2,3$) for the PCA reduced space to 20 dimensions (Table~\ref{table.reduced}). 
-As for Table~\ref{table.mnist}, it helps the MILP solver converge towards closer (bound, solution) pairs. However, the bounds found are not better than with all variables as binary variables, and this do not improve the percentage of images certified robust.
+As for Table~\ref{table.mnist}, it helps the MILP solver converge towards closer (bound, solution) pairs. However, the bounds found are not better than with all variables as binary variables, and this does not improve the percentage of images certified robust.
 
 
-Notice that the MILP process is far from converging (large difference between the Bound and the Solution) after 4hours (14400s), and we could use much longer 
-runtime in order to obtain better bounds. As this task is performed only once offline, this would not be limiting.
+Notice that the MILP process is far from converging (large difference between the Bound and the Solution) after 4 hours (14400s), and we could use a much longer 
+runtime to obtain better bounds. As this task is performed only once offline, this would not be limiting.
 
 
 Last, we report in Table~\ref{table.pair} the bounds $\beta^{.5}_{C,D}$ obtained for every pair of class $C < D \in \{0, \ldots, 9\}$ using all $500 (\times 1,2,3) $ binary variables, which we could not provide in the main file for space issue - $\beta^{.5}_{6,8}$ being a good representative.
@@ -128,7 +128,7 @@ Last, we report in Table~\ref{table.pair} the bounds $\beta^{.5}_{C,D}$ obtained
 \subsection{Experimental Results for Regression (Pipe Strain)}
 
 
-	Last, for the pipe system in Table \ref{table.pipe}, we report for the "standard 14400s time-out we use in other benchmarks, additional experiments with limited number of binary varibles, namely $97 (\times 2,3)$ and $90 (\times 2,3)$ -there is no point to consider the 1v model with reduced number of binary variable as it has alrady converged after 1000s with all the variables binary. Again, lowering the number of binary variables helps the MILP solver converge closer (it did converge within 2000s for 90 variables), but bounds found are worse than with all the variables binary.
+	Last, for the pipe system in Table \ref{table.pipe}, we report for the "standard" 14400s time-out we use in other benchmarks, additional experiments with limited number of binary variables, namely $97 (\times 2,3)$ and $90 (\times 2,3)$ --- there is no point to consider the 1v model with reduced number of binary variable as it has already converged after 1000s with all the variables binary. Again, lowering the number of binary variables helps the MILP solver converge closer (it did converge within 2000s for 90 variables), but the bounds found are worse than with all the variables binary.
 
 
 
