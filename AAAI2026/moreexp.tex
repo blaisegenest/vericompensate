@@ -40,9 +40,13 @@
 
 
 
+<<<<<<< .mine
 
 	\subsection{Experimental results for robustness (MNIST)}
-	
+=======
+\subsection{Experimental Results for Robustness (MNIST)}
+
+>>>>>>> .theirs
 	
 	\begin{table}[h!]
 		\centering
@@ -78,6 +82,11 @@ With 0 binary variables (full LP), the "1v" model converges in 20 seconds, and t
 Opening $400 (\times 1,2,3)$ variables shows a very slight improvement in the bound over 500 variables, 
 far insufficient to prove that any image is robust in real-time. As expected, the lower the number of variables, the closer the MILP solver converges with the same time-out.
 
+<<<<<<< .mine
+
+=======
+\subsection{Reduced Dimension}
+>>>>>>> .theirs
 
 \newpage
 
@@ -126,7 +135,7 @@ Last, we report in Table~\ref{table.pair} the bounds $\beta^{0.5}_{C,D}$ obtaine
 	
 	
 
-\subsection{Experimental results for regression (Pipe strain)}
+\subsection{Experimental Results for Regression (Pipe Strain)}
 
 
 	Last, for the pipe system in Table \ref{table.pipe}, we report for the "standard 14400s time-out we use in other benchmarks, additional experiments with limited number of binary varibles, namely $97 (\times 2,3)$ and $90 (\times 2,3)$ (there is no point to consider the 1v model with reduced number of binary variable as it has alrady converged after 1000s with all the variables binary). Again, lowering the number of binary variables helps the MILP solver converge closer (it did converge within 2000s for 90 variables), but bounds found are worse than with all the variables binary.
