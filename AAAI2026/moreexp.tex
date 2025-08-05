@@ -114,20 +114,21 @@ Notice that the MILP process is far from converging (large difference between th
 runtime in order to obtain better bounds. As this task is performed only once offline, this would not be limiting.
 
 
-Last, we report in Table~\ref{table.pair} the bounds $\beta^{0.5}_{C,D}$ obtained for every pair of class $C < D \in \{0, \ldots, 9\}$ using all $500 (\times 1,2,3) $ binary variables, which we could not provide in the main file for space issue - $\beta^{0.5}_{6,8}$ being a good representative.
+Last, we report in Table~\ref{table.pair} the bounds $\beta^{.5}_{C,D}$ obtained for every pair of class $C < D \in \{0, \ldots, 9\}$ using all $500 (\times 1,2,3) $ binary variables, which we could not provide in the main file for space issue - $\beta^{.5}_{6,8}$ being a good representative.
 
 
 
 
 
 
+\vspace{1cm}
 	
 	
 
 \subsection{Experimental Results for Regression (Pipe Strain)}
 
 
-	Last, for the pipe system in Table \ref{table.pipe}, we report for the "standard 14400s time-out we use in other benchmarks, additional experiments with limited number of binary varibles, namely $97 (\times 2,3)$ and $90 (\times 2,3)$ (there is no point to consider the 1v model with reduced number of binary variable as it has alrady converged after 1000s with all the variables binary). Again, lowering the number of binary variables helps the MILP solver converge closer (it did converge within 2000s for 90 variables), but bounds found are worse than with all the variables binary.
+	Last, for the pipe system in Table \ref{table.pipe}, we report for the "standard 14400s time-out we use in other benchmarks, additional experiments with limited number of binary varibles, namely $97 (\times 2,3)$ and $90 (\times 2,3)$ -there is no point to consider the 1v model with reduced number of binary variable as it has alrady converged after 1000s with all the variables binary. Again, lowering the number of binary variables helps the MILP solver converge closer (it did converge within 2000s for 90 variables), but bounds found are worse than with all the variables binary.
 
 
 
