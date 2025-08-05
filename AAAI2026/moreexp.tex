@@ -40,6 +40,7 @@
 
 
 
+
 	\subsection{Experimental results for robustness (MNIST)}
 	
 	
@@ -51,13 +52,15 @@
 		3v, $0 \times 3$ (LP) & {\bf 20.2614}  & 20.2614  & .125 \\\hline 
 	    2v, $0 \times 2$ (LP) & {\bf 20.2614}  & 20.2614  & {\bf .145} \\\hline\hline	 
 
-		1v, $300 \times 1$ & ? & ? & ? \\\hline 
-		3v, $300 \times 3$ & ? & ? & ? \\\hline 
-	    2v, $300 \times 2$ & ? & ? & ? \\\hline\hline	 
+	   %1v, $100 \times 1$ & 17.70 & 17.67 & .004 \\\hline\hline	 
+
+		1v, $300 \times 1$ & {\bf 15.19} & 11.68 & .093 \\\hline 
+		3v, $300 \times 3$ & 16.57 & 11.43 & .200 \\\hline 
+	    2v, $300 \times 2$ & 16.65 & 10.05 & {\bf .331} \\\hline\hline	 
 
 		1v, $400 \times 1$ & {\bf 14.87} & 6.456 & .032 \\\hline 
 		3v, $400 \times 3$ & 16.62 & 6.343 & .254 \\\hline 
-	    2v, $400 \times 2$ & 16.33 & 5.777 & .371 \\\hline \hline
+	    2v, $400 \times 2$ & 16.33 & 5.777 & {\bf .371} \\\hline \hline
 
 		1v, $500 \times 1$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
 		3v, $500 \times 3$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
@@ -73,9 +76,13 @@
 In Table \ref{table.mnist}, we further tested different number of reduced variables. 
 With 0 binary variables (full LP), the "1v" model converges in 20 seconds, and the "2v" and "3v" models in 200s.
 Opening $400 (\times 1,2,3)$ variables shows a very slight improvement in the bound over 500 variables, 
-far insufficient to prove that any image is robust in real-time. Notice that LP
+far insufficient to prove that any image is robust in real-time. As expected, the lower the number of variables, the closer the MILP solver converges with the same time-out.
 
-\subsection{Reduced dimension}
+
+\newpage
+
+
+\subsection{Reduced Space}
 
 \begin{table}[h!]
 	\centering
@@ -101,30 +108,16 @@ far insufficient to prove that any image is robust in real-time. Notice that LP
 \end{table}
 
 
+We also experimented reducing the number of binary variables (by considering some with linear relaxation) from 500 ($\times 1,2,3$) to 475 ($\times 1,2,3$) and 400 ($\times 1,2,3$) for the PCA reduced space to 20 dimensions (Table~\ref{table.reduced}). 
+As for Table~\ref{table.mnist}, it helps the MILP solver converge towards closer (bound, solution) pairs. However, the bounds found are not better than with all variables as binary variables, and this do not improve the percentage of images certified robust.
+
+
 Notice that the MILP process is far from converging (large difference between the Bound and the Solution) after 4hours (14400s), and we could use much longer 
-runtime in order to obtain better bounds. As this task is performed only once offline, this is not limiting.
-
-Further, we report in table \ref{table.pair} the bounds obtained for every pair of class $C < D \in \{0, \ldots, 9\}$
-using all $500 (\times 1,2,3) $ binary variables.
+runtime in order to obtain better bounds. As this task is performed only once offline, this would not be limiting.
 
 
+Last, we report in Table~\ref{table.pair} the bounds $\beta^{0.5}_{C,D}$ obtained for every pair of class $C < D \in \{0, \ldots, 9\}$ using all $500 (\times 1,2,3) $ binary variables, which we could not provide in the main file for space issue - $\beta^{0.5}_{6,8}$ being a good representative.
 
-
-
-The tests with restricted number of binary variables do not improve the percentage of images certified robust (Table \ref{table.cert}). 
-
-\begin{table}[h!]
-	\begin{tabular}{||l||c|c|c|c||}\hline\hline
-		model &    $L_1\leq 0.5$ & $L_1\leq 1$ & $L_1\leq 1.5$ &  $L_1\leq 2$ \\\hline \hline
-		1v, $500\times1$ & $80 \%$ & $32\%$ & $7\%$ & $0\%$ \\\hline
-		3v, $500 \times 3$ & {\bf 86 \%} & {\bf 53\%} & {\bf 20\%} & {\bf 4\%} \\\hline
-		2v, $500 \times 2$ & 84\% & 51\% & 16\% & {\bf 4\%} \\\hline \hline
-	\end{tabular}
-	\caption{Percentage of images certified robust in real-time 
-	using the computed $(\beta^{.5}_{i,j})_{i < j \leq 10}$ 
-	by the "1v", "3v" and "2v" models, for different values of $L_1$-perturbations.}
-    \label{table.cert}
-\end{table}
 
 
 
@@ -136,7 +129,7 @@ The tests with restricted number of binary variables do not improve the percenta
 \subsection{Experimental results for regression (Pipe strain)}
 
 
-	For the pipe system in Table \ref{table.pipe} ...
+	Last, for the pipe system in Table \ref{table.pipe}, we report for the "standard 14400s time-out we use in other benchmarks, additional experiments with limited number of binary varibles, namely $97 (\times 2,3)$ and $90 (\times 2,3)$ (there is no point to consider the 1v model with reduced number of binary variable as it has alrady converged after 1000s with all the variables binary). Again, lowering the number of binary variables helps the MILP solver converge closer (it did converge within 2000s for 90 variables), but bounds found are worse than with all the variables binary.
 
 
 
@@ -155,23 +148,50 @@ The tests with restricted number of binary variables do not improve the percenta
 \fi
 	
 		
+\addtocounter{table}{1}
+
 	\begin{table}[h!]
 	\begin{tabular}{||l||c|c|c|c||}\hline\hline
 		model &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ &  Time(s) \\\hline \hline
 		1v, $100 \times 1$ &     {\bf .0356} &  $.0356$ & $.0191$ &  1000 \\\hline
 		3v, $100 \times 3$&     .0414 &  .0254 &  .0166 &  1000 \\\hline
 		2v, $100 \times 2$&     .0418 &  .0229 &   {\bf .0229} &  1000 \\\hline \hline
-	3v, $97 \times 3$&     .0352 &  .0284 &  .0196 & 14440 \\\hline
+		
+	    3v, $90 \times 3$&     .0468 &  .0468 &  .0181 & 14440 \\\hline	
+		3v, $97 \times 3$&     .0352 &  .0284 &  .0196 & 14440 \\\hline
 		3v, $100 \times 3$&      {\bf .0350} &  .0272 &  .0216 & 14440 \\\hline
-	2v, $97 \times 2$&     .0393 &  .0240 &   {\bf .0237} & 14440 \\\hline
+
+		2v, $90 \times 2$&     .0472 &  .0472 &  .0195 & 14440 \\\hline	
+		2v, $97 \times 2$&     .0393 &  .0240 &   {\bf .0237} & 14440 \\\hline
 		2v, $100 \times 2$&     .0360 &  .0236 &   .0236 & 14440 \\\hline \hline
+
 		3v, $100 \times 3$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
 		2v, $100 \times 2$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline\hline
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, where all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.}
+	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, where 90, 97 and all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.}
 	\label{table.pipe}
 \end{table}
 
+
+\section{Reproducibility Checklist}
+
+This paper:
+\begin{itemize}
+\item Includes a conceptual outline and/or pseudocode description of AI methods introduced (yes/partial/no/NA)
+\item Clearly delineates statements that are opinions, hypothesis, and speculation from objective facts and results (yes/no)
+\item Provides well marked pedagogical references for less-familiare readers to gain background necessary to replicate the paper (yes/no)
+\item Does this paper make theoretical contributions? (yes/no)
+\end{itemize}
+
+\begin{itemize}
+\item All assumptions and restrictions are stated clearly and formally. (yes/partial/no)
+\item All novel claims are stated formally (e.g., in theorem statements). (yes/partial/no)
+\item Proofs of all novel claims are included. (yes/partial/no)
+\item Proof sketches or intuitions are given for complex and/or novel results. (yes/partial/no)
+\item Appropriate citations to theoretical tools used are given. (yes/partial/no)
+\item All theoretical claims are demonstrated empirically to hold. (yes/partial/no/NA)
+\item All experimental code used to eliminate or disprove claims is included. (yes/no/NA)
+\end{itemize}
 
 
 \begin{table*}
@@ -224,6 +244,6 @@ The tests with restricted number of binary variables do not improve the percenta
 	
 	\caption{Bounds $(\beta^{.5}_{C,D})_{C < D \leq 9}$ 
 	for MNIST on {\bf reduced 20 dimensions}, as reached by the "1v", "3v" and "2v" models
-	with 500 $(\times 1,2,3)$ binary variables.}
+	with 500 $(\times 1,2,3)$ binary variables within 14400s timeout.}
     \label{table.pair}
 \end{table*}
