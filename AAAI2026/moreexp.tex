@@ -86,13 +86,13 @@ far insufficient to prove that any image is robust in real-time. As expected, th
 	\centering
 	\begin{tabular}{||l||c|c|c||}\hline\hline
 		model &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ \\\hline \hline
-1v, $400 \times 1$ & $1.414$ &  $.691$ & $.010$ \\\hline 
-3v, $400 \times 3$ & $1.186$ & $.600$ & $.003$ \\\hline 
+1v, $400 \times 1$ & $1.414$ &  $.691$ & {\bf .010} \\\hline 
+3v, $400 \times 3$ & {\bf 1.186} & $.600$ & $.003$ \\\hline 
 2v, $400 \times 2$ & $1.274$ & $.566$ & $.002$ \\\hline\hline
 	 
 1v, $475 \times 1$ &  $1.408$ & $.301$ & $.008$  \\\hline 
-3v, $475 \times 3$ &  $1.153$ & $.250$ & $.006$ \\ \hline 
-2v, $475 \times 2$ &  $1.247$ & $.1957$ & $.019$ \\\hline\hline
+3v, $475 \times 3$ &  {\bf 1.153} & $.250$ & $.006$ \\ \hline 
+2v, $475 \times 2$ &  $1.247$ & $.196$ & {\bf .019} \\\hline\hline
 
 1v, $500 \times 1$ & $1.412$ & $.161$ & .057 \\\hline 
 3v, $500 \times 3$ & {\bf 1.137} & $.103$ & $.065$\\\hline 
@@ -111,7 +111,7 @@ As for Table~\ref{table.mnist}, it helps the MILP solver converge towards closer
 
 
 Notice that the MILP process is far from converging (large difference between the Bound and the Solution) after 4 hours (14400s), and we can use a much longer 
-runtime to obtain better bounds. We did experiment the "3v" model with an extended time-out at 129600s, which does improve the bounds by around $10\%$, as well as the number of images certified robust in real-time, Table~\ref{table.cert}.
+runtime to obtain better bounds. We did experiment the "3v" model with an extended time-out at 129600s, which does improve the bounds by around $10\%$, as well as the number of images certified robust in real-time (e.g. $65\%$ for $L_1 \leq 1$), Table~\ref{table.cert}.
 
 Last, we report in Table~\ref{table.pair} the bounds $\beta^{.5}_{C,D}$ obtained for every pair of class $C < D \in \{0, \ldots, 9\}$ using all $500 (\times 1,2,3) $ binary variables, which we could not provide in the main file for space issue - $\beta^{.5}_{6,8}$ being a good representative, with the timeout of 14400s.
 
