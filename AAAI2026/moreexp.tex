@@ -46,29 +46,29 @@
 	\begin{table}[h!]
 		\centering
 	\begin{tabular}{||l||c|c|c||}\hline\hline
-		model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
-		1v, $0 \times 1$ (LP) & 20.2612  & 20.2612  & .028 \\\hline 
-		3v, $0 \times 3$ (LP) & {\bf 20.2614}  & 20.2614  & .125 \\\hline 
-	    2v, $0 \times 2$ (LP) & {\bf 20.2614}  & 20.2614  & {\bf .145} \\\hline\hline	 
+		model, nbr bin var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+		1v, $0$ (LP) & 20.2612  & 20.2612  & .028 \\\hline 
+		3v, $0$ (LP) & {\bf 20.2614}  & 20.2614  & .125 \\\hline 
+	    2v, $0$ (LP) & {\bf 20.2614}  & 20.2614  & {\bf .145} \\\hline\hline	 
 
 	   %1v, $100 \times 1$ & 17.70 & 17.67 & .004 \\\hline\hline	 
 
-		1v, $300 \times 1$ & {\bf 15.19} & 11.68 & .093 \\\hline 
-		3v, $300 \times 3$ & 16.57 & 11.43 & .200 \\\hline 
-	    2v, $300 \times 2$ & 16.65 & 10.05 & {\bf .331} \\\hline\hline	 
+		1v, $300$ & {\bf 15.19} & 11.68 & .093 \\\hline 
+		3v, $600$ & 16.57 & 11.43 & .200 \\\hline 
+	    2v, $600$ & 16.65 & 10.05 & {\bf .331} \\\hline\hline	 
 
-		1v, $400 \times 1$ & {\bf 14.87} & 6.456 & .032 \\\hline 
-		3v, $400 \times 3$ & 16.62 & 6.343 & .254 \\\hline 
-	    2v, $400 \times 2$ & 16.33 & 5.777 & {\bf .371} \\\hline \hline
+		1v, $400$ & {\bf 14.87} & 6.456 & .032 \\\hline 
+		3v, $800$ & 16.62 & 6.343 & .254 \\\hline 
+	    2v, $800$ & 16.33 & 5.777 & {\bf .371} \\\hline \hline
 
-		1v, $500 \times 1$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
-		3v, $500 \times 3$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
-	    2v, $500 \times 2$ & $16.49$ & n/a & n/a \\\hline\hline	 
+		1v, $500$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
+		3v, $1000$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
+	    2v, $1000$ & $16.49$ & n/a & n/a \\\hline\hline	 
 	\end{tabular}
 	\caption{Bounds on $\beta^{.5}_{6,8}$ 
 	obtained by the "1v", "3v" and "2v" models 
 	on the {\bf full dimension} MNIST DNN, 
-	for timeouts of $14400$s, when 0, 300, 400 or 500 ($\times 1$, $\times 2$, $\times 3$) variables are binary.}
+	for timeouts of $14400$s, when 0, 300/600, 400/800 or 500/1000 variables are binary.}
 	\label{table.mnist}
 \end{table}
 
@@ -85,49 +85,54 @@ far insufficient to prove that any image is robust in real-time. As expected, th
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{||l||c|c|c||}\hline\hline
-		model &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ \\\hline \hline
-1v, $400 \times 1$ & $1.414$ &  $.691$ & {\bf .010} \\\hline 
-3v, $400 \times 3$ & {\bf 1.186} & $.600$ & $.003$ \\\hline 
-2v, $400 \times 2$ & $1.274$ & $.566$ & $.002$ \\\hline\hline
-	 
-1v, $475 \times 1$ &  $1.408$ & $.301$ & $.008$  \\\hline 
-3v, $475 \times 3$ &  {\bf 1.153} & $.250$ & $.006$ \\ \hline 
-2v, $475 \times 2$ &  $1.247$ & $.196$ & {\bf .019} \\\hline\hline
+		model, nbr bin var &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ \\\hline \hline
+1v, $188$ & $?$ &  $?$ & $?$\\\hline 
+%1v, $300$ & $?$ &  $?$ & $?$\\\hline 
+1v, $488$ & $?$ & $?$ & $?$  \\\hline 
+1v, $500$ & {\bf 1.412} & $.161$ & .057 \\\hline \hline
 
-1v, $500 \times 1$ & $1.412$ & $.161$ & .057 \\\hline 
-3v, $500 \times 3$ & {\bf 1.137} & $.103$ & $.065$\\\hline 
-2v, $500 \times 2$ &  $1.182$ & $.084$& {\bf .084}  \\\hline\hline
+
+3v, $375$ & 1.221 & $?$ & $?$ \\\hline 
+%3v, $600$ & $1.175$ & $?$ & $?$ \\\hline 
+3v, $975$ & $1.149$ & $?$ & $?$ \\ \hline 
+3v, $1000$ & {\bf 1.121} & $.103$ & $.065$\\\hline \hline
+
+2v, $375$ & {\bf 1.157} & $?$ & $?$ \\\hline 
+%2v, $600$ & 1.180 & $?$ & $?$ \\\hline
+2v, $975$ & $?$ & $?$ & ? \\\hline
+2v, $1000$ &  $1.182$ & $.084$& {\bf .084}  \\\hline\hline
 	 
 	\end{tabular}
 	\caption{Comparison of "1v", "3v" and "2v" models 
 	to obtain bounds on $\beta^{.5}_{6,8}$ on the {\bf 20 dimension} reduced order MNIST DNN, for timeout of 14400s, 
-	where 400, 475,  or 500 ($\times 1$, $\times 2$, $\times 3$) neurons use binary variables.}
+	with 188 / 375, 488 / 975,  or 500 /1000 binary variables.}
 	\label{table.reduced}
 \end{table}
 
 
-We also experimented reducing the number of binary variables (by considering some with linear relaxation) from 500 ($\times 1,2,3$) to 475 ($\times 1,2,3$) and 400 ($\times 1,2,3$) for the PCA reduced space to 20 dimensions (Table~\ref{table.reduced}). 
+We also experimented reducing the number of binary variables (by considering some with linear relaxation) from 500 /1000 to 488 / 975 and 188/375 for the PCA reduced space to 20 dimensions (Table~\ref{table.reduced}). 
 As for Table~\ref{table.mnist}, it helps the MILP solver converge towards closer (bound, solution) pairs. However, the bounds found are not better than with all variables as binary variables, and this does not improve the percentage of images certified robust.
 
 
 Notice that the MILP process is far from converging (large difference between the Bound and the Solution) after 4 hours (14400s), and we can use a much longer 
 runtime to obtain better bounds. We did experiment the "3v" model with an extended time-out at 129600s, which does improve the bounds by around $10\%$, as well as the number of images certified robust in real-time (e.g. $65\%$ for $L_1 \leq 1$), Table~\ref{table.cert}.
 
-Last, we report in Table~\ref{table.pair} the bounds $\beta^{.5}_{C,D}$ obtained for every pair of class $C < D \in \{0, \ldots, 9\}$ using all $500 (\times 1,2,3) $ binary variables, which we could not provide in the main file for space issue - $\beta^{.5}_{6,8}$ being a good representative, with the timeout of 14400s.
+Last, we report in Table~\ref{table.pair} the bounds $\beta^{.5}_{C,D}$ obtained for every pair of class $C < D \in \{0, \ldots, 9\}$ using all $500 /1000 $ binary variables, which we could not provide in the main file for space issue - $\beta^{.5}_{6,8}$ being a good representative, with the timeout of 14400s.
 
 
 \begin{table}[t!]
 	\begin{tabular}{||l||c|c|c|c||}\hline\hline
-		model &    $L_1\leq 0.5$ & $L_1\leq 1$ & $L_1\leq 1.5$ &  $L_1\leq 2$ \\\hline \hline
-		1v, $500\times1$ & $80 \%$ & $32\%$ & $7\%$ & $0\%$ \\\hline
-		3v, $500 \times 3$ & {\bf 86\%} & {\bf 53\%} & {\bf 20\%} & {\bf 4\%} \\\hline
-		2v, $500 \times 2$ & 84\% & 51\% & 16\% & {\bf 4\%} \\\hline \hline
-		3vEx, $500 \times 3$ & {\bf 89\%} & {\bf 69\%} & {\bf 35\%} & {\bf 16\%} \\\hline\hline
+		model, nbr &    $L_1\leq 0.5$ & $L_1\leq 1$ & $L_1\leq 1.5$ &  $L_1\leq 2$ \\\hline \hline
+		1v, $500$ & $80 \%$ & $32\%$ & $7\%$ & $0\%$ \\\hline
+		3v, $1000$ & {\bf 86\%} & {\bf 53\%} & {\bf 20\%} & {\bf 4\%} \\\hline
+		2v, $1000$ & 84\% & 51\% & 16\% & {\bf 4\%} \\\hline \hline
+		3vEx, $1000$ & {\bf 89\%} & {\bf 69\%} & {\bf 35\%} & {\bf 16\%} \\\hline\hline
 	\end{tabular}
 	\caption{Percentage of images certified robust in real-time 
 	using the computed $(\beta^{.5}_{i,j})_{i < j \leq 10}$ 
 	by the "1v", "3v" and "2v" models, for different values of $L_1$-perturbations, 
-	as wel as for "3v"Ex with the extended time out of 129600s.}
+	as wel as for "3v"Ex with the extended time out of 129600s, also using
+	$(\beta^{1}_{i,j})_{i < j \leq 10}$ .}
     \label{table.cert}
 \end{table}
 
@@ -145,29 +150,29 @@ Last, we report in Table~\ref{table.pair} the bounds $\beta^{.5}_{C,D}$ obtained
 
 	\begin{table}[b!]
 	\begin{tabular}{||l||c|c|c|c||}\hline\hline
-		model &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ &  Time(s) \\\hline \hline
-		1v, $100 \times 1$ &     {\bf .0356} &  $.0356$ & $.0191$ &  1000 \\\hline
-		3v, $100 \times 3$&     .0414 &  .0254 &  .0166 &  1000 \\\hline
-		2v, $100 \times 2$&     .0418 &  .0229 &   {\bf .0229} &  1000 \\\hline \hline
+		model, n &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ &  Time(s) \\\hline \hline
+		1v, $100 $ &     {\bf .0356} &  $.0356$ & $.0191$ &  1000 \\\hline
+		3v, $200$&     .0414 &  .0254 &  .0166 &  1000 \\\hline
+		2v, $200$&     .0418 &  .0229 &   {\bf .0229} &  1000 \\\hline \hline
 		
-	    3v, $90 \times 3$&     .0468 &  .0468 &  .0181 & 14440 \\\hline	
-		3v, $97 \times 3$&     .0352 &  .0284 &  .0196 & 14440 \\\hline
-		3v, $100 \times 3$&      {\bf .0350} &  .0272 &  .0216 & 14440 \\\hline
+	    3v, $180$&     .0468? &  .0468 &  .0181 & 14440 \\\hline	
+		3v, $194$&     .0352? &  .0284 &  .0196 & 14440 \\\hline
+		3v, $200$&      {\bf .0350} &  .0272 &  .0216 & 14440 \\\hline
 
-		2v, $90 \times 2$&     .0472 &  .0472 &  .0195 & 14440 \\\hline	
-		2v, $97 \times 2$&     .0393 &  .0240 &   {\bf .0237} & 14440 \\\hline
-		2v, $100 \times 2$&     .0360 &  .0236 &   .0236 & 14440 \\\hline \hline
+		2v, $180$&     .0472? &  .0472 &  .0195 & 14440 \\\hline	
+		2v, $194$&     .0393? &  .0240 &   {\bf .0237} & 14440 \\\hline
+		2v, $200$&     .0360 &  .0236 &   .0236 & 14440 \\\hline \hline
 
-		3v, $100 \times 3$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
-		2v, $100 \times 2$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline\hline
+		3v, $200$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
+		2v, $200$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline\hline
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, where 90, 97 and 100 ($\times 1, \times 2,\times 3$) binary variables.}
+	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, with 100, 180, 194 or 200 binary variables.}
 	\label{table.pipe}
 \end{table}
 
 
 
-Last, for the pipe system in Table \ref{table.pipe}, we report for the "standard" 14400s time-out we use in other benchmarks, additional experiments with limited number of binary variables, namely $97 (\times 2,3)$ and $90 (\times 2,3)$ --- there is no point to consider the 1v model with reduced number of binary variable as it has already converged after 1000s with all the variables binary. Again, lowering the number of binary variables helps the MILP solver converge closer (it did converge within 2000s for 90 variables), but the bounds found are worse than with all the variables binary.
+Last, for the pipe system in Table \ref{table.pipe}, we report for the "standard" 14400s time-out we use in other benchmarks, additional experiments with limited number of binary variables, namely $194$ and $180$ --- there is no point to consider the 1v model with reduced number of binary variable as it has already converged after 1000s with all the variables binary. Again, lowering the number of binary variables helps the MILP solver converge closer (it did converge within 2000s for 90 variables), but the bounds found are worse.
 
 
 

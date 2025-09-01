@@ -19,33 +19,33 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 \begin{table}[b!]
 	\centering
 	\begin{tabular}{||l|c|c|c||}\hline\hline
-		model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
-	Classical, $50 \times 2$ &    $.320$ &  $.320$ & $.017$ 
+		model, nbr binary var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+	Classical, $100$ &    $.320$ &  $.320$ & $.017$ 
     \\\hline
-	ITNE, $50 \times 2$ &    $.042$ &  $.037$ & $.022$
+	ITNE, $100$ &    $.042$ &  $.037$ & $.022$
 	\\ \hline
-    2v model, $50 \times 2$ &    {\bf .040} &  $.037$ &  $.018$ 
+    2v model, $100$ &    {\bf .040} &  $.037$ &  $.018$ 
     \\\hline \hline
-     2v model New, $50 \times 2$ &    {\bf .039} &  $.029$ &  $.016$ 
+     2v model New, $100$ &    {\bf .039} &  $.029$ &  $.020$ 
     \\\hline \hline
-    Classical, $100 \times 2$ &  .186  &  $.022$ & $.022$ 
+    Classical, $200$ &  .186  &  $.022$ & $.022$ 
     \\\hline
-	ITNE, $100 \times 2$ &    $.045$ &  $.023$ & .023
+	ITNE, $200$ &    $.045$ &  $.023$ & .023
     \\\hline
-	2v model, $100 \times 2$&     {\bf .042} &  $.023$ &   .023 
+	2v model, $200$&     {\bf .042} &  $.023$ &   .023 
     \\\hline \hline
 	\end{tabular}
-	\caption{Comparison of the classical encoding, ITNE and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $50 \times 2$, 
-    or the full $100 \times 2$ binary variables.}
+	\caption{Comparison of the classical encoding, ITNE and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $100$, 
+    or the full $200$ binary variables.}
     \label{table.classical}
 \end{table}
 
 We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz,ITNE}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
 
 
-Table \ref{table.classical}, $50 \times 2$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{ITNE} recovers most but not all the bound of the "2v" model.
+Table \ref{table.classical}, $100$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{ITNE} recovers most but not all the bound of the "2v" model.
 
-Further, even using a fully accurate model with all $100 \times 2$ variables encoded as binary variables, the "2v" model produces bounds $>4$ times better than the classical model, due to the internal Branch and Bound process to compute bounds, which uses linear relaxation. Again, 
+Further, even using a fully accurate model with all $100$ variables encoded as binary variables, the "2v" model produces bounds $>4$ times better than the classical model, due to the internal Branch and Bound process to compute bounds, which uses linear relaxation. Again, 
 Eq. (3) from \cite{ITNE} recovers most but not all the accuracy of the "2v" model.
 Overall, the "2v" model produces better bounds, even with short time-outs, despite its higher complexity.
 
@@ -57,15 +57,15 @@ in Table \ref{table.mnist} one particular bound $\beta^{.5}_{i,j}$, namely for $
 	\begin{table}[h!]
 		\centering
 	\begin{tabular}{||l||c|c|c||}\hline\hline
-		model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
-		1v, $500 \times 1$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
-		3v, $500 \times 3$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
-	    2v, $500 \times 2$ & $16.49$ & n/a & n/a \\\hline\hline	 
+		model, nbr binary var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+		1v, $500$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
+		3v, $1000$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
+	    2v, $1000$ & $16.49$ & n/a & n/a \\\hline\hline	 
 	\end{tabular}
 	\caption{Bounds on $\beta^{.5}_{6,8}$ 
 	obtained by the "1v", "3v" and "2v" models 
 	on the {\bf full dimension} MNIST DNN, 
-	for timeouts of $14400$s, when all 500 ($\times 1$, $\times 2$, $\times 3$) variables are binary.}
+	for timeouts of $14400$s, when all 500 / 1000 variables are binary.}
 	\label{table.mnist}
 \end{table}
 
@@ -75,7 +75,7 @@ On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached 
 	\centering
 \includegraphics[scale=0.6]{image.png} \hspace{1.5cm}
 \includegraphics[scale=0.6]{perturb.png}
-\caption{An improbable image for MNIST and its perturbation ($L1$-difference of $.5$ in a unique pixel at x=14, y=8 from top) with maximal $\beta^{.5}_{6,8}=0.518$, as obtained by the "3v" $500 \times 2$ model in {\bf full 784 dimension} image space.}
+\caption{An improbable image for MNIST and its perturbation ($L1$-difference of $.5$ in a unique pixel at x=14, y=8 from top) with maximal $\beta^{.5}_{6,8}=0.518$, as obtained by the "3v" model in {\bf full 784 dimension} image space.}
 \label{fig3}
 \end{figure*}	
 
@@ -83,7 +83,7 @@ On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached 
 	\centering
 \includegraphics[scale=0.5]{redimage.png} \hspace{1.5cm}
 \includegraphics[scale=0.5]{redperturb.png}
-\caption{An image for MNIST and its perturbation from the {\bf 20-dimension reduced space} with maximal $\beta^{.5}_{6,8}=.084$, as obtained by the "2v" $500 \times 2$ model.}
+\caption{An image for MNIST and its perturbation from the {\bf 20-dimension reduced space} with maximal $\beta^{.5}_{6,8}=.084$, as obtained by the "2v" model with $1000$ binary variables.}
 \label{fig4}
 \end{figure*}	
 
@@ -91,7 +91,7 @@ On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached 
 \begin{table}[b!]
 	\centering
 	\begin{tabular}{||l||c|c|c||}\hline\hline
-		model &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ \\\hline \hline
+		model, nbr binary var &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ \\\hline \hline
 %1v, $400 \times 1$ & $1.414$ &  $.691$ & $.010$ \\\hline 
 %3v, $400 \times 3$ & $1.186$ & $.600$ & $.003$ \\\hline 
 %2v, $400 \times 2$ & $1.274$ & $.566$ & $.002$ \\\hline\hline
@@ -100,15 +100,15 @@ On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached 
 %3v, $475 \times 3$ &  $1.153$ & $.250$ & $.006$ \\ \hline 
 %2v, $475 \times 2$ &  $1.247$ & $.1957$ & $.019$ \\\hline\hline
 
-1v, $500 \times 1$ & $1.412$ & $.161$ & .057 \\\hline 
-3v, $500 \times 3$ & {\bf 1.137} & $.103$ & $.065$\\\hline 
-2v, $500 \times 2$ &  $1.182$ & $.084$& {\bf .084}  \\\hline\hline
+1v, $500$ & $1.412$ & $.161$ & .057 \\\hline 
+3v, $1000$ & {\bf 1.137} & $.103$ & $.065$\\\hline 
+2v, $1000$ &  $1.182$ & $.084$& {\bf .084}  \\\hline\hline
 	 
 	\end{tabular}
 	\caption{Comparison of "1v", "3v" and "2v" models 
 	to obtain bounds on $\beta^{.5}_{6,8}$ on the {\bf 20 dimension} reduced order MNIST DNN, for timeout of 14400s, where 
 	all %400, 475,  or 
-	500 ($\times 1$, $\times 2$, $\times 3$) neurons use binary variables.}
+	neurons use 500 / 1000 binary variables.}
 	\label{table.reduced}
 \end{table}
 
@@ -119,10 +119,10 @@ On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached 
 
 \begin{table}[b!]
 	\begin{tabular}{||l||c|c|c|c||}\hline\hline
-		model &    $L_1\leq 0.5$ & $L_1\leq 1$ & $L_1\leq 1.5$ &  $L_1\leq 2$ \\\hline \hline
-		1v, $500\times1$ & $80 \%$ & $32\%$ & $7\%$ & $0\%$ \\\hline
-		3v, $500 \times 3$ & {\bf 86 \%} & {\bf 53\%} & {\bf 20\%} & {\bf 4\%} \\\hline
-		2v, $500 \times 2$ & 84\% & 51\% & 16\% & {\bf 4\%} \\\hline \hline
+		model, nbr &    $L_1\leq 0.5$ & $L_1\leq 1$ & $L_1\leq 1.5$ &  $L_1\leq 2$ \\\hline \hline
+		1v, $500$ & $80 \%$ & $32\%$ & $7\%$ & $0\%$ \\\hline
+		3v, $1000$ & {\bf 86 \%} & {\bf 53\%} & {\bf 20\%} & {\bf 4\%} \\\hline
+		2v, $1000$ & 84\% & 51\% & 16\% & {\bf 4\%} \\\hline \hline
 	\end{tabular}
 	\caption{Percentage of images certified robust in real-time 
 	using the computed $(\beta^{.5}_{i,j})_{i < j \leq 10}$ 
@@ -159,7 +159,7 @@ With these bounds, most images ($86\%$) can be certified in real-time robust for
 	\begin{figure*}[t!]
 \includegraphics[scale=0.5]{deform.png} \hspace{0.8cm}
 \includegraphics[scale=0.5]{strain.png}
-\caption{2 slightly different deformations and their associated quite different strain as obtained by the "2v" $100 \times 2$ model.}
+\caption{2 slightly different deformations and their associated quite different strain as obtained by the "2v" model with $200 $ binary variable.}
 \label{fig5}
 \end{figure*}	
 
@@ -186,18 +186,18 @@ With these bounds, most images ($86\%$) can be certified in real-time robust for
 		
 	\begin{table}[h!]
 	\begin{tabular}{||l||c|c|c|c||}\hline\hline
-		model &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ &  Time(s) \\\hline \hline
-		1v, $100 \times 1$ &     {\bf .0356} &  $.0356$ & $.0191$ &  1000 \\\hline
-		3v, $100 \times 3$&     .0414 &  .0254 &  .0166 &  1000 \\\hline
-		2v, $100 \times 2$&     .0418 &  .0229 &   {\bf .0229} &  1000 \\\hline \hline
+		model, nbr&        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ &  Time(s) \\\hline \hline
+		1v, $100$ &     {\bf .0356} &  $.0356$ & $.0191$ &  1000 \\\hline
+		3v, $200$&     .0414 &  .0254 &  .0166 &  1000 \\\hline
+		2v, $200$&     .0418 &  .0229 &   {\bf .0229} &  1000 \\\hline \hline
 		%3v, $97 \times 3$&      ?? &  ?? &  ?? & 14440 \\\hline
-		3v, $100 \times 3$&      {\bf .0350} &  .0272 &  .0216 & 14440 \\\hline
+		3v, $200$&      {\bf .0350} &  .0272 &  .0216 & 14440 \\\hline
 		%2v, $97 \times 2$&     ?? &  ?? &   ?? & 14440 \\\hline
-		2v, $100 \times 2$&     .0360 &  .0236 &    {\bf .0236} & 14440 \\\hline \hline
-		3v, $100 \times 3$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
-		2v, $100 \times 2$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline\hline
+		2v, $200$&     .0360 &  .0236 &    {\bf .0236} & 14440 \\\hline \hline
+		3v, $200$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
+		2v, $200$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline\hline
 	\end{tabular}
-	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, where all 100 ($\times 1, \times 2,\times 3$) neurons use binary variables.}
+	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, where all neurons use 100 / 200 binary variables.}
 	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
 	\label{table.pipe}
 \end{table}
