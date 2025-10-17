@@ -1,0 +1,101 @@
+\documentclass{beamer}
+
+%--- 基本设置 ---
+\usetheme{Madrid} % 简洁主题，可改为 Berlin, CambridgeUS, etc.
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{} % 去掉底部导航图标
+
+\usepackage{graphicx}  % 插图
+\usepackage{booktabs}  % 表格横线
+\usepackage{amsmath, amsfonts, amssymb} % 数学支持
+\usepackage{caption}   % 自定义caption
+\usepackage{hyperref}  % 超链接
+
+%--- 题目信息 ---
+\title[Short Title]{Full Presentation Title}
+\author{Your Name}
+\institute{Your Institution}
+\date{\today}
+
+%--- 正文开始 ---
+\begin{document}
+	
+	%--- 封面 ---
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	%--- 目录 ---
+	\begin{frame}{Outline}
+		\tableofcontents
+	\end{frame}
+	
+	%--- 第一节 ---
+	\section{Introduction}
+	
+	\begin{frame}{Motivation}
+		\begin{itemize}
+			\item Background of the problem
+			\item Previous methods
+			\item Our goal
+		\end{itemize}
+	\end{frame}
+	
+	%--- 图片示例 ---
+	\section{Figures}
+	
+	\begin{frame}{Example Figure}
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.8\linewidth]{example-image-a}
+			\caption{An example figure illustrating the result.}
+		\end{figure}
+	\end{frame}
+	
+	%--- 表格示例 ---
+	\section{Tables}
+	
+	\begin{frame}{Example Table}
+		\begin{table}
+			\centering
+			\begin{tabular}{lcc}
+				\toprule
+				Method & Accuracy & Time (s) \\
+				\midrule
+				Baseline & 85.2 & 120 \\
+				Proposed & \textbf{90.4} & 95 \\
+				\bottomrule
+			\end{tabular}
+			\caption{Comparison of different methods.}
+		\end{table}
+	\end{frame}
+	
+	%--- 数学公式示例 ---
+	\section{Math Example}
+	
+	\begin{frame}{Mathematical Expression}
+		\begin{block}{Loss Function}
+			\[
+			L = \frac{1}{N} \sum_{i=1}^N (y_i - \hat{y}_i)^2
+			\]
+		\end{block}
+	\end{frame}
+	
+	%--- 结论 ---
+	\section{Conclusion}
+	
+	\begin{frame}{Conclusion}
+		\begin{itemize}
+			\item Summary of key points
+			\item Future work
+		\end{itemize}
+	\end{frame}
+	
+	%--- 致谢 ---
+	\begin{frame}
+		\centering
+		\Huge{\textbf{Thank you!}}\\[1em]
+		\small Questions?
+	\end{frame}
+	
+\end{document}
