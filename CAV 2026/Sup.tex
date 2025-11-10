@@ -1,0 +1,159 @@
+\documentclass[runningheads]{llncs}
+\usepackage[T1]{fontenc}
+
+\usepackage{times}  % DO NOT CHANGE THIS
+\usepackage{helvet}  % DO NOT CHANGE THIS
+\usepackage{courier}  % DO NOT CHANGE THIS
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in} % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in} % DO NOT CHANGE THIS
+%
+% These are recommended to typeset algorithms but not required. See the subsubsection on algorithms. Remove them if you don't have algorithms in your paper.
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\pagestyle{plain}
+\usepackage{threeparttable}
+\input{math_commands.tex}
+\usepackage{lineno}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{cases}
+\captionsetup{compatibility=false}
+\usepackage{epstopdf}
+\usepackage{placeins}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage{array}
+%\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usetikzlibrary{positioning, arrows.meta,calc}
+\usepackage{newfloat}
+\usepackage{listings}
+\DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
+\lstset{%
+	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
+	numbers=left,numberstyle=\footnotesize,xleftmargin=2em,% show line numbers, remove this entire line if you don't want the numbers.
+	aboveskip=0pt,belowskip=0pt,%
+	showstringspaces=false,tabsize=2,breaklines=true}
+\floatstyle{ruled}
+\newfloat{listing}{tb}{lst}{}
+\floatname{listing}{Listing}
+%\newtheorem{proposition}{Proposition}
+%\newtheorem{definition}{Definition}
+\newcommand{\vW}{\boldsymbol{W}}
+\newcommand{\val}{{\textrm{value}}}
+\newcommand{\Val}{{\textrm{value}}}
+\newcommand{\MILP}{{\textrm{MILP}}}
+\newcommand{\LP}{{\textrm{LP}}}
+\newcommand{\Improve}{\mathrm{Improve}}
+\newcommand{\Utility}{\mathrm{SAS}}
+\newcommand{\Sol}{\mathrm{Sol}}
+\newcommand{\sol}{\mathrm{sol}}
+\newcommand{\UB}{\mathrm{UB}}
+\newcommand{\LB}{\mathrm{LB}}
+\newcommand{\ub}{\mathrm{ub}}
+\newcommand{\lb}{\mathrm{lb}}
+\newcommand{\B}{\mathrm{B}}
+\usepackage{amsmath, amssymb, amsfonts}
+\newcommand{\ReLU}{\mathrm{ReLU}}
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+\newcommand{\toolname}{Hybrid MILP}
+
+% REMOVE THIS: bibentry
+% This is only needed to show inline citations in the guidelines document. You should not need it and can safely delete it.
+\usepackage{bibentry}
+
+
+\begin{document}
+	
+\maketitle
+
+
+\section{Reproducibility Checklist}
+
+This paper:
+\begin{itemize}
+\item Includes a conceptual outline and/or pseudocode description of AI methods introduced {\bf yes}
+\item Clearly delineates statements that are opinions, hypothesis, and speculation from objective facts and results {\bf yes}
+\item Provides well marked pedagogical references for less-familiar readers to gain background necessary to replicate the paper {\bf yes}
+\item Does this paper make theoretical contributions? {\bf yes}
+\end{itemize}
+
+if yes, then:
+
+\begin{itemize}
+\item All assumptions and restrictions are stated clearly and formally. {\bf yes}
+\item All novel claims are stated formally (e.g., in theorem statements). {\bf yes}
+\item Proofs of all novel claims are included. {\bf yes} (in the supplementary material)
+\item Proof sketches or intuitions are given for complex and/or novel results. {\bf yes}
+\item Appropriate citations to theoretical tools used are given. {\bf yes}
+\item All theoretical claims are demonstrated empirically to hold. {\bf yes}
+\item All experimental code used to eliminate or disprove claims is included. {\bf yes}
+\end{itemize}
+
+
+
+
+\section{Proof of Proposition 2}
+
+Recall first that we use the classical MILP encoding 
+for $\hat{x}'_i=\ReLU(x'_i)$, using one binary variable $a'$. We reuse 
+$a'$ (with its value already settled, see Proposition 1 in the main paper) 
+in the encoding of $\hat{y}_i = \ReLU(x_i)-\ReLU(x'_i)$:
+
+\addtocounter{proposition}{1}
+\addtocounter{table}{1}
+
+\begin{proposition}
+Assuming that $y_i \in [-\gamma_i, \gamma_i]$,
+and that $x'_i \in [\alpha_i,\beta_i]$,
+we have that $\hat{y}_i = \ReLU(x_i=x'_i+y_i)-\ReLU(x'_i)$ is the solution of:
+	\begin{align*}
+		& \begin{aligned}
+			y_i + x'_i &\leq a\beta_i        &
+			y_i &+ x'_i \geq (1-a)\alpha_i \\
+			x'_i       &\leq a'\beta_i       & 
+			x'_i       &\geq (1-a')\alpha_i \\
+			\hat{y}_i  &\leq a\gamma_i       &
+			\hat{y}_i  &\geq -a'\gamma_i \\
+			\hat{y}_i  &\leq y_i + (1-a)\gamma_i  &
+			\hat{y}_i  &\geq y_i - (1-a')\gamma_i \\
+			\hat{y}_i  &\leq -x'_i + a\beta_i &
+			\hat{y}_i  &\geq -x'_i + (1-a')\alpha_i \\
+			\hat{y}_i  &\leq y_i + x'_i + (1-a)(-\alpha_i) &
+			\hat{y}_i  &\geq y_i + x'_i + a'(-\beta_i)
+		\end{aligned}
+	\end{align*} 
+    where $a,a' \in \{0,1\}$ are binary variables, 
+    and $a'$ is shared with the classical MILP
+    encoding for $\hat{x}'_i=\ReLU(x'_i)$.
+\end{proposition}
+
+
+
+	We do a case analysis depending on the value of both binary variables. 
+First, we know the constraints for $\hat{x_i}'=\ReLU(x_i')$ are exact. 
+
+We have 2 binary variables and 4 cases in total. We only need to check that, in all 4 cases, $$\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$$
+
+\textbf{Case 1:} if $a = 1$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 4.
+
+\textbf{Case 2:}  if $a = 1$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i+x'_i$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 6.
+
+\textbf{Case 3:} if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = 0$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 3.
+
+\textbf{Case 4:} if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
+
+\input{PCA}
+
+\input{moreexp}
+	
+\end{document}
