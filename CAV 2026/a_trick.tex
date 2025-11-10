@@ -1,0 +1,24 @@
+\subsection*{Encoding $L_1$-perturbations with linear variables}
+
+Let $\vec{x}=(x_i)_{i\leq n}$ be an input vector, with $n$ dimensions.
+
+\begin{proposition}
+	\label{prop.l1}
+Define $n$ linear variables $(A_i)_{i<n}$ with the constraints 
+\begin{align}\label{L1constraint}\begin{cases}
+	A_i \geq x_i &\text{ for }i \leq n\\ 
+	A_i\geq -x_i &\text{ for }i \leq n\\
+	\sum_{i\leq n} A_i \leq c	&\end{cases}
+\end{align}
+
+This is equivalent with asking $||\vec{x}||_{L_1} = \sum_{i\leq n} |x_i| \leq c$.
+\end{proposition}
+
+The proof is simple: the first two lines of constraints (\ref{L1constraint}) are equivalent with $A_i \geq |x_i|$. So the whole constraint (\ref{L1constraint}) 
+implies that $\sum_{i\leq n} |x_i| \leq c$.
+
+Conversely, for every instance that satisfies $\sum_{i\leq n} |x_i| \leq c$, then there is also an instance which satisfies constraints (\ref{L1constraint}),  by defining $A_i = |x_i|$ for all $i \leq n$.
+
+This shows that constraints (\ref{L1constraint}) is equivalent with 
+$||\vec{x}||_{L_1} = \sum_{i\leq n} |x_i| \leq c$.
+
