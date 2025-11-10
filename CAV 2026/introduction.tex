@@ -26,8 +26,8 @@ Our main contributions address the challenges to compute the {\em global bounds}
 	
 	\item We develop a novel exact MILP encoding for the global robustness problem,
 	called the {\em "2v" model}, where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}). We study and encode exactly in MILP how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}). Compared with the
-	{\em classical MILP model} \cite{MILP} employed in \cite{vhagar,lipshitz, ITNE},
-	the linear relaxation is much more accurate, as each {\em diff variable} can be bounded after a ReLU as a function of the value of the {\em diff variables} before the ReLU, whereas the linear relaxations of the classical model is extremely inaccurate, as the variables are independent of each other. This was observed in \cite{lipshitz, ITNE}, and constraints encoding
+	{\em classical MILP model} \cite{MILP} employed in \cite{vhagar,lipshitz,ITNE},
+	the linear relaxation is much more accurate, as each {\em diff variable} can be bounded after a ReLU as a function of the value of the {\em diff variables} before the ReLU, whereas the linear relaxations of the classical model is extremely inaccurate, as the variables are independent of each other. This was observed in \cite{lipshitz,ITNE}, and constraints encoding
 	a part of the linear relaxation of our "2v" model were added explicitly. Experimentally, 
 	our "2v" model provides more accurate bounds than competing models, in the same runtime
 	(Table \ref{table.classical}).
