@@ -49,6 +49,41 @@ Further, even using a fully accurate model with all $100$ variables encoded as b
 Eq. (3) from \cite{ITNE} recovers most but not all the accuracy of the "2v" model.
 Overall, the "2v" model produces better bounds, even with short time-outs, despite its higher complexity.
 
+\subsection{Global Robustness Comparison vs Vhagar and ITNE}
+
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{||c|c|c|c|c||}\hline\hline
+	Benchmark & model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+	MNIST   & Vhagar &  & & 
+    \\
+	M-Conv1 & ITNE &  & & 
+	\\ 
+    TO=14400s & 2v &   & & 
+    \\\hline \hline
+    
+	FMNIST & Vhagar &  $37.01$ &  $22.06$ & $22.06$ 
+    \\
+	F-Conv1  & ITNE &  $29.17$ &  $22.55$ & $22.55$
+	\\ 
+    TO=14400s & 2v &    {\bf 22.84} &  $22.53$ &  $22.53$ 
+    \\\hline 
+	
+	CIFAR-10  & Vhagar &  & & 
+    \\
+	C-Conv1  & ITNE &  & & 
+	\\ 
+    TO=14400s & 2v &    & & 
+    \\\hline \hline
+    
+     \end{tabular}
+	\caption{Comparison with Vhagar for $L_\infty=0.05$ perturbation.}
+    \label{table.classical}
+\end{table}
+
+
+
 	\subsection{Experimental results for robustness (MNIST)}
 	
 We then turn to the MNIST classification benchmark, and report 
