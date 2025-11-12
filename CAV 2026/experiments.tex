@@ -56,35 +56,35 @@ perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for 
 
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{||c|c|c|c|c||}\hline\hline
-	Benchmark & model &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
-	MNIST   & Vhagar &  & & 
+	\begin{tabular}{||c|c|c|c|c|c||}\hline\hline
+	Benchmark & model & Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ & $\%$ of spread $\downarrow$ \\\hline \hline
+	MNIST   & Vhagar &  &  &  &
     \\
-	M-Conv1 & ITNE &  & & 
+	M-Conv1 & ITNE &  &  &  &
 	\\ 
-    TO=1000s & 2v &   & & 
+    TO=1000s & 2v &   &  &  &
     \\\hline
 
-	FMNIST & Vhagar &  ? &  ? & ? 
+	FMNIST & Vhagar &  ? &  ? & ? &
     \\
-	F-Conv1  & ITNE &  $29.17$ &  $22.55$ & $22.55$
+	F-Conv1  & ITNE &  $27.14$ &  $23.33$ & $23.33$ & $16\%$
 	\\ 
-    TO=1000s & 2v &  {\bf 23.08} &  $23.02$ &  $23.02$ 
+    TO=1000s & 2v &  {\bf 24.59} &  $23.41$ &  $23.41$ & {\bf 5$\%$}
     \\\hline 
 
 
-	FMNIST & Vhagar &  $37.01$ &  $22.06$ & $22.06$ 
+	FMNIST & Vhagar &  $37.01$ &  $22.06$ & $22.06$ & $69\%$
     \\
-	F-Conv1  & ITNE &  $29.17$ &  $22.55$ & $22.55$
+	F-Conv1  & ITNE &  $29.17$ &  $22.55$ & $22.55$ & $?$
 	\\ 
-    TO=14400s & 2v &    {\bf 22.84} &  $22.53$ &  $22.53$ 
+    TO=14400s & 2v &    {\bf 22.84} &  $22.53$ &  $22.53$ & {\bf 1$\%$}
     \\\hline 
 	
-	CIFAR-10  & Vhagar &  & & 
+	CIFAR-10  & Vhagar &  & & &
     \\
-	C-Conv1  & ITNE &  & & 
+	C-Conv1  & ITNE &  & & &
 	\\ 
-    TO=1000s & 2v &    & & 
+    TO=1000s & 2v &    & & &
     \\\hline \hline
     
      \end{tabular}
