@@ -52,39 +52,41 @@ Overall, the "2v" model produces better bounds, even with short time-outs, despi
 \subsection{Global Robustness Comparison vs Vhagar and ITNE}
 
 To be able to compare with Vhagar, we have to use Vhagar benchmarks: 
-perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for MNIST, FMNIST and CIFAR-10), for which the reduction rules of integer variables are implemented. We test with 1000s Time-Out, as well as one test with 14400s time out, showing that much longer time-out does not have a big impact on the result.
+perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for MNIST, FMNIST and CIFAR-10), for which the reduction rules of binary variables are implemented. We test with 1000s Time-Out, as well as one test with 14400s time out, showing that much longer time-out does not have a big impact on the result.
+
+The spread is the average over all cases of the relative distance between the bound to the highest worst-case for that case.
 
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{||c|c|c|c|c|c||}\hline\hline
+	\begin{tabular}{||c||c|c|c|c|c||}\hline\hline
 	Benchmark & model & Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ & $\%$ of spread $\downarrow$ \\\hline \hline
-	MNIST   & Vhagar &  &  &  &
+	MNIST   & Vhagar & 20.51 & 9.20 & 9.20 & 118 $\%$
     \\
-	M-Conv1 & ITNE &  &  &  &
+	M-Conv1 & ITNE & 12.77 & 9.41 & 9.41 & 35 $\%$
 	\\ 
-    TO=1000s & 2v &   &  &  &
-    \\\hline
+    TO=1000s & "2v" & {\bf 11.59}  & 9.38 & 9.38 & {\bf 23 $\%$}
+    \\\hline \hline
 
-	FMNIST & Vhagar &  ? &  ? & ? &
+	FMNIST & Vhagar &  ? &  ? & ? & ?
     \\
-	F-Conv1  & ITNE &  $27.14$ &  $23.33$ & $23.33$ & $16\%$
+	F-Conv1  & ITNE &  $27.57$ &  $22.12$ & $22.12$ & 23 $\%$
 	\\ 
-    TO=1000s & 2v &  {\bf 24.59} &  $23.41$ &  $23.41$ & {\bf 5$\%$}
+    TO=1000s & "2v" &  {\bf 23.67} &  $22.31$ &  $22.31$ & {\bf 6 $\%$}
     \\\hline 
 
 
-	FMNIST & Vhagar &  $37.01$ &  $22.06$ & $22.06$ & $69\%$
+	FMNIST & Vhagar &  $37.01$ &  $22.06$ & $22.06$ & 67 $\%$
     \\
-	F-Conv1  & ITNE &  $29.17$ &  $22.55$ & $22.55$ & $?$
+	F-Conv1  & ITNE &  $24.56$ &  $22.20$ & $22.20$ & 10 $\%$
 	\\ 
-    TO=14400s & 2v &    {\bf 22.84} &  $22.53$ &  $22.53$ & {\bf 1$\%$}
-    \\\hline 
+    TO=14400s & "2v" &    {\bf 22.84} &  $22.53$ &  $22.53$ & {\bf 1 $\%$}
+    \\\hline \hline
 	
-	CIFAR-10  & Vhagar &  & & &
+	CIFAR-10  & Vhagar & does & not & run & 
     \\
 	C-Conv1  & ITNE &  & & &
 	\\ 
-    TO=1000s & 2v &    & & &
+    TO=1000s & "2v" &    & & &
     \\\hline \hline
     
      \end{tabular}
