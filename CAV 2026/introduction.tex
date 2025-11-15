@@ -35,13 +35,13 @@ Our main contributions address the challenges to compute the {\em global bounds}
 	%\item  Our first contribution studies the {\em LP relaxation} of the exact MILP encoding of ReLUs. {\color{blue} We establish in Proposition \ref{LP} its equivalence with the so-called "triangular abstraction"}.
 	
 	\item We develop a novel {\em diff MILP encoding} for the global robustness problem, %called the {\em "2v" model}, 
-	where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}). Compared with the {\em classical MILP model} \cite{MILP} employed in \cite{vhagar,lipshitz,ITNE}, which considers the input and the perturbation but not their difference ({\em diff variable}), we keep the same number of 2 binary variables per ReLU. Experimentally however, 
+	where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}). Compared with the {\em classical MILP model} \cite{MILP} employed in \cite{vhagar,lipshitz,ITNE}, which considers the input and the perturbation but not their difference ({\em diff variable}), we keep the same number of 2 binary variables per ReLU. 
 	%the results are more accurate for the same runtime.
 	%the linear relaxation is much more accurate, as each {\em diff variable} can be bounded after a ReLU as a function of the value of the {\em diff variables} before the ReLU, whereas the linear relaxations of the classical model is extremely inaccurate, as the variables are independent of each other. This was observed in \cite{lipshitz,ITNE}, and constraints encoding
 	%a part of the linear relaxation of our "2v" model were added explicitly. 
 	%Experimentally, 
-	our {\em diff MILP model} provides more accurate bounds at a given runtime
-	(Table \ref{table.classical}).
+	However, our {\em diff MILP model} is more efficient, one reason being 
+	the accuracy of its linear relaxation.
 	%The number of variables a priori doubles compared with local robustness, from each neuron value in the perturbed image to each neuron value in the perturbed image {\em and} in the original image, as the original image is no more fixed. 
 	%Recall that the worst case complexity of MILP is exponential in the number of binary variables \cite{DivideAndSlide}. 
 	%A straightforward MILP model would be to use the  for each of these variables, as in \cite{vhagar,lipshitz}. The main issue with the classical model is that its linear relaxations is extremely inaccurate, as the variables are independent of each other. Instead, we develop another exact MILP model, 
@@ -64,11 +64,11 @@ Our main contributions address the challenges to compute the {\em global bounds}
 	%On the MNIST benchmark, this means 20 linear dimensions to match the $97\%$ accuracy of the DNN we considered, instead of the 784 dimensions of the full image space. 
 	%Using PCA, which is linear, makes it easy to specify perturbations on the actual image (where it is meaningful) rather than on the reduced space.
 
-\item Experimentally, the exact {\em diff MILP model} computes bounds 
-$\beta_{C,D}$ which are 1 order of magnitude better than with the classical MILP encoding, and much closer (Table \ref{table.classical}) to the lower bound than with variants of the classical encoding; namely Vhagar \cite{vhagar} which reduces the number of binary variables in a complete fashion; and ITNE \cite{ITNE} which adds linear relaxation for the diff variables.
+\item Experimentally, the exact {\em diff MILP model} computes upper bounds 
+which are 1 order of magnitude better than with the classical MILP encoding, and much closer (Table \ref{table.classical}) to the lower bounds than with variants of the classical encoding; namely reducing the number of binary variables in a complete fashion (Vhagar \cite{vhagar}); or adding linear relaxation for the diff variables (ITNE \cite{ITNE}).
 Our "1b+2" variant offers good trade-offs, reaching better bounds in the same runtime as the diff MILP model. The "1b" model converges faster but bounds are looser, interesting when runtime is very limited or problem is very complex (Tables \ref{table.mnist},\ref{table.pipe}).
-Overall, the "1b+2" model obtains bounds $\beta_{C,D}$ which enables the robustness certification of $69\%$ of MNIST images for an $L_1$-perturbation of $1$, resp. $89\%$ for $.5$. The online process adds only
-0.0005s of latency per image, and 2000 images/second can be treated per CPU core.
+Further, using PCA reduces $\beta_{C,D}$ by up to an order of magnitude.
+Overall, the "1b+2" model using PCA enables the robustness certification of $69\%$ of MNIST images for an $L_1$-perturbation of $1$, resp. $89\%$ for $.5$. The online process adds only 0.0005s of latency per image, and 2000 images/second can be treated per CPU core.
 \end{enumerate}
 
 
