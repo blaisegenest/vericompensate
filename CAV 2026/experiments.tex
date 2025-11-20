@@ -82,18 +82,18 @@ The spread is the average over all cases of the relative distance between the bo
     TO=14400s & {\em Diff} &    {\bf 22.56} &  $22.32$ &  $22.32$ & {\bf 1 $\%$}
     \\\hline \hline
 	
-	CIFAR-10  & Vhagar & does & not & run & 
+	CIFAR-10  & Vhagar & does & not & run & -
     \\
-	C-Conv1  & ITNE & 28.61 & 11.58 & 11.58 & 
+	C-Conv1  & ITNE & 28.61 & 11.58 & 11.58 & $33\%$
 	\\ 
     TO=1000s & {\em Diff} &  25.93  & 14.43 & 14.43 & $24\%$
 	\\
 	& {\em 2b+1} &  25.31 & 19.77 & - & $23\%$
 	\\
-	& Best &  {\bf 23.44}  &  &  & $16\%$
+	& Best &  {\bf 23.44}  &  &  & {\bf 16} $\%$
     \\\hline
     
-	CIFAR-10  & Vhagar & does & not & run & 
+	CIFAR-10  & Vhagar & does & not & run & -
     \\
 	C-Conv1  & ITNE &  & & &
 	\\ 
@@ -107,6 +107,52 @@ The spread is the average over all cases of the relative distance between the bo
 	\caption{Comparison with Vhagar for $L_\infty=0.05$ perturbation.}
     \label{table.classical}
 \end{table}
+
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{||c||c|c|c||c|c||c|}\hline\hline
+	Benchmark & model & Vhagar &  ITNE & {\em Diff} & {\em 2b+1} & Best \\\hline \hline
+	MNIST-C1  & Bound $\downarrow$ & 20.51 & 12.77 & {\bf 11.59} & &
+    \\
+	TO=1000s & $\%$ of spread $\downarrow$ & 118 $\%$ & 35 $\%$ & {\bf 23} $\%$ & &
+	\\ \hline
+	TO=14400s  & Bound $\downarrow$ & ? & ? & {\bf ?} & &
+    \\
+	 & $\%$ of spread $\downarrow$ & ? $\%$ & ? $\%$ & {\bf ?} $\%$ & &
+    
+    \\\hline \hline
+
+	FMNIST-C1 & Bound $\downarrow$ & 41.52 & 27.57 & {\bf 23.67} & &
+    \\
+	TO=1000s & $\%$ of spread $\downarrow$ & 93 $\%$ & 24 $\%$ & {\bf 6} $\%$ & &
+    \\\hline 
+
+
+	TO=14400s & Bound $\downarrow$ & 37.26 & 24.56 & {\bf 22.56} & &
+    \\
+	 & $\%$ of spread $\downarrow$ & 72 $\%$ & 10 $\%$ & {\bf 1} $\%$ & &
+    \\\hline \hline
+	
+
+	CIFAR-C1  & Bound $\downarrow$ &  & 28.61 & 25.93 & {\bf 25.31}& 23.44
+    \\
+	TO=1000s & $\%$ of spread $\downarrow$ & $\%$ & 33 $\%$ & 24 $\%$& 
+	{\bf 23} $\%$ & 16 $\%$
+	\\\hline
+    
+	TO=14400s  & Bound $\downarrow$ &  & & {\bf 20.67} & &
+    \\
+	 & $\%$ of spread $\downarrow$ & ? $\%$ & ? $\%$ & {\bf 6} $\%$& &
+		\\\hline \hline
+    
+
+     \end{tabular}
+	\caption{Comparison with Vhagar for $L_\infty=0.05$ perturbation.}
+    \label{table.classical}
+\end{table}
+
+
 
 
 
