@@ -64,14 +64,14 @@ The spread is the average over all cases of the relative distance between the bo
     \\
 	M-Conv1 & ITNE & 12.77 & 9.41 & 9.41 & 35 $\%$
 	\\ 
-    TO=1000s & "2v" & {\bf 11.59}  & 9.38 & 9.38 & {\bf 23 $\%$}
+    TO=1000s & {\em Diff} & {\bf 11.59}  & 9.38 & 9.38 & {\bf 23 $\%$}
     \\\hline \hline
 
 	FMNIST & Vhagar &  $41.52$ & $21.23$ & $21.23$ & 93 $\%$ 
     \\
 	F-Conv1  & ITNE &  $27.57$ &  $22.12$ & $22.12$ & 24 $\%$
 	\\ 
-    TO=1000s & "2v" &  {\bf 23.67} &  $22.31$ &  $22.31$ & {\bf 6 $\%$}
+    TO=1000s & {\em Diff} &  {\bf 23.67} &  $22.31$ &  $22.31$ & {\bf 6 $\%$}
     \\\hline 
 
 
@@ -79,16 +79,30 @@ The spread is the average over all cases of the relative distance between the bo
     \\
 	F-Conv1  & ITNE &  $24.56$ &  $22.20$ & $22.20$ & 10 $\%$
 	\\ 
-    TO=14400s & "2v" &    {\bf 22.56} &  $22.32$ &  $22.32$ & {\bf 1 $\%$}
+    TO=14400s & {\em Diff} &    {\bf 22.56} &  $22.32$ &  $22.32$ & {\bf 1 $\%$}
     \\\hline \hline
 	
 	CIFAR-10  & Vhagar & does & not & run & 
     \\
+	C-Conv1  & ITNE & 28.61 & 11.58 & 11.58 & 
+	\\ 
+    TO=1000s & {\em Diff} &  25.93  & 14.43 & 14.43 & $24\%$
+	\\
+	& {\em 2b+1} &  25.31 & 19.77 & - & $23\%$
+	\\
+	& Best &  {\bf 23.44}  &  &  & $16\%$
+    \\\hline
+    
+	CIFAR-10  & Vhagar & does & not & run & 
+    \\
 	C-Conv1  & ITNE &  & & &
 	\\ 
-    TO=1000s & "2v" &    & & &
+    TO=14400s & {\em Diff} &  {\bf 20.67}  & 19.03 & 19.03 & {\bf 6} $\%$
+	\\
+	 & {\em 2b+1} &  {\bf }  &  &  & $\%$
     \\\hline \hline
     
+
      \end{tabular}
 	\caption{Comparison with Vhagar for $L_\infty=0.05$ perturbation.}
     \label{table.classical}

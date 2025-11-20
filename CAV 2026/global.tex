@@ -1,25 +1,36 @@
 	\section{MILP Models for global robustness}
 	
-	
+
+	\subsection{Optimization objective for real-time verification}
+
+As explained in the introduction, the objective we want to maximize is 
+$\beta^{\text{perturb}}_{C,D} = x_C - x_D +x'_D - x'_C$, 
+for $x_C,x_D$ the value associated with the output neurons $C,D$ from input image $I$, and $x'_C,x'_D$ from perturbation $I'$. These bounds 
+$\beta^{\text{perturb}}_{C,D}$ will allow us to verify in real-time 
+whether a new incoming image can be certified to be robust for the perturbation.
+
+Different bounds were proposed in \cite{vhagar}, for an evaluation purpose rather than to verify images in real-time. 
+
+TODO: DEF OF BOUNDS IN VHAGAR. CALL BOUNDS $\alpha_C,D$, to compute the perturbation necessary to switch an image classified as $C$ into an image classified as $D$.
+Notice that $\alpha_C,D$ is not symetrical, while 
+$\beta^{\text{perturb}}_{C,D}$ is.
+
 	
 	\subsection{Extending the classical encoding}
 	
-    To encode global robustness, \cite{vhagar} considers
-	variable $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ for nodes of the image $I$ 
-	and of its perturbation $I'$, 
-	using the classical encoding (\ref{eq11}) \cite{MILP} 
-	to compute $\hat{x}_i, \hat{x}'_i$ from $x_i, x'_i$
-	for each $i$.
-    Further:
-    \begin{enumerate}
-		\item For each input nodes $x_j,x'_j$ of $I,I'$, add constraints
-        $|x_j-x'_j| \leq \varepsilon$ 
-        ($L_\infty$-perturbation - see later for $L_1$).
-		\item The optimization objective is to maximize $x_C - x_D +x'_D - x'_C$ 
-		to compute $\beta^\varepsilon_{C,D}=\beta^\varepsilon_{D,C}$, 
-		for $C \neq D$  decision classes, as proposed in \cite{vhagar}.
+    To encode global robustness in MILP, the classical way, used (with variants) by \cite{vhagar,ITNE}, is to consider variables $x_j,\hat{x}_j$ and 
+	$x'_j,\hat{x}'_j$, encoding the value of neuron $j$ obtained from the image $I$ and from its perturbation $I'$, respectively. Further:
+	\begin{enumerate}
+		\item For each input neuron $j,j$ of $I,I'$, there is constraint
+        $|x_j-x'_j| \leq \varepsilon$ to encode the $L_\infty$-perturbation 
+		(see later how we encode $L_1$ perturbations).
+		\item For each neuron $j$, we have the Re ReLU constraints 
+		from the classical encoding (\ref{eq11}) \cite{MILP}
+		for both $\hat{x}_j$ and $\hat{x'}_j$ independently.
 	\end{enumerate}
 
+
+	
 	We call this encoding $\mathcal{M}^{classical}$.
 	It contains twice as many (binary) variables as for local robustness. 
 	%As the worst-case complexity of solving an MILP model is exponential in the number of binary variables, it will be computationally intractable to compute $\beta^\varepsilon_{i,j}$ in this way, but for very small DNNs. 
