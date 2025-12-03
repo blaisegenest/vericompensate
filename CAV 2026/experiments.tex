@@ -54,12 +54,14 @@ Overall, the "2v" model produces better bounds, even with short time-outs, despi
 To be able to compare with Vhagar, we have to use Vhagar benchmarks: 
 perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for MNIST, FMNIST and CIFAR-10), for which the reduction rules of binary variables are implemented. We test with 1000s Time-Out, as well as one test with 14400s time out, showing that much longer time-out does not have a big impact on the result.
 
-The spread is the average over all cases of the relative distance between the bound and the highest worst-case found for that case.
+The gap is the average over all cases of the relative distance between the bound and the highest worst-case found for that case.
+
+\iffalse
 
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{||c||c|c|c|c|c||}\hline\hline
-	Benchmark & model & Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ & $\%$ of spread $\downarrow$ \\\hline \hline
+	Benchmark & model & Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ & $\%$ of gap $\downarrow$ \\\hline \hline
 	MNIST   & Vhagar & 20.51 & 9.20 & 9.20 & 118 $\%$
     \\
 	M-Conv1 & ITNE & 12.77 & 9.41 & 9.41 & 35 $\%$
@@ -109,46 +111,55 @@ The spread is the average over all cases of the relative distance between the bo
 \end{table}
 
 
+\fi
+
+
+
+
+
+
+
+
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{||c||c|c|c||c|c||c|}\hline\hline
-	Benchmark & model & Vhagar &  ITNE & {\em Diff} & {\em 2b+1} & Best \\\hline \hline
+	Benchmark & MILP model: & Vhagar &  ITNE & {\em Diff} & {\em 2b+1} & {\em Best} \\\hline \hline
 	MNIST-C1  & Bound $\downarrow$ &  20.80 & 12.32 & {11.14} & {\bf 10.95} & 10.85
     \\
-	TO=1000s & $\%$ of spread $\downarrow$ & 120$\%$ & 29 $\%$ & {17} $\%$ & {\bf 15} $\%$& 14 $\%$
+	TO=1000s & $\%$ of gap $\downarrow$ & 120$\%$ & 29 $\%$ & {17} $\%$ & {\bf 15} $\%$& 14 $\%$
 	\\ \hline
-	TO=14400s  & Bound $\downarrow$ & 17.54 & 11.15 & 10.14 & 10.29 & 10.07
+	TO=14400s  & Bound $\downarrow$ & 17.54 & 11.15 & {\bf 10.14} & 10.29 & 10.07
     \\
-	 & $\%$ of spread $\downarrow$ &  84$\%$ & 17 $\%$ & 7 $\%$ & 8 $\%$ & 6 $\%$ 
+	 & $\%$ of gap $\downarrow$ &  84$\%$ & 17 $\%$ & {\bf 7} $\%$ & 8 $\%$ & 6 $\%$ 
     
     \\\hline \hline
 
-	FMNIST-C1 & Bound $\downarrow$ & 41.52 & 26.61 & {23.27\bf } & 24.09 & 22.78
+	FMNIST-C1 & Bound $\downarrow$ & 41.52 & 26.61 & {\bf 23.27}  & 24.09 & 22.78
     \\
-	TO=1000s & $\%$ of spread $\downarrow$ & 93 $\%$ & 20 $\%$ & {\bf 5} $\%$ & 10 $\%$ & 3 $\%$
+	TO=1000s & $\%$ of gap $\downarrow$ & 93 $\%$ & 20 $\%$ & {\bf 5} $\%$ & 10 $\%$ & 3 $\%$
     \\\hline 
 
 
-	TO=14400s & Bound $\downarrow$ & 37.26 & 24.06 & {22.42\bf } & 23.80 & 22.34
+	TO=14400s & Bound $\downarrow$ & 37.26 & 24.06 & {\bf 22.42 } & 23.80 & 22.34
     \\
-	 & $\%$ of spread $\downarrow$ & 72 $\%$ &  9 $\%$ & {1\bf } $\%$ & 9 $\%$ & 0.6 $\%$
+	 & $\%$ of gap $\downarrow$ & 72 $\%$ &  9 $\%$ & {\bf 1} $\%$ & 9 $\%$ & 0.6 $\%$
     \\\hline \hline
 	
 
 	CIFAR-C1  & Bound $\downarrow$ & ? & 27.15 & 25.94 & {\bf 24.52}& 23.29
     \\
-	TO=1000s & $\%$ of spread $\downarrow$ & ? & 28 $\%$ & 24 $\%$& 
+	TO=1000s & $\%$ of gap $\downarrow$ & ? & 28 $\%$ & 24 $\%$& 
 	{\bf 20} $\%$ & 15 $\%$
 	\\\hline
     
 	TO=14400s  & Bound $\downarrow$ & ? & 22.73 & {\bf 21.77} & 21.81 & 20.38
     \\
-	 & $\%$ of spread $\downarrow$ & ? & 12 $\%$ & {\bf 10} $\%$& {\bf 10} $\%$& 5$\%$
+	 & $\%$ of gap $\downarrow$ & ? & 12 $\%$ & {\bf 10} $\%$& {\bf 10} $\%$& 5$\%$
 		\\\hline \hline
     
 
      \end{tabular}
-	\caption{Comparison with Vhagar for $L_\infty=0.05$ perturbation.}
+	\caption{Comparison with Vhagar for $L_\infty=0.05$ perturbation, average over all bounds $\beta_{i,j}$. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $i,j$. Lower gaps using {\em Best} means that there are cases where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite.}
     \label{table.classical}
 \end{table}
 
