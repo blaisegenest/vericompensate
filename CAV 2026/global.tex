@@ -14,8 +14,11 @@ as well as a lower bound ("solution") $\underline{\beta}^{\text{perturb}}_{C,D}$
 
 Different bounds were proposed in \cite{vhagar}, for an evaluation purpose (how narrow is the gap between the upper and lower bound) rather than to verify images in real-time. 
 
-TODO: DEF OF BOUNDS IN VHAGAR. CALL BOUNDS 
-$\alpha^{\text{perturb}}_{C,D}$, to compute the perturbation necessary to switch an image classified as $C$ into an image classified as $D$.
+The bounds in Vhagar, 
+$\alpha^{\text{perturb}}_{C,D}$, to compute the perturbation necessary to switch an image classified as $C$ into an image classified as $D$. The formal definition, \begin{align*}
+	\alpha^{\text{perturb}}_{C,D} &= \max_{|I-I'| \leq \text{perturb}} (x_C-\max_{E\neq C}x_E) \\
+	&\text{s.t. }  (x'_D-\max_{E\neq D}x'_E)\geq 0
+\end{align*}
 Notice that $\alpha^{\text{perturb}}_{C,D}$ is not symetrical, while 
 $\beta^{\text{perturb}}_{C,D}$ is.
 
