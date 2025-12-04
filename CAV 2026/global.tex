@@ -3,16 +3,20 @@
 
 	\subsection{Optimization objective for real-time verification}
 
-As explained in the introduction, the objective we want to maximize is 
-$\beta^{\text{perturb}}_{C,D} = x_C - x_D +x'_D - x'_C$, 
-for $x_C,x_D$ the value associated with the output neurons $C,D$ from input image $I$, and $x'_C,x'_D$ from perturbation $I'$. These bounds 
-$\beta^{\text{perturb}}_{C,D}$ will allow us to verify in real-time 
-whether a new incoming image can be certified to be robust for the perturbation.
+As explained in the introduction, the objective we want to approximate is 
+$\beta^{\text{perturb}}_{C,D} = \max_{|I-I'| \leq \text{perturb}}(x_C - x_D +x'_D - x'_C)$, for $x_C,x_D$ the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
+Upper bounds  $\bar{\beta}^{\text{perturb}}_{C,D} \geq \beta^{\text{perturb}}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
+$\underline{\beta}^{\text{perturb}}_{C,D} \leq \beta^{\text{perturb}}_{C,D}$
+will allow us to evaluate how large is the gap 
+$(\bar{\beta}^{\text{perturb}}_{C,D} - \underline{\beta}^{\text{perturb}}_{C,D}) / \underline{\beta}^{\text{perturb}}_{C,D}$. MILP solvers, e.g. Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\text{perturb}}_{C,D}$
+as well as a lower bound ("solution") $\underline{\beta}^{\text{perturb}}_{C,D}$.
 
-Different bounds were proposed in \cite{vhagar}, for an evaluation purpose rather than to verify images in real-time. 
 
-TODO: DEF OF BOUNDS IN VHAGAR. CALL BOUNDS $\alpha_C,D$, to compute the perturbation necessary to switch an image classified as $C$ into an image classified as $D$.
-Notice that $\alpha_C,D$ is not symetrical, while 
+Different bounds were proposed in \cite{vhagar}, for an evaluation purpose (how narrow is the gap between the upper and lower bound) rather than to verify images in real-time. 
+
+TODO: DEF OF BOUNDS IN VHAGAR. CALL BOUNDS 
+$\alpha^{\text{perturb}}_{C,D}$, to compute the perturbation necessary to switch an image classified as $C$ into an image classified as $D$.
+Notice that $\alpha^{\text{perturb}}_{C,D}$ is not symetrical, while 
 $\beta^{\text{perturb}}_{C,D}$ is.
 
 	
