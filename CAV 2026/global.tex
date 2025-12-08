@@ -16,8 +16,7 @@ Different bounds were proposed in \cite{vhagar}, for an evaluation purpose (how 
 
 The bounds in Vhagar, 
 $\alpha^{\text{perturb}}_{C,D}$, to compute the perturbation necessary to switch an image classified as $C$ into an image classified as $D$. The formal definition, \begin{align*}
-	\alpha^{\text{perturb}}_{C,D} &= \max_{|I-I'| \leq \text{perturb}} (x_C-\max_{E\neq C}x_E) \\
-	&\text{s.t. }  (x'_D-\max_{E\neq D}x'_E)\geq 0
+	\alpha^{\text{perturb}}_{C,D} &= \max_{|I-I'| \leq \text{perturb}} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  (x'_D-\max_{E\neq D}x'_E)\geq 0
 \end{align*}
 Notice that $\alpha^{\text{perturb}}_{C,D}$ is not symetrical, while 
 $\beta^{\text{perturb}}_{C,D}$ is.
