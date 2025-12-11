@@ -130,16 +130,20 @@ f(x) = a_i \quad \text{if } \mathcal{T}(x)=i.
 
 
 \begin{theorem}
-	If a piecewise Lipschitz continuous DT policy $p$ is robustly safe, then
+	If a piecewise Lipschitz continuous DT policy $p$ is robustly safe and $succ$ of the system is Lipschitz continuous, then
 	there exists a DT certificate for safety. 
+	
+	Here, a set value function $f$ is Lipschitz if there exists a constant $C$ such that for any $x,y$ with $d(x,y)=d$, $f(y)\subseteq B_{Cd}(f(x))$.
 \end{theorem}
 
-From now, we fix a system $S$ and assume $p$ is a piecewise Lipschitz continuous DT policy which is robustly safe for $\delta>0$.
+From now, we fix a system $S$ and assume $p$ is a piecewise Lipschitz continuous DT policy which is robustly safe for $\delta>0$. 
 
-The proof is in three steps: \begin{itemize}
-	\item First, we will show, $R(I)$ has an open neighborhood contained in $R_\delta(I)$ and hence disjoint with $U$.
+ Without loss of generality, we assume the Lipschitz constant for $succ$ is 1.
+
+The proof is in several steps: \begin{itemize}
+	\item First, we will show, $R_{\delta/2}(I)$ has an open neighborhood contained in $R_\delta(I)$ and hence disjoint with $U$.
 	
-	\item Second, we will show $R(I)$ is attractive in a neighborhood. 
+	\item Second, we will show $R_{\delta/2}(I)$ is attractive in a neighborhood. 
 \end{itemize}
 
 
@@ -148,7 +152,7 @@ The proof is in three steps: \begin{itemize}
 \end{lemma}
 
 \begin{proof}
-	Trivial.
+  This is by definition.
 \end{proof}
 
 
@@ -168,13 +172,11 @@ The proof is in three steps: \begin{itemize}
 \end{lemma}
 
 \begin{proof}
-	In this proof, we use $R_i$ to denote each $R_{\delta/2}(I)\cap Q_i$. We need to show $R_{\delta/2}(I)$ is attractive in $\bigcup_{i\in I}B_\varepsilon(R_i)\cap Q_i$.
+	We use $R_i$ to denote each $R_{\delta/2}(I)\cap Q_i$.	By assumption, each $Q_i$ is assigned with a Lipschitz continuous function $f_i$ with Lipschitz constant $K_i$. Let $K = \max_{i\in I} K_i$ and $\varepsilon = \frac{\delta}{2K+2} < \delta/2$ (for $L_\infty$ distance; for other distance as $L_2$, $L_1$, $\varepsilon$ should be smaller). 
 	
-	By assumption and definition, each $Q_i$ is assigned with a Lipschitz continuous function $f_i$ with Lipschitz constant $K_i$. Let $K = \max_{i\in I} K_i$ and $\varepsilon = \frac{\delta}{2K+1}$. 
+	For a point $y$ in $B_\varepsilon(R_i)\cap Q_i$, there exists $x\in R_i\subseteq Q_i$ such that $d(x,y)<\varepsilon$. We consider $succ_p(y)$ and $succ_p(x)$. 
 	
-	For a point $y$ in $B_\varepsilon(R_i)\cap Q_i$, there exists $x\in R_i$ such that $d(x,y)<\varepsilon$. We consider $succ_p(y)$ and $succ_p(x)$. 
-	
-	Since $x,y\in Q_i$, $d(p(x),p(y))\leq K_i d(x,y) < K \varepsilon<\delta/2$. Because $x\in R_i\subseteq R_{\delta/2}(I)$, by definition, since $succ_p(y)\in B_{K_i\varepsilon}(succ_p(x))$ and $x\in R_{\delta/2}(I)$, then $succ_p(y)\in R_{\delta/2}(I)$.
+	Since $x,y\in Q_i$, $d(p(x),p(y))\leq K_i d(x,y) < K \varepsilon<\delta/2$.  By assumptions, we have $succ_p(y)\subseteq B_{\delta/2}(succ_p(x))$. Because $x\in R_i\subseteq R_{\delta/2}(I)$, by definition, we have that $succ_p(y)\subseteq R_{\delta/2}(I)$.
 	
 	This is what we want to show.
 \end{proof}
