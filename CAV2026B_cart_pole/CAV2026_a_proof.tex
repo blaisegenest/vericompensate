@@ -144,7 +144,7 @@ The proof is in three steps: \begin{itemize}
 
 
 \begin{lemma}
-	$B_\delta(R(I))\subseteq R_\delta(I)$.
+	$B_{\delta/2}(R_{\delta/2}(I))\subseteq R_\delta(I)$.
 \end{lemma}
 
 \begin{proof}
@@ -153,7 +153,7 @@ The proof is in three steps: \begin{itemize}
 
 
 \begin{lemma}
-	There exists a polytopes decompose of $X=\bigcup_{Q_i\in \mathcal{Q}} Q_i$ (they may include or exclude their boundaries) and Lipschitz continuous functions $f_i$ assigned for each polytopes that can define $p$:\begin{align*}
+	There exists a finite polytopes decompose of $X=\bigcup_{i\in I,\ I\text{ is finite}} Q_i$ (they may include or exclude their boundaries) and Lipschitz continuous functions $f_i$ assigned for each polytopes that can define $p$:\begin{align*}
 		p(x) = f_i(x)\quad \text{if }x\in Q_i
 	\end{align*}
 \end{lemma}
@@ -164,12 +164,31 @@ The proof is in three steps: \begin{itemize}
 
 
 \begin{lemma}
-	For each $Q_i$, there exists $\varepsilon >0$ such that $R(I)\cap Q_i$ is attractive in the region $B_\varepsilon(R(I)\cap Q_i)\cap Q_i$.
+	There exists $\varepsilon >0$ such that $R_{\delta/2}(I)$ is attractive in the region $\bigcup_{i\in I}B_\varepsilon(R_{\delta/2}(I)\cap Q_i)\cap Q_i$.
 \end{lemma}
 
 \begin{proof}
-	In this proof, we use $R_i$ to denote $R(I)\cap Q_i$.
+	In this proof, we use $R_i$ to denote each $R_{\delta/2}(I)\cap Q_i$. We need to show $R_{\delta/2}(I)$ is attractive in $\bigcup_{i\in I}B_\varepsilon(R_i)\cap Q_i$.
+	
+	By assumption and definition, each $Q_i$ is assigned with a Lipschitz continuous function $f_i$ with Lipschitz constant $K_i$. Let $K = \max_{i\in I} K_i$ and $\varepsilon = \frac{\delta}{2K+1}$. 
+	
+	For a point $y$ in $B_\varepsilon(R_i)\cap Q_i$, there exists $x\in R_i$ such that $d(x,y)<\varepsilon$. We consider $succ_p(y)$ and $succ_p(x)$. 
+	
+	Since $x,y\in Q_i$, $d(p(x),p(y))\leq K_i d(x,y) < K \varepsilon<\delta/2$. Because $x\in R_i\subseteq R_{\delta/2}(I)$, by definition, since $succ_p(y)\in B_{K_i\varepsilon}(succ_p(x))$ and $x\in R_{\delta/2}(I)$, then $succ_p(y)\in R_{\delta/2}(I)$.
+	
+	This is what we want to show.
 \end{proof}
+
+
+\begin{lemma}
+	There is a region $A$ satisfying the following:
+	\begin{itemize}
+			\item A is a union of polytopes.
+		\item $A\supseteq R_{\delta/2}(I)$
+		\item $A\subseteq\bigcup_{i\in I}B_\varepsilon(R_{\delta/2}(I)\cap Q_i)\cap Q_i$
+	\end{itemize}
+	Hence, from $A$ we can construct a DT certificate.
+\end{lemma}
 
 
 %\begin{lemma}
