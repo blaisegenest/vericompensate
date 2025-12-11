@@ -1,0 +1,228 @@
+\documentclass[runningheads]{llncs}
+\usepackage[T1]{fontenc}
+
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\frenchspacing  % DO NOT CHANGE THIS
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\pagestyle{plain}
+\usepackage{threeparttable}
+\input{math_commands.tex}
+\usepackage{lineno}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{cases}
+\captionsetup{compatibility=false}
+\usepackage{epstopdf}
+\usepackage{placeins}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage{array}
+%\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usetikzlibrary{positioning, arrows.meta,calc}
+\usepackage{newfloat}
+\usepackage{listings}
+\DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
+\lstset{%
+	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
+	numbers=left,numberstyle=\footnotesize,xleftmargin=2em,% show line numbers, remove this entire line if you don't want the numbers.
+	aboveskip=0pt,belowskip=0pt,%
+	showstringspaces=false,tabsize=2,breaklines=true}
+\floatstyle{ruled}
+\newfloat{listing}{tb}{lst}{}
+\floatname{listing}{Listing}
+%\newtheorem{proposition}{Proposition}
+%\newtheorem{definition}{Definition}
+\newcommand{\vW}{\boldsymbol{W}}
+\newcommand{\val}{{\textrm{value}}}
+\newcommand{\Val}{{\textrm{value}}}
+\newcommand{\MILP}{{\textrm{MILP}}}
+\newcommand{\LP}{{\textrm{LP}}}
+\newcommand{\Improve}{\mathrm{Improve}}
+\newcommand{\Utility}{\mathrm{SAS}}
+\newcommand{\Sol}{\mathrm{Sol}}
+\newcommand{\sol}{\mathrm{sol}}
+\newcommand{\UB}{\mathrm{UB}}
+\newcommand{\LB}{\mathrm{LB}}
+\newcommand{\ub}{\mathrm{ub}}
+\newcommand{\lb}{\mathrm{lb}}
+\newcommand{\B}{\mathrm{B}}
+\usepackage{amsmath, amssymb, amsfonts}
+\newcommand{\ReLU}{\mathrm{ReLU}}
+\newcommand{\CMP}{{\textrm{CMP}}\ }
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+\newcommand{\toolname}{Hybrid MILP}
+
+\usepackage{bibentry}
+
+
+\begin{document}
+	
+	\begin{definition}
+		A system $S$ is a 5-tuple $(X,C,succ, U, I)$ that \begin{itemize}
+			\item $X\subseteq \mathbb{R}^n$ is the full space;
+			\item The control set $C$ is a set and the successor $succ$ is a function from $X\times C$ to $2^X$;
+			\item $U\subseteq X$ is the unsafe region, and nonempty set $I\subseteq X$ disjoint from $U$;
+		\end{itemize}
+		
+		The system of $S$ under perturbation of at most $\delta$, $S_\delta$, is a system with the same $(X,U,C,I)$ but a $succ_\delta$ function defined as follows: \begin{align*}
+		succ_\delta(x,c) &= B_\delta(succ(x,c))\\
+		&= \{z:\exists y\in succ(x,c)\ \ d(y,z)<\delta\}.
+		\end{align*} Here $d$ can be an arbitrary kind of distance ($L_2, L_\infty$ and so on).
+	\end{definition}
+	
+	Definition of policy: 
+	
+	\begin{definition} 
+		 \begin{itemize}
+			\item For a system $S = (X,C,succ, U, I)$, a policy $p$ is a function $p: X\rightarrow C$ and the function $succ_p: X\rightarrow 2^X$ is defined by $succ_p(x) = succ(x,p(x))$.
+			\item A policy $p$ is piecewise continuous (piecewise Lipschitz continuous) DT if there exists a decision tree (DT) $\mathcal{T}$ that defines $p$, i.e., each leaf $i$ of $\mathcal{T}$ is assigned a continuous (Lipschitz continuous) function $f_i(x)$ defined on $X$, and $p$ is defined by
+			\[
+			p(x) = f_i(x) \quad \text{if } \mathcal{T}(x)=i.
+			\]
+		\end{itemize}
+	\end{definition}
+
+
+Now we define the reachable set $R$ and $R_\delta$.
+
+\begin{definition}
+	For a system $S=(X,C,succ, U, I)$ with policy $p$, the reachable set $R(I)$ is the union of all sequence $\{x_n:n\in\mathbb{N}\}$ that is a run by $S$ and $p$, i.e., $\{x_n:n\in\mathbb{N}\}$ satisfies \begin{align*}
+		x_0&\in I\\
+		x_{n+1} &\in succ_p(x_n), n\in\mathbb{N}
+	\end{align*}
+	
+	And the reachable set under perturbation of at most $\delta$ is the union of all sequence $\{x_n:n\in\mathbb{N}\}$ that is a run by $S_\delta$ and $p$, i.e., $\{x_n:n\in\mathbb{N}\}$ satisfies \begin{align*}
+		x_0&\in I\\
+		x_{n+1} &\in B_\delta(succ_p(x_n)), n\in\mathbb{N}
+	\end{align*}
+\end{definition}
+
+
+Next we define safety.
+
+
+\begin{definition}
+	For a system $S=(X,C,succ, U, I)$, a policy $p$ is safe if $R(I)$ is disjoint from $U$. A policy $p$ is robustly safe if for some $\delta$, $R_\delta(I)$ is disjoint from $U$.
+\end{definition}
+
+
+Next we define certificate.
+
+\begin{definition}
+	For a system $S$ and policy $p$, a certificate is a function $f : A \rightarrow \{0,1\}$ such that:
+	\begin{itemize}
+		\item $f^{-1}(1)\supseteq I$, $f^{-1}(1)\cap U = \emptyset$.
+		
+		\item For any $x$ and $x'$ such that $f(x)=1$, we have $x' \in succ_p(x)$ $f(x')=1$.
+	\end{itemize}
+	
+A certificate $f$ is DT if there exists a decision tree (DT) $\mathcal{T}$ that defines $f$, i.e., each leaf $i$ of $\mathcal{T}$ is assigned a number $a_i \in \{0,1\}$, and $f$ is defined by
+\[
+f(x) = a_i \quad \text{if } \mathcal{T}(x)=i.
+\]
+
+\end{definition}
+
+
+
+\begin{theorem}
+	If a piecewise Lipschitz continuous DT policy $p$ is robustly safe, then
+	there exists a DT certificate for safety. 
+\end{theorem}
+
+From now, we fix a system $S$ and assume $p$ is a piecewise Lipschitz continuous DT policy which is robustly safe for $\delta>0$.
+
+The proof is in three steps: \begin{itemize}
+	\item First, we will show, $R(I)$ has an open neighborhood contained in $R_\delta(I)$ and hence disjoint with $U$.
+	
+	\item Second, we will show $R(I)$ is attractive in a neighborhood. 
+\end{itemize}
+
+
+\begin{lemma}
+	$B_\delta(R(I))\subseteq R_\delta(I)$.
+\end{lemma}
+
+\begin{proof}
+	Trivial.
+\end{proof}
+
+
+\begin{lemma}
+	There exists a polytopes decompose of $X=\bigcup_{Q_i\in \mathcal{Q}} Q_i$ (they may include or exclude their boundaries) and Lipschitz continuous functions $f_i$ assigned for each polytopes that can define $p$:\begin{align*}
+		p(x) = f_i(x)\quad \text{if }x\in Q_i
+	\end{align*}
+\end{lemma}
+
+\begin{proof}
+	This is because $p$ is a piecewise  Lipschitz continuous DT policy.
+\end{proof}
+
+
+\begin{lemma}
+	For each $Q_i$, there exists $\varepsilon >0$ such that $R(I)\cap Q_i$ is attractive in the region $B_\varepsilon(R(I)\cap Q_i)\cap Q_i$.
+\end{lemma}
+
+\begin{proof}
+	In this proof, we use $R_i$ to denote $R(I)\cap Q_i$.
+\end{proof}
+
+
+%\begin{lemma}
+%	Let $S$ be a system with policy $p$ and initial region $I$. For any $x\in R_r(I)$ and any $\varepsilon$, we have
+%	\[
+%	B_\varepsilon(x) \subseteq R_{r+\varepsilon }(I).
+%	\]
+%	Hence $B_\varepsilon(R_r(I)) \subseteq R_{r+\varepsilon}(I)$.
+%\end{lemma}
+%
+%\begin{proof}
+%	To prove this lemma, fix $x \in R_r(I)$.
+%	
+%	We assume $x = x_{n+1}$ and $x_{n+1} = p(x_n)+d_n$ with $|d_n|<r$ and $x_n\in R_r(I)\cup I\subseteq R_{r+\varepsilon}(I)\cup I$. Then, we have \[
+%	B_{\varepsilon}(x) \subseteq B_{|d_n| + \varepsilon}(p(x_n)) \subseteq B_{r + \varepsilon}(p(x_n)).
+%	\]
+%	
+%	By definition, since $x_n\in R_{r+\varepsilon}(I)\cup I$, $B_{r + \varepsilon}(p(x_n))\subseteq R_{r+\varepsilon}(I)$.
+%	So,
+%	\[
+%B_{\varepsilon}(x) \subseteq
+%	B_{r + \varepsilon}(p(x_n))\subseteq R_{r+\varepsilon}(I).
+%	\]
+%	This completes the proof.
+%\end{proof}
+%
+%\vspace*{2ex}
+%
+%Notice that if $B_\varepsilon(R_r(I)) \subseteq R_{r+\varepsilon}(I)$, then $\operatorname{cl}(R_r(I)) \subseteq \operatorname{int}(R_{r+\varepsilon}(I))$. 
+%
+%\begin{proof}[of Theorem 1]
+%	
+%	We assume that $S$ is $\delta$-robustly safe.
+%	
+%	From Lemma 1, we can see that \begin{itemize}
+%		\item $\operatorname{cl}(R(I)) \subseteq \operatorname{int}(R_\delta(I))$.
+%		
+%		\item Every point in $R(I)$ is at least a distance $\delta$ away from the boundary of $R_\delta(I)$.
+%	\end{itemize}   
+%	
+%	
+%	Therefore, we can partition the space into hypercubes of side length $\frac{\delta}{2\sqrt{n}}$ where $n$ is the dimension, and cover $R(I)$ with these hypercubes. Those hypercubes are in $R_\delta(I)$, and even $R_{\delta/2}(I)$.
+%	
+%	Put them together, we can get the following conclusion:
+%	\begin{itemize}
+%		\item There is a union of polytopes $\bigcup_{P \in \mathcal{P}} P$ contained in   $R_{\delta}(I)$ that covers $R(I)$.
+%
+%		\item Any point start from $\bigcup_{P \in \mathcal{P}} P$ following $S$ without perturbation will never enter $U$, and has a minimal distance from $U$.
+%	\end{itemize}
+%\end{proof}
+
+
+
+
+
+\end{document}
