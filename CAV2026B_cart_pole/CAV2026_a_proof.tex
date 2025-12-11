@@ -60,100 +60,116 @@
 
 
 \begin{document}
-	
-	\begin{definition}
-		A system $S$ is a 5-tuple $(X,C,succ, U, I)$ that \begin{itemize}
-			\item $X\subseteq \mathbb{R}^n$ is the full space;
-			\item The control set $C$ is a set and the successor $succ$ is a function from $X\times C$ to $2^X$;
-			\item $U\subseteq X$ is the unsafe region, and nonempty set $I\subseteq X$ disjoint from $U$;
-		\end{itemize}
-		
-		The system of $S$ under perturbation of at most $\delta$, $S_\delta$, is a system with the same $(X,U,C,I)$ but a $succ_\delta$ function defined as follows: \begin{align*}
-		succ_\delta(x,c) &= B_\delta(succ(x,c))\\
-		&= \{z:\exists y\in succ(x,c)\ \ d(y,z)<\delta\}.
-		\end{align*} Here $d$ can be an arbitrary kind of distance ($L_2, L_\infty$ and so on).
-	\end{definition}
-	
-	Definition of policy: 
-	
-	\begin{definition} 
-		 \begin{itemize}
-			\item For a system $S = (X,C,succ, U, I)$, a policy $p$ is a function $p: X\rightarrow C$ and the function $succ_p: X\rightarrow 2^X$ is defined by $succ_p(x) = succ(x,p(x))$.
-			\item A policy $p$ is piecewise continuous (piecewise Lipschitz continuous) DT if there exists a decision tree (DT) $\mathcal{T}$ that defines $p$, i.e., each leaf $i$ of $\mathcal{T}$ is assigned a continuous (Lipschitz continuous) function $f_i(x)$ defined on $X$, and $p$ is defined by
-			\[
-			p(x) = f_i(x) \quad \text{if } \mathcal{T}(x)=i.
-			\]
-		\end{itemize}
-	\end{definition}
 
 
-Now we define the reachable set $R$ and $R_\delta$.
+\section{Preliminaries}
+
+
+
+We will use $||.||$ as the $L_{\infty}$ distance.
+For $\varepsilon>0$ and a set $Y$ of configuration, we define 
+$B_\epsilon(Y) = \{z \mid \exists y\in Y, \ ||y-z||<\epsilon \}$
+the open ball of distance $\varepsilon$ around $Y$.
+A function $f : A \rightarrow 2^B$
+is Lipschitz continuous if there exists a constant $\ell$ (Lipschitz constant) such that for any $x,x'$:
+ $f(x') \subseteq B_{\ell \cdot ||x'-x||}(f(x))$.
+
 
 \begin{definition}
-	For a system $S=(X,C,succ, U, I)$ with policy $p$, the reachable set $R(I)$ is the union of all sequence $\{x_n:n\in\mathbb{N}\}$ that is a run by $S$ and $p$, i.e., $\{x_n:n\in\mathbb{N}\}$ satisfies \begin{align*}
-		x_0&\in I\\
-		x_{n+1} &\in succ_p(x_n), n\in\mathbb{N}
-	\end{align*}
-	
-	And the reachable set under perturbation of at most $\delta$ is the union of all sequence $\{x_n:n\in\mathbb{N}\}$ that is a run by $S_\delta$ and $p$, i.e., $\{x_n:n\in\mathbb{N}\}$ satisfies \begin{align*}
-		x_0&\in I\\
-		x_{n+1} &\in B_\delta(succ_p(x_n)), n\in\mathbb{N}
-	\end{align*}
+		A system $S$ is a 5-tuple $(X,C,succ, U, I)$ with: \begin{itemize}
+			\item $X\subseteq \mathbb{R}^n$ is the set of configurations,
+			\item The set $C$ is a set of controlled actions,
+			\item The successor function $succ: X\times C \rightarrow 2^X \setminus \emptyset$ is a Lipschitz continuous and provides the set $succ(x,c)$ of possible successor when chosing action $c$ from configuration $x$,
+			\item The set of unsafe configurations $U\subseteq X$,
+			\item and the set of initial configurations $I\subseteq X$, $>\varepsilon$ away from $U$ for some $\varepsilon$,
+		\end{itemize}
+\end{definition}
+
+\paragraph{Policy}
+A policy $\sigma$ for system $S = (X,C,succ, U, I)$ is a function 
+$\sigma: X\rightarrow C$. Given $\sigma$, we define 
+$succ_\sigma: X\rightarrow 2^X$ by $succ_\sigma(x) = succ(x,\sigma(x))$.
+A run under $\sigma$ is a sequence $(x_i)_{i \in \mathbb{N}}$ such that
+$x_0 \in I$ and for all $i \geq 0$, $x_{i+1} \in succ_p(x_i)$.
+We define $Reach^S(\sigma) = \{x \mid \exists i, (x_n)_{n \in \mathbb{N}} \text{ a run under } \sigma, x_i=x\}$ the set of state reachable by $\sigma$ in $S$ (in particular from initial states $I$ of $S$).
+
+
+
+If $\sigma$ is provided as a decision tree where each leave $i$ is associated with a Lipschitz continuous function $f_i$, then it descirbes a piecewise Lipschitz continuous funciton $f$, and we can $\sigma$ a 
+piecewise Lipschitz continuous DT.
+
+\paragraph{Perturbed system}
+
+
+\begin{definition}
+	For a system $S=(X,C,succ,U,I)$, we define its 
+	$\delta$-perturbation $S_\delta = (X,C, succ_\delta,U,I)$, where: 
+		$succ_\delta(x,c) = (succ(B_\delta(x),c))$.
+	A policy $\sigma$ of $S$ is also a policy for $S_\delta$.
+	We defined $Reach^S_\delta(\sigma) = Reach^{S_\delta}(\sigma)$.
 \end{definition}
 
 
-Next we define safety.
+
+A policy $\sigma$ of $S$ is said to be {\em safe} if $Reach^S(\sigma) \cup U = \emptyset$. Policy $\sigma$ is {\em $\delta$-robustly safe} if 
+$Reach_\delta^S(\sigma) \cup U = \emptyset$, and $\sigma$ is {\em robustly safe}
+if it is {\em $\delta$-robustly safe} for some $\delta>0$.
+
+
+\paragraph{Certificate}
 
 
 \begin{definition}
-	For a system $S=(X,C,succ, U, I)$, a policy $p$ is safe if $R(I)$ is disjoint from $U$. A policy $p$ is robustly safe if for some $\delta$, $R_\delta(I)$ is disjoint from $U$.
-\end{definition}
-
-
-Next we define certificate.
-
-\begin{definition}
-	For a system $S$ and policy $p$, a certificate is a function $f : A \rightarrow \{0,1\}$ such that:
+	A certificate for policy $\sigma$ of system $S=(X,C,succ,U,I)$ is a function 
+	$f : X \rightarrow \{0,1\}$ such that:
 	\begin{itemize}
-		\item $f^{-1}(1)\supseteq I$, $f^{-1}(1)\cap U = \emptyset$.
+		\item $I \subseteq f^{-1}(1)$, 
 		
-		\item For any $x$ and $x'$ such that $f(x)=1$, we have $x' \in succ_p(x)$ $f(x')=1$.
-	\end{itemize}
-	
-A certificate $f$ is DT if there exists a decision tree (DT) $\mathcal{T}$ that defines $f$, i.e., each leaf $i$ of $\mathcal{T}$ is assigned a number $a_i \in \{0,1\}$, and $f$ is defined by
-\[
-f(x) = a_i \quad \text{if } \mathcal{T}(x)=i.
-\]
-
+		\item $f^{-1}(1)\cap U = \emptyset$,
+		
+		\item For any $x,x' \in X$ such that $f(x)=1$ and $x' \in succ_p(x)$,
+		we have $f(x')=1$.
+\end{itemize}
+If $f$ is providede as a DT, where leaves are associated with $\{0,1\}$,
+then $f$ is called a DT-certificate.
 \end{definition}
+	
 
-
+\section{Results}
 
 \begin{theorem}
-	If a piecewise Lipschitz continuous DT policy $p$ is robustly safe and $succ$ of the system is Lipschitz continuous, then
-	there exists a DT certificate for safety. 
-	
-	Here, a set value function $f$ is Lipschitz if there exists a constant $C$ such that for any $x,y$ with $d(x,y)=d$, $f(y)\subseteq B_{Cd}(f(x))$.
+	If a piecewise Lipschitz continuous DT policy $p$ is robustly safe, then
+	there exists a DT-certificate for safety. 
+
+	If a piecewise Lipschitz continuous axis aligned DT policy $p$ is robustly safe, then there exists a axis aligned DT-certificate for safety. 
+
+	If a ReLU-DNN policy $p$ is robustly safe, then
+	there exists a ReLU-DNN certificate for safety. 
 \end{theorem}
 
-From now, we fix a system $S$ and assume $p$ is a piecewise Lipschitz continuous DT policy which is robustly safe for $\delta>0$. 
+Let $\sigma$ be a piecewise Lipschitz-continuous policy for system $S=(X,C,succ,U,I)$ which is $\delta$-robustly safe for $\delta>0$.
+Let $R_\varepsilon=Reach^S_\varepsilon(\sigma)$ for all $\varepsilon$.
+It means that $R_\delta \cap U = \emptyset$.
 
- Without loss of generality, we assume the Lipschitz constant for $succ$ is 1.
-
-The proof is in several steps: \begin{itemize}
-	\item First, we will show, $R_{\delta/2}(I)$ has an open neighborhood contained in $R_\delta(I)$ and hence disjoint with $U$.
-	
-	\item Second, we will show $R_{\delta/2}(I)$ is attractive in a neighborhood. 
+Consider $R = B_{\delta/4}(R_{\delta/2})$.
+We show that $R$ satisfies:
+$R_{\delta_2} \subsetneq R \subsetneq R_\delta$ 
+with:
+\begin{itemize}
+	\item $I \subseteq R$,
+	\item $B_{\delta/4}(R)\cup U = \emptyset$,
+	meaning that $R$ is away from $U$,
+	\item For all polytope $P$ on which 
+    $\sigma$ is Liptscitz continuous (say with function $f$),
+	for all $x \in P \cup R_{\delta/2}$ and 
+	$y$ with $||y-x||<\delta/4$, 
+	$succ(y,f(y)) \in R_{\delta/2}$.
 \end{itemize}
 
+IT will be sufficient to obtain a DT certificate.
+Only the third item above is non trivial.
 
-\begin{lemma}
-	$B_{\delta/2}(R_{\delta/2}(I))\subseteq R_\delta(I)$.
-\end{lemma}
-
-\begin{proof}
-  This is by definition.
-\end{proof}
+Without loss of generality, we assume the Lipschitz constant for $succ$ is 1.
 
 
 \begin{lemma}
