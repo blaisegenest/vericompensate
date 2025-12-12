@@ -163,7 +163,7 @@ with:
     $\sigma$ is Liptscitz continuous (say with function $f$),
 	for all $x \in P \cup R_{\delta/2}$ and 
 	$y$ with $||y-x||<\delta/4$, 
-	$succ(y,f(y)) \in R_{\delta/2}$.
+	$succ(y,f(y)) \subseteq R_{\delta/2}$.
 \end{itemize}
 
 IT will be sufficient to obtain a DT certificate.
@@ -183,6 +183,12 @@ Without loss of generality, we assume the Lipschitz constant for $succ$ is 1.
 \end{proof}
 
 
+
+To prove the third claim, we need to use the definition that $succ$ is also Lipschitz.
+
+
+
+
 \begin{lemma}
 	There exists $\varepsilon >0$ such that $R_{\delta/2}(I)$ is attractive in the region $\bigcup_{i\in I}B_\varepsilon(R_{\delta/2}(I)\cap Q_i)\cap Q_i$.
 \end{lemma}
@@ -198,65 +204,16 @@ Without loss of generality, we assume the Lipschitz constant for $succ$ is 1.
 \end{proof}
 
 
-\begin{lemma}
-	There is a region $A$ satisfying the following:
-	\begin{itemize}
-			\item A is a union of polytopes.
-		\item $A\supseteq R_{\delta/2}(I)$
-		\item $A\subseteq\bigcup_{i\in I}B_\varepsilon(R_{\delta/2}(I)\cap Q_i)\cap Q_i$
-	\end{itemize}
-	Hence, from $A$ we can construct a DT certificate.
-\end{lemma}
-
-
 %\begin{lemma}
-%	Let $S$ be a system with policy $p$ and initial region $I$. For any $x\in R_r(I)$ and any $\varepsilon$, we have
-%	\[
-%	B_\varepsilon(x) \subseteq R_{r+\varepsilon }(I).
-%	\]
-%	Hence $B_\varepsilon(R_r(I)) \subseteq R_{r+\varepsilon}(I)$.
-%\end{lemma}
-%
-%\begin{proof}
-%	To prove this lemma, fix $x \in R_r(I)$.
-%	
-%	We assume $x = x_{n+1}$ and $x_{n+1} = p(x_n)+d_n$ with $|d_n|<r$ and $x_n\in R_r(I)\cup I\subseteq R_{r+\varepsilon}(I)\cup I$. Then, we have \[
-%	B_{\varepsilon}(x) \subseteq B_{|d_n| + \varepsilon}(p(x_n)) \subseteq B_{r + \varepsilon}(p(x_n)).
-%	\]
-%	
-%	By definition, since $x_n\in R_{r+\varepsilon}(I)\cup I$, $B_{r + \varepsilon}(p(x_n))\subseteq R_{r+\varepsilon}(I)$.
-%	So,
-%	\[
-%B_{\varepsilon}(x) \subseteq
-%	B_{r + \varepsilon}(p(x_n))\subseteq R_{r+\varepsilon}(I).
-%	\]
-%	This completes the proof.
-%\end{proof}
-%
-%\vspace*{2ex}
-%
-%Notice that if $B_\varepsilon(R_r(I)) \subseteq R_{r+\varepsilon}(I)$, then $\operatorname{cl}(R_r(I)) \subseteq \operatorname{int}(R_{r+\varepsilon}(I))$. 
-%
-%\begin{proof}[of Theorem 1]
-%	
-%	We assume that $S$ is $\delta$-robustly safe.
-%	
-%	From Lemma 1, we can see that \begin{itemize}
-%		\item $\operatorname{cl}(R(I)) \subseteq \operatorname{int}(R_\delta(I))$.
-%		
-%		\item Every point in $R(I)$ is at least a distance $\delta$ away from the boundary of $R_\delta(I)$.
-%	\end{itemize}   
-%	
-%	
-%	Therefore, we can partition the space into hypercubes of side length $\frac{\delta}{2\sqrt{n}}$ where $n$ is the dimension, and cover $R(I)$ with these hypercubes. Those hypercubes are in $R_\delta(I)$, and even $R_{\delta/2}(I)$.
-%	
-%	Put them together, we can get the following conclusion:
+%	There is a region $A$ satisfying the following:
 %	\begin{itemize}
-%		\item There is a union of polytopes $\bigcup_{P \in \mathcal{P}} P$ contained in   $R_{\delta}(I)$ that covers $R(I)$.
-%
-%		\item Any point start from $\bigcup_{P \in \mathcal{P}} P$ following $S$ without perturbation will never enter $U$, and has a minimal distance from $U$.
+%			\item A is a union of polytopes.
+%		\item $A\supseteq R_{\delta/2}(I)$
+%		\item $A\subseteq\bigcup_{i\in I}B_\varepsilon(R_{\delta/2}(I)\cap Q_i)\cap Q_i$
 %	\end{itemize}
-%\end{proof}
+%	Hence, from $A$ we can construct a DT certificate.
+%\end{lemma}
+
 
 
 
