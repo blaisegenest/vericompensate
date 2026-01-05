@@ -13,43 +13,43 @@
 
 For each benchmark, we report three values: the bound obtained (lower value is better), the solution obtained (distance to the bound depicts how close the model has converged), and worst-case (higher is better), that is the value reached when considering the solution as input to the DNN. For a fully accurate model ("2v" or classical and all variables binary), the worst-case will equal the solution, otherwise, it will be smaller due to abstraction.
 
-\subsection{Classical vs our "2v" model vs ITNE}
+%\subsection{Classical vs our "2v" model vs ITNE}
+%
+%
+%\begin{table}[b!]
+%	\centering
+%	\begin{tabular}{||l|c|c|c||}\hline\hline
+%		model, nbr binary var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+%	Classical, $100$ &    $.320$ &  $.320$ & $.017$ 
+%    \\\hline
+%	ITNE, $100$ &    $.042$ &  $.037$ & $.022$
+%	\\ \hline
+%    2v model, $100$ &    {\bf .040} &  $.037$ &  $.018$ 
+%    \\\hline \hline
+%     2v model New, $100$ &    {\bf .039} &  $.029$ &  $.020$ 
+%    \\\hline \hline
+%    Classical, $200$ &  .186  &  $.022$ & $.022$ 
+%    \\\hline
+%	ITNE, $200$ &    $.045$ &  $.023$ & .023
+%    \\\hline
+%	2v model, $200$&     {\bf .042} &  $.023$ &   .023 
+%    \\\hline \hline
+%	\end{tabular}
+%	\caption{Comparison of the classical encoding, ITNE and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $100$, 
+%    or the full $200$ binary variables.}
+%    \label{table.classical}
+%\end{table}
+%
+%We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz,ITNE}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
+%
+%
+%Table \ref{table.classical}, $100$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{ITNE} recovers most but not all the bound of the "2v" model.
+%
+%Further, even using a fully accurate model with all $100$ variables encoded as binary variables, the "2v" model produces bounds $>4$ times better than the classical model, due to the internal Branch and Bound process to compute bounds, which uses linear relaxation. Again, 
+%Eq. (3) from \cite{ITNE} recovers most but not all the accuracy of the "2v" model.
+%Overall, the "2v" model produces better bounds, even with short time-outs, despite its higher complexity.
 
-
-\begin{table}[b!]
-	\centering
-	\begin{tabular}{||l|c|c|c||}\hline\hline
-		model, nbr binary var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
-	Classical, $100$ &    $.320$ &  $.320$ & $.017$ 
-    \\\hline
-	ITNE, $100$ &    $.042$ &  $.037$ & $.022$
-	\\ \hline
-    2v model, $100$ &    {\bf .040} &  $.037$ &  $.018$ 
-    \\\hline \hline
-     2v model New, $100$ &    {\bf .039} &  $.029$ &  $.020$ 
-    \\\hline \hline
-    Classical, $200$ &  .186  &  $.022$ & $.022$ 
-    \\\hline
-	ITNE, $200$ &    $.045$ &  $.023$ & .023
-    \\\hline
-	2v model, $200$&     {\bf .042} &  $.023$ &   .023 
-    \\\hline \hline
-	\end{tabular}
-	\caption{Comparison of the classical encoding, ITNE and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $100$, 
-    or the full $200$ binary variables.}
-    \label{table.classical}
-\end{table}
-
-We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz,ITNE}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
-
-
-Table \ref{table.classical}, $100$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{ITNE} recovers most but not all the bound of the "2v" model.
-
-Further, even using a fully accurate model with all $100$ variables encoded as binary variables, the "2v" model produces bounds $>4$ times better than the classical model, due to the internal Branch and Bound process to compute bounds, which uses linear relaxation. Again, 
-Eq. (3) from \cite{ITNE} recovers most but not all the accuracy of the "2v" model.
-Overall, the "2v" model produces better bounds, even with short time-outs, despite its higher complexity.
-
-\subsection{Comparison with Vhagar and ITNE ($L_\infty$)}
+\subsection{Comparison with Vhagar and ITNE ($L_\infty=0.05$)}
 
 To be able to compare with Vhagar, we have to use Vhagar benchmarks: 
 perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for MNIST, FMNIST and CIFAR-10), for which the reduction rules of binary variables are implemented. We test with 1000s Time-Out, as well as one test with 14400s time out, showing that much longer time-out does not have a big impact on the result.
@@ -160,7 +160,7 @@ The gap is the average over all cases of the relative distance between the bound
     
 
      \end{tabular}
-	\caption{Comparison with Vhagar for $L_\infty=0.05$ perturbation, average over all bounds $\beta_{i,j}$. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $i,j$. Lower gaps using {\em Best} means that there are cases where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite. * for CIFAR-C1, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar.}
+	\caption{Comparison with Vhagar and ITNE of upper bound and gap to lower bound (lower is better) for $L_\infty=0.05$ perturbation, average over all bounds $\beta_{i,j}$. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $i,j$. Lower gaps using {\em Best} means that there are cases where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite. * for CIFAR-C1, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar.}
     \label{table.classical}
 \end{table}
 
@@ -169,37 +169,37 @@ The gap is the average over all cases of the relative distance between the bound
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{||c||c||c|c|c||c|}\hline\hline
-		Benchmark & MILP model: & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline
-		MNIST-FCNN  & Bound $\downarrow$ &&&&
+		Benchmark & Timeout & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline
+		red. MNIST-FCNN  & 1000s &&&&
 		\\
-		TO=1000s & $\%$ of gap $\downarrow$ &&&&
+		LB = & 14400s &&&&
 		\\ \hline
-		TO=14400s  & Bound $\downarrow$ &&&&
+		Full  MNIST-FCNN  & 1000s &&&&
 		\\
-		& $\%$ of gap $\downarrow$ &&&&
+		LB = & 14400s &&&&
 		
 		\\\hline \hline
 		
-		FMNIST-CNN1 & Bound $\downarrow$ & 3.02 & 3.02 & 2.74 & 2.74
+		red. FMNIST-CNN1 & 1000s & 3.02 & 3.02 & 2.74 & 2.74
 		\\
-		TO=1000s & $\%$ of gap $\downarrow$ & 221 $\%$  & 222 $\%$ & 190 $\%$ & 190 $\%$
+		LB = 0.96 & 14400s & 2.34  & 1.95 & 2.52 & 1.95
 		\\\hline 
 		
 		
-		TO=14400s & Bound $\downarrow$ & 2.34 & 1.95 & 2.52 & 1.95
+		full FMNIST-CNN1 & 1000s & 8.90 & 7.55 & 9.84 & 7.548
 		\\
-		& $\%$ of gap $\downarrow$ & 148 $\%$  & 107 $\%$ & 166 $\%$ & 107 $\%$
+		LB = 4.16 & 14400s & 7.43 & 6.37 & 9.62 & 6.22
 		\\\hline \hline
 		
 		
-		CIFAR10-CNN1  & Bound $\downarrow$ &&&&
+		red. CIFAR10-CNN1  & 1000s &&&&
 		\\
-		TO=1000s & $\%$ of gap $\downarrow$ &&&&
+		LB = & 14400s &&&&
 		\\\hline
 		
-		TO=14400s  & Bound $\downarrow$ &&&&
+		full CIFAR10-CNN1  & 1000s &8.30 & 8.14 & 8.17 & 7.77
 		\\
-		& $\%$ of gap $\downarrow$ &&&&
+		LB = 2.12 & 14400s & 7.19 & 7.45 & 7.31 & 6.67
 		\\\hline \hline
 
 	\end{tabular}
@@ -210,74 +210,77 @@ The gap is the average over all cases of the relative distance between the bound
 
 
 
-\begin{table}[h!]
-	\centering
-	\begin{tabular}{||c||c||c|c|c||c|}\hline\hline
-		Benchmark & MILP model: & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline
-		MNIST-FCNN  & Bound $\downarrow$ &&&&
-		\\
-		TO=1000s & $\%$ of gap $\downarrow$ &&&&
-		\\ \hline
-		TO=14400s  & Bound $\downarrow$ &&&&
-		\\
-		& $\%$ of gap $\downarrow$ &&&&
-		
-		\\\hline \hline
-		
-		FMNIST-CNN1 & Bound $\downarrow$ & 8.90 & 7.55 & 9.84 & 7.548
-		\\
-		TO=1000s & $\%$ of gap $\downarrow$ & 112 $\%$  & 80 $\%$ & 135 $\%$ & 80 $\%$
-		\\\hline 
-		
-		
-		TO=14400s & Bound $\downarrow$ & 7.43 & 6.37 & 9.62 & 6.22
-		\\
-		& $\%$ of gap $\downarrow$ & 77 $\%$  & 53 $\%$ & 129 $\%$ & 49 $\%$
-		\\\hline \hline
-		
-		
-		CIFAR10-CNN1  & Bound $\downarrow$ & 8.30 & 8.14 & 8.17 & 7.77 
-		\\
-		TO=1000s & $\%$ of gap $\downarrow$ & 150 $\%$  & 145 $\%$ & 145 $\%$ & 133 $\%$
-		\\\hline
-		
-		TO=14400s  & Bound $\downarrow$ & 7.19 & 7.45 & 7.31 & 6.67
-		\\
-		& $\%$ of gap $\downarrow$ & 114 $\%$  & 123 $\%$ & 118 $\%$ & 99 $\%$
-		\\\hline \hline
-		
-	\end{tabular}
-	\caption{Full input dimensions}
-	\label{table.classical_our_full}
-\end{table}
+%\begin{table}[h!]
+%	\centering
+%	\begin{tabular}{||c||c||c|c|c||c|}\hline\hline
+%		Benchmark & MILP model: & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline
+%		MNIST-FCNN  & Bound $\downarrow$ &&&&
+%		\\
+%		TO=1000s & $\%$ of gap $\downarrow$ &&&&
+%		\\ \hline
+%		TO=14400s  & Bound $\downarrow$ &&&&
+%		\\
+%		& $\%$ of gap $\downarrow$ &&&&
+%		
+%		\\\hline \hline
+%		
+%		FMNIST-CNN1 & Bound $\downarrow$ & 8.90 & 7.55 & 9.84 & 7.548
+%		\\
+%		TO=1000s & $\%$ of gap $\downarrow$ & 112 $\%$  & 80 $\%$ & 135 $\%$ & 80 $\%$
+%		\\\hline 
+%		
+%		
+%		TO=14400s & Bound $\downarrow$ & 7.43 & 6.37 & 9.62 & 6.22
+%		\\
+%		& $\%$ of gap $\downarrow$ & 77 $\%$  & 53 $\%$ & 129 $\%$ & 49 $\%$
+%		\\\hline \hline
+%		
+%		
+%		CIFAR10-CNN1  & Bound $\downarrow$ & 8.30 & 8.14 & 8.17 & 7.77 
+%		\\
+%		TO=1000s & $\%$ of gap $\downarrow$ & 150 $\%$  & 145 $\%$ & 145 $\%$ & 133 $\%$
+%		\\\hline
+%		
+%		TO=14400s  & Bound $\downarrow$ & 7.19 & 7.45 & 7.31 & 6.67
+%		\\
+%		& $\%$ of gap $\downarrow$ & 114 $\%$  & 123 $\%$ & 118 $\%$ & 99 $\%$
+%		\\\hline \hline
+%		
+%	\end{tabular}
+%	\caption{Full input dimensions}
+%	\label{table.classical_our_full}
+%\end{table}
 
 
 
 
 
-	\subsection{Experimental results for robustness (MNIST)}
+	\subsection{Experimental results for robustness ($L_1$)}
 	
 We then turn to the MNIST classification benchmark, and report 
 in Table \ref{table.mnist} one particular bound $\beta^{.5}_{i,j}$, namely for $i=6,j=8$ as confusion between 6 and 8 happens.
-	
-	\begin{table}[h!]
-		\centering
-	\begin{tabular}{||l||c|c|c||}\hline\hline
-		model, nbr binary var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
-		1v, $500$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
-		3v, $1000$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
-		2v ITNE, $1000$ & $19.08$ & n/a & n/a \\\hline 
-		2v ITNE, $1000$ & $19.38$ & $.185$ & $.185$ \\\hline 
-	    2v, $1000$ & $16.49$ & n/a & n/a \\\hline\hline	 
-	\end{tabular}
-	\caption{Bounds on $\beta^{.5}_{6,8}$ 
-	obtained by the "1v", "3v" and "2v" models 
-	on the {\bf full dimension} MNIST DNN, 
-	for timeouts of $14400$s, when all 500 / 1000 variables are binary.}
-	\label{table.mnist}
-\end{table}
 
 On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached are too pessimistic: no image can be certified robust in real-time. One of the reason, besides that the verification question is very complicated with 1000 binary variables for the accurate model, is that working in the full $784$ dimensional space allows for very unlikely inputs, far away from the training dataset, making the search space overly large. As an illustration of that, we display on Fig.~\ref{fig3} the worst-case as found by our models, which is very improbable to be ever encountered in the MNIST benchmark.
+
+	
+%	\begin{table}[h!]
+%		\centering
+%	\begin{tabular}{||l||c|c|c||}\hline\hline
+%		model, nbr binary var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+%		1v, $500$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
+%		3v, $1000$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
+%		2v ITNE, $1000$ & $19.08$ & n/a & n/a \\\hline 
+%		2v ITNE, $1000$ & $19.38$ & $.185$ & $.185$ \\\hline 
+%	    2v, $1000$ & $16.49$ & n/a & n/a \\\hline\hline	 
+%	\end{tabular}
+%	\caption{Bounds on $\beta^{.5}_{6,8}$ 
+%	obtained by the "1v", "3v" and "2v" models 
+%	on the {\bf full dimension} MNIST DNN, 
+%	for timeouts of $14400$s, when all 500 / 1000 variables are binary.}
+%	\label{table.mnist}
+%\end{table}
+
+
 
 \begin{figure*}[t!]
 	\centering
