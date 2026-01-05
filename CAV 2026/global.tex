@@ -399,5 +399,5 @@ Assume we have computed (offline) $\bar{\beta}^{\text{perturb}}_{C,D}$ for each 
   \item[2] We return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
 \end{enumerate}
 
-The overhead (1,2 above) amounts to \#Class ADD(+) and COMP(<), then one OR($\bigvee$) of \#Class bits, that is 19 operations in total for 10 classes. 
+The overhead (1,2 above) amounts to \#Class-1 ADD(+) and COMP(<), then one OR($\bigvee$) of \#Class-1 bits, that is 19 operations in total for 10 classes. 
 This can be realized extremely fast, even on limited hardware.
