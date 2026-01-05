@@ -1,18 +1,55 @@
 	\section{MILP Models for global robustness}
-	
 
+Let $N$ the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). As worst-case complexity is exponential in the number of binary variables, this makes the problem much harder.
+
+To encode $L_\infty$-perturbations bounded by $\varepsilon$,
+the linear constraint $|x_j-x'_j| \leq \varepsilon$ is used for each {\em input} neuron $j$. 
+
+We now explain how to encode $L_1$-perturbations bounded by $c$,
+using additional variables that are linear only. Let $n$ be the number of input neurons. 
+We use $n$ additional linear variables $(A_i)_{i \leq n}$, with the following  constrains:
+\begin{align}\label{L1constraint}\begin{cases}
+	A_j \geq x_j - x'_j &\text{ for all }j \leq n\\ 
+	A_j \geq x'_j - x_j &\text{ for all }j \leq n\\
+	\sum_{j\leq n} A_j \leq c	&\end{cases}
+\end{align}
+
+\begin{proof}
+%We prove that (\ref{L1constraint}) are equivalent with asking $||\vec{x}||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq c$.
+
+The first two lines of constraints (\ref{L1constraint}) are equivalent with $A_j \geq |x_j - x'_j|$. 
+So the whole constraint (\ref{L1constraint}) 
+implies that $\sum_{j\leq n} |x_j| \leq c$.
+
+Conversely, for every instance that satisfies $\sum_{j\leq n} |x_j| \leq c$, then there is also an instance which satisfies constraints (\ref{L1constraint}),  by defining $A_j = |x_j|$ for all $j \leq n$.
+
+This shows that (\ref{L1constraint}) is equivalent with 
+$||\vec{x}||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq c$.
+\qed
+\end{proof}
+
+
+It remains to encoded the (non linear) ReLU functions of DNNs.
+
+
+
+
+		%(see later how we encode $L_1$ perturbations).
+
+
+\iffalse
 	\subsection{Optimization objective for real-time verification}
 
 As explained in the introduction, the objective we want to approximate is 
 $\beta^{\text{perturb}}_{C,D} = \max_{|I-I'| \leq \text{perturb}}(x_C - x_D +x'_D - x'_C)$, for $x_C,x_D$ the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
 Upper bounds  $\bar{\beta}^{\text{perturb}}_{C,D} \geq \beta^{\text{perturb}}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
 $\underline{\beta}^{\text{perturb}}_{C,D} \leq \beta^{\text{perturb}}_{C,D}$
-will allow us to evaluate how large is the gap 
-$(\bar{\beta}^{\text{perturb}}_{C,D} - \underline{\beta}^{\text{perturb}}_{C,D}) / \underline{\beta}^{\text{perturb}}_{C,D}$. MILP solvers, e.g. Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\text{perturb}}_{C,D}$
+will allow us to evaluate how large is the gap= 
+$\frac{(\bar{\beta}^{\text{perturb}}_{C,D} - \underline{\beta}^{\text{perturb}}_{C,D})} {\underline{\beta}^{\text{perturb}}_{C,D}}$. MILP solvers, e.g. Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\text{perturb}}_{C,D}$
 as well as a lower bound ("solution") $\underline{\beta}^{\text{perturb}}_{C,D}$.
 
 
-Different bounds were proposed in \cite{vhagar}, for an evaluation purpose (how narrow is the gap between the upper and lower bound) rather than to verify images in real-time. Namely, Vhagar defines $\alpha^{\text{perturb}}_{C,D}$, computing the perturbation necessary to switch an image classified as $C$ into an image classified as $D$:
+Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, Vhagar \cite{vhagar} defines $\alpha^{\text{perturb}}_{C,D}$, computing the perturbation necessary to switch an image classified as $C$ into an image classified as $D$:
 \begin{align*}
 	\alpha^{\text{perturb}}_{C,D} &= \max_{|I-I'| \leq \text{perturb}} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
 \end{align*}
@@ -21,37 +58,24 @@ Notice that
 $\alpha^{\text{perturb}}_{C,D}$ is not symetrical, while 
 $\beta^{\text{perturb}}_{C,D}$ is.
 
+\fi
 	
-	\subsection{Extending the classical encoding}
+\subsection{The classical MILP encoding of ReLUs for global robustness}
 	
-    To encode global robustness in MILP, the classical way, used (with variants) by \cite{vhagar,ITNE}, is to consider variables $x_j,\hat{x}_j$ and 
-	$x'_j,\hat{x}'_j$, encoding the value of neuron $j$ obtained from the image $I$ and from its perturbation $I'$, respectively. Further:
-	\begin{enumerate}
-		\item For each input neuron $j,j$ of $I,I'$, there is constraint
-        $|x_j-x'_j| \leq \varepsilon$ to encode the $L_\infty$-perturbation 
-		(see later how we encode $L_1$ perturbations).
-		\item For each neuron $j$, we have the Re ReLU constraints 
-		from the classical encoding (\ref{eq11}) \cite{MILP}
-		for both $\hat{x}_j$ and $\hat{x'}_j$ independently.
-	\end{enumerate}
+    The classical encoding is used (with variants) by \cite{vhagar,ITNE}. It considers variables $x_j$ 
+	%,\hat{x}_j$ 
+	and 
+	$x'_j$,
+	%,\hat{x}'_j$, 
+	encoding the value of neuron $j$ obtained from the image $I$ and from its perturbation $I'$, respectively. Further, for each neuron $j$, $\hat{x}_j$ and $\hat{x}'_j$ denote  the variables for $\ReLU(x_j)$ and $\ReLU(x'_j)$,
+	with constraints from the classical encoding (\ref{eq11}) \cite{MILP}
+	{\em independently} for $\hat{x}_j$ {\em and} for $\hat{x}'_j$ .
 
 
 	
 	We call this encoding $\mathcal{M}^{classical}$.
-	It contains twice as many (binary) variables as for local robustness. 
+	%It contains twice as many variables as for local robustness. 
 	%As the worst-case complexity of solving an MILP model is exponential in the number of binary variables, it will be computationally intractable to compute $\beta^\varepsilon_{i,j}$ in this way, but for very small DNNs. 
-	As explained in the previous section, the standard way to make the model more efficient is to rely on 
-	linearly relaxing some of the binary variables into linear variables.
-
-    The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when all variables are binary, the classical MILP encoding 
-	of \cite{MILP}, while fully accurate, will likely not result into accurate bounds as well. Notice that this was already witnessed in \cite{ITNE}, and some additional constraints were added to make the classical model more accurate:
-	the {\em diff variables} were defined, although to pass the ReLU the classical  
-	MILP encoding was used, but with added specific constraints (Eq. (3) in 
-	\cite{ITNE}). We will compare the different methods in Table \ref{table.classical}.
-
-	
-
- 
 
 
 	\subsection{A novel "2v" model with {\em diff variables}}
@@ -205,6 +229,24 @@ Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then 
 	
 
 	%	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
+
+
+
+\subsection{Comparison between classical and Diff MILP models}
+
+
+
+	As explained in the previous section, the standard way to make the model more efficient is to rely on linearly relaxing some of the binary variables into linear variables.
+    The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when all variables are binary, the classical MILP encoding 
+	of \cite{MILP}, while fully accurate, will likely result into looser bounds as well. Notice that this was already witnessed in \cite{ITNE}, and some additional constraints were added to make the classical model more accurate:
+	the {\em diff variables} were used as specific constraints added to the classical encoding (Eq. (3) in \cite{ITNE}). 
+	%We will compare the different methods in Table \ref{table.classical}.
+
+	
+
+ 
+
+
 	
     
     
