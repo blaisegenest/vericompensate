@@ -1,5 +1,6 @@
 \section{Notations and Preliminaries}
-	
+\label{s.notation}
+
 	In this paper, we will use lower case latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
 	capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
 	To simplify the notations, we restrict the presentation to feed-forward, 
@@ -11,7 +12,6 @@
 	%\subsection{Neural Network and Verification}
 	
 	
-	% testtesttesttest
 	An $\ell$-layer DNN is provided by $\ell$ weight matrices 
 	$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
 	and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
@@ -38,8 +38,9 @@
     \item $x'_j,\hat{x}'_j$, for nodes $j$ with input the perturbed $I'$, 
     \item  $y_j = x_j - x'_j$ the {\em diff variable}, with 
     $\hat{y}_j = \hat{x}_j - \hat{x}'_j$ (and {\em not} 
-    $\hat{y}_i = \ReLU(x_j-x'_j)$), similarly than in the 
-	Interleaving Twin-Network Encoding (ITNE) model of \cite{lipshitz,ITNE}. 
+    $\hat{y}_i = \ReLU(x_j-x'_j)$), 
+	as first proposed by [cite DIFF \cite{diff}].
+	%, 	similarly than in the Interleaving Twin-Network Encoding (ITNE) model of \cite{lipshitz,ITNE}. 
     \end{itemize}
      
     %Concerning the verification problem, we focus on the global-robustness question. Global robustness asks to determine how the output of a neural network will be affected under a certain kind of small perturbations to any possible input. In this view, Lipschitz continuity is a good characterization of global robustness.
