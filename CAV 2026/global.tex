@@ -50,28 +50,6 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 		%(see later how we encode $L_1$ perturbations).
 
 
-\iffalse
-	\subsection{Optimization objective for real-time verification}
-
-As explained in the introduction, the objective we want to approximate is 
-$\beta^{\text{perturb}}_{C,D} = \max_{|I-I'| \leq \text{perturb}}(x_C - x_D +x'_D - x'_C)$, for $x_C,x_D$ the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
-Upper bounds  $\bar{\beta}^{\text{perturb}}_{C,D} \geq \beta^{\text{perturb}}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
-$\underline{\beta}^{\text{perturb}}_{C,D} \leq \beta^{\text{perturb}}_{C,D}$
-will allow us to evaluate how large is the gap= 
-$\frac{(\bar{\beta}^{\text{perturb}}_{C,D} - \underline{\beta}^{\text{perturb}}_{C,D})} {\underline{\beta}^{\text{perturb}}_{C,D}}$. MILP solvers, e.g. Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\text{perturb}}_{C,D}$
-as well as a lower bound ("solution") $\underline{\beta}^{\text{perturb}}_{C,D}$.
-
-
-Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, Vhagar \cite{vhagar} defines $\alpha^{\text{perturb}}_{C,D}$, computing the perturbation necessary to switch an image classified as $C$ into an image classified as $D$:
-\begin{align*}
-	\alpha^{\text{perturb}}_{C,D} &= \max_{|I-I'| \leq \text{perturb}} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
-\end{align*}
-
-Notice that  
-$\alpha^{\text{perturb}}_{C,D}$ is not symetrical, while 
-$\beta^{\text{perturb}}_{C,D}$ is.
-
-\fi
 	
 \subsection{The classical encoding of ReLUs for global robustness}
 	
@@ -80,7 +58,7 @@ $\beta^{\text{perturb}}_{C,D}$ is.
 	As explained in the section \ref{s.notation}, the standard way to make the MILP model more efficient is to linearly relax some of the binary variables into linear variables. The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when 
 	no LP relaxation is used, the classical MILP encoding of \cite{MILP}, while asymptotically accurate, will result into looser bounds in practice. 
 	
-	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \cite{ITNE}), while Vhagar reduces the number of binary variables depending on the perturbation used \cite{vhagar}.
+	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \cite{ITNE} and Section \ref{s.diff}), while Vhagar reduces the number of binary variables depending on the perturbation used \cite{vhagar}.
 	
 	
 	%We will compare the different methods in Table \ref{table.classical}.
@@ -97,6 +75,7 @@ $\beta^{\text{perturb}}_{C,D}$ is.
 
 
 	\subsection{The novel {\em Diff} MILP encoding for global robustness}
+	\label{s.diff}
 
 	We now present our main methodological contribtion, the {\em Diff} MILP encoding. It considers variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em Diff variables} \cite{diff}, with $y_j = x_j - x'_j$ and $\hat{y}_j= \hat{x}_j - \hat{x}'_j$. 
 	For $\hat{x}'_j$, one binary variable $a'_j$ and the related constraints from the classical encoding (\ref{eq11}) are used, similar to ITNE.
@@ -182,9 +161,7 @@ and used it in the MILP encoding of $\hat{y}_j = \ReLU(x_j)-\ReLU(x'_j)$:
 
 \begin{proposition}
     \label{Prop2}
-Assuming that $y_j \in [-\gamma_j, \gamma_j]$,
-and that $x'_j \in [\alpha_j,\beta_j]$,
-we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of:
+Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j \in [\alpha_j,\beta_j]$, we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of the MILP program:
 	\begin{align*}
 		& \begin{aligned}
 			y_j + x'_j &\leq a\beta_j        &
@@ -220,6 +197,7 @@ We have 2 binary variables and 4 cases in total. We only need to check that, in 
 
 \textbf{Case 3:} if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = 0$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 3.
 
+
 \textbf{Case 4:} if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
 	\qed
 \end{proof}
@@ -227,10 +205,15 @@ We have 2 binary variables and 4 cases in total. We only need to check that, in 
 
 %The proof of Prop. \ref{Prop2} can be found in the supplementary materials.
 
-
-The LP relaxation of this model contains important bounds, including 
-    $\frac{y_j-\gamma_j}{2} \leq \hat{y}_j \leq \frac{y_j+\gamma_j}{2}$
-    (see subsection The eficient "1v" model for a formal sketch), which is not the case of the classical model.
+Intuitively, the {\em diff values} will be small as they will be carrying the difference between the image $I$ and its slight perturbation $I'$.
+The LP relaxation of ${\cal M}^{classical}$ will miss this totally, while the LP relaxation of the Diff model contains such important bounds, including (see 
+section \ref{s.1b} and Fig.~\ref{fig.1v}):
+\begin{align}
+	\ref{eq.lpr}
+\frac{y_j-\gamma_j}{2} \leq \hat{y}_j \leq \frac{y_j+\gamma_j}{2}
+\end{align}
+which is not the case of 
+${\cal M}^{classical}$. This is a rewrite (and simplification due to the noticed symetry) of the additional linear constraint (3) of \cite{ITNE} used explicitely in ITNE.
 	
 
 	\iffalse
@@ -271,6 +254,7 @@ Case 4: if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then 
 	%	The relaxation of this model is similar: let $a$s and $a'$s be continuous variables instead of binary/integer variables. Unlike the first model in this section, relaxing a few nodes does not lose too much accuracy.
 
 
+	\iffalse
 
 \subsection{Comparison between classical and Diff MILP models}
 
@@ -284,6 +268,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	the {\em diff variables} were used as specific constraints added to the classical encoding (Eq. (3) in \cite{ITNE}). 
 	%We will compare the different methods in Table \ref{table.classical}.
 
+	\fi
 	
 
  
@@ -295,16 +280,23 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
     
 
 
-    \subsection{A decoupled "3v" model}
+    \subsection{A decoupled "2b+1" model}
 
-	Besides doing LP relaxation on some of the binary variables, we propose a 
-    variant of the "2v" model: the binary variables $a'$ appearing in 
-    Prop. \ref{Prop2} can be decoupled from the binary variable appearing in the classical encoding of $\hat{x}'_i = \ReLU(x'_i)$. While this means having 3 binary variables per unstable ReLU (which warrants the name "3v" model), the fact that these variables are decoupled removes a lot of constraints in the MILP encoding, and actually helps the solver. The decoupling also means that the "3v" model is not as accurate as the "2v" model.
+	We propose a variant of the {\em Diff} encoding: 
+	the binary variables $a'$ appearing in 
+    Prop. \ref{Prop2} can be decoupled from the binary variable $a'_j$
+	appearing in the classical encoding of $\hat{x}'_j = \ReLU(x'_j)$. 
+	This would mean having 3 binary variables, which would be too costly. 
+	The variables $a'_j$ used for $x'_j$ is thus linearly relaxed, while
+	both variables $a,a'$ used in the encoding of $\hat{y}_j$ are kept binary. We call this the "2b+1" model, which uses 2 binary variables per neuron, 
+	as the classical and {\em Diff} encodings.
+	However, the decoupling between $a'$ and $a_j$ removes complicated constraints in the MILP encoding, and this helps the solver. This however also means that  the "2b+1" model is not as accurate as the {\em Diff} model asymptotically.
 
 
-	\subsection{The efficient "1v" model}
+	\subsection{The efficient "1b" model}
+	\label{s.1b}
 
-		\begin{figure}[t!]
+		\begin{figure}[b!]
 		\centering
 	\hspace*{10ex}\begin{tikzpicture}
 		\begin{axis}[
@@ -332,16 +324,15 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 			\node[label={above:\scriptsize $LP\ relaxation$}] at (axis cs: 0.5, -1.4) {};
 		\end{axis}
 	\end{tikzpicture}
-\caption{The possible values of $\hat{y}_i=\ReLU(x_i)-\ReLU(x'_i)$ depending on $y_i = x_i-x'_i$ for the "1v" model.}
+\caption{The possible values of $\hat{y}_i=\ReLU(x_i)-\ReLU(x'_i)$ depending on $y_i = x_i-x'_i$ for the "1b" model.}
 	\label{fig.1v}
 \end{figure}
 
 
 
 	To simplify further and limit the number of (binary) variables, 
-    we introduce an efficient "1v" model which only uses the diff variables $y_i,\hat{y}_i$. Again, we study the range of values $\hat{y}_i$ can take according to the value of $y_i$, as depicted in Fig.~\ref{fig.1v}. This is a projection of Fig.~\ref{fig.2v} onto $y_i,\hat{y}_i$.
+    we introduce an efficient "1b" model which only uses the diff variables $y_i,\hat{y}_i$. Again, we study the range of values $\hat{y}_i$ can take according to the value of $y_i$, as depicted in Fig.~\ref{fig.1v}. This is a projection of Fig.~\ref{fig.2v} onto $y_i,\hat{y}_i$.
     
-\newpage
 
     \begin{proposition}
     \label{prop3}
@@ -353,16 +344,11 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	\end{proposition}
 
     We can easily check that the LP relaxation of this MILP program,
-	depicted in broken lines on Fig.~\ref{fig.1v}, is exactly: 
-    \begin{equation}
-		\label{eq.lpr}
-	  \frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}
-	\end{equation}
-
-	As the "1v" model is a projection of the "2v" and also of the "3v" models, 
-	the LP relaxations of the "2v" and the "3v" models contain (\ref{eq.lpr}).
-	Notice that (\ref{eq.lpr}) corresponds to Eq. (3) in \cite{ITNE}, 
-	which is added explicitly to the classical model in their ITNE model.
+	depicted in broken lines on Fig.~\ref{fig.1v}, is exactly (\ref{eq.lpr}).
+    
+	As the "1b" model is a projection of the {\em Diff} model and also of the "2b+1" models, 	the LP relaxations of the {\em Diff} and the "2b+1" models contain (\ref{eq.lpr}). 
+	%Notice that (\ref{eq.lpr}) corresponds to Eq. (3) in \cite{ITNE}, 
+	%which is added explicitly to the classical model in their ITNE model.
 	
     
 	
@@ -383,5 +369,35 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	\fi
 
 	
+\section{Real-time verification}
+
+As explained in the introduction, the objective we want to approximate is 
+$\beta^{\text{perturb}}_{C,D} = \max_{|I-I'| \leq \text{perturb}}(x_C - x_D +x'_D - x'_C)$, for $x_C,x_D$ the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
+Upper bounds  $\bar{\beta}^{\text{perturb}}_{C,D} \geq \beta^{\text{perturb}}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
+$\underline{\beta}^{\text{perturb}}_{C,D} \leq \beta^{\text{perturb}}_{C,D}$
+will allow us to evaluate how large is the gap= 
+$\frac{(\bar{\beta}^{\text{perturb}}_{C,D} - \underline{\beta}^{\text{perturb}}_{C,D})} {\underline{\beta}^{\text{perturb}}_{C,D}}$. MILP solvers, e.g. Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\text{perturb}}_{C,D}$
+as well as a lower bound ("solution") $\underline{\beta}^{\text{perturb}}_{C,D}$.
+
+
+Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, Vhagar \cite{vhagar} defines $\alpha^{\text{perturb}}_{C,D}$, computing the perturbation necessary to switch an image classified as $C$ into an image classified as $D$:
+\begin{align*}
+	\alpha^{\text{perturb}}_{C,D} &= \max_{|I-I'| \leq \text{perturb}} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
+\end{align*}
+
+Notice that  
+$\alpha^{\text{perturb}}_{C,D}$ is not symetrical, while 
+$\beta^{\text{perturb}}_{C,D}$ is.
+
 
     
+Assume we have computed (offline) $\bar{\beta}^{\text{perturb}}_{C,D}$ for each $C,D$. Now in real-time:
+\begin{enumerate}  
+	\item[0] Run inference on the DNN to obtain the values $o_D$ of each output neurons. Let $C$ be the class with maximal $o_{C}$. This is the predicted class from the DNN. This is the basic operation done commenly for DNN classification without any change.
+  \item[1] Now, we compute for each class $D \neq C$
+  a bit $b_D=1$ iff $o_D +\bar{\beta}^{\text{perturb}}_{C,D} > o_C$.
+  \item[2] We return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
+\end{enumerate}
+
+The overhead (1,2 above) amounts to \#Class ADD(+) and COMP(<), then one OR($\bigvee$) of \#Class bits, that is 19 operations in total for 10 classes. 
+This can be realized extremely fast, even on limited hardware.
