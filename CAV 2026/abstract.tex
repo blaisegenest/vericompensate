@@ -4,8 +4,8 @@ Most existing methods focus on {\em local} robustness, i.e., verification in the
 techniques are impractical to guarantee robustness of {\em real-time} inputs
 on embedded systems, due to excessive latency and computational intensivity.
 
-In this paper, we consider {\em global} robustness, which is significantly more complex than local robustness, as %the number of variables doubles (from the deviation image to the image and its deviation). Further, 
-the values each neuron can take are no longer limited to a small neighborhood. 
+In this paper, we consider {\em global} robustness, which is significantly more complex than local robustness, as the number of variables doubles (from the deviation image to the image and its deviation). 
+%Further, the values each neuron can take are no longer limited to a small neighborhood. 
 %, that is, guarantees not restricted to a set of local images. 
-We focus on deriving {\em bounds} on the variation of output values across different decision classes of a DNN, given $L_\infty$- {\em and} $L_1$-perturbations. We develop a novel {\em diff}  MILP model, more efficient than the classical MILP encoding and its variants for global robustness. 
-To obtain better bounds, we reduce the space dimension by using principal component analysis (PCA), focusing on {\em realistic} inputs. These bounds enable the {\em real-time} certification of robustness for $69\%$ (resp. $89\%$) of incoming images for an $L_1$-perturbation of $1$ (resp. $.5$), adding only $0.0005s$ of latency using only a single CPU core.
+We focus on deriving {\em bounds} on the variation of output values across different decision classes of a DNN, given $L_\infty$- {\em and} $L_1$-perturbations. We develop novel {\em Diff} MILP models encoding the evolution of {\em diff}erential variables between the image and its perturbation, more efficient than the classical MILP encoding of variables independently. To obtain better bounds, we reduce the space dimension by using principal component analysis (PCA), focusing on {\em realistic} inputs. These bounds enable the {\em real-time} certification of robustness for $\geq 69\%$ 
+of incoming images for an $L_1$-perturbation of $1$, adding only $0.5ms$ of latency using only a single CPU core, over 3 different datasets (MNIST, Fashion MNIST and CIFAR-10).
