@@ -16,58 +16,63 @@ images of the feed cannot be certified robust in few ms on embedded hardware to 
 
 In this paper, we consider {\em global} robustness, that is we do not restrict the certification process to the neighborhood of a fix input. We follow a two steps procedure. 
 The first step, performed offline once, computes global bounds on the shift between 
-output values of different decision classes due to the perturbation, close to \cite{vhagar}. That is, considering decision classes $C$ and $D$ and perturbation $\varepsilon$, compute 
-{\em global bound} $\beta^\varepsilon_{C,D} \geq \max_{I,I', |I-I'| \leq \epsilon}(value_{I}(C) - value_{I}(D) + value_{I'}(D) - value_{I'}(C))$, where $value_{J}(X)$ is the output value of class $X \in \{C,D\}$ for input image $J \in \{I,I'\}$. %Notice that as $I,I',C,D$ have symetrical roles, we can choose $\beta^\varepsilon_{D,C} = \beta^\varepsilon_{C,D}$. Also, as $I,I'$ have symetrcal role, the minimum value is exactly $-$ the maximum value. 
+output values of different decision classes due to the perturbation, close to \cite{vhagar}. That is, considering decision classes $C$ and $D$ and perturbation $\varepsilon$, compute an 
+upper bound $\bar{\beta}^\varepsilon_{C,D}$ of $\max_{I,I', |I-I'| \leq \epsilon}(value_{I}(C) - value_{I}(D) + value_{I'}(D) - value_{I'}(C))$, where $value_{J}(X)$ is the output value of class $X \in \{C,D\}$ for input image $J \in \{I,I'\}$. %Notice that as $I,I',C,D$ have symetrical roles, we can choose $\beta^\varepsilon_{D,C} = \beta^\varepsilon_{C,D}$. Also, as $I,I'$ have symetrcal role, the minimum value is exactly $-$ the maximum value. 
 %Hence, if we have $n$ decision classes, we only have to compute $n (n-1)/2$ bounds. 
-Bound $\beta^\varepsilon_{C,D}$ needs to be computed once for a DNN, 
+Bound $\bar{\beta}^\varepsilon_{C,D}$ is computed offline once for a DNN, 
 and it is valid over the whole input space; compared with $k$ calls to 
 {\em local} robustness, once for each of the $k$ input images, with results only valid for these $k$ images.
 
 The second step is real-time, being performed with the DNN inference of the image $I$ considered: it suffices to consider the class $C$ with the highest output value $value_{I}(C)$, and check whether for every other class $D \neq C$, 
-$value_{I}(C) - value_{I}(D) > \beta^\varepsilon_{C,D}$. 
-If this is the case, then we are certified that image $I$ is robust for perturbation $\varepsilon$, because $\varepsilon$-perturbed image $I'$ could at most get  $value_{I'}(D) \leq \beta^\varepsilon_{C,D}  - (value_{I}(C) - value_{I}(D))  + value_{I'}(C) < value_{I'}(C)$, hence $C$ is also the predicted class for image $I'$. This typically needs a couple of tens CPU instructions, which can be performed under 1ms (mili-second) on a single CPU core. If the image is not certified robust, one could either skip image $I$ (in a video feed), or use safer degraded mode in the decision making process till a trustable robust image is received.
+$value_{I}(C) - value_{I}(D) > \bar{\beta}^\varepsilon_{C,D}$. 
+If this is the case, then we are certified that image $I$ is robust for perturbation $\varepsilon$, because $\varepsilon$-perturbed image $I'$ could at most get  $value_{I'}(D) \leq \bar{\beta}^\varepsilon_{C,D}  - (value_{I}(C) - value_{I}(D))  + value_{I'}(C) < value_{I'}(C)$, hence $C$ is also the predicted class for image $I'$. This typically needs a couple of tens CPU instructions, which can be performed under 1ms (mili-second) on a single CPU core. If the image is not certified robust, one could either skip image $I$ (in a video feed), or use safer degraded mode in the decision making process till a trustable robust image is received.
 
 
-Our main contributions address the challenges to compute the {\em global bounds} $\beta^\varepsilon_{C,D}$, for $C,D$ output neurons:
+Our main contributions address the challenges to compute the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$, for $C,D$ output neurons:
 % for standard ReLU DNNs (e.g. \cite{vhagar}). Our findings can be extended to other activation functions, following similar extention by \cite{DivideAndSlide}:
 %, with updated MILP models e.g. for maxpool:
 \begin{enumerate}
 	%\item  Our first contribution studies the {\em LP relaxation} of the exact MILP encoding of ReLUs. {\color{blue} We establish in Proposition \ref{LP} its equivalence with the so-called "triangular abstraction"}.
 	
-	\item We develop a novel {\em diff MILP encoding} for the global robustness problem, %called the {\em "2v" model}, 
-	where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}). Compared with the {\em classical MILP model} \cite{MILP} employed in \cite{vhagar,lipshitz,ITNE}, which considers the input and the perturbation but not their difference ({\em diff variable}), we keep the same number of 2 binary variables per ReLU. 
+	\item We develop a novel {\em Diff MILP encoding} for the global robustness problem, %called the {\em "2v" model}, 
+	where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}), see Section \ref{s.diff}. 
+	Compared with the {\em classical MILP model} \cite{MILP} employed in 
+	\cite{vhagar,lipshitz,ITNE}, which considers the input and the perturbation but not the diff variable, we keep the same number of 2 binary variables per ReLU.
 	%the results are more accurate for the same runtime.
 	%the linear relaxation is much more accurate, as each {\em diff variable} can be bounded after a ReLU as a function of the value of the {\em diff variables} before the ReLU, whereas the linear relaxations of the classical model is extremely inaccurate, as the variables are independent of each other. This was observed in \cite{lipshitz,ITNE}, and constraints encoding
 	%a part of the linear relaxation of our "2v" model were added explicitly. 
 	%Experimentally, 
-	However, our {\em diff MILP model} is more efficient, one reason being 
+	However, our {\em Diff MILP model} is more efficient, one reason being 
 	the accuracy of its linear relaxation.
 	%The number of variables a priori doubles compared with local robustness, from each neuron value in the perturbed image to each neuron value in the perturbed image {\em and} in the original image, as the original image is no more fixed. 
 	%Recall that the worst case complexity of MILP is exponential in the number of binary variables \cite{DivideAndSlide}. 
 	%A straightforward MILP model would be to use the  for each of these variables, as in \cite{vhagar,lipshitz}. The main issue with the classical model is that its linear relaxations is extremely inaccurate, as the variables are independent of each other. Instead, we develop another exact MILP model, 
-	\item Further from the {\em diff MILP model}, which is exact, 
-	we develop two abstract MILP models, which are more efficient but also possibly less accurate. Namely, the "2b+1" model, decoupling one binary variable into 2 variables: 1 binary and the other using linear relaxation; while the "1b" model has a unique binary variable per ReLU, only considering the {\em diff variables}.
+
+	\item Further, from the {\em Diff MILP model}, which is exact, 
+	we develop two abstract MILP models, which are more efficient but also asymptotically less accurate. Namely, the "2b+1" model, decoupling one binary variable into 2 variables: 1 binary and the other using linear relaxation; while the "1b" model has a unique binary variable per ReLU, only considering the {\em diff variables}.
 	%\item We adapt the Solution Aware Scoring from \cite{ATVA25} to our novel MILP models, in order to select the most important ReLUs to be treated using complex binary variables, while less important variables are treated using linear relaxation. The chosen number of binary variables depends upon the complexity of the DNN as well as the targeted runtime.
 
-   \item  In terms of perturbations, we consider conjunctions of $L_\infty$- and $L_1$-norms, which allow to accurately describe perturbations. For instance, "each subpixel is perturbed by at most $\frac{50}{255}$ ($L_\infty$) and the sum of the absolute value of perturbations over all subpixels is at most $1$" ($L_1$-perturbation). While $L_1$-perturbations are not linear (because of the absolute values), reason for which it is seldom used, Prop.~\ref{prop.l1} shows how to use it as a perturbation in the MILP model without incurring any expansive binary variables (only cheap linear variables are necessary). Check \cite{L1paper-by-AI} ??
+   \item  In terms of perturbations, we consider conjunctions of $L_\infty$- and $L_1$-norms, which allow to accurately describe perturbations. For instance, "each subpixel is perturbed by at most $\frac{50}{255}$ ($L_\infty$) and the sum of the absolute value of perturbations over all subpixels is at most $1$" ($L_1$-perturbation). While $L_1$-perturbations are not linear (because of the absolute values), reason for which it is seldom used, Section~\ref{s.L1} shows how to use it as a perturbation in the MILP model without incurring any expansive binary variables (only cheap linear variables are necessary). 
+   %Check \cite{L1paper-by-AI} ??
 
 	\item Bounds obtained on the full input space are particularly pessimistic, as all inputs, including improbable ones far away from the training dataset, called (Out of Distribution) {\em OOD inputs} \cite{OOD}), need to be accounted for. 
 	%As a result, the runtime to obtain the bound is particularly long. 
 	%Finally, when computing worst-case 
 	%pairs (image, perturbation), improbable images are generated, hence these  are not meaningful. 
-	To address that, we consider model order reduction techniques from engineering science \cite{Paco}. Specifically, we use Principal Component Analysis (PCA) to represent faithfully realistic inputs.
-	OOD	inputs may be represented unfaithfully - but the DNN is unlikely to provide reasonable answer on such inputs anyway.
+	To address this, we consider model order reduction techniques from engineering science \cite{Paco}. Specifically, we use Principal Component Analysis (PCA) to represent faithfully common inputs from the dataset.
+	OOD	inputs may be represented unfaithfully, which is reasonable as the DNN is unlikely to provide reasonable answer on such inputs anyway.
 	%	focus on reduce the space to a linear input space. We choose the number of dimensions of the space to equal the accuracy of the DNN on the reduced space. 
 	%(using a projection to the reduced space then the inverse projection to obtain a very similar image understandable by the DNN). 
-	For instance, using just $20$ out of 784 dimensions suffices to represent faithfully MNIST inputs, without losing accuracy for the DNN on MNIST inputs.
+	For instance, using just $20$ out of 784 dimensions suffices to represent faithfully MNIST inputs, without losing accuracy for the DNN on the MNIST dataset.
 	%On the MNIST benchmark, this means 20 linear dimensions to match the $97\%$ accuracy of the DNN we considered, instead of the 784 dimensions of the full image space. 
 	%Using PCA, which is linear, makes it easy to specify perturbations on the actual image (where it is meaningful) rather than on the reduced space.
 
-\item Experimentally, the exact {\em diff MILP model} computes upper bounds 
-which are 1 order of magnitude better than with the classical MILP encoding, and much closer (Table \ref{table.classical}) to the lower bounds than with variants of the classical encoding; namely reducing the number of binary variables in a complete fashion (Vhagar \cite{vhagar}); or adding linear relaxation for the diff variables (ITNE \cite{ITNE}).
-Our "1b+2" variant offers good trade-offs, reaching better bounds in the same runtime as the diff MILP model. The "1b" model converges faster but bounds are looser, interesting when runtime is very limited or problem is very complex (Tables \ref{table.mnist},\ref{table.pipe}).
-Further, using PCA reduces $\beta_{C,D}$ by up to an order of magnitude.
-Overall, the "1b+2" model using PCA enables the robustness certification of $69\%$ of MNIST images for an $L_1$-perturbation of $1$, resp. $89\%$ for $.5$. The online process adds only 0.0005s of latency per image, and 2000 images/second can be treated per CPU core.
+\item Experimentally, the exact {\em Diff MILP model} computes upper bounds
+$\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound by one order of magnitude compared with optimized version of the classical MILP encoding; namely reducing the number of binary variables (Vhagar \cite{vhagar}); or adding linear constraints from the diff variables (ITNE \cite{ITNE}), see Table \ref{table.classical}.
+The abstractions  "2b+1" and "1b" variant offer different trade-offs, 
+reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
+Further, using PCA reduces the upper bound $\beta_{C,D}$ by $2$ to $17$ times.
+Overall, using this different contributions (diff MILP model, abstraction and PCA), it enables the real-time certification of $\geq 69\%$ of fresh images for an $L1$-perturbation of $1$ over three datasets (MNIST, Fashion MNIST and CIFAR-10), see Table \ref{table.cert}. The online process adds only 0.5ms of latency per image, and 2000 images/second can be treated per CPU core.
 \end{enumerate}
 
 

@@ -3,6 +3,7 @@
 Let $N$ the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). Worst-case complexity being exponential in the number of binary variables, global robustness (e.g. ITNE and Vhagar \cite{ITNE,vhagar}) is much harder than local robustness.
 
 \subsection{Encoding $L_\infty$- and $L_1$-perturbations for input variables}
+\label{s.L1}
 
 To encode $L_\infty$-perturbations bounded by $\varepsilon$,
 the linear constraint $|x_j-x'_j| \leq \varepsilon$ is used for each {\em input} neuron $j$. 
@@ -34,6 +35,7 @@ $||\vec{x}||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq c$.
 
 
 \subsection{Constraints for propagations in the DNN}
+
 
 There are two propagations of values for variables: 
 for a neuron $j$ of layer $\ell$, the value of variable $x_j$ is defined by the constraint $x_j = \sum_{i \in \ell-1} \alpha_i \hat{x_i}$, which is a simple linear operation from the output $(\hat{x_i})_{i \in \ell-1}$ of neurons $i$ in layer $\ell-1$.
