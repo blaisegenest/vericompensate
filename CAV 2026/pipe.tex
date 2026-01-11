@@ -1,0 +1,82 @@
+
+\subsection{Experimental results for regression (Pipe strain)}
+
+[Put in appendix instead?? We do have space for it -18 pages max without references]
+
+Our {\em Diff} model is not only accurate for classification tasks providing bounds and proving global robustness of DNNs. It can also tackle regression tasks, providing upper bounds on the output of the learnt regressor from small perturbation of the input.
+
+
+\begin{figure*}[t!]
+    %\centering
+    \includegraphics[scale=0.7]{PIPE.pdf} \hspace{1.5cm}
+    \caption{Training and bound computation on the pipe use case. 
+    Note that two PCAs are used, one for the input space (deformation) and another for the output space (plastic strain). The exploitation and bound computation must then use a pipeline that: (1) reduces the deformation; (2) obtains a reduced strain with the surrogate, and (3) decodes the reduced strain from the reduced to the full dimension.}
+    \label{fig.PIPE}
+\end{figure*}	
+
+
+
+
+
+We consider here a pipe system and its DNN regressor from \cite{aiware},
+that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of these 3000 points.
+
+Compared to the classification tasks that we just considered where the DNN are learnt in a standard way and PCA is later applied to reduce the output dimension without comprimising the accuracy, the regressor has been learnt on the reduced PCA basis, for both the high dimensional input and the high dimensional output.
+
+Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learnt has 2 fully connected layers, 50 neurons each, learnt as a surrogate model, with 10 reduced input and 26 reduced output.
+
+In term of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
+
+\begin{figure*}[t!]
+\includegraphics[scale=0.4]{deform.png} \hspace{0.1cm}
+\includegraphics[scale=0.4]{strain.png}
+\caption{2 slightly different deformations and their associated quite different strain as obtained by the {\em Diff} model with $200 $ binary variable.}
+\label{fig5}
+\end{figure*}	
+
+
+
+	\begin{table}[h!]
+        \centering
+	\begin{tabular}{||l||c|c|c|c||}\hline\hline
+		model, nbr&        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ &  Time(s) \\\hline \hline
+		1v, $100$ &     {\bf .0356} &  $.0356$ & $.0191$ &  1000 \\\hline
+		3v, $200$&     .0414 &  .0254 &  .0166 &  1000 \\\hline
+		2v, $200$&     .0418 &  .0229 &   {\bf .0229} &  1000 \\\hline 
+		2v ITNE, $200$&  .0446  & .0227 &  .0221  &  1000 \\\hline\hline
+		%3v, $97 \times 3$&      ?? &  ?? &  ?? & 14440 \\\hline
+		3v, $200$&      {\bf .0350} &  .0272 &  .0216 & 14440 \\\hline
+		%2v, $97 \times 2$&     ?? &  ?? &   ?? & 14440 \\\hline
+		2v, $200$&     .0360 &  .0236 &    {\bf .0236} & 14440 \\\hline 
+		2v ITNE, $200$& .0424  &  .0237  & .0228   &  14400 \\\hline\hline
+		3v, $200$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
+		2v, $200$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline
+		2v ITNE, $200$&  .04159 & .0241 &  .0228  &  72000 \\\hline\hline
+	\end{tabular}
+	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, where all neurons use 100 / 200 binary variables.}
+	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
+	\label{table.pipe}
+\end{table}
+
+	
+
+	For the pipe system, we compared in Table \ref{table.pipe} the different models "1v","2v","3v" to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the "3v" model, slightly better than the bound $.0337$ found within the same time by the "2v" model, and better than the bound found $0.356$ by the "1v" model, although this bound has been found 70 times faster due to the simpler model. The certified lower bound is not too far, at $.245$, found by the fully accurate "2v" model when all the variables are binary. We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.0329$, is coherent with the physical dinite element model the DNN surrogate has been learnt from, hence this is not an hallucination due to the brittleness of the learnt DNN.
+
+
+	
+	\vspace*{1ex}
+	
+	\iffalse
+	\begin{table}[h!]
+	\begin{tabular}{|l|l|l|l|l|}\hline
+		$L_1\leq 0.83$ &        Bound $\downarrow$ &  Solution $\uparrow$ &      Real $\uparrow$ &  Time \\\hline
+		1v,open 100 &     {\bf 0.035613} &  0.035613 &                       0.01288 & 10608 \\\hline
+		3v,open 100 &     0.040074 &  0.028934 &                      0.021441 & 10922 \\\hline
+		%3v,open 100 &     0.039824 &  0.028832 &                      0.022255 & 22153 \\\hline
+		2v,open 100 &     0.046719 &  0.024364 &  {\bf 0.024436} & 10922 \\\hline
+	\end{tabular}
+	\caption{Comparison of 1v,2v and 3v models on the pipe system with a fixed timeout of 10.000s.}
+\end{table}
+\fi
+	
+		

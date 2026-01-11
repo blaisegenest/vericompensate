@@ -5,7 +5,6 @@
 	
 	We consider two DNNs: one for MNIST, namely a pre-trained $5\times 100$ (available at \url{https://github.com/eth-sri/eran}), a 5 fully connected layers DNN, with 100 neurons each,	trained with diffAI \cite{deeppoly}. 
 	Although it is relatively small, it is also of good quality with $97\%$ accuracy on classification, but it is not easy to certify for global robustness (the size of a network can be deceptive to know whether they are easy or hard to verify \cite{ATVA25}).  
-	The second one is a 2 fully connected layers, 50 neurons each, learnt as a surrogate model, with 10 reduced input and 26 reduced output, that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of this 3000 points (through a PCA order reduction \cite{Paco} encoding all 3000 points with 10 dimensions in input and 26 dimensions in output), from \cite{aiware}.
 	
 	MNIST is a classification benchmark, we thus compute the different $\beta^{\varepsilon}_{i,j}$ bounds, for an $L_1$-deformation $\varepsilon \leq 1$. 
 	%The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
