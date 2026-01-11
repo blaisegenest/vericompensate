@@ -72,8 +72,8 @@ For instance, using just $20$ out of 784 dimensions suffices to represent faithf
 $\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compared with optimized version of the classical MILP encoding; namely reducing the number of binary variables (Vhagar \cite{vhagar}); or adding linear constraints from the {\em diff variables} (ITNE \cite{ITNE}), see Table \ref{table.classical}.
 The abstractions  "2b+1" and "1b" variant offer different trade-offs, 
 reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
-Further, using PCA reduces the upper bound $\beta_{C,D}$ by $2$ to $17$ times.
-Overall, using these different techniques ({\em Diff} MILP model, abstraction and PCA) enables the real-time certification of $\geq 69\%$ of fresh images for an $L1$-perturbation of $1$ over three datasets (MNIST, Fashion MNIST and CIFAR-10), see Table \ref{table.cert}. The online process adds only 0.5ms of latency per image, and 2000 images/second can be treated per CPU core.
+Further, using PCA reduces the upper bound $\beta_{C,D}$ by $3$ to $20$ times.
+Overall, using these different techniques ({\em Diff} MILP model, abstraction and PCA) enables the real-time certification of $\geq 67\%$ of fresh images for an $L1$-perturbation of $1,4,2$ over the MNIST, Fashion MNIST and CIFAR-10 datasets respectively, see Table \ref{table.cert}. The online process adds only 0.5ms of latency per image, and 2000 images/second can be treated per CPU core.
 \end{enumerate}
 
 

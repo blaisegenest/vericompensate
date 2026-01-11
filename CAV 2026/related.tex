@@ -1,14 +1,16 @@
-\section{Related Work on Global Robustness}
+\subsection{Related Work on Global Robustness}
+
+While \cite{diff} does not tackle global robustness per se, its one of the first work to consider {\em differential} verification, introducing the {\em diff} variables that are used here and also in \cite{ITNE}. The paper \cite{diff} did not consider MILP encoding.
 
 Some works \cite{Leino,Zhang22a,Sun22,Chen21,REGLO} focus on training a network to be - rather than proving the DNN is - globally robust.
-Other works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g. using probabilistic guarantees 
-\cite{Levy23,Mangal19}.
+Other works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g. using probabilistic guarantees \cite{Levy23,Mangal19}.
 
 More related, several works  \cite{Marabou,lipshitz,ITNE,GROCET} consider certifying {\em restricted} Lipschitz bound, to understand how the output can change given an input perturbations. However, they do not consider whether the classification changes. 
 
-The most related work is Vhagar \cite{vhagar}, which also computes $\beta^\varepsilon_{i,j}$ bounds, but limited to $L_\infty$-perturbations (and variants). They do not however report {\em real-time} certified robust percentage, as in Table \ref{table.cert}. Last, their hyper-adversarial attack to find better lower bounds seems very efficient, and we will consider it in the future.
+The most related work is Vhagar \cite{vhagar}, which computes 
+bounds $\alpha^\varepsilon_{i,j}$ similar to our $\beta^\varepsilon_{i,j}$ bounds, but limited to $L_\infty$-perturbations (and variants). They do not report {\em real-time} certified robust percentage, as we do in Table \ref{table.cert}.
 
-Technically, none of the MILP base work \cite{vhagar,lipshitz,ITNE} 
-consider $L_1$-perturbations. Further, they use the classical MILP encoding from \cite{MILP}, and not our novel "2v" model, nor even our "1v" model. However, \cite{ITNE} 
-defines the {\em diff variables} $y,\hat{y}$, adding explicitly the linear relaxation $\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ implied by our models, Eq. (3) in \cite{ITNE} corresponding essentially to it. \cite{vhagar} does things differently, adding per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations. 
+Technically, none of the MILP-based work \cite{vhagar,lipshitz,ITNE} 
+consider $L_1$-perturbations. Further, they use the classical MILP encoding from \cite{MILP}, and not our novel {\em Diff} model, nor even our "1b" model. However, \cite{ITNE} considers the {\em diff variables} $y,\hat{y}$, by adding explicitly the linear relaxation $\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ implied by our models, Eq. (3) in \cite{ITNE} corresponding essentially to it. \cite{vhagar} does things differently, adding per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations 
+(and to some extend to $L_\infty$-perturbations). 
 

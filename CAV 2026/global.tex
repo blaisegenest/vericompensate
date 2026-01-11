@@ -1,4 +1,4 @@
-	\section{MILP Models for global robustness}
+	\section{MILP Models for Global Robustness}
 
 Let $N$ the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). Worst-case complexity being exponential in the number of binary variables, global robustness (e.g. ITNE and Vhagar \cite{ITNE,vhagar}) is much harder than local robustness.
 
@@ -211,7 +211,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 The LP relaxation of ${\cal M}^{classical}$ will miss this totally, while the LP relaxation of the Diff model contains such important bounds, including (see 
 section \ref{s.1b} and Fig.~\ref{fig.1v}):
 \begin{align}
-	\ref{eq.lpr}
+	\label{eq.lpr}
 \frac{y_j-\gamma_j}{2} \leq \hat{y}_j \leq \frac{y_j+\gamma_j}{2}
 \end{align}
 which is not the case of 
@@ -400,6 +400,29 @@ Assume we have computed (offline) $\bar{\beta}^{\text{perturb}}_{C,D}$ for each 
   a bit $b_D=1$ iff $o_D +\bar{\beta}^{\text{perturb}}_{C,D} > o_C$.
   \item[2] We return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
 \end{enumerate}
+
+\begin{proposition}
+  If "certified robust" is returned over input $I$, 
+  then for all perturbed input $I'$ with  $|I - I'| \leq perturb$,
+  the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$ for perturbation $perturb$.
+\end{proposition}
+
+\begin{proof}
+  Let $C$ be the decision of the DNN on $I$.
+Assume by contradiction that $D \neq C$ is the decision on $I'$. 
+  We know that 
+  $x_D +\bar{\beta}^{\text{perturb}}_{C,D} < x_C$
+  because "certified robust" is returned over input $I$.
+  That  is, $x_D - x_C +\bar{\beta}^{\text{perturb}}_{C,D} < 0$
+
+  By definition of $\bar{\beta}^{\text{perturb}}_{C,D}$,
+  we have $x'_D - x'_C + x_C - x_D \leq \bar{\beta}^{\text{perturb}}_{C,D}$.
+  ($I$ and $I'$ have symetrical roles), 
+  that is 
+  $x'_D - x'_C \leq x_D - x_C + \bar{\beta}^{\text{perturb}}_{C,D} < 0$.
+  That is $x'_D < x'_C$, a contradiction with $D$ is the decision on $I'$.
+  \qed
+\end{proof}
 
 The overhead (1,2 above) amounts to \#Class-1 ADD(+) and COMP(<), then one OR($\bigvee$) of \#Class-1 bits, that is 19 operations in total for 10 classes. 
 This can be realized extremely fast, even on limited hardware.

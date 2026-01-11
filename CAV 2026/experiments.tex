@@ -58,7 +58,7 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 \subsection{Comparison with Vhagar and ITNE ($L_\infty=0.05$)}
 
 To be able to compare with Vhagar, we have to use Vhagar benchmarks: 
-perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for MNIST, FMNIST and CIFAR-10), for which the reduction rules of binary variables are implemented. We test with 1000s Time-Out, as well as one test with 14400s time out, showing that much longer time-out does not have a big impact on the result.
+perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv for MNIST, FMNIST and CIFAR-10), for which the reduction rules of binary variables are implemented. We test with 1000s Time-Out, as well as one test with 14400s time out, showing that much longer time-out does not have a big impact on the result.
 
 \iffalse
 
@@ -68,14 +68,14 @@ perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for 
 	Benchmark & model & Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ & $\%$ of gap $\downarrow$ \\\hline \hline
 	MNIST   & Vhagar & 20.51 & 9.20 & 9.20 & 118 $\%$
     \\
-	M-Conv1 & ITNE & 12.77 & 9.41 & 9.41 & 35 $\%$
+	M-Conv & ITNE & 12.77 & 9.41 & 9.41 & 35 $\%$
 	\\ 
     TO=1000s & {\em Diff} & {\bf 11.59}  & 9.38 & 9.38 & {\bf 23 $\%$}
     \\\hline \hline
 
 	FMNIST & Vhagar &  $41.52$ & $21.23$ & $21.23$ & 93 $\%$ 
     \\
-	F-Conv1  & ITNE &  $27.57$ &  $22.12$ & $22.12$ & 24 $\%$
+	F-Conv  & ITNE &  $27.57$ &  $22.12$ & $22.12$ & 24 $\%$
 	\\ 
     TO=1000s & {\em Diff} &  {\bf 23.67} &  $22.31$ &  $22.31$ & {\bf 6 $\%$}
     \\\hline 
@@ -83,14 +83,14 @@ perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for 
 
 	FMNIST & Vhagar &  $37.26$ &  $22.00$ & $22.00$ & 72 $\%$
     \\
-	F-Conv1  & ITNE &  $24.56$ &  $22.20$ & $22.20$ & 10 $\%$
+	F-Conv  & ITNE &  $24.56$ &  $22.20$ & $22.20$ & 10 $\%$
 	\\ 
     TO=14400s & {\em Diff} &    {\bf 22.56} &  $22.32$ &  $22.32$ & {\bf 1 $\%$}
     \\\hline \hline
 	
 	CIFAR-10  & Vhagar & does & not & run & -
     \\
-	C-Conv1  & ITNE & 28.61 & 11.58 & 11.58 & $33\%$
+	C-Conv  & ITNE & 28.61 & 11.58 & 11.58 & $33\%$
 	\\ 
     TO=1000s & {\em Diff} &  25.93  & 14.43 & 14.43 & $24\%$
 	\\
@@ -101,7 +101,7 @@ perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for 
     
 	CIFAR-10  & Vhagar & does & not & run & -
     \\
-	C-Conv1  & ITNE &  & & &
+	C-Conv  & ITNE &  & & &
 	\\ 
     TO=14400s & {\em Diff} &  {\bf 20.67}  & 19.03 & 19.03 & {\bf 6} $\%$
 	\\
@@ -123,42 +123,42 @@ perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv1 for 
 \begin{table}[t!]
 	\centering
 	\begin{tabular}{||c c||c c c c c ||c|}\hline
-	Benchmark & Timeout & MILP model: & Vhagar &  ITNE & {\em Diff} & {\em 2b+1} & {\em Best} \\\hline \hline
-	  & 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ &  20.80 & 12.32 & {\em 11.14} & {\em \bf 10.95} & {\em \bf 10.85}
+	$L_\infty=0.05$ & Timeout & MILP model: & Vhagar &  ITNE & {\em Diff} & {\em 2b+1} & {\em Best} \\\hline \hline
+	  & 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ &  20.80 & 12.32 & {\em 11.14} & {\em \bf 10.95} & {\bf \em 10.85}
     \\
-	MNIST-C1 & & ($\%$ of gap $\downarrow$) & (120$\%$) & (29 $\%$) & ({\em 17} $\%$) & ({\em \bf 15} $\%$) & ({\em \bf 14} $\%$)
+	MNIST-Conv & & ($\%$ of gap $\downarrow$) & (120$\%$) & (29 $\%$) & ({\em 17} $\%$) & ({\em \bf 15} $\%$) & ({\bf \em 14} $\%$)
 	\\
-	 LB $\underline{\alpha}$= 9.51 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 17.54 & 11.15 & {\bf \em 10.14} & {\em 10.29} & {\em \bf 10.07}
+	 LB $\underline{\alpha}$= 9.51 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 17.54 & 11.15 & {\bf \em 10.14} & {\em 10.29} & {\bf \em 10.07}
     \\
-	  & & ($\%$ of gap $\downarrow$) &  (84$\%$) & (17 $\%$) & ({\bf \em 7} $\%$) & ({\em 8} $\%$) & ({\em \bf 6} $\%$) 
+	  & & ($\%$ of gap $\downarrow$) &  (84$\%$) & (17 $\%$) & ({\bf \em 7} $\%$) & ({\em 8} $\%$) & ({\bf \em 6} $\%$) 
     \\\hline
 
 	
-	& 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ & 41.52 & 26.61 & {\bf \em 23.27}  & {\em 24.09} & {\em \bf 22.78}
+	& 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ & 41.52 & 26.61 & {\bf \em 23.27}  & {\em 24.09} & {\bf \em 22.78}
     \\
-	FMNIST-C1 & & ($\%$ of gap $\downarrow$) & (93 $\%$) & (20 $\%$) & ({\bf \em 5} $\%$) & ({\em 10} $\%$) & ({\em \bf 3} $\%$)
+	FMNIST-Conv & & ($\%$ of gap $\downarrow$) & (93 $\%$) & (20 $\%$) & ({\bf \em 5} $\%$) & ({\em 10} $\%$) & ({\bf \em 3} $\%$)
     \\
 
 
-	LB $\underline{\alpha}$= 22.21 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 37.26 & 24.06 & {\bf \em 22.42 } & {\em  23.80} & {\em \bf 22.34}
+	LB $\underline{\alpha}$= 22.21 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 37.26 & 24.06 & {\bf \em 22.42 } & {\em  23.80} & {\bf \em 22.34}
     \\
-	 & & ($\%$ of gap $\downarrow$) & (72 $\%$) &  (9 $\%$) & ({\bf \em 1} $\%$) & ({\em 9} $\%$) & ({\em \bf .6} $\%$)
+	 & & ($\%$ of gap $\downarrow$) & (72 $\%$) &  (9 $\%$) & ({\bf \em 1} $\%$) & ({\em 9} $\%$) & ({\bf \em .6} $\%$)
     \\\hline
 	
 
 	& 1000s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 36.57* & 27.15 & 
-	{\em 25.94} & {\bf \em 24.52}& {\em \bf 23.29}
+	{\em 25.94} & {\bf \em 24.52}& {\bf \em 23.29}
     \\
-	CIFAR-C1 & & ($\%$ of gap $\downarrow$) & (55* $\%$) & (28 $\%$) & ({\em 24} $\%$) & ({\bf \em 20} $\%$) & ({\em \bf 15} $\%$)
+	CIFAR-Conv & & ($\%$ of gap $\downarrow$) & (55* $\%$) & (28 $\%$) & ({\em 24} $\%$) & ({\bf \em 20} $\%$) & ({\bf \em 15} $\%$)
 	\\
     
-	LB $\underline{\alpha}$= 19.04 & 14400s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 31.53* & 22.73 & {\bf \em 21.77} & {\em 21.81} & {\em \bf 20.38}
+	LB $\underline{\alpha}$= 19.04 & 14400s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 31.53* & 22.73 & {\bf \em 21.77} & {\em 21.81} & {\bf \em 20.38}
     \\
-	 & & ($\%$ of gap $\downarrow$) & (39* $\%$) & (12 $\%$) & ({\bf \em 10} $\%$) & ({\bf \em 10} $\%$) & ({\em \bf 5}$\%$)
+	 & & ($\%$ of gap $\downarrow$) & (39* $\%$) & (12 $\%$) & ({\bf \em 10} $\%$) & ({\bf \em 10} $\%$) & ({\bf \em 5}$\%$)
 		\\\hline
     
      \end{tabular}
-	\caption{Comparison with Vhagar and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-C1, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $i,j$. Lower gaps using {\em Best} means that there are cases where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite.}
+	\caption{Comparison with Vhagar and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-Conv, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $i,j$. Lower gaps using {\em Best} means that there are cases where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite.}
     \label{table.classical}
 \end{table}
 
@@ -175,7 +175,7 @@ The gap is the average over all cases of the relative distance between the bound
 %	\centering
 %	\begin{tabular}{||c||c||c|c|c||c|}\hline\hline
 %		Benchmark & MILP model: & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline
-%		MNIST-FCNN  & Bound $\downarrow$ &&&&
+%		MNIST-FC  & Bound $\downarrow$ &&&&
 %		\\
 %		TO=1000s & $\%$ of gap $\downarrow$ &&&&
 %		\\ \hline
@@ -227,15 +227,16 @@ We first set the PCA dimensions to have $\leq 1\%$ loss of accuracy using DNN-PC
 		PCA dimension: & 15 & 20 & 25 & 30 & 35 & 40 & 45 
 		
 		\\\hline
-		PCA-MNIST-FCNN  & 2$\%$ & {\bf 0}$\%$ & 0$\%$& 0$\%$ & 0$\%$& 0$\%$ & 0$\%$
+		PCA-MNIST-FC  & 2$\%$ & {\bf 0}$\%$ & 0$\%$& 0$\%$ & 0$\%$& 0$\%$ & 0$\%$
 		\\	
- 		PCA-FMNIST-C1 & 5$\%$ &	3$\%$ &	{\bf 1}$\%$ & 0$\%$& 0$\%$	& 0$\%$ &	0$\%$ 
+ 		PCA-FMNIST-Conv & 5$\%$ &	3$\%$ &	{\bf 1}$\%$ & 0$\%$& 0$\%$	& 0$\%$ &	0$\%$ 
 		\\
-		PCA-CIFAR10-C1  & 16$\%$ &	14$\%$ &	12$\%$ & 10$\%$ &	14$\%$ &	5$\%$ &	{\bf 0}$\%$
+		PCA-CIFAR10-Conv  & 16$\%$ &	14$\%$ &	12$\%$ & 10$\%$ &	14$\%$ &	5$\%$ &	{\bf 0}$\%$
 		\\\hline
 	\end{tabular}
 
-	\caption{Loss of accuracy from using PCA according to the PCA dimension.
+	\caption{Loss of accuracy of PCA-DNN vs DNN (no PCA) 
+	according to the PCA dimension.
 	{\bf Bold} corresponds to the dimension chosen, minimal ensuring loss 
 	$\leq 1\%$.}
     \label{table.cert}
@@ -247,41 +248,42 @@ We first set the PCA dimensions to have $\leq 1\%$ loss of accuracy using DNN-PC
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{|cc|c c c|c|}\hline
-		Benchmark & Timeout & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline 
-		MNIST-FCNN  & 1000s & 38.88 & 38.68 & 37.34 & {\bf 37.33}
+		$L_1=1$ & Timeout & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline 
+		MNIST-FC  & 1000s & 38.88 & 38.68 & {\bf 37.34} & {\bf 37.33}
 		\\
-		LB $\underline{\beta}$= & 14400s & 37.24 & 36.96 & {\bf 33.68} & 33.67
+		LB $\underline{\beta}$= & 14400s & 37.24 & 36.96 & {\bf 33.68} & {\bf 33.67}
 		
 		\\\hline
-		PCA-MNIST-FCNN  & 1000s & 2.429 & {\bf 2.426} & 2.68 & 2.41
+		PCA-MNIST-FC  & 1000s & {\bf 2.43} & {\bf 2.43} & 2.68 & {\bf 2.41}
 		\\
-		LB $\underline{\beta}$= & 14400s & 2.18 & {\bf 2.00} & 2.46 & 2.00
+		LB $\underline{\beta}$= & 14400s & 2.18 & {\bf 2.00} & 2.46 & {\bf 2.00}
 		\\ \hline \hline
 		
- 		FMNIST-C1 & 1000s & 8.90 & {\bf 7.55} & 9.84 & {\bf 7.55}
+ 		FMNIST-Conv & 1000s & 8.90 & {\bf 7.55} & 9.84 & {\bf 7.55}
 		\\
 		LB $\underline{\beta} = 4.16$ & 14400s & 7.43 & {\bf 6.37} & 9.62 & {\bf 6.22}
 		\\\hline
 
-		PCA-FMNIST-C1 & 1000s & 3.02 & 3.02 & {\bf 2.74} & {\bf 2.74}
+		PCA-FMNIST-Conv & 1000s & 3.02 & 3.02 & {\bf 2.74} & {\bf 2.74}
 		\\
 		LB $\underline{\beta}= 0.96$ & 14400s & 2.34  & {\bf 1.95} & 2.52 & {\bf 1.95}
 		\\\hline  \hline
 		
 		
 		
-		CIFAR10-C1  & 1000s &8.30 & {\bf 8.14} & 8.17 & {\bf 7.77}
+		CIFAR10-Conv  & 1000s &8.30 & {\bf 8.14} & 8.17 & {\bf 7.77}
 		\\
 		LB $\underline{\beta}= 2.12$ & 14400s & {\bf 7.19} & 7.45 & 7.31 & {\bf 6.67}
 		\\\hline
-		PCA-CIFAR10-C1  & 1000s & 1.18 &&&
+		PCA-CIFAR10-Conv  & 1000s & 1.18 &&&
 		\\
 		LB $\underline{\beta}$= & 14400s & 1.07 &&&
-		\\\hline \hline
+		\\\hline
 
 	\end{tabular}
-	\caption{Comparison of upper bound $\overline{\beta}$ (lower is better $\downarrow$) among Diff, 2b+1 and 1b, for both original as well as PCA-DNNs over MNIST, FMNIST and CIFAR dataset, averaged over all bounds $\overline{\beta}_{i,j}$. %Best report is the average of the best for every case.
-	 %We use PCA dimension = 20 for MNIST-FCNN, PCA dimension = 25 for FMNIST CNN1, and PCA dimension = 45 for CIFAR10 CNN1.
+	\caption{Comparison of upper bound $\overline{\beta}$ (lower is better $\downarrow$) averaged over all bounds $\overline{\beta}_{i,j}$,
+	between {\em Diff, 2b+1 and 1b}, for both original DNN as well as PCA-DNNs over MNIST, FMNIST and CIFAR dataset. %Best report is the average of the best for every case.
+	 %We use PCA dimension = 20 for MNIST-FC, PCA dimension = 25 for FMNIST CNN1, and PCA dimension = 45 for CIFAR10 CNN1.
 	 }
 	\label{table.L1}
 \end{table}
@@ -348,23 +350,23 @@ ITNE, $1000$ &  $1.371$ & $.085$& {\bf .085}  \\\hline\hline
 		Benchmark & $L_1=1$ & $L_1=2$ & $L_1=3$ & $L_1=4$ & Latency overhead 
 		
 		\\\hline \hline
-		MNIST-FCNN  & 0$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
+		MNIST-FC  & 0$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
 		
 		\\\hline
-		PCA-MNIST-FCNN  & {\bf 80} $\%$ & 21 $\%$ & 1 $\%$ & 0 $\%$ & 0.5ms
+		PCA-MNIST-FC  & {\bf 80} $\%$ & 21 $\%$ & 1 $\%$ & 0 $\%$ & 0.5ms
 		\\ \hline \hline
 		
- 		FMNIST-C1 & 
+ 		FMNIST-Conv & 
 		{\bf 75} $\%$ & 50 $\%$ & 28$\%$ &	12$\%$  & 0.5ms
 		\\\hline
 
-		PCA-FMNIST-C1 & 
+		PCA-FMNIST-Conv & 
 		92 $\%$ &	86 $\%$ &	79 $\%$ &	{\bf 70} $\%$ & 0.5ms
 		\\\hline  \hline
 		
-		CIFAR10-C1  & 39 $\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
+		CIFAR10-Conv  & 39 $\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
 		\\\hline
-		PCA-CIFAR10-C1  & 88 $\%$ & {\bf 69} $\%$& 59 $\%$ & 52 $\%$ & 0.5ms
+		PCA-CIFAR10-Conv  & 88 $\%$ & {\bf 69} $\%$& 59 $\%$ & 52 $\%$ & 0.5ms
 		\\\hline \hline
 	\end{tabular}
 
