@@ -130,9 +130,7 @@ and Vhagar \cite{vhagar}, see Table \ref{table.classical}.
 We also explained how to support $L_1$-perturbations efficiently on top of classical $L_\infty$-perturbations.
 Further, using simpler models, namely with the {\em 2$b+$1}
 or the {\em 1$b$} models, abstracting away some features of the {\em Diff} model,
-even better bounds can be reached for the complex questions of global robustness with $L_1$ bounds (Tables 3, 4, 5). To further lower the bounds by $> 10$ times, we resort to model order reduction, reducing the space of search closer to the space of the training dataset, without sacrificing DNN accuracy ($97\%$). This results into, to the best of our knowledge, the first {\em real-time} robustness certification reported for a DNN, with $86\%$ of robustness for an $L_1$-perturbation of $.5$ and $53\%$ of robustness for an $L_1$-perturbation twice as large of $1$. Still, global verification is only at its beginning, and combining different methods is necessary to scale to more complex DNNs.
-
-
+even better bounds can be reached for the complex questions of global robustness with $L_1$ bounds (Tables 3, 4, 5). To further lower the bounds by $3-20$ times, we resort to PCA, concentrating the accuracy around the datasets, potentially being inaccurate for OOD inputs, overwhich the DNN is mostly inaccurate anyway, without sacrificing DNN accuracy over the dataset. This results into, to the best of our knowledge, the first {\em real-time} robustness certification reported for a DNN, with $>67\%$ of robustness for an $L_1$-perturbation of $\geq 1$ for different datasets. Still, global verification is only at its beginning, and combining different methods is necessary to scale to more complex DNNs.
 
 \newpage
 
