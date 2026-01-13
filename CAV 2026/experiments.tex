@@ -246,37 +246,37 @@ We first set the PCA dimensions to have $\leq 1\%$ loss of accuracy using DNN-PC
 
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{|cc|c c c|c|}\hline
-		$L_1=1$ & Timeout & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline 
-		MNIST-FC  & 1000s & 38.88 & 38.68 & {\bf 37.34} & {\bf 37.33}
+	\begin{tabular}{|cc| c | c c c|c|}\hline
+		$L_1=1$ & Timeout & ITNE & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline 
+		MNIST-FC  & 1000s && 38.88 & 38.68 & {\bf 37.34} & {\bf 37.33}
 		\\
-		LB $\underline{\beta}$= 0.50 & 14400s & 37.24 & 36.96 & {\bf 33.68} & {\bf 33.67}
+		LB $\underline{\beta}$= 0.50 & 14400s && 37.24 & 36.96 & {\bf 33.68} & {\bf 33.67}
 		
 		\\\hline
-		PCA-MNIST-FC  & 1000s & {\bf 2.43} & {\bf 2.43} & 2.68 & {\bf 2.41}
+		PCA-MNIST-FC  & 1000s && {\bf 2.43} & {\bf 2.43} & 2.68 & {\bf 2.41}
 		\\
-		LB $\underline{\beta}$= 0.12 & 14400s & 2.18 & {\bf 2.00} & 2.46 & {\bf 2.00}
+		LB $\underline{\beta}$= 0.12 & 14400s && 2.18 & {\bf 2.00} & 2.46 & {\bf 2.00}
 		\\ \hline \hline
 		
- 		FMNIST-Conv & 1000s & 8.90 & {\bf 7.55} & 9.84 & {\bf 7.55}
+ 		FMNIST-Conv & 1000s & 12.27 & 8.90 & {\bf 7.55} & 9.84 & {\bf 7.55}
 		\\
-		LB $\underline{\beta} = 4.16$ & 14400s & 7.43 & {\bf 6.37} & 9.62 & {\bf 6.22}
+		LB $\underline{\beta} = 4.16$ & 14400s & 11.03 & 7.43 & {\bf 6.37} & 9.62 & {\bf 6.22}
 		\\\hline
 
-		PCA-FMNIST-Conv & 1000s & 3.02 & 3.02 & {\bf 2.74} & {\bf 2.74}
+		PCA-FMNIST-Conv & 1000s & 3.64 & 3.02 & 3.02 & {\bf 2.74} & {\bf 2.74}
 		\\
-		LB $\underline{\beta}= 0.96$ & 14400s & 2.34  & {\bf 1.95} & 2.52 & {\bf 1.95}
+		LB $\underline{\beta}= 0.96$ & 14400s & 2.67 & 2.34  & {\bf 1.95} & 2.52 & {\bf 1.95}
 		\\\hline  \hline
 		
 		
 		
-		CIFAR10-Conv  & 1000s &8.30 & {\bf 8.14} & 8.17 & {\bf 7.77}
+		CIFAR10-Conv  & 1000s &&8.30 & {\bf 8.14} & 8.17 & {\bf 7.77}
 		\\
-		LB $\underline{\beta}= 2.12$ & 14400s & {\bf 7.19} & 7.45 & 7.31 & {\bf 6.67}
+		LB $\underline{\beta}= 2.12$ & 14400s && {\bf 7.19} & 7.45 & 7.31 & {\bf 6.67}
 		\\\hline
-		PCA-CIFAR10-Conv  & 1000s & 1.18 &&&
+		PCA-CIFAR10-Conv  & 1000s && 1.18 &&&
 		\\
-		LB $\underline{\beta}$= & 14400s & 1.07 &&&
+		LB $\underline{\beta}$= & 14400s && 1.07 &&&
 		\\\hline
 
 	\end{tabular}
