@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0" version="29.3.1" pages="2">
   <diagram name="mnist-train" id="XROeWO3g0NZ_PiaLbZFy">
-    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+    <mxGraphModel dx="1375" dy="799" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -283,10 +283,10 @@
         <mxCell id="vmAbL_y1JBXuyQn4gMuO-0" />
         <mxCell id="vmAbL_y1JBXuyQn4gMuO-1" parent="vmAbL_y1JBXuyQn4gMuO-0" />
         <mxCell id="ZPNV2LpK28YQEISH_Ev0-11" parent="vmAbL_y1JBXuyQn4gMuO-1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" value="&lt;b&gt;Bound Computation&lt;/b&gt;" vertex="1">
-          <mxGeometry height="30" width="60" x="10" y="495.5" as="geometry" />
+          <mxGeometry height="30" width="60" x="13" y="495.5" as="geometry" />
         </mxCell>
         <mxCell id="JMofE5EZ7LCJ6BKNm64P-1" parent="vmAbL_y1JBXuyQn4gMuO-1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;container=0;" value="$$\Delta \leq \beta^\varepsilon$$" vertex="1">
-          <mxGeometry height="30" width="200" x="511" y="500" as="geometry" />
+          <mxGeometry height="30" width="200" x="512" y="500" as="geometry" />
         </mxCell>
         <mxCell id="IvqJLzDHP44ShI30B2PX-4" edge="1" parent="vmAbL_y1JBXuyQn4gMuO-1" source="DGsAHbPRPBR2guuzycdK-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="IvqJLzDHP44ShI30B2PX-3">
           <mxGeometry relative="1" as="geometry" />
@@ -315,7 +315,7 @@
           <mxGeometry height="30" width="40" x="234" y="416" as="geometry" />
         </mxCell>
         <mxCell id="IvqJLzDHP44ShI30B2PX-15" parent="vmAbL_y1JBXuyQn4gMuO-1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="Strain" vertex="1">
-          <mxGeometry height="30" width="50" x="591" y="435" as="geometry" />
+          <mxGeometry height="30" width="50" x="587" y="435" as="geometry" />
         </mxCell>
         <mxCell id="IvqJLzDHP44ShI30B2PX-24" edge="1" parent="vmAbL_y1JBXuyQn4gMuO-1" source="IvqJLzDHP44ShI30B2PX-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="IvqJLzDHP44ShI30B2PX-29">
           <mxGeometry relative="1" as="geometry" />
@@ -344,7 +344,7 @@
           <mxGeometry height="40" width="70" x="407.5" y="571.3100000000001" as="geometry" />
         </mxCell>
         <mxCell id="IvqJLzDHP44ShI30B2PX-33" parent="vmAbL_y1JBXuyQn4gMuO-1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="Strain′" vertex="1">
-          <mxGeometry height="30" width="60" x="586" y="575" as="geometry" />
+          <mxGeometry height="30" width="60" x="582" y="575" as="geometry" />
         </mxCell>
         <mxCell id="JMofE5EZ7LCJ6BKNm64P-0" edge="1" parent="vmAbL_y1JBXuyQn4gMuO-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;" value="">
           <mxGeometry relative="1" as="geometry">
@@ -410,7 +410,7 @@
           <mxGeometry height="40" width="90" x="172" y="55" as="geometry" />
         </mxCell>
         <mxCell id="IvqJLzDHP44ShI30B2PX-22" parent="vmAbL_y1JBXuyQn4gMuO-1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" value="&lt;b&gt;Training&lt;/b&gt;" vertex="1">
-          <mxGeometry height="30" width="60" x="10" y="187" as="geometry" />
+          <mxGeometry height="30" width="60" x="13" y="155.5" as="geometry" />
         </mxCell>
         <mxCell id="M0z-uzwCNTruxoXtsyCI-2" parent="vmAbL_y1JBXuyQn4gMuO-1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=default;" value="Surrogate" vertex="1">
           <mxGeometry height="60" width="80" x="321.5" y="206" as="geometry" />
@@ -421,17 +421,11 @@
             <mxPoint x="321.5" y="362" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="vmAbL_y1JBXuyQn4gMuO-3" parent="vmAbL_y1JBXuyQn4gMuO-1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=default;" value="Deformation Training Dataset" vertex="1">
-          <mxGeometry height="60" width="80" x="70.51" y="221" as="geometry" />
-        </mxCell>
         <mxCell id="iafHDiiH5GsFdXVntqaR-3" edge="1" parent="vmAbL_y1JBXuyQn4gMuO-1" source="DGsAHbPRPBR2guuzycdK-1" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;strokeColor=#CC0000;" target="M0z-uzwCNTruxoXtsyCI-2" value="">
           <mxGeometry height="50" relative="1" width="50" as="geometry">
             <mxPoint x="244.50999999999993" y="134.32999999999998" as="sourcePoint" />
             <mxPoint x="306.01" y="49.999999999999886" as="targetPoint" />
           </mxGeometry>
-        </mxCell>
-        <mxCell id="DGsAHbPRPBR2guuzycdK-0" parent="vmAbL_y1JBXuyQn4gMuO-1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=default;" value="Plastic Strain Training Dataset" vertex="1">
-          <mxGeometry height="60" width="80" x="70.51" y="60" as="geometry" />
         </mxCell>
         <mxCell id="iafHDiiH5GsFdXVntqaR-7" edge="1" parent="vmAbL_y1JBXuyQn4gMuO-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fillColor=#f8cecc;strokeColor=#CC0000;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="DGsAHbPRPBR2guuzycdK-1">
           <mxGeometry relative="1" as="geometry">
@@ -503,6 +497,15 @@
             <mxPoint x="110" y="281" as="sourcePoint" />
             <mxPoint x="216" y="307" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="1Xz45kID3O_ovXMnoaFI-0" connectable="0" parent="vmAbL_y1JBXuyQn4gMuO-1" style="group" value="" vertex="1">
+          <mxGeometry height="221" width="79.99999999999999" x="70.51" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vmAbL_y1JBXuyQn4gMuO-3" parent="1Xz45kID3O_ovXMnoaFI-0" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=default;" value="Deformation Training Dataset" vertex="1">
+          <mxGeometry height="60" width="80" y="161" as="geometry" />
+        </mxCell>
+        <mxCell id="DGsAHbPRPBR2guuzycdK-0" parent="1Xz45kID3O_ovXMnoaFI-0" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=default;" value="Plastic Strain Training Dataset" vertex="1">
+          <mxGeometry height="60" width="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
