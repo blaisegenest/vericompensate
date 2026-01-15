@@ -373,7 +373,8 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	
 \section{Real-time verification}
 
-As explained in the introduction, the objective we want to approximate is 
+%As explained in the introduction, 
+The objective we want to compute upper and lower bounds on is 
 $\beta^{\text{perturb}}_{C,D} = \max_{|I-I'| \leq \text{perturb}}(x_C - x_D +x'_D - x'_C)$, for $x_C,x_D$ the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
 Upper bounds  $\bar{\beta}^{\text{perturb}}_{C,D} \geq \beta^{\text{perturb}}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
 $\underline{\beta}^{\text{perturb}}_{C,D} \leq \beta^{\text{perturb}}_{C,D}$
