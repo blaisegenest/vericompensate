@@ -153,7 +153,7 @@ It means that $R_\delta \cap U = \emptyset$.
 
 Consider $R = B_{\delta/4}(R_{\delta/2})$.
 We show that $R$ satisfies:
-$R_{\delta_2} \subsetneq R \subsetneq R_\delta$ 
+$R_{\delta/2} \subsetneq R \subsetneq R_\delta$ 
 with:
 \begin{itemize}
 	\item $I \subseteq R$,
@@ -163,19 +163,31 @@ with:
     $\sigma$ is Liptscitz continuous,
 	for all $x \in P \cap R_{\delta/2}$ and 
 	$y\in P$ with $||y-x||<\delta/4$, 
-	$succ(y,\sigma(y)) \subseteq R_{\delta/2}$.
+	$succ(y,\sigma(y)) \subseteq R$.
 \end{itemize}
 
 IT will be sufficient to obtain a DT certificate.
 Only the third item above is non trivial.
 
-Without loss of generality, we assume the Lipschitz constant for $succ$ is 1. Now we prove the third claim.
-
 \begin{proof}
-	(of the third claim.)
+	(of the third claim.) Without loss of generality, we assume the Lipschitz constant for $succ$ and $\sigma$ (on $P$) is 1. 
+	
+	
+	First, since $x\in R_{\delta/2}$ and $||y-x||<\delta/4$,  by assumption and definition, we have that $succ(y,\sigma(x))\subseteq  R_{\delta/2}$. 
+	
+	Now, because both $succ$ and $\sigma$ (on $P$) are Lipschitz, we have that \begin{align*}
+		succ(y,\sigma(y)) &\subseteq succ(y,\sigma(B_{\delta/4}(x))) \\
+		&\subseteq succ(y,B_{\delta/4}(\sigma(x))) \\
+		&\subseteq B_{\delta/4}(succ(y,\sigma(x))) \\
+		&\subseteq B_{\delta/4}(R_{\delta/2}).
+	\end{align*}
+	
+	This complete the proof of the claim.
 \end{proof}
 
 
+
+To complete our conclusion, we need the following lemmas.
 
 \begin{lemma}
 	There exists a finite polytopes decompose of $X=\bigcup_{i\in I,\ I\text{ is finite}} Q_i$ (they may include or exclude their boundaries) and Lipschitz continuous functions $f_i$ assigned for each polytopes that can define $p$:\begin{align*}
@@ -187,9 +199,6 @@ Without loss of generality, we assume the Lipschitz constant for $succ$ is 1. No
 	This is because $p$ is a piecewise  Lipschitz continuous DT policy.
 \end{proof}
 
-
-
-To prove the third claim, we need to use the definition that $succ$ is also Lipschitz.
 
 
 
