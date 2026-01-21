@@ -3,12 +3,13 @@
 
 %[Put in appendix instead?? We do have space for it -18 pages max without references]
 
-Our {\em Diff} model is not only accurate for classification tasks providing bounds and proving global robustness of DNNs. It can also tackle regression tasks, providing upper bounds on the output of the learnt regressor from small perturbation of the input.
+Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of learnt regressor from small perturbation of the input.
 
 
 \begin{figure*}[t!]
-    %\centering
-    \includegraphics[scale=0.7]{PIPE.pdf} \hspace{1.5cm}
+    \centering
+    \includegraphics[scale=0.6]{PIPE.pdf} 
+	\vspace{-0.5cm}
     \caption{Training and bound computation on the pipe use case. 
     Note that two PCAs are used, one for the input space (deformation) and another for the output space (plastic strain). The exploitation and bound computation must then use a pipeline that: (1) reduces the deformation; (2) obtains a reduced strain with the surrogate, and (3) decodes the reduced strain from the reduced to the full dimension.}
     \label{fig.PIPE}
@@ -30,7 +31,7 @@ In term of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$
 
 
 
-	\begin{table}[t!]
+	\begin{table}[b!]
         \centering
 \begin{tabular}{|c | c c c c c|} 
         \hline
@@ -49,7 +50,7 @@ In term of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$
 \end{table}
 
 
-\begin{figure*}[b!]
+\begin{figure*}[t!]
 \includegraphics[scale=0.4]{deform.png} \hspace{0.1cm}
 \includegraphics[scale=0.4]{strain.png}
 \caption{2 slightly different deformations and their associated quite different strain as obtained by the {\em Diff} model with $200 $ binary variable.}
