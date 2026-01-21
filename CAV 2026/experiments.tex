@@ -3,10 +3,9 @@
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. 
 	
-	We consider two DNNs: one for MNIST, namely a pre-trained $5\times 100$ (available at \url{https://github.com/eth-sri/eran}), a 5 fully connected layers DNN, with 100 neurons each,	trained with diffAI \cite{deeppoly}. 
-	Although it is relatively small, it is also of good quality with $97\%$ accuracy on classification, but it is not easy to certify for global robustness (the size of a network can be deceptive to know whether they are easy or hard to verify \cite{ATVA25}).  
-	
-	MNIST is a classification benchmark, we thus compute the different $\beta^{\varepsilon}_{i,j}$ bounds, for an $L_1$-deformation $\varepsilon \leq 1$. 
+	We consider 4 pretrained DNNs on 3 different dataset (MNIST, Fashion MNIST and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at \url{https://github.com/eth-sri/eran} ("5x100"). We also considered 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
+	from \cite{vhagar} ("MNIST-C1, FMNIST-C1, and CIFAR10-C1").
+	We will also consider 3 PCA-DNNs, as detailled in Section~\ref{s62}
 	%The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
 
 \iffalse	
@@ -163,8 +162,8 @@ $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{tabl
     \label{table.classical}
 \end{table}
 
-\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. For that reason, using the 1$b$ model is not useful, as its abstraction will loose more than $6\%$. That is why it is not reported in Table \ref{table.classical}. Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap at least $40\%$, up to $120\%$. Although we are using Vhagar CNN and benchmark, Vhagar methodology is not well-suited for $L_\infty$, and it makes much more sense on patch explored in \cite{vhagar}. ITNE is better, with gaps from $9\%$ to $17\%$.
-Our methods based on the {\em Diff} MILP provides the {\em Best} overall gaps, from as low as $.6\%$ to $6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate overall for shorter timeout, and {\em Diff} is more accurate when there is sufficient time, which is to be expected. Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff] and 2$b$+1 in every test.
+\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. For that reason, using the 1$b$ model is not useful, as its abstraction will loose more than $6\%$. That is why it is not reported in Table \ref{table.classical}. Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap at least $40\%$, up to $120\%$. Although we are using Vhagar benchmarks and CNNs, Vhagar methodology is not well-suited for $L_\infty$ (it is more efficient on {\em patch} \cite{vhagar}). ITNE is better, with gaps from $9\%$ to $17\%$.
+Our methods based on the {\em Diff} MILP provides the {\em Best} overall gaps, from as low as $.6\%$ to $6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate overall for shorter timeout, and {\em Diff} is more accurate when there is sufficient time, which is to be expected. Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff} and 2$b$+1 in every test.
 
 
 
@@ -218,36 +217,44 @@ Our methods based on the {\em Diff} MILP provides the {\em Best} overall gaps, f
 
 \subsection{Experimental results for $L_1=1$ and PCA-DNN.}
 	
-We then turn to the MNIST classification benchmark, and report 
-in Table \ref{table.L1} one particular bound $\beta^{.5}_{i,j}$, namely for $i=6,j=8$ as confusion between 6 and 8 happens.
+\label{s62}
 
-We first set the PCA dimensions to have $\leq 1\%$ loss of accuracy using DNN-PCA vs original DNN:
+We then turn to test with $L_1$ perturbations and comparing between DNNs and their PCA-DNN versions (which is not supported in Vhagar). Here, we consider MNIST-FC (not supported by Vhagar), because it has a higher accuracy than MNIST-Conv, and to test a different architecture than Convolution Networks.
 
-\begin{table}[h!]
+We recall that PCA-DNNs are generated following the process described in Section 5: for each PCA dimension, we report in Table \ref{table.pca} 
+the accuracy loss from using PCA-DNN rather than the original DNN.
+We set the dimension at the minimal dimension reaching at most 1$\%$ 
+loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively.
+
+
+\begin{table}[t!]
 	\centering
-	\begin{tabular}{|c|c c c c c c c|}\hline
-		PCA dimension: & 15 & 20 & 25 & 30 & 35 & 40 & 45 
+	\begin{tabular}{|c c c c c c c c c |}\hline
+		PCA dimension: & 15 & 20 & 25 & 30 & 35 & 40 & ... & 60 
 		
 		\\\hline
-		PCA-MNIST-FC  & 2$\%$ & {\bf 0}$\%$ & 0$\%$& 0$\%$ & 0$\%$& 0$\%$ & 0$\%$
+		PCA-MNIST-FC  & 2$\%$ & {\color{blue} 0$\%$} & 0$\%$& 0$\%$ & 0$\%$& 0$\%$ & &0$\%$
 		\\	
- 		PCA-FMNIST-Conv & 5$\%$ &	3$\%$ &	{\bf 1}$\%$ & 0$\%$& 0$\%$	& 0$\%$ &	0$\%$ 
+ 		PCA-FMNIST-Conv & 5$\%$ &	3$\%$ &	{\color{blue} 1$\%$} & 0$\%$& 0$\%$	&0$\%$ & &	0$\%$ 
 		\\
-		PCA-CIFAR10-Conv  & 16$\%$ &	14$\%$ &	12$\%$ & 10$\%$ &	14$\%$ &	5$\%$ &	{\bf 0}$\%$
+		PCA-CIFAR10-Conv  & 16$\%$ &	14$\%$ &	12$\%$ & 10$\%$ &	14$\%$ &	5$\%$ &	& {\color{blue} $1\%$}
 		\\\hline
 	\end{tabular}
 
 	\caption{Loss of accuracy of PCA-DNN vs DNN (no PCA) 
 	according to the PCA dimension.
-	{\bf Bold} corresponds to the dimension chosen, minimal ensuring loss 
-	$\leq 1\%$.}
-    \label{table.cert}
+	{\color{blue} Blue} corresponds to the minimal dimension ensuring loss $\leq 1\%$.}
+    \label{table.pca}
 \end{table}
 
+Now, we consider the $\bar{\beta}$ bounds reached for $L_1$-perturbation  at most 1, on the 3 original DNNs MNIST-FC, FMNIST-Conv and CIFAR10-Conv, plus their PCA variants for the dimension computed in Table~\ref{table.pca}.
+We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{table.classical}.
 
 
 
-\begin{table}[h!]
+
+
+\begin{table}[b!]
 	\centering
 	\begin{tabular}{|cc| c | c c c|c|}\hline
 		$L_1=1$ & Timeout & ITNE & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline 
@@ -294,7 +301,13 @@ We first set the PCA dimensions to have $\leq 1\%$ loss of accuracy using DNN-PC
 \end{table}
 
 
-On the full space, the best bounds $(\beta^{.5}_{i,j})_{i < j \leq 10}$ reached are too pessimistic: no image can be certified robust in real-time. One of the reason, besides that the verification question is very complicated with 1000 binary variables for the accurate model, is that working in the full $784$ dimensional space allows for very unlikely inputs, far away from the training dataset, making the search space overly large. As an illustration of that, we display on Fig.~\ref{fig3} the worst-case as found by our models, which is very improbable to be ever encountered in the MNIST benchmark.
+
+\noindent {\bf Discussion:} Compared with results on $L_\infty$ (Table~\ref{table.classical}), the upper bound $\bar{\beta}$ computed by Best is now much further from the lower bound $\underline{\beta}$: from 2 to 600 times. Using 
+the faster 1$b$ model now becomes pertinent. In half of the cases, 1$b$ actually produced the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provide better bounds. ITNE is significantly worse, producing results on average $25\%$ worse boundS $\bar{\beta}$ than Best.
+
+Comparing with and without PCA, as expected, PCA-DNNs allow to reach much smaller upper bounds $\bar{beta}$ than without PCA, $15$x for MNIST-FC, $3$x for FMNIST-Conv and $7$x for CIFAR10-Conv. MNIST-FC is harder to solver than FMNIST-Conv, although they are comparable benchmark, because fully connected architecture are richer than Convolutional architecture of the same size. PCA-CIFAR10-Conv is the hardest test, because the dimension (60) is not as reduced (20,25) for MNIST and FMNIST.
+
+
 
 	
 %	\begin{table}[h!]
@@ -349,6 +362,11 @@ ITNE, $1000$ &  $1.371$ & $.085$& {\bf .085}  \\\hline\hline
 
 \subsection{Real-Time vertification of Robustness}
 
+We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{i,j}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a singale CPU core), as it depents only on the number of output of the DNN, which is 10 for all 6 DNN considered. It means 2000 image can be treated by second by each CPU core, which can be deemed {\em real-time}. We set a treshold of $70\%$ to evaluate how large the $L_1$  perturbation can be while still certifying at least this threshold of image: a threshold much lower than $70\%$ would 
+mean labelling too many incoming images as uncertified, which would degrade the system too much.
+
+
+
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{||c||c|c|c|c||c|}\hline\hline
@@ -358,29 +376,35 @@ ITNE, $1000$ &  $1.371$ & $.085$& {\bf .085}  \\\hline\hline
 		MNIST-FC  & 0$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
 		
 		\\\hline
-		PCA-MNIST-FC  & {\bf 80} $\%$ & 21 $\%$ & 1 $\%$ & 0 $\%$ & 0.5ms
+		PCA-MNIST-FC  & {\color{blue} 80$\%$}  & 21 $\%$ & 1 $\%$ & 0 $\%$ & 0.5ms
 		\\ \hline \hline
 		
  		FMNIST-Conv & 
-		{\bf 75} $\%$ & 50 $\%$ & 28$\%$ &	12$\%$  & 0.5ms
+		{\color{blue} 75$\%$}  & 50 $\%$ & 28$\%$ &	12$\%$  & 0.5ms
 		\\\hline
 
 		PCA-FMNIST-Conv & 
-		92 $\%$ &	86 $\%$ &	79 $\%$ &	{\bf 70} $\%$ & 0.5ms
+		92 $\%$ &	86 $\%$ &	79 $\%$ & {\color{blue} 70$\%$}  & 0.5ms
 		\\\hline  \hline
 		
 		CIFAR10-Conv  & 39 $\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
 		\\\hline
-		PCA-CIFAR10-Conv  & 92 $\%$ & {\bf 72} $\%$& 61 $\%$ & 51 $\%$ & 0.5ms
+		PCA-CIFAR10-Conv  & 92 $\%$ & {\color{blue} 72$\%$} & 61 $\%$ & 51 $\%$ & 0.5ms
 		\\\hline \hline
 	\end{tabular}
 
 	\caption{Percentage of images certified robust in real-time 
-	using the Best computed $(\beta^{1}_{i,j})_{i < j \leq 10}$ 
-	by {\em Diff} and {\em 2b+1}, for different values of $L_1$-perturbations. Latency overhead are the same as the number of classes is the same (=10) for all datasets. 2000 images/s can be treated per cpu core.}
+	using the Best computed $(\beta^{1}_{i,j})_{i < j \leq 10}$, 
+	for different values of $L_1$-perturbations.
+	{\color{blue} Blue} depicts the largest perturbation ensuring $\geq 70\%$ of images being robust. Latency overhead are the same as the number of classes is the same (=10) for all datasets.} 
+	%2000 images/s can be treated per cpu core.}
     \label{table.cert}
 \end{table}
 
+With that, we can guarantee at least $70\%$ of the image as certified
+for all 3 PCA-DNN label  for a $L1$-perturbation of $1$, and even go up to perturbation $2$ for PCA-CIFAR10-Conv and even $4$ for PCA-FMNIST-Conv.
+If we are using the non PCA version, we are unable to do it, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its PCA-version.
+PCA is extremely efficient to provide real-time certification.
 
 \iffalse
 To remove improbable images and limit the space of search, 
