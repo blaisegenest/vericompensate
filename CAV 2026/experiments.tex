@@ -3,9 +3,9 @@
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. 
 	
-	We consider 4 pretrained DNNs on 3 different dataset (MNIST, Fashion MNIST and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at \url{https://github.com/eth-sri/eran} ("5x100"). We also considered 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
-	from \cite{vhagar} ("MNIST-C1, FMNIST-C1, and CIFAR10-C1").
-	We will also consider 3 PCA-DNNs, as detailled in Section~\ref{s62}
+	We consider 4 pretrained DNNs on 3 different datasets (MNIST, Fashion MNIST and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at 
+	\url{https://github.com/eth-sri/eran} ("5x100"). We also considered 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
+	from \cite{vhagar} ("conv1"). We will also consider 3 PCA-DNNs, as detailled in Section~\ref{s62}
 	%The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
 
 \iffalse	
@@ -55,8 +55,9 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 
 \subsection{Comparison with Vhagar and ITNE ($L_\infty=0.05$)}
 
-To be able to compare with Vhagar, we have to use Vhagar benchmarks. We use
-bound $\alpha$ they consider, perturbation they consider (here $L_\infty=0.05$) on their convolutional DNNs, for which the reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) Time-Out. For each DNN and MILP models, we report the upper bound $\bar{\alpha}$ they find. For each DNN, we report the best lower bound LB $\underline{\alpha}$ found among all the MILP model, and report the gap between the upper bound $\bar{\alpha}$ and the lower bound $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}
+We use Vhagar benchmarks to be able to compare: 
+bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for which the reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each
+MILP model find. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}
 
 \iffalse
 
@@ -156,12 +157,15 @@ bound $\alpha$ they consider, perturbation they consider (here $L_\infty=0.05$) 
 		\\\hline
     
      \end{tabular}
-	\caption{Comparison with Vhagar and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-Conv, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $i,j$. Lower gaps using {\em Best} means that there are cases $(i,j)$ where {\em Diff} is much better than {\em 2b+1}, and cases $(i',j')$ where it is the opposite.}
+	\caption{Comparison with Vhagar and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-Conv, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $(i,j)$. Lower gaps using {\em Best} means that there are cases $(i,j)$ where {\em Diff} is much better than {\em 2b+1}, and cases $(i',j')$ where it is the opposite.}
     \label{table.classical}
 \end{table}
 
-\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. For that reason, using the 1$b$ model is not useful, as its abstraction will loose more than $6\%$. That is why it is not reported in Table \ref{table.classical}. Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap at least $40\%$, up to $120\%$. Although we are using Vhagar benchmarks and CNNs, Vhagar methodology is not well-suited for $L_\infty$ (it is more efficient on {\em patch} \cite{vhagar}). ITNE is better, with gaps from $9\%$ to $17\%$.
-Our methods based on the {\em Diff} MILP provides the {\em Best} overall gaps, from as low as $.6\%$ to $6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate overall for shorter timeout, and {\em Diff} is more accurate when there is sufficient time, which is to be expected. Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff} and 2$b$+1 in every test.
+\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. Using the 1$b$ model is not useful, as its abstraction will loose more than $6\%$. 
+%That is why it is not reported in Table \ref{table.classical}. 
+Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap $40-120\%$. Although we are using its benchmarks, Vhagar methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
+Our method provides the {\em Best} overall gaps: $.6\%-6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate for shorter timeout, and {\em Diff} more accurate when there is sufficient time, as expected. 
+Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff} and 2$b$+1 in every test.
 
 
 
