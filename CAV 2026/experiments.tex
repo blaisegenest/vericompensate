@@ -56,8 +56,10 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 
 \subsection{Comparison with Vhagar and ITNE ($L_\infty=0.05$)}
 
-To be able to compare with Vhagar, we have to use Vhagar benchmarks: 
-perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv for MNIST, FMNIST and CIFAR-10), for which the reduction rules of binary variables are implemented. We test with 1000s Time-Out, as well as one test with 14400s time out, showing that much longer time-out does not have a big impact on the result.
+To be able to compare with Vhagar, we have to use Vhagar benchmarks. We use
+bound $\alpha$ they consider, perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv for MNIST, FMNIST and CIFAR-10), for which the reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) Time-Out. For each DNN and MILP models, we report the upper bound $\bar{\alpha}$ they find. For each DNN, we report the best lower bound LB $\underline{\alpha}$ found among all the MILP model, and report the gap between 
+the upper bound $\bar{\alpha}$ and the lower bound $\underline{\alpha}$ as 
+$\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}
 
 \iffalse
 
@@ -157,12 +159,13 @@ perturbation they consider (here $L_\infty=0.05$) on their DNNs (here Conv for M
 		\\\hline
     
      \end{tabular}
-	\caption{Comparison with Vhagar and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-Conv, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $i,j$. Lower gaps using {\em Best} means that there are cases where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite.}
+	\caption{Comparison with Vhagar and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-Conv, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $i,j$. Lower gaps using {\em Best} means that there are cases $(i,j)$ where {\em Diff} is much better than {\em 2b+1}, and cases $(i',j')$ where it is the opposite.}
     \label{table.classical}
 \end{table}
 
+\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. For that reason, using the 1$b$ model is not useful, as its abstraction will loose more than $6\%$. That is why it is not reported in Table \ref{table.classical}. Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap at least $40\%$, up to $120\%$. Although we are using Vhagar CNN and benchmark, Vhagar methodology is not well-suited for $L_\infty$, and it makes much more sense on patch explored in \cite{vhagar}. ITNE is better, with gaps from $9\%$ to $17\%$.
+Our methods based on the {\em Diff} MILP provides the {\em Best} overall gaps, from as low as $.6\%$ to $6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate overall for shorter timeout, and {\em Diff} is more accurate when there is sufficient time, which is to be expected. Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff] and 2$b$+1 in every test.
 
-The gap is the average over all cases of the relative distance between the bound and the highest worst-case found for that case.
 
 
 
