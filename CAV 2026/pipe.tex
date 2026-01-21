@@ -3,7 +3,11 @@
 
 %[Put in appendix instead?? We do have space for it -18 pages max without references]
 
-Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of learnt regressor from small perturbation of the input.
+Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of DNN-regressor due to small perturbations of the input.
+We consider here a pipe system and its DNN regressor from \cite{aiware},
+that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of these 3000 points.
+Compared to the classification tasks where the DNN are learnt in a standard way and PCA is later applied to reduce the output dimension without comprimising the accuracy, the DNN regressor has been learnt on the reduced PCA basis directly, for both the high dimensional input and the high dimensional output.
+
 
 
 \begin{figure*}[t!]
@@ -11,7 +15,7 @@ Our {\em Diff} model is not only accurate for classification. It can also provid
     \includegraphics[scale=0.6]{PIPE.pdf} 
 	\vspace{-0.5cm}
     \caption{Training and bound computation on the pipe use case. 
-    Note that two PCAs are used, one for the input space (deformation) and another for the output space (plastic strain). The exploitation and bound computation must then use a pipeline that: (1) reduces the deformation; (2) obtains a reduced strain with the surrogate, and (3) decodes the reduced strain from the reduced to the full dimension.}
+    Two PCAs are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learnt from reduced deformation input to reduced strain output.}
     \label{fig.PIPE}
 \end{figure*}	
 
@@ -19,10 +23,7 @@ Our {\em Diff} model is not only accurate for classification. It can also provid
 
 
 
-We consider here a pipe system and its DNN regressor from \cite{aiware},
-that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of these 3000 points.
 
-Compared to the classification tasks that we just considered where the DNN are learnt in a standard way and PCA is later applied to reduce the output dimension without comprimising the accuracy, the regressor has been learnt on the reduced PCA basis, for both the high dimensional input and the high dimensional output.
 
 Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learnt has 2 fully connected layers, 50 neurons each, learnt as a surrogate model, with 10 reduced input and 26 reduced output.
 
