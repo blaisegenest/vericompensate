@@ -56,8 +56,7 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 \subsection{Comparison with Vhagar and ITNE ($L_\infty=0.05$)}
 
 We use Vhagar benchmarks to be able to compare: 
-bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for which the reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each
-MILP model find. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}
+bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for which the Vhagar reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model find. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}.
 
 \iffalse
 
@@ -164,7 +163,7 @@ MILP model find. For each DNN, we report the best lower bound $\underline{\alpha
 \noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. Using the 1$b$ model is not useful, as its abstraction will loose more than $6\%$. 
 %That is why it is not reported in Table \ref{table.classical}. 
 Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap $40-120\%$. Although we are using its benchmarks, Vhagar methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
-Our method provides the {\em Best} overall gaps: $.6\%-6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate for shorter timeout, and {\em Diff} more accurate when there is sufficient time, as expected. 
+Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate for shorter timeout, and {\em Diff} more accurate when there is sufficient time, as expected. 
 Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff} and 2$b$+1 in every test.
 
 
