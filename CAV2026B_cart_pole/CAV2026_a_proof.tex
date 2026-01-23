@@ -90,7 +90,7 @@ A policy $\sigma$ for system $S = (X,C,succ, U, I)$ is a function
 $\sigma: X\rightarrow C$. Given $\sigma$, we define 
 $succ_\sigma: X\rightarrow 2^X$ by $succ_\sigma(x) = succ(x,\sigma(x))$.
 A run under $\sigma$ is a sequence $(x_i)_{i \in \mathbb{N}}$ such that
-$x_0 \in I$ and for all $i \geq 0$, $x_{i+1} \in succ_p(x_i)$.
+$x_0 \in I$ and for all $i \geq 0$, $x_{i+1} \in succ_\sigma(x_i)$.
 We define $Reach^S(\sigma) = \{x \mid \exists i, (x_n)_{n \in \mathbb{N}} \text{ a run under } \sigma, x_i=x\}$ the set of state reachable by $\sigma$ in $S$ (in particular from initial states $I$ of $S$).
 
 
