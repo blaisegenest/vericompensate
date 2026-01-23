@@ -36,6 +36,12 @@
 \usepackage{tikz}
 \usepackage{calc}
 \usepackage{array}
+\usepackage{todonotes}
+\newcommand\eca[1]{\textcolor{red}{#1}}
+% allow to type " and get latex to handle it
+\usepackage[autostyle=false, style=english]{csquotes}
+\MakeOuterQuote{"}
+
 %\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usetikzlibrary{positioning, arrows.meta,calc}
 \usepackage{newfloat}
@@ -86,20 +92,6 @@
 
 \begin{abstract}
 	\input{abstract.tex}
-	\iffalse
-	Most DNNs are brittle to small perturbations. Extensive works have thus been performed to verify robustness for DNNs.
-	However, these works mostly consider local robustness, i.e. in the neighborhood of an image.
-	While local robustness is useful to have an idea how often non robust images happen, by repeating the verification on 1000 or 10000 pre-obtained images, the main shortcoming is that we have no guarantee that a specific new incoming image, e.g. in a video feed, is robust: The verification process takes too long and requires too much resources to be performed online on embedded systems.
-	
-	In this paper, we consider {\em global} robustness, that is, guarantees not restricted to a set of local images. For that, we consider {\em bounds} on the switch of values between the different decision classes of a DNN due to a given perturbation. 
-	The verification question is much harder than local robustness, as the number of complex variables doubles (from the deviation image to the image and its deviation).
-	Further, the values each neuron can take is no more in a small neighborhood.
-	Therefore, the global verification process is very complex.
-	To obtain useable bounds, we develop several novel partial MILP models for global robustness, with different trade-offs. Last, we use order reduction techniques to reduce the space of images considered, avoiding unrealistic inputs, by using linear PCA. 
-	This results into usable bounds, allowing in real time to certify robustness for $87\%$ of incoming images in the MNIST benchmark for a L1-perturbation of $0.5$, as well as for a surrogate computing the hidden plastic strain associated to a deformation map of a pipe.
-
-
-	\fi
 \end{abstract}
 
 
