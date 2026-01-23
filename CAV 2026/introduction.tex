@@ -1,31 +1,25 @@
-Deep neural networks (DNNs for short) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks. However, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the verification community to develop various methodologies, each presenting a unique balance between completeness and computational efficiency \cite{Marabou,Reluplex,deeppoly}. This surge in innovation has also led to the inception of competitions such as VNNComp \cite{VNNcomp}, which aim to systematically evaluate the performance of neural network verification tools. Among them, NNenum \cite{nnenum}, Marabou \cite{Marabou,Marabou2}, and PyRAT \cite{pyrat} MnBAB \cite{ferrari2022complete}, built upon ERAN \cite{deeppoly} and PRIMA \cite{prima}; and $\alpha,\beta$-CROWN \cite{crown,xu2020fast}, 
-%the winner of the last 4 VNNcomp, benefiting from 
-based on branch-and-bound based methodology \cite{cutting,BaB}.
+Deep neural networks (DNNs for short) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks. However, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the formal verification community to develop various methodologies, each presenting a unique trade-off between completeness and computational efficiency~\cite{Marabou,Reluplex,deeppoly}. 
+This surge in innovation has also led to the inception of competitions such as VNNComp~\cite{VNNcomp}, which aims to systematically evaluate the performance of neural network verification tools. Notable examples include NNenum~\cite{nnenum}, Marabou~\cite{Marabou,Marabou2}, and PyRAT~\cite{pyrat}, as well as frameworks such as MnBAB~\cite{ferrari2022complete} (which builds upon ERAN~\cite{deeppoly} and PRIMA~\cite{prima}) and $\alpha,\beta$-CROWN~\cite{crown,xu2020fast}, based on branch-and-bound methodology \cite{cutting,BaB}.
 
-These tools %benchmarks usually 
-focus on {\em local} robustness, i.e. given a DNN, an image and a small neighborhood around this image, is it the case that all the images in the neighborhood are classified in the same way by the DNN? The neighborhood is provided by a maximal perturbation of the input image, often an 
-$L_\infty$-perturbation, i.e. every subpixel of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is 2 levels of grey/blue/red/green). 
-Although it is not necessarily the most meaningful perturbation,
-$L_\infty$ is the usual choice because it is perfectly linear and specifies 
-subpixel perturbations independantly, which is easier to verify. 
-Importantly, these verification tools for local robustness are too computationally-intensive to be used in a real-time decision making pipeline: considering an autonomous car with a video feed from the dashboard, 
-images of the feed cannot be certified robust in few ms on embedded hardware to e.g. skip non-robust images and only consider certified robust images.
-% for the decision-making process.
+These tools focus on {\em local} robustness: given a DNN, an image and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned in the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric every subpixel\todo{what is a subpixel here? pixel component like each R/G/B?} of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is 2 levels of grey/blue/red/green). 
++Although it is not necessarily the most semantically meaningful perturbation,
++$L_\infty$ is the usual choice because it is easier to verify since it is perfectly linear and specifies subpixel perturbations independently.
+
+Crucially, however, these verification tools for local robustness are too computationally-intensive for real-time decision-making pipelines. For instance, consider an autonomous vehicule processing a live video feed: images of the feed cannot be certified robust in few ms on embedded hardware. \eca{This prevents the development of safety filters that could skip non-robust images and only consider certified robust images.}
 
 \smallskip
 
-In this paper, we consider {\em global} robustness, that is we do not restrict the certification process to the neighborhood of a fix input. We follow a two steps procedure. 
-The first step, performed offline once, computes global bounds on the shift between 
-output values of different decision classes due to the perturbation, close to \cite{vhagar}. That is, considering decision classes $C$ and $D$ and perturbation $\varepsilon$, compute an 
-upper bound $\bar{\beta}^\varepsilon_{C,D}$ of $\max_{I,I', |I-I'| \leq \epsilon}(value_{I}(C) - value_{I}(D) + value_{I'}(D) - value_{I'}(C))$, where $value_{J}(X)$ is the output value of class $X \in \{C,D\}$ for input image $J \in \{I,I'\}$. %Notice that as $I,I',C,D$ have symetrical roles, we can choose $\beta^\varepsilon_{D,C} = \beta^\varepsilon_{C,D}$. Also, as $I,I'$ have symetrcal role, the minimum value is exactly $-$ the maximum value. 
-%Hence, if we have $n$ decision classes, we only have to compute $n (n-1)/2$ bounds. 
-Bound $\bar{\beta}^\varepsilon_{C,D}$ is computed offline once for a DNN, 
-and it is valid over the whole input space; compared with $k$ calls to 
-{\em local} robustness, once for each of the $k$ input images, with results only valid for these $k$ images.
+In this paper, we consider {\em global} robustness, that is we do not restrict the certification process to the neighborhood of a specific, fixed input. We follow a two-step procedure. 
+The first step, performed offline, computes global bounds on the \eca{maximum possible} shift between output values of different decision classes due to a perturbation, following an approach similar to \cite{vhagar}. Specifically, for any two decision classes $C$ and $D$ and a perturbation $\varepsilon$, we compute upper and lower bounds 
+$$\beta^{\text{perturb}}_{C,D} = \max_{|I-I'| \leq \text{perturb}}(x_C - x_D +x'_D - x'_C)$$
+where $x_C,x_D$ is the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
+Unlike local robustness methods, which require $k$ separate calls, computationally expensive calls to certify $k$ images, the global bound $\bar{\beta}^\varepsilon_{C,D}$ is compute offline once per network and remains valid across the entire input space. 
 
+
+\todo{shouldn't we unify notation w/ the section 4?}
 The second step is real-time, being performed with the DNN inference of the image $I$ considered: it suffices to consider the class $C$ with the highest output value $value_{I}(C)$, and check whether for every other class $D \neq C$, 
 $value_{I}(C) - value_{I}(D) > \bar{\beta}^\varepsilon_{C,D}$. 
-If this is the case, then we are certified that image $I$ is robust for perturbation $\varepsilon$, because $\varepsilon$-perturbed image $I'$ could at most get  $value_{I'}(D) \leq \bar{\beta}^\varepsilon_{C,D}  - (value_{I}(C) - value_{I}(D))  + value_{I'}(C) < value_{I'}(C)$, hence $C$ is also the predicted class for image $I'$. This typically needs a couple of tens CPU instructions, which can be performed under 1ms (mili-second) on a single CPU core. If the image is not certified robust, one could either skip image $I$ (in a video feed), or use safer degraded mode in the decision making process till a trustable robust image is received.
+If this is the case, then we are certified that image $I$ is robust for perturbation $\varepsilon$, because $\varepsilon$-perturbed image $I'$ could at most get  $value_{I'}(D) \leq \bar{\beta}^\varepsilon_{C,D}  - (value_{I}(C) - value_{I}(D))  + value_{I'}(C) < value_{I'}(C)$, hence $C$ is also the predicted class for image $I'$. This check typically requires only a few dozen CPU instructions, which can be completed under 1 ms on a single CPU core. When an image fails this certification, one could either skip it (e.g., in a video stream) or revert to a safer, degraded mode until a trustworthy, robust image is received.
 
 
 Our main contributions address the challenges to compute the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$, for $C,D$ output neurons:
