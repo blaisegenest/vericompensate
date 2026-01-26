@@ -1,11 +1,14 @@
 While deep neural networks (DNNs) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the formal verification community to develop various methodologies, each presenting a unique trade-off between completeness and computational efficiency~\cite{Marabou,Reluplex,deeppoly}. 
-This surge in innovation has also led to the inception of competitions such as VNNComp~\cite{VNNcomp}, which aims to systematically evaluate the performance of neural network verification tools. Notable examples include NNenum~\cite{nnenum}, Marabou~\cite{Marabou,Marabou2}, and PyRAT~\cite{pyrat}, as well as frameworks such as MnBAB~\cite{ferrari2022complete} (which builds upon ERAN~\cite{deeppoly} and PRIMA~\cite{prima}) and $\alpha,\beta$-CROWN~\cite{crown,xu2020fast}, based on branch-and-bound methodology \cite{cutting,BaB}.
+This surge in innovation has also led to the inception of competitions such as VNNComp~\cite{VNNcomp}, which aims to systematically evaluate the performance of neural network verification tools. Notable examples include NNenum~\cite{nnenum}, Marabou~\cite{Marabou,Marabou2}, and PyRAT~\cite{pyrat}, as well as frameworks such as MnBAB~\cite{ferrari2022complete} (which builds upon ERAN~\cite{deeppoly} and PRIMA~\cite{prima}) and $\alpha,\beta$-CROWN~\cite{crown,xu2020fast}, the winner of the last 4 VNNcomp, based on branch-and-bound methodology \cite{cutting,BaB}.
 
-These tools focus on {\em local} robustness: given a DNN, an image, and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned to the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric, every subpixel\todo{what is a subpixel here? pixel component like each R/G/B?} of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is, 2 levels of grey/blue/red/green). 
-Although it is not necessarily the most semantically meaningful perturbation, $L_\infty$ is the usual choice because it is easier to verify since it is perfectly linear and specifies subpixel perturbations independently.
+These tools focus on {\em local} robustness: given a DNN, an image, and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned to the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric, every subpixel (pixel component) of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is, 2 levels of grey/blue/red/green). 
+Although it is not necessarily the most meaningful perturbation,
+$L_\infty$ is the usual choice because it is perfectly linear  
+(subpixel perturbations are independent), which is easier to verify.
 
 %- to line break
-Crucially, however, these verification tools for local robustness are too compu-tationally-intensive for real-time decision-making pipelines. For instance, consider an autonomous vehicle processing a live video feed: images of the feed cannot be certified robust in a few ms on embedded hardware. \eca{This prevents the development of safety filters that could skip non-robust images and only consider certified robust images.}
+\eca{
+Crucially, however, these verification tools for local robustness are too compu-tationally-intensive for real-time decision-making pipelines. For instance, consider an autonomous vehicle processing a live video feed: images of the feed cannot be certified robust in a few ms on embedded hardware. This prevents the development of safety filters that could skip non-robust images and only consider certified robust images.}
 
 \smallskip
 
@@ -32,8 +35,16 @@ Our main contributions address the challenges of computing the {\em global bound
 	\item We develop a novel {\em Diff MILP encoding} for the global robustness problem, 
 	where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}), see Section \ref{s.diff}. 
 	Compared with the {\em classical MILP model} \cite{MILP} employed in 
-	\cite{vhagar,lipshitz,ITNE}, which considers the input and the perturbation but {\em diff variable} \todo{and the diff variable? I don't get? 3 vars for them?}, we keep the same number of 2 binary variables per ReLU.
-	However, our {\em Diff MILP model} is more efficient, one reason being the accuracy of its linear relaxation.
+	\cite{vhagar,lipshitz,ITNE}, which considers the input and the perturbation instead of the {\em diff variable}, we keep the same number (2) of binary variables per ReLU.
+	%the results are more accurate for the same runtime.
+	%the linear relaxation is much more accurate, as each {\em diff variable} can be bounded after a ReLU as a function of the value of the {\em diff variables} before the ReLU, whereas the linear relaxations of the classical model is extremely inaccurate, as the variables are independent of each other. This was observed in \cite{lipshitz,ITNE}, and constraints encoding
+	%a part of the linear relaxation of our "2v" model were added explicitly. 
+	%Experimentally, 
+	However, our {\em Diff MILP model} is more efficient, one reason being 
+	the accuracy of its linear relaxation.
+	%The number of variables a priori doubles compared with local robustness, from each neuron value in the perturbed image to each neuron value in the perturbed image {\em and} in the original image, as the original image is no more fixed. 
+	%Recall that the worst case complexity of MILP is exponential in the number of binary variables \cite{DivideAndSlide}. 
+	%A straightforward MILP model would be to use the  for each of these variables, as in \cite{vhagar,lipshitz}. The main issue with the classical model is that its linear relaxations is extremely inaccurate, as the variables are independent of each other. Instead, we develop another exact MILP model, 
 
 	\item Further, from the {\em Diff MILP model}, which is exact, 
 	we develop two abstract MILP models, which are more efficient but also asymptotically less accurate than {\em Diff}. 
@@ -43,9 +54,10 @@ Our main contributions address the challenges of computing the {\em global bound
 
     \item Bounds obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD \cite{OOD})} inputs far away from the training dataset, need to be accounted for. To address this, we consider model order reduction techniques from engineering science \cite{Paco}. Specifically, we use principal component analysis (PCA) to faithfully represent common inputs from the dataset. OOD inputs may be represented unfaithfully, which is reasonable as the DNN is unlikely to provide a reasonable answer on such inputs anyway. For instance, using just $20$ out of 784 dimensions suffices to represent MNIST inputs faithfully, without losing accuracy for the DNN on the MNIST dataset.
 
-    \item Experimentally, the {\em Diff MILP model} computes upper bounds
-    $\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compared with the optimized version of the classical MILP encoding; namely, reducing the number of binary variables (VHAGaR \cite{vhagar}); or adding linear constraints from the {\em diff variables} (ITNE \cite{ITNE}), see Table \ref{table.classical}.
-    The abstractions "2b+1" and "1b" variant offer different trade-offs, reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
-    Further, using PCA reduces the upper bound $\beta_{C,D}$ by $3$ to $20$ times.
-    Overall, using these different techniques ({\em Diff} MILP model, abstraction, and PCA) enables the real-time certification of $\geq 70\%$ of fresh images for an $L1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets, respectively, see Table \ref{table.cert}. The online process only adds 0.5ms of latency per image, and 2000 images/second can be treated per CPU core.
+\item Experimentally, the {\em Diff MILP model} computes upper bounds
+$\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compared with the optimized version of the classical MILP encoding (see Table \ref{table.classical}); namely reducing the number of binary variables (VHAGaR \cite{vhagar}); or adding linear constraints from the {\em diff variables} (ITNE \cite{ITNE}).
+The abstractions  "2b+1" and "1b" variant offer different trade-offs, 
+reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
+Further, using PCA reduces the upper bound $\bar{\beta}^{\varepsilon}_{C,D}$ by $3$ to $20$ times.
+Overall, using these different techniques ({\em Diff} MILP model, abstraction, and PCA) enables the real-time certification of $\geq 70\%$ of fresh images for an $L1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets respectively, see Table \ref{table.cert}. The online process only adds 0.5 ms of latency per image, and 2000 images/second can be treated per CPU core.
 \end{enumerate}

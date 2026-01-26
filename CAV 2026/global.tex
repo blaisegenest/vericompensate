@@ -24,12 +24,12 @@ We use $n$ additional linear variables $(A_i)_{i \leq n}$, with the following  c
 
 The first two lines of constraints (\ref{L1constraint}) are equivalent with $A_j \geq |x_j - x'_j|$. 
 So the whole constraint (\ref{L1constraint}) 
-implies that $\sum_{j\leq n} |x_j| \leq c$.
+implies that $\sum_{j\leq n} |x_j - x'_j| \leq c$.
 
-Conversely, for every instance that satisfies $\sum_{j\leq n} |x_j| \leq c$, then there is also an instance which satisfies constraints (\ref{L1constraint}),  by defining $A_j = |x_j|$ for all $j \leq n$.
+Conversely, for every instance that satisfies $\sum_{j\leq n} |x_j - x'_j| \leq c$, then there is also an instance which satisfies constraints (\ref{L1constraint}),  by defining $A_j = |x_j - x'_j|$ for all $j \leq n$.
 
 This shows that (\ref{L1constraint}) is equivalent with 
-$||\vec{x}||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq c$.
+$||\vec{x} - \vec{x}'||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq c$.
 \qed
 \end{proof}
 
@@ -60,7 +60,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	As explained in the section \ref{s.notation}, the standard way to make the MILP model more efficient is to linearly relax some of the binary variables into linear variables. The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when 
 	no LP relaxation is used, the classical MILP encoding of \cite{MILP}, while asymptotically accurate, will result into looser bounds in practice. 
 	
-	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \cite{ITNE} and Section \ref{s.diff}), while VHAGaR reduces the number of binary variables depending on the perturbation used \cite{vhagar}.
+	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \cite{ITNE}, see also Section \ref{s.diff}), while Vhagar reduces the number of binary variables depending on the perturbation used \cite{vhagar}.
 	
 	
 	%We will compare the different methods in Table \ref{table.classical}.
@@ -79,19 +79,22 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	\subsection{The novel {\em Diff} MILP encoding for global robustness}
 	\label{s.diff}
 
-	We now present our main methodological contribtion, the {\em Diff} MILP encoding. It considers variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em Diff variables} \cite{diff}, with $y_j = x_j - x'_j$ and $\hat{y}_j= \hat{x}_j - \hat{x}'_j$. 
-	For $\hat{x}'_j$, one binary variable $a'_j$ and the related constraints from the classical encoding (\ref{eq11}) are used, similar to ITNE.
+	We now present our main methodological contribution, the {\em Diff} MILP encoding. It considers variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em Diff variables} \cite{diff}, with 
+	$y_j = x_j - x'_j$ and $\hat{y}_j= \ReLU({x}_j) - \ReLU(x'_j)$. 
+	A first important observation is that the image $I$ and the deformation $I'$ having perfectly symmetrical roles, assuming that $\gamma_j$ is an {\em upper} bound of $y_j$, then $-\gamma_j$ is a {\em lower} bound for $y_j$.
+
+
+	To encode the equation describing $\hat{x}'_j$, we use 
+	the MILP constraints from the classical encoding (\ref{eq11}), including
+	one binary variable $a'_j$, similar to ITNE.
 
     However, unlike ITNE, 
 	%Interleaving Twin-Network Encoding (ITNE) of \cite{lipshitz,ITNE} which relies on the classical MILP encoding (\ref{eq11}) \cite{MILP} to compute $\hat{y}_j$ from the difference between 
 	%$\ReLU(x'_j + y_j) = \ReLU(x_j) = \hat{x_j}$
 	%and $\hat{x}'_j$, 
-	the Diff encoding computes $\hat{y}_j$ directly, without resorting to the classical encoding from $x_j=x'_j + y_j$ to $\ReLU(x_j)$.
-	To do so, we study the function from $(x'_j,y_j)$ to 
-    $\hat{y}_j$, and encode it into a novel MILP model.
-    A first important observation is that $I,I'$ being perfectly symmetrical,
-    assuming that $\gamma_j$ is an upper bound of $y_j$, then $-\gamma_j$ is a lower bound for $y_j$.
-
+	the {\em Diff} MILP model encodes the equation for $\hat{y}_j$ directly, without resorting to the classical encoding from $x_j(=y_j+x'_j)$ to 
+	$\ReLU(x_j)$ and using $\hat{y}_j= \ReLU(x_j) - \ReLU(x'_j)$, which is correct but does not encode explicitly that $\hat{y}_j$ is small when $y_j$ is small, since both ReLUs can be large and they are encoded independently, see also \cite{diff}. Instead, we study the function from $(x'_j,y_j)$ to $\hat{y}_j$, and encode it into the novel MILP {\em Diff} model.
+    
 
 
 	%	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
@@ -108,7 +111,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	When $x'_j \leq 0$ and $x_j = x'_j+y_j \leq 0$, we have $\hat{y}_j = \ReLU(x_j) - \ReLU(x'_j) = 0-0=0$. For $x'_j \geq 0$ and $x_j = x'_j+y_j \geq 0$, we have $\hat{y}_j= \ReLU(x_j)-\ReLU(x'_j)=x_j - x'_j = y_j$. 
     Between these two linear planes, we have two more linear planes presenting intermediate cases, so 4 linear planes in total.
 	
-	\begin{figure}[t!]
+	\begin{figure}[b!]
 		\centering
 	\hspace*{-5ex}
 	\begin{tikzpicture}[scale=0.65]
@@ -156,8 +159,8 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 
 Recall first that $a'_j$ is the binary variables used in the 
  classical MILP encoding for $\hat{x}'_j=\ReLU(x'_j)$.
-We set $a'=a_j$ (whose value is already settled, see Proposition \ref{Prop1}),
-and used it in the MILP encoding of $\hat{y}_j = \ReLU(x_j)-\ReLU(x'_j)$:
+We set $a'=a'_j$ (whose value is already settled, see Proposition \ref{Prop1}),
+and use it in the MILP encoding of $\hat{y}_j = \ReLU(x_j)-\ReLU(x'_j)$:
 
 \newpage
 
@@ -172,12 +175,12 @@ Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j \in [\alpha_j,\beta_j]$, we h
 			x'_j       &\geq (1-a')\alpha_j \\
 			\hat{y}_j  &\leq a\gamma_j       &
 			\hat{y}_j  &\geq -a'\gamma_j \\
-			\hat{y}_j  &\leq y_j + (1-a)\gamma_j  &
-			\hat{y}_j  &\geq y_j - (1-a')\gamma_j \\
+			\hat{y}_j  &\leq y_j + x'_j + (1-a)(-\alpha_j) &
+			\hat{y}_j  &\geq y_j + x'_j + a'(-\beta_j) \\
 			\hat{y}_j  &\leq -x'_j + a\beta_j &
 			\hat{y}_j  &\geq -x'_j + (1-a')\alpha_j \\
-			\hat{y}_j  &\leq y_j + x'_j + (1-a)(-\alpha_j) &
-			\hat{y}_j  &\geq y_j + x'_j + a'(-\beta_j)
+			\hat{y}_j  &\leq y_j + (1-a)\gamma_j  &
+			\hat{y}_j  &\geq y_j - (1-a')\gamma_j
 		\end{aligned}
 	\end{align*} 
     where $a,a' \in \{0,1\}$ are binary variables, 
@@ -188,19 +191,24 @@ Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j \in [\alpha_j,\beta_j]$, we h
 So to encode both $\hat{y}_j$ and $\hat{x}'_j$, the {\em Diff} encoding needs 2 binary variables, similar to the classical encoding for $\hat{x}_j$ and $\hat{x}'_j$. 
 
 \begin{proof}
-	We do a case analysis depending on the value of both binary variables. 
-First, we know the constraints for $\hat{x_i}'=\ReLU(x_i')$ are exact. 
+First, we know the constraints for $\hat{x}_j'=\ReLU(x_j')$ are exact, by Prop \ref{Prop1}. We now do a case analysis depending on the value of both binary variables. 
+%We have 2 binary variables and 4 cases in total.
+ We check that in all 4 cases $\hat{y}_j = \ReLU(y_j+x'_j)-\ReLU(x'_j)$.
 
-We have 2 binary variables and 4 cases in total. We only need to check that, in all 4 cases, $$\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$$
+\textbf{$\mathbf{a = 0, a' = 0}$:}  In this case $y_j+x'_j\leq 0$ and $x'_j \leq 0 $ (lines 1\&2). We thus have to show that 
+$\hat{y}_j = 0$. This is true thanks to inequalities in line 3.
 
-\textbf{Case 1:} if $a = 1$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 4.
+\textbf{$\mathbf{a = 1, a' = 0}$:}  In this case $y_j+x'_j\geq 0$ and $x'_j \leq 0$ (lines 1\&2). We thus have to show that 
+$\hat{y}_j = y_j+x'_j$. This is true thanks to inequalities in line 4.
 
-\textbf{Case 2:}  if $a = 1$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\geq 0$, then we need to show $\hat{y}_i = y_i+x'_i$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 6.
+\textbf{$\mathbf{a = 0, a' = 1}$:}  In this case $y_j+x'_j\leq 0$ and
+$x'_j \geq 0 $ (lines 1\&2). We thus have to show that 
+$\hat{y}_j = -x'_j$. This is true thanks to inequalities in line 5.
 
-\textbf{Case 3:} if $a = 0$ and $a' = 0$, then $x'_i \leq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = 0$ based on  $\hat{x'_i} = 0$. This is true by the two inequalities in line 3.
+\textbf{$\mathbf{a = 1, a' = 1}$:} 
+In this case, $y_j+x'_j\geq 0$ and $x'_j \geq 0 $ (lines 1\&2). We thus have to show that $\hat{y}_j = y_j$. This is true thanks to inequalities in line 6.
 
-
-\textbf{Case 4:} if $a = 0$ and $a' = 1$, then $x'_i \geq 0 $ and $y_i+x'_i\leq 0$, then we need to show $\hat{y}_i = -x'_i$ based on  $\hat{x'_i} = x'_i$. This is true by the two inequalities in line 5.
+Notice that in each case, equations not mentionned are moot.
 	\qed
 \end{proof}
 
