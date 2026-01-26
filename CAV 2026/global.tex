@@ -1,6 +1,6 @@
 	\section{MILP Models for Global Robustness}
 
-Let $N$ the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). Worst-case complexity being exponential in the number of binary variables, global robustness (e.g. ITNE and Vhagar \cite{ITNE,vhagar}) is much harder than local robustness.
+Let $N$ the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). Worst-case complexity being exponential in the number of binary variables, global robustness (e.g. ITNE and VHAGaR \cite{ITNE,vhagar}) is much harder than local robustness.
 
 \subsection{Encoding $L_\infty$- and $L_1$-perturbations for input variables}
 \label{s.L1}
@@ -55,12 +55,12 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	
 \subsection{The classical encoding of ReLUs for global robustness}
 	
-    The classical encoding is used (with variants) by Vhagar \cite{vhagar} and ITNE \cite{ITNE}. For each neuron $j$, variables $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ are considered. For each ReLU $j$, a binary variable $a_j$ and related constraints from the classical encoding (\ref{eq11}) \cite{MILP} are used to set $\hat{x}_j$, and an {\em independent} binary variable $a'_j$ and related constraints from the classical encoding are used to set $\hat{x}_j$. We call this encoding $\mathcal{M}^{classical}$.
+    The classical encoding is used (with variants) by VHAGaR \cite{vhagar} and ITNE \cite{ITNE}. For each neuron $j$, variables $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ are considered. For each ReLU $j$, a binary variable $a_j$ and related constraints from the classical encoding (\ref{eq11}) \cite{MILP} are used to set $\hat{x}_j$, and an {\em independent} binary variable $a'_j$ and related constraints from the classical encoding are used to set $\hat{x}_j$. We call this encoding $\mathcal{M}^{classical}$.
 	
 	As explained in the section \ref{s.notation}, the standard way to make the MILP model more efficient is to linearly relax some of the binary variables into linear variables. The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when 
 	no LP relaxation is used, the classical MILP encoding of \cite{MILP}, while asymptotically accurate, will result into looser bounds in practice. 
 	
-	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \cite{ITNE} and Section \ref{s.diff}), while Vhagar reduces the number of binary variables depending on the perturbation used \cite{vhagar}.
+	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \cite{ITNE} and Section \ref{s.diff}), while VHAGaR reduces the number of binary variables depending on the perturbation used \cite{vhagar}.
 	
 	
 	%We will compare the different methods in Table \ref{table.classical}.
@@ -383,7 +383,7 @@ $\frac{(\bar{\beta}^{\text{perturb}}_{C,D} - \underline{\beta}^{\text{perturb}}_
 as well as a lower bound ("solution") $\underline{\beta}^{\text{perturb}}_{C,D}$.
 
 
-Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, Vhagar \cite{vhagar} defines $\alpha^{\text{perturb}}_{C,D}$, computing the perturbation necessary to switch an image classified as $C$ into an image classified as $D$:
+Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, VHAGaR \cite{vhagar} defines $\alpha^{\text{perturb}}_{C,D}$, computing the perturbation necessary to switch an image classified as $C$ into an image classified as $D$:
 \begin{align*}
 	\alpha^{\text{perturb}}_{C,D} &= \max_{|I-I'| \leq \text{perturb}} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
 \end{align*}

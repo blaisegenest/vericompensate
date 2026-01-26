@@ -53,10 +53,10 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 
 
 
-\subsection{Comparison for global robustness with Vhagar and ITNE}
+\subsection{Comparison for global robustness with VHAGaR and ITNE}
 
-We use Vhagar benchmarks to be able to compare: 
-bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for which the Vhagar reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model find. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall most robustness tools, e.g. $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
+We use VHAGaR benchmarks to be able to compare: 
+bound $\alpha$, perturbation $L_\infty=0.05$, VHAGaR convolutional DNNs, for which the VHAGaR reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model find. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall most robustness tools, e.g. $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
 
 \iffalse
 
@@ -64,14 +64,14 @@ bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for whi
 	\centering
 	\begin{tabular}{||c||c|c|c|c|c||}\hline\hline
 	Benchmark & model & Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ & $\%$ of gap $\downarrow$ \\\hline \hline
-	MNIST   & Vhagar & 20.51 & 9.20 & 9.20 & 118 $\%$
+	MNIST   & VHAGaR & 20.51 & 9.20 & 9.20 & 118 $\%$
     \\
 	M-Conv & ITNE & 12.77 & 9.41 & 9.41 & 35 $\%$
 	\\ 
     TO=1000s & {\em Diff} & {\bf 11.59}  & 9.38 & 9.38 & {\bf 23 $\%$}
     \\\hline \hline
 
-	FMNIST & Vhagar &  $41.52$ & $21.23$ & $21.23$ & 93 $\%$ 
+	FMNIST & VHAGaR &  $41.52$ & $21.23$ & $21.23$ & 93 $\%$ 
     \\
 	F-Conv  & ITNE &  $27.57$ &  $22.12$ & $22.12$ & 24 $\%$
 	\\ 
@@ -79,14 +79,14 @@ bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for whi
     \\\hline 
 
 
-	FMNIST & Vhagar &  $37.26$ &  $22.00$ & $22.00$ & 72 $\%$
+	FMNIST & VHAGaR &  $37.26$ &  $22.00$ & $22.00$ & 72 $\%$
     \\
 	F-Conv  & ITNE &  $24.56$ &  $22.20$ & $22.20$ & 10 $\%$
 	\\ 
     TO=14400s & {\em Diff} &    {\bf 22.56} &  $22.32$ &  $22.32$ & {\bf 1 $\%$}
     \\\hline \hline
 	
-	CIFAR-10  & Vhagar & does & not & run & -
+	CIFAR-10  & VHAGaR & does & not & run & -
     \\
 	C-Conv  & ITNE & 28.61 & 11.58 & 11.58 & $33\%$
 	\\ 
@@ -97,7 +97,7 @@ bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for whi
 	& Best &  {\bf 23.44}  &  &  & {\bf 16} $\%$
     \\\hline
     
-	CIFAR-10  & Vhagar & does & not & run & -
+	CIFAR-10  & VHAGaR & does & not & run & -
     \\
 	C-Conv  & ITNE &  & & &
 	\\ 
@@ -108,7 +108,7 @@ bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for whi
     
 
      \end{tabular}
-	\caption{Comparison with Vhagar for $L_\infty=0.05$ perturbation.}
+	\caption{Comparison with VHAGaR for $L_\infty=0.05$ perturbation.}
     \label{table.classical}
 \end{table}
 
@@ -121,7 +121,7 @@ bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for whi
 \begin{table}[t!]
 	\centering
 	\begin{tabular}{||c c||c c c c c ||c|}\hline
-	$L_\infty=0.05$ & Timeout & MILP model: & Vhagar &  ITNE & {\em Diff} & {\em 2b+1} & {\em Best} \\\hline \hline
+	$L_\infty=0.05$ & Timeout & MILP model: & VHAGaR &  ITNE & {\em Diff} & {\em 2b+1} & {\em Best} \\\hline \hline
 	  & 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ &  20.80 & 12.32 & {\em 11.14} & {\em \bf 10.95} & {\bf \em 10.85}
     \\
 	MNIST-Conv & & ($\%$ of gap $\downarrow$) & (120$\%$) & (29 $\%$) & ({\em 17} $\%$) & ({\em \bf 15} $\%$) & ({\bf \em 14} $\%$)
@@ -156,13 +156,13 @@ bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for whi
 		\\\hline
     
      \end{tabular}
-	\caption{Comparison with Vhagar and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-Conv, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $(i,j)$. Lower gaps using {\em Best} means that there are cases $(i,j)$ where {\em Diff} is much better than {\em 2b+1}, and cases $(i',j')$ where it is the opposite.}
+	\caption{Comparison with VHAGaR and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-Conv, VHAGaR failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming VHAGaR in every test), so these numbers are optimistic evaluation for VHAGaR. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $(i,j)$. Lower gaps using {\em Best} means that there are cases $(i,j)$ where {\em Diff} is much better than {\em 2b+1}, and cases $(i',j')$ where it is the opposite.}
     \label{table.classical}
 \end{table}
 
 \noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. Using the 1$b$ model is not useful, as its abstraction will loose more than $6\%$. 
 %That is why it is not reported in Table \ref{table.classical}. 
-Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap $40-120\%$. Although we are using its benchmarks, Vhagar methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
+VHAGaR computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap $40-120\%$. Although we are using its benchmarks, VHAGaR methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
 Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate for shorter timeout, and {\em Diff} more accurate when there is sufficient time, as expected. 
 Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff} and 2$b$+1 in every test.
 
@@ -220,7 +220,7 @@ Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower t
 	
 \label{s62}
 
-We then turn to test with $L_1$ perturbations and comparing between DNNs and their PCA-DNN versions (which is not supported in Vhagar). Here, we consider MNIST-FC (not supported by Vhagar), because it has a higher accuracy than MNIST-Conv, and to test a different architecture than Convolution Networks.
+We then turn to test with $L_1$ perturbations and comparing between DNNs and their PCA-DNN versions (which is not supported in VHAGaR). Here, we consider MNIST-FC (not supported by VHAGaR), because it has a higher accuracy than MNIST-Conv, and to test a different architecture than Convolution Networks.
 
 We recall that PCA-DNNs are generated following the process described in Section 5: for each PCA dimension, we report in Table \ref{table.pca} 
 the accuracy loss from using PCA-DNN rather than the original DNN.

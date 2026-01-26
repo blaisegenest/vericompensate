@@ -1,4 +1,4 @@
-Deep neural networks (DNNs for short) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks. However, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the formal verification community to develop various methodologies, each presenting a unique trade-off between completeness and computational efficiency~\cite{Marabou,Reluplex,deeppoly}. 
+While deep neural networks (DNNs) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the formal verification community to develop various methodologies, each presenting a unique trade-off between completeness and computational efficiency~\cite{Marabou,Reluplex,deeppoly}. 
 This surge in innovation has also led to the inception of competitions such as VNNComp~\cite{VNNcomp}, which aims to systematically evaluate the performance of neural network verification tools. Notable examples include NNenum~\cite{nnenum}, Marabou~\cite{Marabou,Marabou2}, and PyRAT~\cite{pyrat}, as well as frameworks such as MnBAB~\cite{ferrari2022complete} (which builds upon ERAN~\cite{deeppoly} and PRIMA~\cite{prima}) and $\alpha,\beta$-CROWN~\cite{crown,xu2020fast}, based on branch-and-bound methodology \cite{cutting,BaB}.
 
 These tools focus on {\em local} robustness: given a DNN, an image and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned in the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric every subpixel\todo{what is a subpixel here? pixel component like each R/G/B?} of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is 2 levels of grey/blue/red/green). 
@@ -10,7 +10,9 @@ Crucially, however, these verification tools for local robustness are too comput
 \smallskip
 
 In this paper, we consider {\em global} robustness, that is we do not restrict the certification process to the neighborhood of a specific, fixed input. We follow a two-step procedure. 
-The first step, performed offline, computes global bounds on the \eca{maximum possible} shift between output values of different decision classes due to a perturbation, following an approach similar to \cite{vhagar}. Specifically, for any two decision classes $C$ and $D$ and a perturbation $\varepsilon$, we compute upper and lower bounds 
+The first step, performed offline, computes global bounds on the \eca{maximum possible} shift between output values of different decision classes due to a perturbation, following an approach similar to VHAGaR~\cite{vhagar}. 
+%
+Specifically, for any two decision classes $C$ and $D$ and a perturbation $\varepsilon$, we compute upper and lower bounds 
 $$\beta^{\text{perturb}}_{C,D} = \max_{|I-I'| \leq \text{perturb}}(x_C - x_D +x'_D - x'_C)$$
 where $x_C,x_D$ is the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
 Unlike local robustness methods, which require $k$ separate calls, computationally expensive calls to certify $k$ images, the global bound $\bar{\beta}^\varepsilon_{C,D}$ is compute offline once per network and remains valid across the entire input space. 
@@ -63,7 +65,7 @@ For instance, using just $20$ out of 784 dimensions suffices to represent faithf
 	%Using PCA, which is linear, makes it easy to specify perturbations on the actual image (where it is meaningful) rather than on the reduced space.
 
 \item Experimentally, the {\em Diff MILP model} computes upper bounds
-$\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compared with optimized version of the classical MILP encoding; namely reducing the number of binary variables (Vhagar \cite{vhagar}); or adding linear constraints from the {\em diff variables} (ITNE \cite{ITNE}), see Table \ref{table.classical}.
+$\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compared with optimized version of the classical MILP encoding; namely reducing the number of binary variables (VHAGaR \cite{vhagar}); or adding linear constraints from the {\em diff variables} (ITNE \cite{ITNE}), see Table \ref{table.classical}.
 The abstractions  "2b+1" and "1b" variant offer different trade-offs, 
 reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
 Further, using PCA reduces the upper bound $\beta_{C,D}$ by $3$ to $20$ times.
