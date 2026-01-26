@@ -1,0 +1,489 @@
+	\section{Experimental Evaluation}
+	
+	We implemented our code in Python 3.8.
+	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090. 
+	
+	We consider 4 pretrained DNNs on 3 different datasets (MNIST, Fashion MNIST and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at 
+	\url{https://github.com/eth-sri/eran} ("5x100"). We also considered 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
+	from \cite{vhagar} ("conv1"). We will also consider 3 PCA-DNNs, as detailled in Section~\ref{s62}
+	%The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
+
+\iffalse	
+For each benchmark, we report three values: the bound obtained (lower value is better), the solution obtained (distance to the bound depicts how close the model has converged), and worst-case (higher is better), that is the value reached when considering the solution as input to the DNN. For a fully accurate model ("2v" or classical and all variables binary), the worst-case will equal the solution, otherwise, it will be smaller due to abstraction.
+\fi
+
+%\subsection{Classical vs our "2v" model vs ITNE}
+%
+%
+%\begin{table}[b!]
+%	\centering
+%	\begin{tabular}{||l|c|c|c||}\hline\hline
+%		model, nbr binary var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+%	Classical, $100$ &    $.320$ &  $.320$ & $.017$ 
+%    \\\hline
+%	ITNE, $100$ &    $.042$ &  $.037$ & $.022$
+%	\\ \hline
+%    2v model, $100$ &    {\bf .040} &  $.037$ &  $.018$ 
+%    \\\hline \hline
+%     2v model New, $100$ &    {\bf .039} &  $.029$ &  $.020$ 
+%    \\\hline \hline
+%    Classical, $200$ &  .186  &  $.022$ & $.022$ 
+%    \\\hline
+%	ITNE, $200$ &    $.045$ &  $.023$ & .023
+%    \\\hline
+%	2v model, $200$&     {\bf .042} &  $.023$ &   .023 
+%    \\\hline \hline
+%	\end{tabular}
+%	\caption{Comparison of the classical encoding, ITNE and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $100$, 
+%    or the full $200$ binary variables.}
+%    \label{table.classical}
+%\end{table}
+%
+%We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz,ITNE}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
+%
+%
+%Table \ref{table.classical}, $100$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{ITNE} recovers most but not all the bound of the "2v" model.
+%
+%Further, even using a fully accurate model with all $100$ variables encoded as binary variables, the "2v" model produces bounds $>4$ times better than the classical model, due to the internal Branch and Bound process to compute bounds, which uses linear relaxation. Again, 
+%Eq. (3) from \cite{ITNE} recovers most but not all the accuracy of the "2v" model.
+%Overall, the "2v" model produces better bounds, even with short time-outs, despite its higher complexity.
+
+
+
+
+
+
+\subsection{Comparison for global robustness with Vhagar and ITNE}
+
+We use Vhagar benchmarks to be able to compare: 
+bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for which the Vhagar reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model find. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall most robustness tools, e.g. $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
+
+\iffalse
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{||c||c|c|c|c|c||}\hline\hline
+	Benchmark & model & Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ & $\%$ of gap $\downarrow$ \\\hline \hline
+	MNIST   & Vhagar & 20.51 & 9.20 & 9.20 & 118 $\%$
+    \\
+	M-Conv & ITNE & 12.77 & 9.41 & 9.41 & 35 $\%$
+	\\ 
+    TO=1000s & {\em Diff} & {\bf 11.59}  & 9.38 & 9.38 & {\bf 23 $\%$}
+    \\\hline \hline
+
+	FMNIST & Vhagar &  $41.52$ & $21.23$ & $21.23$ & 93 $\%$ 
+    \\
+	F-Conv  & ITNE &  $27.57$ &  $22.12$ & $22.12$ & 24 $\%$
+	\\ 
+    TO=1000s & {\em Diff} &  {\bf 23.67} &  $22.31$ &  $22.31$ & {\bf 6 $\%$}
+    \\\hline 
+
+
+	FMNIST & Vhagar &  $37.26$ &  $22.00$ & $22.00$ & 72 $\%$
+    \\
+	F-Conv  & ITNE &  $24.56$ &  $22.20$ & $22.20$ & 10 $\%$
+	\\ 
+    TO=14400s & {\em Diff} &    {\bf 22.56} &  $22.32$ &  $22.32$ & {\bf 1 $\%$}
+    \\\hline \hline
+	
+	CIFAR-10  & Vhagar & does & not & run & -
+    \\
+	C-Conv  & ITNE & 28.61 & 11.58 & 11.58 & $33\%$
+	\\ 
+    TO=1000s & {\em Diff} &  25.93  & 14.43 & 14.43 & $24\%$
+	\\
+	& {\em 2b+1} &  25.31 & 19.77 & - & $23\%$
+	\\
+	& Best &  {\bf 23.44}  &  &  & {\bf 16} $\%$
+    \\\hline
+    
+	CIFAR-10  & Vhagar & does & not & run & -
+    \\
+	C-Conv  & ITNE &  & & &
+	\\ 
+    TO=14400s & {\em Diff} &  {\bf 20.67}  & 19.03 & 19.03 & {\bf 6} $\%$
+	\\
+	 & {\em 2b+1} &  {\bf }  &  &  & $\%$
+    \\\hline \hline
+    
+
+     \end{tabular}
+	\caption{Comparison with Vhagar for $L_\infty=0.05$ perturbation.}
+    \label{table.classical}
+\end{table}
+
+
+\fi
+
+
+
+
+\begin{table}[t!]
+	\centering
+	\begin{tabular}{||c c||c c c c c ||c|}\hline
+	$L_\infty=0.05$ & Timeout & MILP model: & Vhagar &  ITNE & {\em Diff} & {\em 2b+1} & {\em Best} \\\hline \hline
+	  & 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ &  20.80 & 12.32 & {\em 11.14} & {\em \bf 10.95} & {\bf \em 10.85}
+    \\
+	MNIST-Conv & & ($\%$ of gap $\downarrow$) & (120$\%$) & (29 $\%$) & ({\em 17} $\%$) & ({\em \bf 15} $\%$) & ({\bf \em 14} $\%$)
+	\\
+	 LB $\underline{\alpha}$= 9.51 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 17.54 & 11.15 & {\bf \em 10.14} & {\em 10.29} & {\bf \em 10.07}
+    \\
+	  & & ($\%$ of gap $\downarrow$) &  (84$\%$) & (17 $\%$) & ({\bf \em 7} $\%$) & ({\em 8} $\%$) & ({\bf \em 6} $\%$) 
+    \\\hline
+
+	
+	& 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ & 41.52 & 26.61 & {\bf \em 23.27}  & {\em 24.09} & {\bf \em 22.78}
+    \\
+	FMNIST-Conv & & ($\%$ of gap $\downarrow$) & (93 $\%$) & (20 $\%$) & ({\bf \em 5} $\%$) & ({\em 10} $\%$) & ({\bf \em 3} $\%$)
+    \\
+
+
+	LB $\underline{\alpha}$= 22.21 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 37.26 & 24.06 & {\bf \em 22.42 } & {\em  23.80} & {\bf \em 22.34}
+    \\
+	 & & ($\%$ of gap $\downarrow$) & (72 $\%$) &  (9 $\%$) & ({\bf \em 1} $\%$) & ({\em 9} $\%$) & ({\bf \em .6} $\%$)
+    \\\hline
+	
+
+	& 1000s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 36.57* & 27.15 & 
+	{\em 25.94} & {\bf \em 24.52}& {\bf \em 23.29}
+    \\
+	CIFAR-Conv & & ($\%$ of gap $\downarrow$) & (55* $\%$) & (28 $\%$) & ({\em 24} $\%$) & ({\bf \em 20} $\%$) & ({\bf \em 15} $\%$)
+	\\
+    
+	LB $\underline{\alpha}$= 19.04 & 14400s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 31.53* & 22.73 & {\bf \em 21.77} & {\em 21.81} & {\bf \em 20.38}
+    \\
+	 & & ($\%$ of gap $\downarrow$) & (39* $\%$) & (12 $\%$) & ({\bf \em 10} $\%$) & ({\bf \em 10} $\%$) & ({\bf \em 5}$\%$)
+		\\\hline
+    
+     \end{tabular}
+	\caption{Comparison with Vhagar and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-Conv, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $(i,j)$. Lower gaps using {\em Best} means that there are cases $(i,j)$ where {\em Diff} is much better than {\em 2b+1}, and cases $(i',j')$ where it is the opposite.}
+    \label{table.classical}
+\end{table}
+
+\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. Using the 1$b$ model is not useful, as its abstraction will loose more than $6\%$. 
+%That is why it is not reported in Table \ref{table.classical}. 
+Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap $40-120\%$. Although we are using its benchmarks, Vhagar methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
+Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate for shorter timeout, and {\em Diff} more accurate when there is sufficient time, as expected. 
+Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff} and 2$b$+1 in every test.
+
+
+
+
+
+
+
+
+%\begin{table}[h!]
+%	\centering
+%	\begin{tabular}{||c||c||c|c|c||c|}\hline\hline
+%		Benchmark & MILP model: & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline
+%		MNIST-FC  & Bound $\downarrow$ &&&&
+%		\\
+%		TO=1000s & $\%$ of gap $\downarrow$ &&&&
+%		\\ \hline
+%		TO=14400s  & Bound $\downarrow$ &&&&
+%		\\
+%		& $\%$ of gap $\downarrow$ &&&&
+%		
+%		\\\hline \hline
+%		
+%		FMNIST-CNN1 & Bound $\downarrow$ & 8.90 & 7.55 & 9.84 & 7.548
+%		\\
+%		TO=1000s & $\%$ of gap $\downarrow$ & 112 $\%$  & 80 $\%$ & 135 $\%$ & 80 $\%$
+%		\\\hline 
+%		
+%		
+%		TO=14400s & Bound $\downarrow$ & 7.43 & 6.37 & 9.62 & 6.22
+%		\\
+%		& $\%$ of gap $\downarrow$ & 77 $\%$  & 53 $\%$ & 129 $\%$ & 49 $\%$
+%		\\\hline \hline
+%		
+%		
+%		CIFAR10-CNN1  & Bound $\downarrow$ & 8.30 & 8.14 & 8.17 & 7.77 
+%		\\
+%		TO=1000s & $\%$ of gap $\downarrow$ & 150 $\%$  & 145 $\%$ & 145 $\%$ & 133 $\%$
+%		\\\hline
+%		
+%		TO=14400s  & Bound $\downarrow$ & 7.19 & 7.45 & 7.31 & 6.67
+%		\\
+%		& $\%$ of gap $\downarrow$ & 114 $\%$  & 123 $\%$ & 118 $\%$ & 99 $\%$
+%		\\\hline \hline
+%		
+%	\end{tabular}
+%	\caption{Full input dimensions}
+%	\label{table.classical_our_full}
+%\end{table}
+
+
+
+\subsection{Experimental results for $L_1=1$ and PCA-DNN.}
+	
+\label{s62}
+
+We then turn to test with $L_1$ perturbations and comparing between DNNs and their PCA-DNN versions (which is not supported in Vhagar). Here, we consider MNIST-FC (not supported by Vhagar), because it has a higher accuracy than MNIST-Conv, and to test a different architecture than Convolution Networks.
+
+We recall that PCA-DNNs are generated following the process described in Section 5: for each PCA dimension, we report in Table \ref{table.pca} 
+the accuracy loss from using PCA-DNN rather than the original DNN.
+We set the dimension at the minimal dimension reaching at most 1$\%$ 
+loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively.
+
+
+\begin{table}[t!]
+	\centering
+	\begin{tabular}{|c c c c c c c c c |}\hline
+		PCA dimension: & 15 & 20 & 25 & 30 & 35 & 40 & ... & 60 
+		
+		\\\hline
+		PCA-MNIST-FC  & 2$\%$ & {\color{blue} 0$\%$} & 0$\%$& 0$\%$ & 0$\%$& 0$\%$ & &0$\%$
+		\\	
+ 		PCA-FMNIST-Conv & 5$\%$ &	3$\%$ &	{\color{blue} 1$\%$} & 0$\%$& 0$\%$	&0$\%$ & &	0$\%$ 
+		\\
+		PCA-CIFAR10-Conv  & 16$\%$ &	14$\%$ &	12$\%$ & 10$\%$ &	14$\%$ &	5$\%$ &	& {\color{blue} $1\%$}
+		\\\hline
+	\end{tabular}
+
+	\caption{Loss of accuracy of PCA-DNN vs DNN (no PCA) 
+	according to the PCA dimension.
+	{\color{blue} Blue} corresponds to the minimal dimension ensuring loss $\leq 1\%$.}
+    \label{table.pca}
+\end{table}
+
+We consider the $\bar{\beta}$ bounds reached for $L_1$-perturbation  at most 1, on the 3 original DNNs MNIST-FC, FMNIST-Conv and CIFAR10-Conv, plus their PCA variants for the dimension computed in Table~\ref{table.pca}.
+We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{table.classical}.
+
+
+
+
+
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{|cc| c | c c c|c|}\hline
+		$L_1=1$ & Timeout & ITNE & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline 
+		MNIST-FC  & 1000s & 45.6 & 38.88 & 38.68 & {\bf 37.34} & {\bf 37.33}
+		\\
+		LB $\underline{\beta}$= 0.50 & 14400s & 45.3 & 37.24 & 36.96 & {\bf 33.68} & {\bf 33.67}
+		
+		\\\hline
+		PCA-MNIST-FC  & 1000s & 2.52 & {\bf 2.43} & {\bf 2.43} & 2.68 & {\bf 2.41}
+		\\
+		LB $\underline{\beta}$= 0.12 & 14400s & 2.33 & 2.18 & {\bf 2.00} & 2.46 & {\bf 2.00}
+		\\ \hline \hline
+		
+ 		FMNIST-Conv & 1000s & 12.27 & 8.90 & {\bf 7.55} & 9.84 & {\bf 7.55}
+		\\
+		LB $\underline{\beta} = 4.16$ & 14400s & 11.03 & 7.43 & {\bf 6.37} & 9.62 & {\bf 6.22}
+		\\\hline
+
+		PCA-FMNIST-Conv & 1000s & 3.64 & 3.02 & 3.02 & {\bf 2.74} & {\bf 2.74}
+		\\
+		LB $\underline{\beta}= 0.96$ & 14400s & 2.67 & 2.34  & {\bf 1.95} & 2.52 & {\bf 1.95}
+		\\\hline  \hline
+		
+		
+		
+		CIFAR10-Conv  & 1000s & 10.49 &8.30 & {\bf 8.14} & 8.17 & {\bf 7.77}
+		\\
+		LB $\underline{\beta}= 3.38$ & 14400s & 10.49 & {\bf 7.19} & 7.45 & 7.31 & {\bf 6.67}
+		\\\hline
+		PCA-CIFAR10-Conv  & 1000s & 1.70 & 1.63 & 1.54 & {\bf 1.28} & {\bf 1.28}
+		\\
+		LB $\underline{\beta}$= 0.0015 & 14400s & 1.67 & 1.56 & 1.52 & {\bf 1.15} & {\bf 1.15}
+		\\
+		 extra long timeout& 216000s & 1.66 & 1.53 & 1.36 & {\bf 0.99} & {\bf 0.99}
+		
+		\\\hline
+
+	\end{tabular}
+	\caption{Comparison of upper bound $\overline{\beta}$ (lower is better $\downarrow$) averaged over all bounds $\overline{\beta}_{i,j}$,
+	between ITNE and {\em Best} of {\em Diff, 2b+1 and 1b}, for original DNNs as well as PCA-DNNs over MNIST, FMNIST and CIFAR datasets. %Best report is the average of the best for every case.
+	 %We use PCA dimension = 20 for MNIST-FC, PCA dimension = 25 for FMNIST CNN1, and PCA dimension = 45 for CIFAR10 CNN1.
+	 }
+	\label{table.L1}
+\end{table}
+
+
+
+\noindent {\bf Discussion:} Compared with results on $L_\infty$ (Table~\ref{table.classical}), the upper bound $\bar{\beta}$ computed by Best is now much larger than the lower bound $\underline{\beta}$: from 1.5 to 600 times. Using 
+the faster 1$b$ model now becomes pertinent. In half of the cases, 1$b$ actually produces the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provide better bounds. ITNE is significantly worse, producing $25\%$ worse bounds $\bar{\beta}$ on average than Best.
+
+Comparing with and without PCA, as expected, PCA-DNNs allow to reach much smaller upper bounds $\bar{beta}$ than without PCA, $15$x for MNIST-FC, $3$x for FMNIST-Conv and $7$x for CIFAR10-Conv. MNIST-FC is harder to solve than FMNIST-Conv, although they are comparable benchmark, because fully connected architecture are richer than Convolutional architecture of the same size. PCA-CIFAR10-Conv is the hardest test, because the dimension (60) is not as reduced as for MNIST and FMNIST (20 and 25) .
+
+
+
+	
+%	\begin{table}[h!]
+%		\centering
+%	\begin{tabular}{||l||c|c|c||}\hline\hline
+%		model, nbr binary var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+%		1v, $500$ & {\bf 14.97} & $.845$ & $.009$ \\\hline 
+%		3v, $1000$ & $17.66$ & $.813$ & {\bf .518} \\\hline 
+%		2v ITNE, $1000$ & $19.08$ & n/a & n/a \\\hline 
+%		2v ITNE, $1000$ & $19.38$ & $.185$ & $.185$ \\\hline 
+%	    2v, $1000$ & $16.49$ & n/a & n/a \\\hline\hline	 
+%	\end{tabular}
+%	\caption{Bounds on $\beta^{.5}_{6,8}$ 
+%	obtained by the "1v", "3v" and "2v" models 
+%	on the {\bf full dimension} MNIST DNN, 
+%	for timeouts of $14400$s, when all 500 / 1000 variables are binary.}
+%	\label{table.mnist}
+%\end{table}
+
+
+\iffalse
+
+
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{||l||c|c|c||}\hline\hline
+		model, nbr binary var &        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ \\\hline \hline
+%1v, $400 \times 1$ & $1.414$ &  $.691$ & $.010$ \\\hline 
+%3v, $400 \times 3$ & $1.186$ & $.600$ & $.003$ \\\hline 
+%2v, $400 \times 2$ & $1.274$ & $.566$ & $.002$ \\\hline\hline
+	 
+%1v, $475 \times 1$ &  $1.408$ & $.301$ & $.008$  \\\hline 
+%3v, $475 \times 3$ &  $1.153$ & $.250$ & $.006$ \\ \hline 
+%2v, $475 \times 2$ &  $1.247$ & $.1957$ & $.019$ \\\hline\hline
+
+1v, $500$ & $1.412$ & $.161$ & .057 \\\hline 
+3v, $1000$ & {\bf 1.137} & $.103$ & $.065$\\\hline 
+2v, $1000$ &  $1.182$ & $.084$& {\bf .084}  \\\hline
+ITNE, $1000$ &  $1.371$ & $.085$& {\bf .085}  \\\hline\hline
+	 
+	\end{tabular}
+	\caption{Comparison of "1v", "3v" and "2v" models 
+	to obtain bounds on $\beta^{.5}_{6,8}$ on the {\bf 20 dimension} reduced order MNIST DNN, for timeout of 14400s, where 
+	all %400, 475,  or 
+	neurons use 500 / 1000 binary variables.}
+	\label{table.reduced}
+\end{table}
+\fi
+
+
+%\paragraph{Reduced Space}
+
+\subsection{Real-Time vertification of Robustness}
+
+We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{i,j}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}. We set a threshold of $70\%$ to evaluate how large the $L_1$  perturbation can be while still certifying at least this threshold: 
+a threshold much lower than $70\%$ would mean labelling too many incoming images as uncertified, which would degrade the system too much.
+
+
+
+\begin{table}[t!]
+	\centering
+	\begin{tabular}{|c|cccc|c|}\hline
+		Benchmark & $L_1=1$ & $L_1=2$ & $L_1=3$ & $L_1=4$ & Latency overhead 
+		
+		\\\hline 
+		MNIST-FC  & 0$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
+		\\
+		
+		PCA-MNIST-FC  & {\color{blue} 80$\%$}  & 21 $\%$ & 1 $\%$ & 0 $\%$ & 0.5ms
+		\\ \hline 
+		
+ 		FMNIST-Conv & 
+		{\color{blue} 75$\%$}  & 50 $\%$ & 28$\%$ &	12$\%$  & 0.5ms
+		\\
+
+		PCA-FMNIST-Conv & 
+		92 $\%$ &	86 $\%$ &	79 $\%$ & {\color{blue} 70$\%$}  & 0.5ms
+		\\\hline
+		
+		CIFAR10-Conv  & 39 $\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
+		\\ 
+		PCA-CIFAR10-Conv  & 92 $\%$ & {\color{blue} 72$\%$} & 61 $\%$ & 51 $\%$ & 0.5ms
+		\\\hline
+	\end{tabular}
+
+	\caption{Percentage of images certified robust in real-time 
+	using the Best computed $(\beta^{1}_{i,j})_{i < j \leq 10}$, 
+	for different values of $L_1$-perturbations.
+	{\color{blue} Blue} depicts the largest perturbation ensuring $\geq 70\%$ of images being robust. Latency overhead are the same as the number of classes is the same (=10) for all datasets.} 
+	%2000 images/s can be treated per cpu core.}
+    \label{table.cert}
+\end{table}
+
+With that, we can guarantee at least $70\%$ of the image as certified
+for all 3 PCA-DNN label  for a $L1$-perturbation of $1$, and even go up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST.
+We are unable to do it for the non-PCA version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its PCA-version:
+PCA is extremely efficient at helping certifying.
+
+\iffalse
+To remove improbable images and limit the space of search, 
+we consider a PCA model order reduction \cite{Paco}: We reduced to 20 dimensions, because the MNIST $100 \times 5$ DNN considered, once run on images obtained from projecting to the 20 dimension space and projected back to the full dimension space displays the same accuracy of $97$\% as the DNN on the original images. This means that considering the reduced 20 dimensional space
+does not incur any loss in accuracy, which is the only thing which matters. On this reduced space, bounds obtained are much more precise, and one can certify in real-time robustness of images.
+
+
+
+
+
+We report in Table \ref{table.reduced} the same $\beta^{.5}_{6,8}$
+as in Table \ref{table.mnist}, obtained with the same time-out. The bounds are directly comparable: the best $\beta^{.5}_{6,8}$ obtained using the reduced dimension is $>10$ times smaller than when using the full dimension ($1.137$ vs $14.97$). 
+With these bounds, most images ($86\%$) can be certified in real-time robust for a perturbation $L_1 \leq .5$, and even $53\%$ with a perturbation $L_1 \leq 1$ twice as large, see Table \ref{table.cert}. We illustrate that improbable images are removed by displaying in Fig.~\ref{fig4} the worst-case obtained for $\beta^{.5}_{6,8}$, which indeed looks like a realistic MNIST instance.
+
+
+
+
+	
+	
+
+
+	
+
+
+\subsection{Experimental results for regression (Pipe strain)}
+
+
+	\begin{figure*}[t!]
+\includegraphics[scale=0.5]{deform.png} \hspace{0.8cm}
+\includegraphics[scale=0.5]{strain.png}
+\caption{2 slightly different deformations and their associated quite different strain as obtained by the "2v" model with $200 $ binary variable.}
+\label{fig5}
+\end{figure*}	
+
+
+	For the pipe system, we compared in Table \ref{table.pipe} the different models "1v","2v","3v" to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the "3v" model, slightly better than the bound $.0337$ found within the same time by the "2v" model, and better than the bound found $0.356$ by the "1v" model, although this bound has been found 70 times faster due to the simpler model. The certified lower bound is not too far, at $.245$, found by the fully accurate "2v" model when all the variables are binary. We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.0329$, is coherent with the physical dinite element model the DNN surrogate has been learnt from, hence this is not an hallucination due to the brittleness of the learnt DNN.
+
+
+	
+	\vspace*{1ex}
+	
+	\iffalse
+	\begin{table}[h!]
+	\begin{tabular}{|l|l|l|l|l|}\hline
+		$L_1\leq 0.83$ &        Bound $\downarrow$ &  Solution $\uparrow$ &      Real $\uparrow$ &  Time \\\hline
+		1v,open 100 &     {\bf 0.035613} &  0.035613 &                       0.01288 & 10608 \\\hline
+		3v,open 100 &     0.040074 &  0.028934 &                      0.021441 & 10922 \\\hline
+		%3v,open 100 &     0.039824 &  0.028832 &                      0.022255 & 22153 \\\hline
+		2v,open 100 &     0.046719 &  0.024364 &  {\bf 0.024436} & 10922 \\\hline
+	\end{tabular}
+	\caption{Comparison of 1v,2v and 3v models on the pipe system with a fixed timeout of 10.000s.}
+\end{table}
+\fi
+	
+		
+	\begin{table}[h!]
+	\begin{tabular}{||l||c|c|c|c||}\hline\hline
+		model, nbr&        Bound$\downarrow$ &  Sol. &      Worst-Case$\uparrow$ &  Time(s) \\\hline \hline
+		1v, $100$ &     {\bf .0356} &  $.0356$ & $.0191$ &  1000 \\\hline
+		3v, $200$&     .0414 &  .0254 &  .0166 &  1000 \\\hline
+		2v, $200$&     .0418 &  .0229 &   {\bf .0229} &  1000 \\\hline 
+		2v ITNE, $200$&  .0446  & .0227 &  .0221  &  1000 \\\hline\hline
+		%3v, $97 \times 3$&      ?? &  ?? &  ?? & 14440 \\\hline
+		3v, $200$&      {\bf .0350} &  .0272 &  .0216 & 14440 \\\hline
+		%2v, $97 \times 2$&     ?? &  ?? &   ?? & 14440 \\\hline
+		2v, $200$&     .0360 &  .0236 &    {\bf .0236} & 14440 \\\hline 
+		2v ITNE, $200$& .0424  &  .0237  & .0228   &  14400 \\\hline\hline
+		3v, $200$&     {\bf .0329} &  .0277 &  .0165 & 72000 \\\hline
+		2v, $200$&     .0337 &  .0245 &  {\bf .0245} & 72000 \\\hline
+		2v ITNE, $200$&  .04159 & .0241 &  .0228  &  72000 \\\hline\hline
+	\end{tabular}
+	\caption{Comparison of "1v", "3v" and "2v" models on the pipe system with timeouts of 1000s, 14440s and 72000s, where all neurons use 100 / 200 binary variables.}
+	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
+	\label{table.pipe}
+\end{table}
+
+\newpage
+
+\noindent {\bf Supplementary material content:} We provide in supplementary materials additional content, in particular results with reduced number of binary variables. We also provide the proof of Prop.~\ref{Prop2}, and explanations on the reduced-order dimension pipeline.
+
+\fi
