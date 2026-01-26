@@ -7,14 +7,13 @@ $L_\infty$ is the usual choice because it is perfectly linear
 (subpixel perturbations are independent), which is easier to verify.
 
 %- to line break
-\eca{
-Crucially, however, these verification tools for local robustness are too compu-tationally-intensive for real-time decision-making pipelines. For instance, consider an autonomous vehicle processing a live video feed: images of the feed cannot be certified robust in a few ms on embedded hardware. This prevents the development of safety filters that could skip non-robust images and only consider certified robust images.}
+Crucially, however, these verification tools for local robustness are too compu-tationally-intensive for real-time decision-making pipelines. 
+For instance, consider an autonomous vehicle processing a live video feed: images of the feed cannot be certified robust in a few ms on embedded hardware. This prevents the development of safety filters that could skip non-robust images and only consider certified robust images.
 
 \smallskip
 
-\todo{shouldn't we unify notation w/ section4?}
 In this paper, we consider {\em global} robustness, that is we do not restrict the certification process to the neighborhood of a specific, fixed input. We follow a two-step procedure. 
-The first step, performed offline, computes global bounds on the \eca{maximum possible} shift between output values of different decision classes due to a perturbation, following an approach similar to VHAGaR~\cite{vhagar}. 
+The first step, performed offline, computes global bounds on the maximum possible shift between output values of different decision classes due to a perturbation, following an approach similar to VHAGaR~\cite{vhagar}. 
 %
 Specifically, for any two decision classes $C$ and $D$ and perturbation $\varepsilon$, we compute an 
 upper bound 
@@ -28,7 +27,7 @@ $value_{I}(C) - value_{I}(D) > \bar{\beta}^\varepsilon_{C,D}$.
 %
 If this is the case, then we are certified that image $I$ is robust for perturbation $\varepsilon$, because $\varepsilon$-perturbed image $I'$ could at most get  $value_{I'}(D) \leq \bar{\beta}^\varepsilon_{C,D}  - (value_{I}(C) - value_{I}(D))  + value_{I'}(C) < value_{I'}(C)$, hence $C$ is also the predicted class for image $I'$. 
 %
-This check typically requires only a few dozen CPU instructions, which can be completed under 1 ms on a single CPU core. \eca{When an image fails this certification, one could either skip it (e.g., in a video stream) or revert to a safer, degraded mode until a trustworthy, robust image is received.}
+This check typically requires only a few dozen CPU instructions, which can be completed under 1 ms on a single CPU core. When an image fails this certification, one could either skip it (e.g., in a video stream) or revert to a safer, degraded mode until a trustworthy, robust image is received.
 
 Our main contributions address the challenges of computing the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$, for $C,D$ output neurons:
 \begin{enumerate}
