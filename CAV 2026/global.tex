@@ -193,7 +193,7 @@ So to encode both $\hat{y}_j$ and $\hat{x}'_j$, the {\em Diff} encoding needs 2 
 \begin{proof}
 First, we know the constraints for $\hat{x}_j'=\ReLU(x_j')$ are exact, by Prop \ref{Prop1}. We now do a case analysis depending on the value of both binary variables. 
 %We have 2 binary variables and 4 cases in total.
- We only need to check that, in all 4 cases that $\hat{y}_j = \ReLU(y_j+x'_j)-\ReLU(x'_j)$.
+ We check that in all 4 cases $\hat{y}_j = \ReLU(y_j+x'_j)-\ReLU(x'_j)$.
 
 \textbf{$\mathbf{a = 0, a' = 0}$:}  In this case $y_j+x'_j\leq 0$ and $x'_j \leq 0 $ (lines 1\&2). We thus have to show that 
 $\hat{y}_j = 0$. This is true thanks to inequalities in line 3.
