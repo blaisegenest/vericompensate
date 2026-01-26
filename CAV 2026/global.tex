@@ -222,8 +222,8 @@ section \ref{s.1b} and Fig.~\ref{fig.1v}):
 	\label{eq.lpr}
 \frac{y_j-\gamma_j}{2} \leq \hat{y}_j \leq \frac{y_j+\gamma_j}{2}
 \end{align}
-which is not the case of 
-${\cal M}^{classical}$. This is a rewrite (and simplification due to the noticed symetry) of the additional linear constraint (3) of \cite{ITNE} used explicitely in ITNE.
+%which is not the case of ${\cal M}^{classical}$. 
+This is a simplification (due to the noticed symmetry) of the additional linear constraint (3) of \cite{ITNE} used explicitly in ITNE.
 	
 
 	\iffalse
@@ -300,13 +300,13 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	The variables $a'_j$ used for $x'_j$ is thus linearly relaxed, while
 	both variables $a,a'$ used in the encoding of $\hat{y}_j$ are kept binary. We call this the "2b+1" model, which uses 2 binary variables per neuron, 
 	as the classical and {\em Diff} encodings.
-	However, the decoupling between $a'$ and $a_j$ removes complicated constraints in the MILP encoding, and this helps the solver. This however also means that  the "2b+1" model is not as accurate as the {\em Diff} model asymptotically.
+	The decoupling between $a'$ and $a_j$ removes complicated constraints in the MILP encoding, which helps the solver. This however also means that  the "2b+1" model is not as accurate as the {\em Diff} model asymptotically.
 
 
 	\subsection{The efficient "1b" model}
 	\label{s.1b}
 
-		\begin{figure}[b!]
+		\begin{figure}[t!]
 		\centering
 	\hspace*{10ex}\begin{tikzpicture}
 		\begin{axis}[
@@ -334,7 +334,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 			\node[label={above:\scriptsize $LP\ relaxation$}] at (axis cs: 0.5, -1.4) {};
 		\end{axis}
 	\end{tikzpicture}
-\caption{The possible values of $\hat{y}_i=\ReLU(x_i)-\ReLU(x'_i)$ depending on $y_i = x_i-x'_i$ for the "1b" model.}
+\caption{Possible values of $\hat{y}_i$ depending on $y_i$ for the "1b" model.}
 	\label{fig.1v}
 \end{figure}
 
@@ -347,7 +347,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
     \begin{proposition}
     \label{prop3}
     Given $y_i \in [-\gamma_i,\gamma_i]$, 
-    $\hat{y}_i$ is a solution of the following MILP program :\begin{align*}
+    $\hat{y}_i$ is a solution of the MILP program :\begin{align*}
 		\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
 		\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
 	\end{align*} where $a \in \{0,1\}$ is a binary variable.
@@ -391,29 +391,29 @@ $\frac{(\bar{\beta}^{\text{perturb}}_{C,D} - \underline{\beta}^{\text{perturb}}_
 as well as a lower bound ("solution") $\underline{\beta}^{\text{perturb}}_{C,D}$.
 
 
-Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, Vhagar \cite{vhagar} defines $\alpha^{\text{perturb}}_{C,D}$, computing the perturbation necessary to switch an image classified as $C$ into an image classified as $D$:
+Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, Vhagar \cite{vhagar} defines $\alpha^{\text{perturb}}_{C,D}$, computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$:
 \begin{align*}
 	\alpha^{\text{perturb}}_{C,D} &= \max_{|I-I'| \leq \text{perturb}} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
 \end{align*}
 
 Notice that  
-$\alpha^{\text{perturb}}_{C,D}$ is not symetrical, while 
+$\alpha^{\text{perturb}}_{C,D}$ is not symmetrical, while 
 $\beta^{\text{perturb}}_{C,D}$ is.
 
 
     
 Assume we have computed (offline) $\bar{\beta}^{\text{perturb}}_{C,D}$ for each $C,D$. Now in real-time:
 \begin{enumerate}  
-	\item[0] Run inference on the DNN to obtain the values $o_D$ of each output neurons. Let $C$ be the class with maximal $o_{C}$. This is the predicted class from the DNN. This is the basic operation done commenly for DNN classification without any change.
-  \item[1] Now, we compute for each class $D \neq C$
+	\item[0] Run inference on the DNN to obtain the values $o_D$ of output neuron for each class D. Let $C$ be the class with maximal $o_{C}$. This is the predicted class from the DNN. This is the basic operation commonly done for DNN classification. % without any change.
+  \item[1] Compute for each class $D \neq C$
   a bit $b_D=1$ iff $o_D +\bar{\beta}^{\text{perturb}}_{C,D} > o_C$.
-  \item[2] We return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
+  \item[2] Return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
 \end{enumerate}
 
 \begin{proposition}
   If "certified robust" is returned over input $I$, 
-  then for all perturbed input $I'$ with  $|I - I'| \leq perturb$,
-  the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$ for perturbation $perturb$.
+  then for all perturbed input $I'$ with  $|I - I'| \leq \text{perturb}$,
+  the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$ for perturbation $\text{perturb}$.
 \end{proposition}
 
 \begin{proof}
@@ -433,5 +433,5 @@ Assume by contradiction that $D \neq C$ is the decision on $I'$.
   \qed
 \end{proof}
 
-The overhead (1,2 above) amounts to \#Class$-1$ ADD(+) and COMP(<), then one OR($\bigvee$) of \#Class$-1$ bits, that is 19 operations in total for 10 classes. 
+The overhead (1,2 above) afterf 0 amounts to \#Class$-1$ ADD(+) and COMP(<), then one OR($\bigvee$) of \#Class$-1$ bits, that is 19 operations in total for 10 classes. 
 This can be realized extremely fast, even on limited hardware.
