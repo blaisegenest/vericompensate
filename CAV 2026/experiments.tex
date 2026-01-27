@@ -58,7 +58,7 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 \subsection{Comparison for global robustness with Vhagar and ITNE ($L_\infty$)}
 
 We use Vhagar benchmarks to be able to compare: 
-bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for which the Vhagar reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model find. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall most robustness tools, e.g. $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
+Vhagar bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for which the Vhagar reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model find. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall most robustness tools, e.g. $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
 
 \iffalse
 
@@ -158,7 +158,8 @@ bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for whi
 		\\\hline
     
      \end{tabular}
-	\caption{Comparison with Vhagar and ITNE of upper bound $\overline{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, average over all bounds $\alpha_{i,j}$. * for CIFAR-Conv, Vhagar failed to compute bounds for some of the cases. For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar. Our results are in {\em italic}. {\em Best} uses the best between our {\em Diff} and our {\em 2b+1} for each $(i,j)$. Lower gaps using {\em Best} means that there are cases $(i,j)$ where {\em Diff} is much better than {\em 2b+1}, and cases $(i',j')$ where it is the opposite.}
+	\caption{Upper bound $\bar{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, averaging bounds $\bar{\alpha}_{C,D}$ over all pair of classes $(C,D)$. {\em Best} computes the average $\bar{\alpha}$ using the lowest $\bar{\alpha}_{C,D}$ computed by {\em Diff} and {\em 2b+1} for each $(C,D)$. Lower gaps using {\em Best} means that there are cases $(C,D)$ where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite. * means that Vhagar failed to compute bounds for some cases $(C,D)$ of CIFAR-Conv. 
+	For such cases, we used numbers from ITNE instead (which is overperforming Vhagar in every test), so these numbers are optimistic evaluation for Vhagar.}
     \label{table.classical}
 \end{table}
 
@@ -168,7 +169,7 @@ bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for whi
 %That is why it is not reported in Table \ref{table.classical}. 
 Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap $40-120\%$. Although we are using its benchmarks, Vhagar methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
 Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, {\em 2b+1} is more accurate for shorter timeout, and {\em Diff} more accurate when there is sufficient time, as expected. 
-Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff} and {\em 2b+1} in every test.
+Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower than both {\em Diff} and {\em 2b+1} in every test.
 
 
 

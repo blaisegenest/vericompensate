@@ -1,4 +1,4 @@
-\section{Primary Component Analysis for Bound Computation}
+\section{Principal Component Analysis for Bound Computation}
 
 \begin{figure*}[b!]
     \centering
@@ -15,7 +15,7 @@
 %As explained in the previous section, global robustness is a very complex problem. On top of efficient MILP encodings, 
 
 Upper bounds $\bar{\beta}$ obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD)} \cite{OOD} inputs far away from the training dataset, need to be accounted for.
-We propose to leverage on Primary Component Analysis (PCA) \cite{Paco},
+We propose to leverage on Principal Component Analysis (PCA) \cite{Paco},
 %Model Order Reduction, 
 stemming from Engineering Science, to focus on faithfully representing common inputs from the dataset ({\em ID}: in distribution). OOD inputs may be represented unfaithfully (with (ID) representation closer to the dataset), which is reasonable as the DNN is unlikely to provide reasonable answers on OOD inputs anyway. 
 To make sure that a dataset is faithfully represented, we can check the accuracy of the DNN on the representation of this ID dataset.

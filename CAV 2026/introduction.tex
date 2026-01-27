@@ -17,19 +17,20 @@ The first step, performed offline, computes global bounds on the maximum possibl
 %
 Specifically, for any two decision classes $C$ and $D$ and perturbation $\varepsilon$, we compute an 
 upper bound 
-$\bar{\beta}^\varepsilon_{C,D}$ of $\max_{I,I', |I-I'| \leq \epsilon}(value_{I}(C) - value_{I}(D) + value_{I'}(D) - value_{I'}(C))$
-, where $value_{J}(X)$ is the output value of class $X \in \{C,D\}$ for input image $J \in \{I,I'\}$. 
+$\bar{\beta}^\varepsilon_{C,D}$ of $\max_{I,I', |I-I'| \leq \epsilon}(
+x_C - x'_C + x'_D - x_D)$, where $x_{C,D},x'_{C,D}$ are the output value of class $C,D$ from image $I$ and $I'$. 
 %
 Unlike local robustness methods, which require $k$ separate calls, computationally expensive calls to certify $k$ images, the global bound $\bar{\beta}^\varepsilon_{C,D}$ is computed offline once per network and remains valid across the entire input space. 
 
-The second step is real-time, being performed with the DNN inference of the image $I$ considered: it suffices to consider the class $C$ with the highest output value $value_{I}(C)$, and check whether for every other class $D \neq C$, 
-$value_{I}(C) - value_{I}(D) > \bar{\beta}^\varepsilon_{C,D}$. 
+The second step is real-time, being performed with the DNN inference of the image $I$ considered: it suffices to consider the class $C$ with the highest output value $x_C$, and check whether for every other class $D \neq C$, 
+$x_C - x_D > \bar{\beta}^\varepsilon_{C,D}$. 
 %
-If this is the case, then we are certified that image $I$ is robust for perturbation $\varepsilon$, because $\varepsilon$-perturbed image $I'$ could at most get  $value_{I'}(D) \leq \bar{\beta}^\varepsilon_{C,D}  - (value_{I}(C) - value_{I}(D))  + value_{I'}(C) < value_{I'}(C)$, hence $C$ is also the predicted class for image $I'$. 
+If this is the case, then we are certified that image $I$ is robust for perturbation $\varepsilon$, because $\varepsilon$-perturbed image $I'$ could at most get 
+$x'_D \leq \bar{\beta}^\varepsilon_{C,D}  - (x_C - x_D)  + x'_C < x'_C$, hence $C$ is also the predicted class for image $I'$. 
 %
 This check typically requires only a few dozen CPU instructions, which can be completed under 1 ms on a single CPU core. When an image fails this certification, one could either skip it (e.g., in a video stream) or revert to a safer, degraded mode until a trustworthy, robust image is received.
 
-Our main contributions address the challenges of computing the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$, for $C,D$ output neurons:
+Our main contributions address the challenges of computing the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$ for all pair of classes $(C,D)$:
 \begin{enumerate}
 	\item We develop a novel {\em Diff MILP encoding} for the global robustness problem, 
 	where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}), see Section \ref{s.diff}. 
