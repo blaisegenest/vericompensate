@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0" version="29.3.4" pages="2">
   <diagram name="mnist-train" id="XROeWO3g0NZ_PiaLbZFy">
-    <mxGraphModel dx="786" dy="519" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+    <mxGraphModel dx="542" dy="358" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -10,7 +10,7 @@
             <mxPoint x="575" y="579.5" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="BlW0AEFeD_OexRqf7nm--6" connectable="0" parent="BlW0AEFeD_OexRqf7nm--2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];spacing=0;labelBorderColor=none;textShadow=0;convertToSvg=0;fontSize=12;labelBackgroundColor=none;" value="&lt;span style=&quot;&quot;&gt;$$o_6 - o_8 + o_8&#39; - o_6&#39; \leq \beta_{6,8}^{\varepsilon}$$&lt;/span&gt;" vertex="1">
+        <mxCell id="BlW0AEFeD_OexRqf7nm--6" connectable="0" parent="BlW0AEFeD_OexRqf7nm--2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];spacing=0;labelBorderColor=none;textShadow=0;convertToSvg=0;fontSize=12;labelBackgroundColor=none;" value="&lt;span style=&quot;&quot;&gt;$$x_6 - x_8 + x_8&#39; - x_6&#39; \leq \beta_{6,8}^{\varepsilon}$$&lt;/span&gt;" vertex="1">
           <mxGeometry relative="1" x="0.1948" as="geometry">
             <mxPoint x="12" y="7" as="offset" />
           </mxGeometry>
@@ -171,17 +171,17 @@
         <mxCell id="BlW0AEFeD_OexRqf7nm--9" connectable="0" parent="1" style="group" value="" vertex="1">
           <mxGeometry height="43.49744186046519" width="90.9997674418604" x="502" y="541" as="geometry" />
         </mxCell>
-        <mxCell id="BlW0AEFeD_OexRqf7nm--7" parent="BlW0AEFeD_OexRqf7nm--9" style="text;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;sub&gt;$$o_8$$&lt;/sub&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="BlW0AEFeD_OexRqf7nm--7" parent="BlW0AEFeD_OexRqf7nm--9" style="text;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;sub&gt;$$x_8$$&lt;/sub&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="38" width="67" x="27.9997674418604" y="10.497441860465187" as="geometry" />
         </mxCell>
-        <mxCell id="BlW0AEFeD_OexRqf7nm--10" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="&lt;div&gt;$$o_6&#39;$$&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="41" width="67" x="502" y="651" as="geometry" />
+        <mxCell id="BlW0AEFeD_OexRqf7nm--10" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="&lt;div&gt;$$x_6&#39;$$&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="70" x="501" y="652" as="geometry" />
         </mxCell>
-        <mxCell id="BlW0AEFeD_OexRqf7nm--11" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;sub&gt;$$o_8&#39;$$&lt;/sub&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="BlW0AEFeD_OexRqf7nm--11" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;sub&gt;$$x_8&#39;$$&lt;/sub&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="38" width="67" x="525.9997674418604" y="665.4974418604652" as="geometry" />
         </mxCell>
-        <mxCell id="sCFTrJq4_meSi-AOqO2O-22" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="&lt;div&gt;$$o_6$$&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="41" width="65" x="506" y="539.5" as="geometry" />
+        <mxCell id="sCFTrJq4_meSi-AOqO2O-22" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="&lt;div&gt;$$x_6$$&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="70" x="504" y="540.5" as="geometry" />
         </mxCell>
         <mxCell id="BlW0AEFeD_OexRqf7nm--26" connectable="0" parent="1" style="group" value="" vertex="1">
           <mxGeometry height="150" width="52.54999999999998" x="163.11" y="290" as="geometry" />
