@@ -308,7 +308,8 @@ We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{
 
 
 \noindent {\bf Discussion:} Compared with results on $L_\infty$ (Table~\ref{table.classical}), the upper bound $\bar{\beta}$ computed by {\em Best} is now much larger than the lower bound $\underline{\beta}$: from 1.5 to 600 times. Using 
-the faster 1$b$ model now becomes pertinent. In half of the cases, 1$b$ actually produces the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provide better bounds. ITNE is significantly worse, producing $25\%$ worse bounds $\bar{\beta}$ on average than Best.
+the faster 1$b$ model now becomes pertinent. In half of the cases, 1$b$ actually produces the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provides better bounds. ITNE is significantly worse, producing $25\%$ worse bounds 
+$\bar{\beta}$ on average than {\em Best}.
 
 Comparing with and without PCA, as expected, PCA-DNNs allow to reach much smaller upper bounds $\bar{\beta}$ than without PCA, $15$x for MNIST-FC, $3$x for FMNIST-Conv and $7$x for CIFAR10-Conv. MNIST-FC is harder to solve than FMNIST-Conv, although they are comparable benchmark, because fully connected architecture are richer than Convolutional architecture of the same size. PCA-CIFAR10-Conv is the hardest test, because the dimension (60) is not as reduced as for MNIST and FMNIST (20 and 25) .
 
