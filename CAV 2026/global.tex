@@ -10,13 +10,13 @@ the linear constraint $|x_j-x'_j| \leq \varepsilon$ is used for each {\em input}
 
 \smallskip
 
-We now explain how to encode $L_1$-perturbations bounded by $c$,
+We now explain how to encode $L_1$-perturbations bounded by $\varepsilon$,
 using additional variables that are linear only. Let $n$ be the number of input neurons. 
 We use $n$ additional linear variables $(A_i)_{i \leq n}$, with the following  constrains:
 \begin{align}\label{L1constraint}\begin{cases}
 	A_j \geq x_j - x'_j &\text{ for all }j \leq n\\ 
 	A_j \geq x'_j - x_j &\text{ for all }j \leq n\\
-	\sum_{j\leq n} A_j \leq c	&\end{cases}
+	\sum_{j\leq n} A_j \leq \varepsilon	&\end{cases}
 \end{align}
 
 \begin{proof}
@@ -24,12 +24,12 @@ We use $n$ additional linear variables $(A_i)_{i \leq n}$, with the following  c
 
 The first two lines of constraints (\ref{L1constraint}) are equivalent with $A_j \geq |x_j - x'_j|$. 
 So the whole constraint (\ref{L1constraint}) 
-implies that $\sum_{j\leq n} |x_j - x'_j| \leq c$.
+implies that $\sum_{j\leq n} |x_j - x'_j| \leq \varepsilon$.
 
 Conversely, for every instance that satisfies $\sum_{j\leq n} |x_j - x'_j| \leq c$, then there is also an instance which satisfies constraints (\ref{L1constraint}),  by defining $A_j = |x_j - x'_j|$ for all $j \leq n$.
 
 This shows that (\ref{L1constraint}) is equivalent with 
-$||\vec{x} - \vec{x}'||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq c$.
+$||\vec{x} - \vec{x}'||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq \varepsilon$.
 \qed
 \end{proof}
 
@@ -383,55 +383,59 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 
 %As explained in the introduction, 
 The objective we want to compute upper and lower bounds on is 
-$\beta^{\text{perturb}}_{C,D} = \max_{|I-I'| \leq \text{perturb}}(x_C - x_D +x'_D - x'_C)$, for $x_C,x_D$ the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
-Upper bounds  $\bar{\beta}^{\text{perturb}}_{C,D} \geq \beta^{\text{perturb}}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
-$\underline{\beta}^{\text{perturb}}_{C,D} \leq \beta^{\text{perturb}}_{C,D}$
+$\beta^{\varepsilon}_{C,D} = \max_{|I-I'| \leq \varepsilon}(x_C - x_D +x'_D - x'_C)$, for $x_C,x_D$ the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
+Upper bounds  $\bar{\beta}^{\varepsilon}_{C,D} \geq \beta^{\varepsilon}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
+$\underline{\beta}^{\varepsilon}_{C,D} \leq \beta^{\varepsilon}_{C,D}$
 will allow us to evaluate how large is the gap= 
-$\frac{(\bar{\beta}^{\text{perturb}}_{C,D} - \underline{\beta}^{\text{perturb}}_{C,D})} {\underline{\beta}^{\text{perturb}}_{C,D}}$. MILP solvers, e.g. Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\text{perturb}}_{C,D}$
-as well as a lower bound ("solution") $\underline{\beta}^{\text{perturb}}_{C,D}$.
+$\frac{(\bar{\beta}^{\varepsilon}_{C,D} - \underline{\beta}^{\varepsilon}_{C,D})} {\underline{\beta}^{\varepsilon}_{C,D}}$. MILP solvers, e.g. Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\varepsilon}_{C,D}$
+as well as a lower bound ("solution") $\underline{\beta}^{\varepsilon}_{C,D}$.
 
 
-Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, Vhagar \cite{vhagar} defines $\alpha^{\text{perturb}}_{C,D}$, computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$:
+Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, Vhagar \cite{vhagar} defines $\alpha^{\varepsilon}_{C,D}$, computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$:
 \begin{align*}
-	\alpha^{\text{perturb}}_{C,D} &= \max_{|I-I'| \leq \text{perturb}} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
+	\alpha^{\varepsilon}_{C,D} &= \max_{|I-I'| \leq \varepsilon} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
 \end{align*}
 
 Notice that  
-$\alpha^{\text{perturb}}_{C,D}$ is not symmetrical, while 
-$\beta^{\text{perturb}}_{C,D}$ is.
+$\alpha^{\varepsilon}_{C,D}$ is not symmetrical, while 
+$\beta^{\varepsilon}_{C,D}$ is.
 
 
     
-Assume we have computed (offline) $\bar{\beta}^{\text{perturb}}_{C,D}$ for each $C,D$. Now in real-time:
+Assume we have computed (offline) $\bar{\beta}^{\varepsilon}_{C,D}$ for each $C,D$. Now in real-time:
 \begin{enumerate}  
-	\item[0] Run inference on the DNN to obtain the values $o_D$ of output neuron for each class D. Let $C$ be the class with maximal $o_{C}$. This is the predicted class from the DNN. This is the basic operation commonly done for DNN classification. % without any change.
+  \item[0] Run inference on the DNN to obtain the values $x_D$ of output neuron for each class D. Let $C$ be the class with maximal $x_{C}$. This is the predicted class from the DNN. This is the basic operation commonly done for DNN classification. % without any change.
   \item[1] Compute for each class $D \neq C$
-  a bit $b_D=1$ iff $o_D +\bar{\beta}^{\text{perturb}}_{C,D} > o_C$.
+  a bit $b_D=1$ iff $x_D +\bar{\beta}^{\varepsilon}_{C,D} > x_C$.
   \item[2] Return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
 \end{enumerate}
 
 \begin{proposition}
   If "certified robust" is returned over input $I$, 
-  then for all perturbed input $I'$ with  $|I - I'| \leq \text{perturb}$,
-  the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$ for perturbation $\text{perturb}$.
+  then for all perturbed input $I'$ with  $|I - I'| \leq \varepsilon$,
+  the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$ for perturbation $\varepsilon$.
 \end{proposition}
 
 \begin{proof}
   Let $C$ be the decision of the DNN on $I$.
 Assume by contradiction that $D \neq C$ is the decision on $I'$. 
   We know that 
-  $x_D +\bar{\beta}^{\text{perturb}}_{C,D} < x_C$
+  $x_D +\bar{\beta}^{\varepsilon}_{C,D} < x_C$
   because "certified robust" is returned over input $I$.
-  That  is, $x_D - x_C +\bar{\beta}^{\text{perturb}}_{C,D} < 0$
+  That  is, $x_D - x_C +\bar{\beta}^{\varepsilon}_{C,D} < 0$
 
-  By definition of $\bar{\beta}^{\text{perturb}}_{C,D}$,
-  we have $x'_D - x'_C + x_C - x_D \leq \bar{\beta}^{\text{perturb}}_{C,D}$.
+  By definition of $\bar{\beta}^{\varepsilon}_{C,D}$,
+  we have $x'_D - x'_C + x_C - x_D \leq \bar{\beta}^{\varepsilon}_{C,D}$.
   ($I$ and $I'$ have symetrical roles), 
   that is 
-  $x'_D - x'_C \leq x_D - x_C + \bar{\beta}^{\text{perturb}}_{C,D} < 0$.
+  $x'_D - x'_C \leq x_D - x_C + \bar{\beta}^{\varepsilon}_{C,D} < 0$.
   That is $x'_D < x'_C$, a contradiction with $D$ is the decision on $I'$.
   \qed
 \end{proof}
 
-The overhead (1,2 above) afterf 0 amounts to \#Class$-1$ ADD(+) and COMP(<), then one OR($\bigvee$) of \#Class$-1$ bits, that is 19 operations in total for 10 classes. 
-This can be realized extremely fast, even on limited hardware.
+The overhead (1,2 above) after 0 amounts to $2k-1$ operations, 
+where $k=\#$Class. 
+More precisly,
+$(k-1)$ ADD(+), 
+$(k-1)$ COMP(<) and $1$ OR($\bigvee$) of ($k-1$) bits.
+That is, 19 operations in total for $k=10$ classes. This can be realized extremely fast, even on limited hardware.
