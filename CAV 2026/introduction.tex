@@ -1,13 +1,13 @@
 While deep neural networks (DNNs) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the formal verification community to develop various methodologies, each presenting a unique trade-off between completeness and computational efficiency~\cite{Marabou,Reluplex,deeppoly}. 
-This surge in innovation has also led to the inception of competitions such as VNNComp~\cite{VNNcomp}, which aims to systematically evaluate the performance of neural network verification tools. Notable examples include NNenum~\cite{nnenum}, Marabou~\cite{Marabou,Marabou2}, and PyRAT~\cite{pyrat}, as well as frameworks such as MnBAB~\cite{ferrari2022complete} (which builds upon ERAN~\cite{deeppoly} and PRIMA~\cite{prima}) and $\alpha,\beta$-CROWN~\cite{crown,xu2020fast}, the winner of the last 4 VNNcomp, based on branch-and-bound methodology \cite{cutting,BaB}.
+This surge in innovation has also led to the inception of competitions such as VNNComp~\cite{VNNcomp}, which aims to systematically evaluate the performance of neural network verification tools. Notable examples include NNenum~\cite{nnenum}, Marabou~\cite{Marabou,Marabou2}, and PyRAT~\cite{pyrat}, as well as frameworks such as MnBAB~\cite{ferrari2022complete} (which builds upon ERAN~\cite{deeppoly} and PRIMA~\cite{prima}) and $\alpha,\beta$-CROWN~\cite{crown,xu2020fast}, the winner of the last 4 VNNComp, based on branch-and-bound methodology \cite{cutting,BaB}.
 
-These tools focus on {\em local} robustness: given a DNN, an image, and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned to the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric, every subpixel of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is, 2 levels of grey/blue/red/green). 
+These tools focus on {\em local} robustness: given a DNN, an image, and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned to the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric, every subpixel of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is, 2 levels of gray/blue/red/green). 
 Although it is not necessarily the most meaningful perturbation,
 $L_\infty$ is the usual choice because it is perfectly linear  
 (subpixel perturbations are independent), which is easier to verify.
 
 %- to line break
-Crucially, however, these verification tools for local robustness are too compu-tationally-intensive for real-time decision-making pipelines. 
+Crucially, however, these verification tools for local robustness are too computationally-intensive for real-time decision-making pipelines. 
 For instance, consider an autonomous vehicle processing a live video feed: images of the feed cannot be certified robust in a few ms on embedded hardware. This prevents the development of safety filters that could skip non-robust images and only consider certified robust images.
 
 \smallskip
