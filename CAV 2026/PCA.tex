@@ -12,9 +12,14 @@
 %Then, how we use it (pictures and text).
 
 
-As explained in the previous section, global robustness is a very complex problem. On top of efficient MILP encodings, we propose to leverage an orthogonal technique, stemming from Engineering Science: Model Order Reduction.
-The idea is to reduce the search space. This will have several benefits: the search is faster, it produces better upper bounds $\bar{\beta}$, 
-and the lower bounds $\underline{\beta}$ produced are much more natural wrt the dataset. The simplest Model Order Reduction uses Primary Component Analysis (PCA) \cite{Paco}: PCA  is a linear technique to reduce the dimension of a dataset while keeping its main information. From a dataset, the most important linear components of this dataset are computed.
+%As explained in the previous section, global robustness is a very complex problem. On top of efficient MILP encodings, 
+
+Upper bounds $\bar{\beta}$ obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD \cite{OOD})} inputs far away from the training dataset, need to be accounted for.
+We propose to leverage on Model Order Reduction, stemming from Engineering Science \cite{Paco}, %. %Specifically, we use principal component analysis (PCA) 
+to focus on faithfully representing common inputs from the dataset. OOD inputs may be represented unfaithfully, which is reasonable as the DNN is unlikely to provide a reasonable answer on such inputs anyway. 
+Further, 
+%This will have several benefits: the search is faster, it produces better, and 
+the lower bounds $\underline{\beta}$ produced will be much more natural wrt the dataset. The simplest Model Order Reduction uses Primary Component Analysis (PCA) \cite{Paco}: PCA  is a linear technique to reduce the dimension of a dataset while keeping its main information. From a dataset, the most important linear components of this dataset are computed.
 Projecting over the first few main components is a powerful model order reduction technique ({\em encoding} / {\em reducing from the full dimension}). 
 It is easy to go from the reduced dimension back to the full dimension
 by making the product between the reduced vector and the first few dimensions ({\em decoding}). The PCA-pipeline is as follows (see Fig.~\ref{fig.MNIST} for an example on the MNIST dataset):

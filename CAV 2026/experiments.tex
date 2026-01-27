@@ -1,4 +1,4 @@
-	\section{Experimental Evaluation}
+\section{Experimental Evaluation}
 	
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090 (not used, Gurobi is CPU only). 
@@ -163,11 +163,11 @@ bound $\alpha$, perturbation $L_\infty=0.05$, Vhagar convolutional DNNs, for whi
 
 \smallskip 
 
-\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. Using the 1$b$ model is not useful, as its abstraction will loose more than $6\%$. 
+\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. Using the {\em 1b} model is not useful, as its abstraction will loose more than $6\%$. 
 %That is why it is not reported in Table \ref{table.classical}. 
 Vhagar computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap $40-120\%$. Although we are using its benchmarks, Vhagar methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
-Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, 2$b$+1 is more accurate for shorter timeout, and {\em Diff} more accurate when there is sufficient time, as expected. 
-Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff} and 2$b$+1 in every test.
+Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, {\em 2b+1} is more accurate for shorter timeout, and {\em Diff} more accurate when there is sufficient time, as expected. 
+Anyway, both are better for particular classes $(i,j)$, as {\em Best} is lower than both {\em Diff} and {\em 2b+1} in every test.
 
 
 
@@ -307,8 +307,10 @@ We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{
 
 
 
-\noindent {\bf Discussion:} Compared with results on $L_\infty$ (Table~\ref{table.classical}), the upper bound $\bar{\beta}$ computed by {\em Best} is now much larger than the lower bound $\underline{\beta}$: from 1.5 to 600 times. Using 
-the faster 1$b$ model now becomes pertinent. In half of the cases, 1$b$ actually produces the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provides better bounds. ITNE is significantly worse, producing $25\%$ worse bounds 
+\noindent {\bf Discussion:} Compared with $L_\infty$ (Table~\ref{table.classical}), the gap between the upper bound $\bar{\beta}$ and 
+the lower bound $\underline{\beta}$ is much larger with 
+$L_1$ perturbations, from 1.5 to 600. Using 
+the faster {\em 1b} model now becomes pertinent. In half of the cases, {\em 1b} actually produces the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provides better bounds. ITNE is significantly worse, producing $25\%$ worse bounds 
 $\bar{\beta}$ on average than {\em Best}.
 
 Comparing with and without PCA, as expected, PCA-DNNs allow to reach much smaller upper bounds $\bar{\beta}$ than without PCA, $15$x for MNIST-FC, $3$x for FMNIST-Conv and $7$x for CIFAR10-Conv. MNIST-FC is harder to solve than FMNIST-Conv, although they are comparable benchmark, because fully connected architecture are richer than Convolutional architecture of the same size. PCA-CIFAR10-Conv is the hardest test, because the dimension (60) is not as reduced as for MNIST and FMNIST (20 and 25) .

@@ -47,7 +47,7 @@ Our main contributions address the challenges of computing the {\em global bound
 
 	\item Further, from the {\em Diff MILP model}, which is exact, 
 	we develop two abstract MILP models, which are more efficient but also asymptotically less accurate than {\em Diff}. 
-	Namely, the "2b+1" model, accurate on the {\em diff variables} but abstract on the perturbed variables; while the "1b" model has a unique binary variable per ReLU, only considering the {\em diff variables}.
+	Namely, the {\em 2b+1} model, accurate on the {\em diff variables} but abstract on the perturbed variables; while the {\em 1b} model has a unique binary variable per ReLU, only considering the {\em diff variables}.
 
    \item  In terms of perturbations, we consider conjunctions of $L_\infty$- and $L_1$-norms, which allow to accurately describe perturbations. For instance, "each subpixel is perturbed by at most $\frac{50}{255}$ ($L_\infty$) and the sum of the absolute value of perturbations over all subpixels is at most $1$" ($L_1$-perturbation). While $L_1$ perturbations are not linear (because of the absolute values), and thus they are seldom used, we show in Section~\ref{s.L1} how to use them as a perturbation in the MILP model without incurring any expensive binary variables (only cheap linear variables are necessary). 
 
@@ -55,7 +55,7 @@ Our main contributions address the challenges of computing the {\em global bound
 
 \item Experimentally, the {\em Diff MILP model} computes upper bounds
 $\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compared with the optimized version of the classical MILP encoding (see Table \ref{table.classical}); namely reducing the number of binary variables (VHAGaR \cite{vhagar}); or adding linear constraints from the {\em diff variables} (ITNE \cite{ITNE}).
-The abstractions  "2b+1" and "1b" variant offer different trade-offs, 
+The abstractions  {\em 2b+1} and {\em 1b} variant offer different trade-offs, 
 reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
 Further, using PCA reduces the upper bound $\bar{\beta}^{\varepsilon}_{C,D}$ by $3$ to $20$ times.
 Overall, using these different techniques ({\em Diff} MILP model, abstraction, and PCA) enables the real-time certification of $\geq 70\%$ of fresh images for an $L1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets respectively, see Table \ref{table.cert}. The online process only adds 0.5 ms of latency per image, and 2000 images/second can be treated per CPU core.

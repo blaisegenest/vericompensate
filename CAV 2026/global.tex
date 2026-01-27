@@ -290,7 +290,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
     
 
 
-    \subsection{A decoupled "2b+1" model}
+    \subsection{A decoupled {\em 2b+1} model}
 
 	We propose a variant of the {\em Diff} encoding: 
 	the binary variables $a'$ appearing in 
@@ -298,12 +298,12 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	appearing in the classical encoding of $\hat{x}'_j = \ReLU(x'_j)$. 
 	This would mean having 3 binary variables, which would be too costly. 
 	The variables $a'_j$ used for $x'_j$ is thus linearly relaxed, while
-	both variables $a,a'$ used in the encoding of $\hat{y}_j$ are kept binary. We call this the "2b+1" model, which uses 2 binary variables per neuron, 
+	both variables $a,a'$ used in the encoding of $\hat{y}_j$ are kept binary. We call this the {\em 2b+1} model, which uses 2 binary variables per neuron, 
 	as the classical and {\em Diff} encodings.
-	The decoupling between $a'$ and $a_j$ removes complicated constraints in the MILP encoding, which helps the solver. This however also means that  the "2b+1" model is not as accurate as the {\em Diff} model asymptotically.
+	The decoupling between $a'$ and $a_j$ removes complicated constraints in the MILP encoding, which helps the solver. This however also means that  the {\em 2b+1} model is not as accurate as the {\em Diff} model asymptotically.
 
 
-	\subsection{The efficient "1b" model}
+	\subsection{The efficient {\em 1b} model}
 	\label{s.1b}
 
 		\begin{figure}[t!]
@@ -334,14 +334,14 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 			\node[label={above:\scriptsize $LP\ relaxation$}] at (axis cs: 0.5, -1.4) {};
 		\end{axis}
 	\end{tikzpicture}
-\caption{Possible values of $\hat{y}_i$ depending on $y_i$ for the "1b" model.}
+\caption{Possible values of $\hat{y}_i$ depending on $y_i$ for the {\em 1b} model.}
 	\label{fig.1v}
 \end{figure}
 
 
 
 	To simplify further and limit the number of (binary) variables, 
-    we introduce an efficient "1b" model which only uses the diff variables $y_i,\hat{y}_i$. Again, we study the range of values $\hat{y}_i$ can take according to the value of $y_i$, as depicted in Fig.~\ref{fig.1v}. This is a projection of Fig.~\ref{fig.2v} onto $y_i,\hat{y}_i$.
+    we introduce an efficient {\em 1b} model which only uses the diff variables $y_i,\hat{y}_i$. Again, we study the range of values $\hat{y}_i$ can take according to the value of $y_i$, as depicted in Fig.~\ref{fig.1v}. This is a projection of Fig.~\ref{fig.2v} onto $y_i,\hat{y}_i$.
     
 
     \begin{proposition}
@@ -356,7 +356,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
     We can easily check that the LP relaxation of this MILP program,
 	depicted in broken lines on Fig.~\ref{fig.1v}, is exactly (\ref{eq.lpr}).
     
-	As the "1b" model is a projection of the {\em Diff} model and also of the "2b+1" models, 	the LP relaxations of the {\em Diff} and the "2b+1" models contain (\ref{eq.lpr}). 
+	As the {\em 1b} model is a projection of the {\em Diff} model and also of the {\em 2b+1} models, 	the LP relaxations of the {\em Diff} and the {\em 2b+1} models contain (\ref{eq.lpr}). 
 	%Notice that (\ref{eq.lpr}) corresponds to Eq. (3) in \cite{ITNE}, 
 	%which is added explicitly to the classical model in their ITNE model.
 	
