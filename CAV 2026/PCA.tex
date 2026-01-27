@@ -1,4 +1,4 @@
-\section{PCA Model Order Reduction for Bound Computation}
+\section{Primary Component Analysis for Bound Computation}
 
 \begin{figure*}[b!]
     \centering
@@ -14,22 +14,33 @@
 
 %As explained in the previous section, global robustness is a very complex problem. On top of efficient MILP encodings, 
 
-Upper bounds $\bar{\beta}$ obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD \cite{OOD})} inputs far away from the training dataset, need to be accounted for.
-We propose to leverage on Model Order Reduction, stemming from Engineering Science \cite{Paco}, %. %Specifically, we use principal component analysis (PCA) 
-to focus on faithfully representing common inputs from the dataset. OOD inputs may be represented unfaithfully, which is reasonable as the DNN is unlikely to provide a reasonable answer on such inputs anyway. 
-Further, 
+Upper bounds $\bar{\beta}$ obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD)} \cite{OOD} inputs far away from the training dataset, need to be accounted for.
+We propose to leverage on Primary Component Analysis (PCA) \cite{Paco},
+%Model Order Reduction, 
+stemming from Engineering Science, to focus on faithfully representing common inputs from the dataset ({\em ID}: in distribution). OOD inputs may be represented unfaithfully (with (ID) representation closer to the dataset), which is reasonable as the DNN is unlikely to provide reasonable answers on OOD inputs anyway. 
+To make sure that a dataset is faithfully represented, we can check the accuracy of the DNN on the representation of this ID dataset.
+Last, examples corresponding to 
 %This will have several benefits: the search is faster, it produces better, and 
-the lower bounds $\underline{\beta}$ produced will be much more natural wrt the dataset. The simplest Model Order Reduction uses Primary Component Analysis (PCA) \cite{Paco}: PCA  is a linear technique to reduce the dimension of a dataset while keeping its main information. From a dataset, the most important linear components of this dataset are computed.
-Projecting over the first few main components is a powerful model order reduction technique ({\em encoding} / {\em reducing from the full dimension}). 
-It is easy to go from the reduced dimension back to the full dimension
-by making the product between the reduced vector and the first few dimensions ({\em decoding}). The PCA-pipeline is as follows (see Fig.~\ref{fig.MNIST} for an example on the MNIST dataset):
+the lower bounds $\underline{\beta}$ with PCA will be much more natural (ID) wrt the dataset (compare Fig.~\ref{fig3} and Fig.~\ref{fig4}).
+
+%The simplest Model Order Reduction uses 
+ PCA is a %Model Order Reduction 
+ technique to extract %the main information from a dataset.
+%reduce the dimension of a dataset while keeping its main information. 
+%From a dataset, 
+the most important linear components from a dataset. 
+%are computed. Projecting over the first few main components is a powerful model order reduction technique ({\em encoding} / {\em reducing from the full dimension}). 
+It computes linear operators to go from the full dimension to a reduced dimension of important features (encoding), and back (decoding).
+%It is easy to go from the reduced dimension back to the full dimension
+%by making the product between the reduced vector and the first few dimensions ({\em decoding}). 
+The PCA-pipeline is as follows (see Fig.~\ref{fig.MNIST} for an example on the MNIST dataset):
 
 \begin{figure*}[b!]
 	\centering
 \includegraphics[scale=0.4]{image.png} \hspace{1.5cm}
 \includegraphics[scale=0.4]{perturb.png}
-\caption{An improbable image for MNIST and its perturbation ($L1$-difference of $.5$ in a unique pixel at x=14, y=8 from top) with maximal 
-$\underline{\beta}^{.5}_{6,8}=.518$, as obtained as solution by the {\em Diff} model without PCA.}
+\caption{An (OOD) image for MNIST and its perturbation ($L1$-difference of $.5$ in a unique pixel at x=14, y=8 from top) maximizing
+$\underline{\beta}^{.5}_{6,8}=.518$, as obtained as solution by the {\em Diff} model (without PCA).}
 \label{fig3}
 \end{figure*}	
 
@@ -61,7 +72,7 @@ Notice that the lower bound $\underline{\beta}$ is lower when using PCA-DNN, whi
 	\centering
 \includegraphics[scale=0.4]{redimage.png} \hspace{1.5cm}
 \includegraphics[scale=0.4]{redperturb.png}
-\caption{An image for MNIST and its perturbation when using the {\bf PCA-DNN} with 20-dimension, with maximal $\underline{\beta}^{.5}_{6,8} = .084$, as obtained by the{\em Diff} model.}
+\caption{An (ID) image for MNIST and its perturbation when using the {\bf PCA-DNN} with 20-dimension, maximizing $\underline{\beta}^{.5}_{6,8} = .084$, as obtained by the{\em Diff} model.}
 \label{fig4}
 \end{figure*}	
 
