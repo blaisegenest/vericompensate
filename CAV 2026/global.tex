@@ -26,7 +26,7 @@ The first two lines of constraints (\ref{L1constraint}) are equivalent with $A_j
 So the whole constraint (\ref{L1constraint}) 
 implies that $\sum_{j\leq n} |x_j - x'_j| \leq \varepsilon$.
 
-Conversely, for every instance that satisfies $\sum_{j\leq n} |x_j - x'_j| \leq c$, then there is also an instance which satisfies constraints (\ref{L1constraint}),  by defining $A_j = |x_j - x'_j|$ for all $j \leq n$.
+Conversely, for every instance that satisfies $\sum_{j\leq n} |x_j - x'_j| \leq \varepsilon$, then there is also an instance which satisfies constraints (\ref{L1constraint}),  by defining $A_j = |x_j - x'_j|$ for all $j \leq n$.
 
 This shows that (\ref{L1constraint}) is equivalent with 
 $||\vec{x} - \vec{x}'||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq \varepsilon$.
@@ -383,7 +383,9 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 
 %As explained in the introduction, 
 The objective we want to compute upper and lower bounds on is 
-$\beta^{\varepsilon}_{C,D} = \max_{|I-I'| \leq \varepsilon}(x_C - x_D +x'_D - x'_C)$, for $x_C,x_D$ the value associated with output neurons $C,D$ from any input image $I$, and $x'_C,x'_D$ from its perturbed image $I'$. 
+$\beta^{\varepsilon}_{C,D} = \max_{|I-I'| \leq \varepsilon}((x_C - x'_C)- 
+(x_D - x'_D)) = \max_{|I-I'| \leq \varepsilon}(y_C - y_D)$, for $x_{C,D},x'_{C,D}, y_{C,D}$ the value of the output neuron associated with class $C,D$ from input image $I$, perturbed image $I'$ or the differential between $I,I'$ respectively.
+
 Upper bounds  $\bar{\beta}^{\varepsilon}_{C,D} \geq \beta^{\varepsilon}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
 $\underline{\beta}^{\varepsilon}_{C,D} \leq \beta^{\varepsilon}_{C,D}$
 will allow us to evaluate how large is the gap= 
@@ -391,7 +393,8 @@ $\frac{(\bar{\beta}^{\varepsilon}_{C,D} - \underline{\beta}^{\varepsilon}_{C,D})
 as well as a lower bound ("solution") $\underline{\beta}^{\varepsilon}_{C,D}$.
 
 
-Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. Namely, Vhagar \cite{vhagar} defines $\alpha^{\varepsilon}_{C,D}$, computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$:
+Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. 
+Namely, VHAGaR \cite{vhagar} defines $\alpha^{\varepsilon}_{C,D}$, computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$:
 \begin{align*}
 	\alpha^{\varepsilon}_{C,D} &= \max_{|I-I'| \leq \varepsilon} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
 \end{align*}
@@ -404,7 +407,7 @@ $\beta^{\varepsilon}_{C,D}$ is.
     
 Assume we have computed (offline) $\bar{\beta}^{\varepsilon}_{C,D}$ for each $C,D$. Now in real-time:
 \begin{enumerate}  
-  \item[0] Run inference on the DNN to obtain the values $x_D$ of output neuron for each class D. Let $C$ be the class with maximal $x_{C}$. This is the predicted class from the DNN. This is the basic operation commonly done for DNN classification. % without any change.
+  \item[0] Run inference on the DNN to obtain the values $x_D$ of output neuron for each class D. Let $C$ be the class with maximal $x_{C}$. This is the predicted class from the DNN. This is the basic operation commonly done for DNN classification, without any change.
   \item[1] Compute for each class $D \neq C$
   a bit $b_D=1$ iff $x_D +\bar{\beta}^{\varepsilon}_{C,D} > x_C$.
   \item[2] Return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
