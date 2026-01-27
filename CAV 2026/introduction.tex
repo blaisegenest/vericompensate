@@ -54,7 +54,7 @@ Our main contributions address the challenges of computing the {\em global bound
     \item Bounds obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD \cite{OOD})} inputs far away from the training dataset, need to be accounted for. To address this, we consider 
 	principal component analysis (PCA)
 	 from engineering science \cite{Paco}. 
-	 Specifically, we use PCA to faithfully represent common inputs from the dataset. OOD inputs may be represented unfaithfully, which is reasonable as the DNN is unlikely to provide a reasonable answer on OOD inputs anyway. For instance, $20$ linear components represent MNIST inputs faithfully, without losing accuracy for the DNN on the MNIST dataset.
+	 Specifically, we use PCA to faithfully represent common inputs from the dataset. OOD inputs may be represented unfaithfully, which is reasonable as the DNN is unlikely to provide a reasonable answer on OOD inputs anyway. For instance, $20$ linear components represent MNIST inputs faithfully: the PCA-DNN does not loose accuracy on the MNIST dataset.
 
 \item Experimentally, the {\em Diff MILP model} computes upper bounds
 $\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compared with the optimized version of the classical MILP encoding (see Table \ref{table.classical}); namely reducing the number of binary variables (VHAGaR \cite{vhagar}); or adding linear constraints from the {\em diff variables} (ITNE \cite{ITNE}).
