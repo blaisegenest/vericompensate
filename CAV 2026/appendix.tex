@@ -39,14 +39,14 @@
  	\end{aligned}
  \end{align*} Now we can see, $y_j+x'_j\leq 0$ and $x'_j \leq 0$ (lines 1\&2), $\hat{y}_j=0$ (line 3). 
  
- For other 3 lines, we check the right-hand side of each inequalities by assumption of the proposition $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$: \begin{align*}
+ For other 3 lines, by above discussing and the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, they are implied by the following inequalities respectively (one for one) \begin{align*}
  & \begin{aligned}
- 	0  &\leq y_j + x'_j -\alpha_j &
- 	0  &\geq y_j + x'_j  \\
- 	0  &\leq -x'_j  &
- 	0  &\geq -x'_j + \alpha_j \\
- 	0  &\leq y_j + \gamma_j  &
- 	0  &\geq y_j - \gamma_j
+ 	\hat{y}_j  \leq 0 &\leq y_j + x'_j -\alpha_j &
+ 	\hat{y}_j  \geq 0 &\geq y_j + x'_j  \\
+ 	\hat{y}_j  \leq 0 &\leq -x'_j  &
+ 	\hat{y}_j  \geq 0 &\geq -x'_j + \alpha_j \\
+ 	\hat{y}_j  \leq 0 &\leq y_j + \gamma_j  &
+ 	\hat{y}_j  \geq 0 &\geq y_j - \gamma_j
  \end{aligned}
  \end{align*} Therefore all 3 rest lines are tautology.
  
@@ -68,16 +68,22 @@
 	\end{aligned}
 \end{align*} Now we can see, $y_j+x'_j\geq 0$ and $x'_j \leq 0$ (lines 1\&2), hence $y_j \geq 0$; and $\hat{y}_j= y_j + x'_j$ (line 4). 
 
-For other 3 lines, we check the right-hand side of each inequalities by assumption of the proposition $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$: \begin{align*}
-& \begin{aligned}
-0  &\leq \gamma_j       &
-0  &\geq 0 \\
-0 &\leq -x'_j + \beta_j &
-0  &\geq -x'_j + \alpha_j \\
-0 &\leq y_j  &
-0  &\geq y_j - \gamma_j
-\end{aligned}
-\end{align*} Therefore all 3 rest lines are tautology.
+By above discussing,  we have: \begin{align*}
+	& \begin{aligned}
+		\hat{y}_j  \leq& y_j+x'_j \leq y_j  &\hat{y}_j  \geq& y_j+x'_j \geq 0
+	\end{aligned}
+\end{align*}
+
+Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, all 3 other lines are implied by the following inequalities respectively (one for one): \begin{align*}
+	& \begin{aligned}
+		\hat{y}_j  \leq&  y_j \leq \gamma_j       &
+		\hat{y}_j  \geq& y_j+x'_j \geq 0 \\
+		\hat{y}_j  \leq& 0 \leq -x'_j + \beta_j &
+		\hat{y}_j  \geq& 0 \geq -x'_j + \alpha_j \\
+		\hat{y}_j  \leq& y_j+x'_j \leq y_j  &
+		\hat{y}_j  \geq& 0 \geq y_j - \gamma_j
+	\end{aligned}
+\end{align*}Therefore all 3 rest lines are tautology.
 	
 
 	
@@ -90,7 +96,7 @@ For other 3 lines, we check the right-hand side of each inequalities by assumpti
 		\hat{y}_j  &\leq 0      &
 		\hat{y}_j  &\geq -\gamma_j \\
 		\hat{y}_j  &\leq y_j + x'_j - \alpha_j &
-		\hat{y}_j  &\geq y_j + x'_j  \\
+		\hat{y}_j  &\geq y_j + x'_j  -\beta_j\\
 		\hat{y}_j  &\leq -x'_j &
 		\hat{y}_j  &\geq -x'_j \\
 		\hat{y}_j  &\leq y_j + \gamma_j  &
@@ -98,22 +104,82 @@ For other 3 lines, we check the right-hand side of each inequalities by assumpti
 	\end{aligned}
 \end{align*} Now we can see, $y_j+x'_j\leq 0$ and $x'_j \geq 0$ (lines 1\&2), hence $y_j \leq 0$; and $\hat{y}_j= - x'_j$ (line 5). 
 
-For other 3 lines, we check the right-hand side of each inequalities by assumption of the proposition $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$: \begin{align*}
-& \begin{aligned}
-	0  &\leq 0      &
-	0  &\geq -\gamma_j \\
-	0  &\leq y_j + x'_j - \alpha_j &
-	0  &\geq y_j + x'_j  \\
-	0  &\leq y_j + \gamma_j  &
-	0  &\geq y_j
-\end{aligned}
-\end{align*} Therefore all 3 rest lines are tautology.
+By above discussing,  we have: \begin{align*}
+	& \begin{aligned}
+		\hat{y}_j  &\leq -x'_j\leq 0      & \hspace*{4ex}
+		\hat{y}_j  &\geq -x'_j \geq -x'_j+(y_j+x'_j) \geq y_j
+	\end{aligned}
+\end{align*}
+
+Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, all 3 other lines are implied by the following inequalities respectively (one for one):\begin{align*}
+	& \begin{aligned}
+		\hat{y}_j  &\leq -x'_j\leq 0      &
+		\hat{y}_j  &\geq y_j\geq -\gamma_j \\
+		\hat{y}_j  &\leq 0 \leq y_j + x'_j - \alpha_j &
+		\hat{y}_j  &\geq y_j \geq y_j + x'_j -\beta_j \\
+		\hat{y}_j  &\leq 0 \leq y_j + \gamma_j  &
+		\hat{y}_j  &\geq  y_j
+	\end{aligned}
+\end{align*}Therefore all 3 rest lines are tautology.
 
 
 
 
 	
-	\textbf{$\mathbf{a = 1, a' = 1}$:} 
+\textbf{$\mathbf{a = 1, a' = 1}$:} In this case, the inequalities become: \begin{align*}
+	& \begin{aligned}
+		y_j + x'_j &\leq \beta_j        &
+		y_j &+ x'_j \geq 0 \\
+		x'_j       &\leq \beta_j       & 
+		x'_j       &\geq 0 \\
+		\hat{y}_j  &\leq \gamma_j       &
+		\hat{y}_j  &\geq -\gamma_j \\
+		\hat{y}_j  &\leq y_j + x'_j  &
+		\hat{y}_j  &\geq y_j + x'_j - \beta_j \\
+		\hat{y}_j  &\leq -x'_j + \beta_j &
+		\hat{y}_j  &\geq -x'_j \\
+		\hat{y}_j  &\leq y_j &
+		\hat{y}_j  &\geq y_j
+	\end{aligned}
+\end{align*} Now we can see, $y_j+x'_j\geq 0$ and $x'_j \geq 0$ (lines 1\&2) and $\hat{y}_j= y_j$ (line 6). 
+
+
+Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, all 3 other lines are implied by the following inequalities respectively (one for one):\begin{align*}
+	& \begin{aligned}
+		\hat{y}_j  &\leq y_j\leq \gamma_j       &
+		\hat{y}_j  &\geq y_j\geq -\gamma_j \\
+		\hat{y}_j  &\leq y_j \leq y_j + x'_j  &
+		\hat{y}_j  &\geq y_j \geq y_j + x'_j - \beta_j \\
+		\hat{y}_j  &\leq -x'_j+(y_j+x'_j)\leq -x'_j + \beta_j &
+		\hat{y}_j  &\geq y_j - (y_j+x'_j)\geq -x'_j \\
+	\end{aligned}
+\end{align*}Therefore all 3 rest lines are tautology.
 	
 	\qed
+\end{proof}
+
+
+
+\begin{proof}[of Proposition 3] First, we list the inequalities: \begin{align*}
+		\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
+		\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
+	\end{align*}
+	
+	Similar to Proposition 2, we consider by cases.
+	
+	\textbf{$\mathbf{a = 0}$:} In this case, the inequalities become: \begin{align*}
+		\hat{y}_i &\leq 0               &\quad \hat{y}_i &\geq y_i \\
+		\hat{y}_i &\geq -\gamma_i           &\quad \hat{y}_i &\leq y_i + \gamma_i
+	\end{align*} Now we can see, $y_i\leq 0$ (line 1). Line 2 becomes tautology since \begin{align*}
+	\hat{y}_i &\geq y_i \geq -\gamma_i           &\quad \hat{y}_i &\leq 0 \leq y_i + \gamma_i
+	\end{align*}
+
+	\textbf{$\mathbf{a = 1}$:} In this case, the inequalities become: \begin{align*}
+		\hat{y}_i &\leq \gamma_i               &\quad \hat{y}_i &\geq y_i - \gamma_i \\
+		\hat{y}_i &\geq 0           &\quad \hat{y}_i &\leq y_i 
+	\end{align*} Now we can see, $y_i\geq 0$ (line 2). Line 1 becomes tautology since \begin{align*}
+	\hat{y}_i &\leq y_i\leq \gamma_i               &\quad \hat{y}_i &\geq 0 \geq y_i - \gamma_i 
+	\end{align*}
+		
+Now we finish the proof. \qed
 \end{proof}
