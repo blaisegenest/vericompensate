@@ -2,25 +2,25 @@
 
 \begin{figure*}[b!]
     \centering
-\vspace{-0.3cm}
+    \vspace{-0.3cm}
     \includegraphics[scale=0.75]{MNIST.pdf} 
     \caption{The pipeline training and exploiting the {\bf PCA-DNN} on MNIST dataset.}
     \label{fig.MNIST}
 \end{figure*}	
 
+\eca{Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic, since they must accommodate all possible points, including out of distribution (OOD) \cite{OOD} samples far from the training dataset. Thus, we propose to leverage principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the verification objective to common, i.e., in-distribution (ID), data. 
+%
+While OOD inputs may be represented unfaithfully into this ID subspace, this is justified by the DNN's inherent lack of robustness outside the training distribution. 
+To ensure that a dataset is faithfully represented, we verify the DNN's accuracy on the representation of this ID dataset \todo{on the representation of this ID dataset? what?}. In addition, we can observe that examples corresponding to the lower bounds $\underline{\beta}$ with PCA are more "natural" (ID) wrt the dataset (compare Fig.~\ref{fig3} and Fig.~\ref{fig4}).}
 
-%Some words on PCA, learn of 2 Matrix full-dim to reduced-dim and back.
-%Then, how we use it (pictures and text).
-
-
-%As explained in the previous section, global robustness is a very complex problem. On top of efficient MILP encodings, 
-
+\iffalse
 Upper bounds $\bar{\beta}$ obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD)} \cite{OOD} inputs far away from the training dataset, need to be accounted for.
 We propose to leverage Principal Component Analysis (PCA) \cite{Paco},
 %Model Order Reduction, 
 stemming from Engineering Science, to focus on faithfully representing common inputs from the dataset ({\em ID}: in distribution). OOD inputs may be represented unfaithfully (with (ID) representation closer to the dataset), which is reasonable as the DNN is unlikely to provide reasonable answers on OOD inputs anyway. 
 To make sure that a dataset is faithfully represented, we can check the accuracy of the DNN on the representation of this ID dataset.
 Last, examples corresponding to the lower bounds $\underline{\beta}$ with PCA will be much more natural (ID) wrt the dataset (compare Fig.~\ref{fig3} and Fig.~\ref{fig4}).
+\fi
 
 %The simplest Model Order Reduction uses 
  PCA is a %Model Order Reduction 
