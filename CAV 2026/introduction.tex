@@ -7,8 +7,8 @@ $L_\infty$ is the usual choice because it is perfectly linear
 (subpixel perturbations are independent), which is easier to verify.
 
 %- to line break
-Crucially, however, these verification tools for local robustness are too computationally-intensive for real-time decision-making pipelines. 
-For instance, consider an autonomous vehicle processing a live video feed: images of the feed cannot be certified robust in a few ms on embedded hardware. This prevents the development of safety filters that could skip non-robust images and only consider certified robust images.
+Crucially, however, these verification tools for local robustness are too computationally intensive for real-time decision-making pipelines. 
+For instance, consider an autonomous vehicle processing a live video feed: images of the feed cannot be certified as robust in a few ms on embedded hardware. This prevents the development of safety filters that could skip non-robust images and only consider certified robust images.
 
 \smallskip
 
@@ -18,19 +18,19 @@ The first step, performed offline, computes global bounds on the maximum possibl
 Specifically, for any two decision classes $C$ and $D$ and perturbation $\varepsilon$, we compute an 
 upper bound 
 $\bar{\beta}^\varepsilon_{C,D}$ of $\max_{I,I', |I-I'| \leq \epsilon}(
-x_C - x'_C + x'_D - x_D)$, where $x_{C,D},x'_{C,D}$ are the output value of class $C,D$ from image $I$ and $I'$. 
+x_C - x'_C + x'_D - x_D)$, where $x_{C,D},x'_{C,D}$ are the output values of class $C,D$ from image $I$ and $I'$. 
 %
 Unlike local robustness methods, which require $k$ separate calls, computationally expensive calls to certify $k$ images, the global bound $\bar{\beta}^\varepsilon_{C,D}$ is computed offline once per network and remains valid across the entire input space. 
 
 The second step is real-time, being performed with the DNN inference of the image $I$ considered: it suffices to consider the class $C$ with the highest output value $x_C$, and check whether for every other class $D \neq C$, 
 $x_C - x_D > \bar{\beta}^\varepsilon_{C,D}$. 
 %
-If this is the case, then we are certified that image $I$ is robust for perturbation $\varepsilon$, because $\varepsilon$-perturbed image $I'$ could at most get 
+If this is the case, then we provide a certification that image $I$ is robust for perturbation $\varepsilon$, because an $\varepsilon$-perturbed image $I'$ could at most get 
 $x'_D \leq \bar{\beta}^\varepsilon_{C,D}  - (x_C - x_D)  + x'_C < x'_C$, hence $C$ is also the predicted class for image $I'$. 
 %
 This check typically requires only a few dozen CPU instructions, which can be completed under 1 ms on a single CPU core. When an image fails this certification, one could either skip it (e.g., in a video stream) or revert to a safer, degraded mode until a trustworthy, robust image is received.
 
-Our main contributions address the challenges of computing the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$ for all pair of classes $(C,D)$:
+Our main contributions address the challenges of computing the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$ for all pairs of classes $(C,D)$:
 \begin{enumerate}
 	\item We develop a novel {\em Diff MILP encoding} for the global robustness problem, 
 	where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}), see Section \ref{s.diff}. 
@@ -55,12 +55,12 @@ Our main contributions address the challenges of computing the {\em global bound
     \item Bounds obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD \cite{OOD})} inputs far away from the training dataset, need to be accounted for. To address this, we consider 
 	principal component analysis (PCA)
 	 from engineering science \cite{Paco}. 
-	 Specifically, we use PCA to faithfully represent common inputs from the dataset. OOD inputs may be represented unfaithfully, which is reasonable as the DNN is unlikely to provide a reasonable answer on OOD inputs anyway. For instance, $20$ linear components represent MNIST inputs faithfully: the PCA-DNN does not loose accuracy on the MNIST dataset.
+	 Specifically, we use PCA to faithfully represent common inputs from the dataset. OOD inputs may be represented unfaithfully, which is reasonable as the DNN is unlikely to provide a reasonable answer on OOD inputs anyway. For instance, $20$ linear components represent MNIST inputs faithfully: the PCA-DNN does not lose accuracy on the MNIST dataset.
 
 \item Experimentally, the {\em Diff MILP model} computes upper bounds
 $\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compared with the optimized version of the classical MILP encoding (see Table \ref{table.classical}); namely reducing the number of binary variables (VHAGaR \cite{vhagar}); or adding linear constraints from the {\em diff variables} (ITNE \cite{ITNE}).
-The abstractions  {\em 2b+1} and {\em 1b} variant offer different trade-offs, 
+The abstractions {\em 2b+1} and {\em 1b} variants offer different trade-offs, 
 reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
 Further, using PCA reduces the upper bound $\bar{\beta}^{\varepsilon}_{C,D}$ by $3$ to $20$ times.
-Overall, using these different techniques ({\em Diff} MILP model, abstraction, and PCA) enables the real-time certification of $\geq 70\%$ of fresh images for an $L1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets respectively, see Table \ref{table.cert}. The online process only adds 0.5 ms of latency per image, and 2000 images/second can be treated per CPU core.
+Overall, using these different techniques ({\em Diff} MILP model, abstraction, and PCA) enables the real-time certification of $\geq 70\%$ of fresh images for an $L_1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets respectively, see Table \ref{table.cert}. The online process only adds 0.5 ms of latency per image, and 2000 images/second can be treated per CPU core.
 \end{enumerate}

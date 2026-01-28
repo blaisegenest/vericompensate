@@ -6,7 +6,7 @@
 Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of DNN-regressor due to small perturbations of the input.
 We consider here a pipe system and its DNN regressor from \cite{aiware},
 that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of these 3000 points.
-Compared to the classification tasks where the DNN are learned in a standard way and PCA is later applied to reduce the output dimension without compromising the accuracy, the DNN regressor has been learned on the reduced PCA basis directly, for both the high dimensional input and the high dimensional output (3000 dimensions each).
+Compared to the classification tasks where the DNN is learned in a standard way and PCA is later applied to reduce the output dimension without compromising the accuracy, the DNN regressor has been learned on the reduced PCA basis directly, for both the high dimensional input and the high dimensional output (3000 dimensions each).
 
 
 
@@ -27,7 +27,7 @@ Compared to the classification tasks where the DNN are learned in a standard way
 
 Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learned has 2 fully connected layers, 50 neurons each, learned as a surrogate model, with 10 reduced input and 26 reduced output.
 
-In term of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
+In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
 
 
 
@@ -61,7 +61,7 @@ In term of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$
 	For the pipe system, we compared in Table \ref{table.pipe} the different models ITNE, {\em Diff}, {\em "2b+1","1b"} to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. 
     The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the {\em $2b+1$} model, slightly better than the bound $.0337$ found within the same time by the {\em Diff} model, and better than the bound found $0.356$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is sensitively worse than even the {\em "$1b$"} with 1000s of timeout, at $0.416$ despite a very long time out. The certified lower bound is not too far, at $.025$.
     
-    We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} an hallucination due to the learning process, but rather reflects correctly the physical system.
+    We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather reflects correctly the physical system.
 
 
 	

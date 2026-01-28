@@ -1,6 +1,6 @@
 	\section{MILP Models for Global Robustness}
 
-Let $N$ the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). Worst-case complexity being exponential in the number of binary variables, global robustness (e.g. ITNE and VHAGaR \cite{ITNE,vhagar}) is much harder than local robustness.
+Let $N$ be the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). Worst-case complexity being exponential in the number of binary variables, global robustness (e.g. ITNE and VHAGaR \cite{ITNE,vhagar}) is much harder than local robustness.
 
 \subsection{Encoding $L_\infty$- and $L_1$-perturbations for input variables}
 \label{s.L1}
@@ -12,7 +12,7 @@ the linear constraint $|x_j-x'_j| \leq \varepsilon$ is used for each {\em input}
 
 We now explain how to encode $L_1$-perturbations bounded by $\varepsilon$,
 using additional variables that are linear only. Let $n$ be the number of input neurons. 
-We use $n$ additional linear variables $(A_i)_{i \leq n}$, with the following  constrains:
+We use $n$ additional linear variables $(A_i)_{i \leq n}$, with the following  constraints:
 \begin{align}\label{L1constraint}\begin{cases}
 	A_j \geq x_j - x'_j &\text{ for all }j \leq n\\ 
 	A_j \geq x'_j - x_j &\text{ for all }j \leq n\\
@@ -45,7 +45,7 @@ for variable $x'_j$ associated with the perturbed image $I'$, using the same $\a
 if the {\em Diff} variables $y_j = x'_j - x_j$ are considered as defined in Section 2, with $\hat{y}_j = \hat{x}_j - \hat{x}'_j$, then we simply have 
 $y_j = \sum_{i \in \ell-1} \alpha_i \hat{y}_i$.
 
-It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y_j$ to $\hat{x_j},\hat{x}'_j$ and/or $\hat{y}_j$, which is the complex part, with different possible solutions explored in the following with different set of variables considered. 
+It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y_j$ to $\hat{x_j},\hat{x}'_j$ and/or $\hat{y}_j$, which is the complex part, with different possible solutions explored in the following with different sets of variables considered. 
 
 
 

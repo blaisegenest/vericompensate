@@ -1,6 +1,6 @@
 \subsection{Related Work on Global Robustness}
 
-While \cite{diff} does not tackle global robustness per se, its one of the first work to consider {\em differential} verification, introducing the {\em diff} variables that are used here and also in \cite{ITNE}. The paper \cite{diff} did not consider MILP encoding.
+While \cite{diff} does not tackle global robustness per se, it is one of the first works to consider {\em differential} verification, introducing the {\em diff} variables that are used here and also in \cite{ITNE}. The paper \cite{diff} did not consider MILP encoding.
 
 Some works \cite{Leino,Zhang22a,Sun22,Chen21,REGLO} focus on training a network to be - rather than proving the DNN is - globally robust.
 Other works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g. using probabilistic guarantees \cite{Levy23,Mangal19}.
@@ -13,5 +13,5 @@ $\bar{\beta}^\varepsilon_{i,j}$, but limited to $L_\infty$-perturbations (and va
 
 Technically, none of the MILP-based works 
 \cite{vhagar,lipshitz,ITNE} consider $L_1$-perturbations. Further, they use the classical MILP encoding from \cite{MILP}, and not our novel {\em Diff} model, nor even our simplified "1b" model. Notice that \cite{ITNE} considers the {\em diff variables} $y,\hat{y}$, adding explicitly the {\em linear relaxation} $\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ implied by each of our three MILP models {\em Diff}, "2b+1" and "1b" models; Eq. (3) in \cite{ITNE} corresponding essentially to it. \cite{vhagar} does things differently, adding per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations 
-(and to some extend to $L_\infty$-perturbations). 
+(and to some extent to $L_\infty$-perturbations). 
 
