@@ -25,10 +25,10 @@ Unlike local robustness methods, which require $k$ separate, computationally-exp
 \textit{Real-Time Verification.} The second step occurs in real-time, after the DNN's inference phase. For a given input image $I$, we identify the class $C$ with the highest output value $x_C$, and check whether for every other class $D \neq C$, 
 $x_C - x_D > \bar{\beta}^\varepsilon_{C,D}$. 
 %
-If this is the case, then we can verify that image $I$ is robust for perturbation $\varepsilon$, because an $\varepsilon$-perturbed image $I'$ could at most get 
+If this is the case, then we can certify that image $I$ is robust for perturbation $\varepsilon$, because an $\varepsilon$-perturbed image $I'$ could at most get 
 $x'_D \leq \bar{\beta}^\varepsilon_{C,D}  - (x_C - x_D)  + x'_C < x'_C$, hence $C$ is also the predicted class for image $I'$. 
 %
-This check typically requires only a few dozen CPU instructions, which can be completed under 1 ms on a single embedded CPU core. When an image fails this verification, one could either skip it (e.g., in a video stream) or revert to a safer, degraded mode until a trustworthy, robust image is received.
+This check typically requires only a few dozen CPU instructions, which can be completed under $1 ms$ on a single embedded CPU core. When an image fails this verification, one could either skip it (e.g., in a video stream) or revert to a safer, degraded mode until a trustworthy, robust image is received.
 
 Our main contributions address the challenges of computing the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$ for all pairs of classes $(C,D)$:
 \begin{enumerate}
@@ -66,5 +66,5 @@ $\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compa
 The abstractions {\em 2b+1} and {\em 1b} variants offer different trade-offs, 
 reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
 Further, using PCA reduces the upper bound $\bar{\beta}^{\varepsilon}_{C,D}$ by $3$ to $20$ times.
-Overall, using these different techniques ({\em Diff} MILP model, abstraction, and PCA) enables the real-time certification of $\geq 70\%$ of fresh images for an $L_1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets respectively, see Table \ref{table.cert}. The online process only adds 0.5 ms of latency per image, and 2000 images/second can be treated per CPU core.
+Overall, using these different techniques ({\em Diff} MILP model, abstraction, and PCA) enables the real-time certification of $\geq 70\%$ of fresh images for an $L_1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets respectively, see Table \ref{table.cert}. The online process only adds $.5 ms$ of latency per image, and 2000 images/second can be treated per CPU core.
 \end{enumerate}
