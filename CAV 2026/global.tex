@@ -161,7 +161,6 @@ Recall first that $a'_j$ is the binary variable used in the
 We set $a'=a'_j$ (whose value is already settled, see Proposition \ref{Prop1}),
 and use it in the MILP encoding of $\hat{y}_j = \ReLU(x_j)-\ReLU(x'_j)$:
 
-\newpage
 
 \begin{proposition}
     \label{Prop2}
@@ -189,7 +188,7 @@ Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_
 
 So to encode both $\hat{y}_j$ and $\hat{x}'_j$, the {\em Diff} encoding needs 2 binary variables, similar to the classical encoding for $\hat{x}_j$ and $\hat{x}'_j$. 
 
-\begin{proof}
+\begin{proof}[sketch]
 First, we know the constraints for $\hat{x}_j'=\ReLU(x_j')$ are exact, by Prop \ref{Prop1}. We now do a case analysis depending on the value of both binary variables. 
 %We have 2 binary variables and 4 cases in total.
  We check that in all 4 cases $\hat{y}_j = \ReLU(y_j+x'_j)-\ReLU(x'_j)$.
@@ -207,7 +206,7 @@ $\hat{y}_j = -x'_j$. This is true thanks to inequalities in line 5.
 \textbf{$\mathbf{a = 1, a' = 1}$:} 
 In this case, $y_j+x'_j\geq 0$ and $x'_j \geq 0 $ (lines 1\&2). We thus have to show that $\hat{y}_j = y_j$. This is true thanks to inequalities in line 6.
 
-Notice that in each case, equations not mentioned are moot.
+Equations not mentionned are mooot, as shown in the appendix.
 	\qed
 \end{proof}
 
@@ -304,7 +303,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	\subsection{The efficient {\em 1b} model}
 	\label{s.1b}
 
-		\begin{figure}[t!]
+		\begin{figure}[b!]
 		\centering
 	%\hspace*{10ex}
     \begin{tikzpicture}
@@ -354,8 +353,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 
     We can easily check that the LP relaxation of this MILP program,
 	depicted in broken lines on Fig.~\ref{fig.1v}, is exactly (\ref{eq.lpr}).
-    
-	As the {\em 1b} model is a projection of the {\em Diff} model and also of the {\em 2b+1} models, 	the LP relaxations of the {\em Diff} and the {\em 2b+1} models contain (\ref{eq.lpr}). 
+	As the {\em 1b} model is a projection of the {\em Diff} model and also of the {\em 2b+1} models, 	the LP relaxations of the {\em Diff} and the {\em 2b+1} models contain (\ref{eq.lpr}).  Proof of Prop.~\ref{prop3} is in appendix.
 	%Notice that (\ref{eq.lpr}) corresponds to Eq. (3) in \cite{ITNE}, 
 	%which is added explicitly to the classical model in their ITNE model.
 	
