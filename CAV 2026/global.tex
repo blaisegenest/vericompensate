@@ -30,7 +30,6 @@ Conversely, for every instance that satisfies $\sum_{j\leq n} |x_j - x'_j| \leq 
 %
 This shows that (\ref{L1constraint}) is equivalent with 
 $||\vec{x} - \vec{x}'||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq \varepsilon$.
-\qed
 \end{proof}
 
 
@@ -57,7 +56,12 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	
     The classical encoding is used (with variants) by VHAGaR \cite{vhagar} and ITNE \cite{ITNE}. For each neuron $j$, variables $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ are considered. For each ReLU $j$, a binary variable $a_j$ and related constraints from the classical encoding (\ref{eq11}) \cite{MILP} are used to set $\hat{x}_j$, and an {\em independent} binary variable $a'_j$ and related constraints from the classical encoding are used to set $\hat{x}_j$. We call this encoding $\mathcal{M}^{classical}$.
 	
-	As explained in the section \ref{s.notation}, the standard way to make the MILP model more efficient is to linearly relax some of the binary variables into linear variables. The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when no LP relaxation is used, the classical MILP encoding of \cite{MILP}, while asymptotically accurate, will result in looser bounds in practice. 
+	The key values to compute are the {\em diff}erential values of $y_j$ between $x_j$ and $x'_j$. Most of the values of $y_j$ are likely small because they are inherited from a small perturbation between $I$ and $I'$.
+	However, $\mathcal{M}^{classical}$ only maintains $x_j$ and $x'_j$ separately, and both can take large values. This results into poor evaluation of $y_j$. This problem was first raised and experimentally demonstrated in \cite{diff}.
+
+	Similarly, the standard way to make the MILP model more efficient is to linearly relax some of the binary variables (see Section~\ref{s.notation}). The problem is that the LP relaxation of $\mathcal{M}^{classical}$ is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers. 
+	%to provide bounds for each branch. 
+	So even without explicit LP relaxation, the classical MILP encoding of \cite{MILP}, while asymptotically accurate, will result in looser bounds in practice. 
 	
 	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \cite{ITNE}, see also Section \ref{s.diff}), while VHAGaR reduces the number of binary variables depending on the perturbation used \cite{vhagar}.
 	
@@ -106,9 +110,6 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	%	
 	%	Moreover, we can add two more natural constraints: $x_i'+y_i \geq \alpha_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \leq \beta_i.$
 	
-	We first display on Figure \ref{fig.2v} the function $f(x'_j,y_j)=\hat{y}_j$ for $y_j \in [- \gamma_j, \gamma_j]$. 
-	When $x'_j \leq 0$ and $x_j = x'_j+y_j \leq 0$, we have $\hat{y}_j = \ReLU(x_j) - \ReLU(x'_j) = 0-0=0$. For $x'_j \geq 0$ and $x_j = x'_j+y_j \geq 0$, we have $\hat{y}_j= \ReLU(x_j)-\ReLU(x'_j)=x_j - x'_j = y_j$. 
-    Between these two linear planes, we have two more linear planes presenting intermediate cases, so 4 linear planes in total.
 	
 	\begin{figure}[b!]
 		\centering
@@ -154,6 +155,11 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	depending on $y_j$ and on $x'_j$.}
 	\label{fig.2v}
 \end{figure}
+	
+
+We first display on Figure \ref{fig.2v} the function $f(x'_j,y_j)=\hat{y}_j$ for $y_j \in [- \gamma_j, \gamma_j]$. 
+	When $x'_j \leq 0$ and $x_j = x'_j+y_j \leq 0$, we have $\hat{y}_j = \ReLU(x_j) - \ReLU(x'_j) = 0-0=0$. For $x'_j \geq 0$ and $x_j = x'_j+y_j \geq 0$, we have $\hat{y}_j= \ReLU(x_j)-\ReLU(x'_j)=x_j - x'_j = y_j$. 
+    Between these two linear planes, we have two more linear planes presenting intermediate cases, so 4 linear planes in total.
 	
 
 Recall first that $a'_j$ is the binary variable used in the 
@@ -407,7 +413,7 @@ $\beta^{\varepsilon}_{C,D}$ is.
     
 Assume we have computed (offline) $\bar{\beta}^{\varepsilon}_{C,D}$ for each $C,D$. Now in real-time:
 \begin{enumerate}  
-  \item[0] Run inference on the DNN to obtain the values $x_D$ of output neuron for each class D. Let $C$ be the class with maximal $x_{C}$. This is the predicted class from the DNN. This is the basic operation commonly done for DNN classification, without any change.
+  \item[0] Run inference on the DNN to obtain the values $x_D$ of output neuron for each class D. Let $C$ be the class with maximal $x_{C}$, that is, the class predicted by the DNN. These are the basic inference operations standardly performed for classification by a DNN.
   \item[1] Compute for each class $D \neq C$
   a bit $b_D=1$ iff $x_D +\bar{\beta}^{\varepsilon}_{C,D} > x_C$.
   \item[2] Return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
@@ -438,7 +444,7 @@ Assume by contradiction that $D \neq C$ is the decision on $I'$.
 
 The overhead (1,2 above) after 0 amounts to $2k-1$ operations, 
 where $k=\#$Class. 
-More precisely,
-$(k-1)$ ADD(+), 
+That is, 19 operations in total for $k=10$ classes. 
+More precisely: $(k-1)$ ADD(+), 
 $(k-1)$ COMP(<) and $1$ OR($\bigvee$) of ($k-1$) bits.
-That is, 19 operations in total for $k=10$ classes. This can be realized extremely fast, even on limited hardware.
+This can be performed extremely fast, even on limited hardware.
