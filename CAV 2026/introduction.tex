@@ -1,10 +1,8 @@
 While deep neural networks (DNNs) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the formal verification community to develop various methodologies, each presenting a unique trade-off between completeness and computational efficiency~\cite{Marabou,Reluplex,deeppoly}. 
 This surge in innovation has also led to the establishment of competitions such as VNNComp~\cite{VNNcomp}, which systematically evaluate the performance of neural network verification tools. Notable examples include NNenum~\cite{nnenum}, Marabou~\cite{Marabou,Marabou2}, and PyRAT~\cite{pyrat}, as well as frameworks such as MnBAB~\cite{ferrari2022complete} (which builds upon ERAN~\cite{deeppoly} and PRIMA~\cite{prima}) and $\alpha,\beta$-CROWN~\cite{crown,xu2020fast}, the winner of the last 4 VNNComp, based on branch-and-bound methodology \cite{cutting,BaB}.
 
-These tools focus on {\em local} robustness: given a DNN, an image, and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric, every subpixel of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is, 2 levels of gray/blue/red/green). 
-Although it is not necessarily the most meaningful perturbation,
-$L_\infty$ is the usual choice because it is perfectly linear  
-(subpixel perturbations are independent), which is easier to verify.
+However, these tools focus on {\em local} robustness: given a DNN, an image, and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric, every subpixel of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is, 2 levels of gray/blue/red/green). 
+Although it is not necessarily the most meaningful perturbation, $L_\infty$ is the usual choice because it is perfectly linear (subpixel perturbations are independent), which is easier to verify.
 
 %- to line break
 Crucially, however, these verification tools for local robustness are too computationally intensive for real-time decision-making pipelines. 
@@ -12,8 +10,9 @@ For instance, consider an autonomous vehicle processing a live video feed: image
 
 \smallskip
 
-In this paper, we consider {\em global} robustness, that is, we do not restrict the certification process to the neighborhood of a specific, fixed input. We follow a two-step procedure. 
-The first step, performed offline, computes global bounds on the maximum possible shift between output values of different decision classes due to a perturbation, following an approach similar to VHAGaR~\cite{vhagar}. 
+In this paper, we consider {\em global} robustness, that is, we do not restrict the certification process to the neighborhood of a specific, fixed input. Our approach employs a two-step procedure.
+
+\textit{Global Bound Analysis.} The first step, performed offline, computes global bounds on the maximum possible shift between output values of different decision classes due to a perturbation, following an approach similar to VHAGaR~\cite{vhagar}. 
 %
 Specifically, for any two decision classes $C$ and $D$ and perturbation $\varepsilon$, we compute an 
 upper bound 
@@ -22,13 +21,13 @@ x_C - x'_C + x'_D - x_D)$, where $x_{C,D},x'_{C,D}$ are the output values of cla
 %
 Unlike local robustness methods, which require $k$ separate, computationally expensive calls to certify $k$ images, the global bound $\bar{\beta}^\varepsilon_{C,D}$ is computed offline once per network and remains valid across the entire input space. 
 
-The second step is real-time, being performed with the DNN inference of the image $I$ considered: it suffices to consider the class $C$ with the highest output value $x_C$, and check whether for every other class $D \neq C$, 
+\textit{Real-Time Verification.} The second step occurs in real-time, during the DNN's inference phase. For a given input image $I$, we identify the class $C$ with the highest output value $x_C$, and check whether for every other class $D \neq C$, 
 $x_C - x_D > \bar{\beta}^\varepsilon_{C,D}$. 
 %
-If this is the case, then we provide a certification that image $I$ is robust for perturbation $\varepsilon$, because an $\varepsilon$-perturbed image $I'$ could at most get 
+If this is the case, then we can verify that image $I$ is robust for perturbation $\varepsilon$, because an $\varepsilon$-perturbed image $I'$ could at most get 
 $x'_D \leq \bar{\beta}^\varepsilon_{C,D}  - (x_C - x_D)  + x'_C < x'_C$, hence $C$ is also the predicted class for image $I'$. 
 %
-This check typically requires only a few dozen CPU instructions, which can be completed under 1 ms on a single CPU core. When an image fails this certification, one could either skip it (e.g., in a video stream) or revert to a safer, degraded mode until a trustworthy, robust image is received.
+This check typically requires only a few dozen CPU instructions, which can be completed under 1 ms on a single CPU core. When an image fails this verification, one could either skip it (e.g., in a video stream) or revert to a safer, degraded mode until a trustworthy, robust image is received.
 
 Our main contributions address the challenges of computing the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$ for all pairs of classes $(C,D)$:
 \begin{enumerate}
