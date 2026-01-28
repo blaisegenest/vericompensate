@@ -166,7 +166,7 @@ and use it in the MILP encoding of $\hat{y}_j = \ReLU(x_j)-\ReLU(x'_j)$:
 
 \begin{proposition}
     \label{Prop2}
-Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j \in [\alpha_j,\beta_j]$, we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of the MILP program:
+Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of the MILP program:
 	\begin{align*}
 		& \begin{aligned}
 			y_j + x'_j &\leq a\beta_j        &
@@ -175,8 +175,8 @@ Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j \in [\alpha_j,\beta_j]$, we h
 			x'_j       &\geq (1-a')\alpha_j \\
 			\hat{y}_j  &\leq a\gamma_j       &
 			\hat{y}_j  &\geq -a'\gamma_j \\
-			\hat{y}_j  &\leq y_j + x'_j + (1-a)(-\alpha_j) &
-			\hat{y}_j  &\geq y_j + x'_j + a'(-\beta_j) \\
+			\hat{y}_j  &\leq y_j + x'_j - (1-a)\alpha_j &
+			\hat{y}_j  &\geq y_j + x'_j - a'\beta_j \\
 			\hat{y}_j  &\leq -x'_j + a\beta_j &
 			\hat{y}_j  &\geq -x'_j + (1-a')\alpha_j \\
 			\hat{y}_j  &\leq y_j + (1-a)\gamma_j  &
