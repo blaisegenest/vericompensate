@@ -5,13 +5,13 @@
 	ITNE \cite{ITNE} was reimplemented using the same path as our code, except for the MILP variable $x_j$ using the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). The Julia VHAGaR code 
 	from \url{https://github.com/ananmkabaha/VHAGaR} \cite{vhagar} was run on the same hardware.
 	
-	We consider 4 pretrained DNNs on 3 different datasets (MNIST, Fashion MNIST and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at 
+	We consider 4 pretrained DNNs on 3 different datasets (MNIST, Fashion MNIST, and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at 
 	\url{https://github.com/eth-sri/eran} ("5x100"). We also considered 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
 	from \cite{vhagar} ("conv1"). We will also consider 3 PCA-DNNs, as detailed in Section~\ref{s62}
 	%The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
 
 \iffalse	
-For each benchmark, we report three values: the bound obtained (lower value is better), the solution obtained (distance to the bound depicts how close the model has converged), and worst-case (higher is better), that is the value reached when considering the solution as input to the DNN. For a fully accurate model ("2v" or classical and all variables binary), the worst-case will equal the solution, otherwise, it will be smaller due to abstraction.
+For each benchmark, we report three values: the bound obtained (lower value is better), the solution obtained (distance to the bound depicts how close the model has converged), and the worst-case (higher is better), that is, the value reached when considering the solution as input to the DNN. For a fully accurate model ("2v" or classical and all variables binary), the worst-case will equal the solution; otherwise, it will be smaller due to abstraction.
 \fi
 
 %\subsection{Classical vs our "2v" model vs ITNE}
@@ -36,12 +36,12 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 %	2v model, $200$&     {\bf .042} &  $.023$ &   .023 
 %    \\\hline \hline
 %	\end{tabular}
-%	\caption{Comparison of the classical encoding, ITNE and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $100$, 
+%	\caption{Comparison of the classical encoding, ITNE, and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $100$, 
 %    or the full $200$ binary variables.}
 %    \label{table.classical}
 %\end{table}
 %
-%We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz,ITNE}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
+%We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz ,ITNE}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
 %
 %
 %Table \ref{table.classical}, $100$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{ITNE} recovers most but not all the bound of the "2v" model.
@@ -58,7 +58,7 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 \subsection{Comparison for global robustness with VHAGaR and ITNE ($L_\infty$)}
 
 We use VHAGaR benchmarks to be able to compare: 
-VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR convolutional DNNs, for which the VHAGaR reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model find. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall most robustness tools, e.g. $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
+VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR convolutional DNNs, for which the VHAGaR reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model finds. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall that most robustness tools, e.g., $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
 
 \iffalse
 
@@ -159,17 +159,17 @@ VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR conv
     
      \end{tabular}
 	\caption{Upper bound $\bar{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, averaging bounds $\bar{\alpha}_{C,D}$ over all pair of classes $(C,D)$. {\em Best} computes the average $\bar{\alpha}$ using the lowest $\bar{\alpha}_{C,D}$ computed by {\em Diff} and {\em 2b+1} for each $(C,D)$. Lower gaps using {\em Best} means that there are cases $(C,D)$ where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite. * means that VHAGaR failed to compute bounds for some cases $(C,D)$ of CIFAR-Conv. 
-	For such cases, we used numbers from ITNE instead (which is overperforming VHAGaR in every test), so these numbers are optimistic evaluation for VHAGaR.}
+	For such cases, we used numbers from ITNE instead (which is overperforming VHAGaR in every test), so these numbers are an optimistic evaluation for VHAGaR.}
 	\vspace{-0.4cm}
     \label{table.classical}
 \end{table}
 
 \smallskip 
 
-\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. Using the {\em 1b} model is not useful, as its abstraction will loose more than $6\%$. 
+\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. Using the {\em 1b} model is not useful, as its abstraction will lose more than $6\%$. 
 %That is why it is not reported in Table \ref{table.classical}. 
-VHAGaR computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with gap $40-120\%$. Although we are using its benchmarks, VHAGaR methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
-Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, {\em 2b+1} is more accurate for shorter timeout, and {\em Diff} more accurate when there is sufficient time, as expected. 
+VHAGaR computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with a gap $40-120\%$. Although we are using its benchmarks, VHAGaR methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
+Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, {\em 2b+1} is more accurate for shorter timeout, and {\em Diff} is more accurate when there is sufficient time, as expected. 
 Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower than both {\em Diff} and {\em 2b+1} in every test.
 
 
@@ -229,8 +229,7 @@ Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower t
 We then turn to test with $L_1$ perturbations and comparing between DNNs and their PCA-DNN versions (which are not supported in VHAGaR). Here, we consider MNIST-FC, which has a higher accuracy than MNIST-Conv, 
 to test a different architecture than convolutional Networks.
 
-We recall that PCA-DNNs are generated following the process described in Section 5: for each PCA dimension, we report in Table \ref{table.pca} 
-the accuracy loss from using PCA-DNN rather than the original DNN.
+We recall that PCA-DNNs are generated following the process described in Section 5: for each PCA dimension, we report in Table \ref{table.pca} the accuracy loss from using PCA-DNN rather than the original DNN.
 We set the dimension at the minimal dimension reaching at most 1$\%$ 
 loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively.
 
@@ -249,8 +248,7 @@ loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR
 		\\\hline
 	\end{tabular}
 
-	\caption{Loss of accuracy of PCA-DNN vs DNN (no PCA) 
-	according to the PCA dimension.
+	\caption{Loss of accuracy of PCA-DNN vs DNN (no PCA) according to the PCA dimension.
 	{\color{blue} Blue} corresponds to the minimal dimension ensuring loss $\leq 1\%$.}
 	\vspace{-0.4cm}
     \label{table.pca}
@@ -317,7 +315,7 @@ $L_1$ perturbations, from 1.5 to 600. Using
 the faster {\em 1b} model now becomes pertinent. In half of the cases, {\em 1b} actually produces the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provide better bounds. ITNE is significantly worse, producing $25\%$ worse bounds 
 $\bar{\beta}$ on average than {\em Best}.
 
-Comparing with and without PCA, as expected, PCA-DNNs allow to reach much smaller upper bounds $\bar{\beta}$ than without PCA, $15$x for MNIST-FC, $3$x for FMNIST-Conv and $7$x for CIFAR10-Conv. MNIST-FC is harder to solve than FMNIST-Conv, although they are comparable benchmark, because fully connected architectures are richer than Convolutional architectures of the same size. PCA-CIFAR10-Conv is the hardest test, because the dimension (60) is not as reduced as for MNIST and FMNIST (20 and 25) .
+Comparing with and without PCA, as expected, PCA-DNNs allow reaching much smaller upper bounds $\bar{\beta}$ than without PCA, $15$x for MNIST-FC, $3$x for FMNIST-Conv, and $7$x for CIFAR10-Conv. MNIST-FC is harder to solve than FMNIST-Conv, although they are comparable benchmarks, because fully connected architectures are richer than convolutional architectures of the same size. PCA-CIFAR10-Conv is the hardest test, because the dimension (60) is not as reduced as for MNIST and FMNIST (20 and 25).
 
 
 
@@ -374,8 +372,7 @@ ITNE, $1000$ &  $1.371$ & $.085$& {\bf .085}  \\\hline\hline
 
 \subsection{Real-Time verification of Robustness}
 
-We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{i,j}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}. We set a threshold of $70\%$ to evaluate how large the $L_1$  perturbation can be while still certifying at least this threshold: 
-a threshold much lower than $70\%$ would mean labeling too many incoming images as uncertified, which would degrade the system too much.
+We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{i,j}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}. We set a threshold of $70\%$ to evaluate how large the $L_1$  perturbation can be while still certifying at least this threshold: a threshold much lower than $70\%$ would mean labeling too many incoming images as uncertified, which would degrade the system too much.
 
 
 
@@ -408,7 +405,8 @@ a threshold much lower than $70\%$ would mean labeling too many incoming images 
 	\caption{Percentage of images certified robust in real-time 
 	using the Best computed $(\beta^{1}_{i,j})_{i < j \leq 10}$, 
 	for different values of $L_1$-perturbations.
-	{\color{blue} Blue} depicts the largest perturbation ensuring $\geq 70\%$ of images being robust. Latency overhead are the same as the number of classes is the same (=10) for all datasets.} 
+	{\color{blue} Blue} depicts the largest perturbation ensuring $\geq 70\%$ of images being robust. The latency overhead is the same as the number of classes (10) for all datasets.}
+    %Latency overhead are the same as the number of classes is the same (=10) for all datasets.} 
 	%2000 images/s can be treated per cpu core.}
     \label{table.cert}
 \end{table}
@@ -416,7 +414,7 @@ a threshold much lower than $70\%$ would mean labeling too many incoming images 
 With that, we can guarantee at least $70\%$ of the images as certified
 for all 3 PCA-DNN label  for a $L_1$-perturbation of $1$, and even go up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST.
 We are unable to do it for the non-PCA version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its PCA-version:
-PCA is extremely efficient at helping certifying.
+PCA is extremely efficient at helping verify.
 
 \iffalse
 To remove improbable images and limit the space of search, 

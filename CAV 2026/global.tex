@@ -1,6 +1,6 @@
 	\section{MILP Models for Global Robustness}
 
-Let $N$ be the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). Worst-case complexity being exponential in the number of binary variables, global robustness (e.g. ITNE and VHAGaR \cite{ITNE,vhagar}) is much harder than local robustness.
+Let $N$ be the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). Worst-case complexity being exponential in the number of binary variables, global robustness (e.g., ITNE and VHAGaR \cite{ITNE,vhagar}) is much harder than local robustness.
 
 \subsection{Encoding $L_\infty$- and $L_1$-perturbations for input variables}
 \label{s.L1}
@@ -27,7 +27,7 @@ So the whole constraint (\ref{L1constraint})
 implies that $\sum_{j\leq n} |x_j - x'_j| \leq \varepsilon$.
 
 Conversely, for every instance that satisfies $\sum_{j\leq n} |x_j - x'_j| \leq \varepsilon$, then there is also an instance which satisfies constraints (\ref{L1constraint}),  by defining $A_j = |x_j - x'_j|$ for all $j \leq n$.
-
+%
 This shows that (\ref{L1constraint}) is equivalent with 
 $||\vec{x} - \vec{x}'||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq \varepsilon$.
 \qed
@@ -57,8 +57,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	
     The classical encoding is used (with variants) by VHAGaR \cite{vhagar} and ITNE \cite{ITNE}. For each neuron $j$, variables $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ are considered. For each ReLU $j$, a binary variable $a_j$ and related constraints from the classical encoding (\ref{eq11}) \cite{MILP} are used to set $\hat{x}_j$, and an {\em independent} binary variable $a'_j$ and related constraints from the classical encoding are used to set $\hat{x}_j$. We call this encoding $\mathcal{M}^{classical}$.
 	
-	As explained in the section \ref{s.notation}, the standard way to make the MILP model more efficient is to linearly relax some of the binary variables into linear variables. The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when 
-	no LP relaxation is used, the classical MILP encoding of \cite{MILP}, while asymptotically accurate, will result into looser bounds in practice. 
+	As explained in the section \ref{s.notation}, the standard way to make the MILP model more efficient is to linearly relax some of the binary variables into linear variables. The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when no LP relaxation is used, the classical MILP encoding of \cite{MILP}, while asymptotically accurate, will result in looser bounds in practice. 
 	
 	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \cite{ITNE}, see also Section \ref{s.diff}), while VHAGaR reduces the number of binary variables depending on the perturbation used \cite{vhagar}.
 	
@@ -81,7 +80,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 
 	We now present our main methodological contribution, the {\em Diff} MILP encoding. It considers variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em Diff variables} \cite{diff}, with 
 	$y_j = x_j - x'_j$ and $\hat{y}_j= \ReLU({x}_j) - \ReLU(x'_j)$. 
-	A first important observation is that the image $I$ and the deformation $I'$ having perfectly symmetrical roles, assuming that $\gamma_j$ is an {\em upper} bound of $y_j$, then $-\gamma_j$ is a {\em lower} bound for $y_j$.
+	A first important observation is that, since the image $I$ and the deformation $I'$ have perfectly symmetrical roles and assuming that $\gamma_j$ is an {\em upper} bound of $y_j$, then $-\gamma_j$ is a {\em lower} bound for $y_j$.
 
 
 	To encode the equation describing $\hat{x}'_j$, we use 
@@ -97,7 +96,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
     
 
 
-	%	(This model has the same binary set, although the meaning of binary variable for $y_i$ is somehow different.)
+	%	(This model has the same binary set, although the meaning of the binary variable for $y_i$ is somehow different.)
 	
 	%	The exact constraints for $$ \begin{align*}
 		%		&\hat{y}_i \geq -\hat{x}'_i \hspace*{1ex} \wedge \hspace*{1ex} \hat{y}_i \leq -\hat{x}'_i+a\beta_i  \hspace*{1ex}\wedge\hspace*{1ex} x_i'+y_i \leq a\beta_i \hspace*{1ex}\wedge\hspace*{1ex}  x_i'+y_i \geq (1-a)\alpha_i \\
@@ -157,7 +156,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 \end{figure}
 	
 
-Recall first that $a'_j$ is the binary variables used in the 
+Recall first that $a'_j$ is the binary variable used in the 
  classical MILP encoding for $\hat{x}'_j=\ReLU(x'_j)$.
 We set $a'=a'_j$ (whose value is already settled, see Proposition \ref{Prop1}),
 and use it in the MILP encoding of $\hat{y}_j = \ReLU(x_j)-\ReLU(x'_j)$:
@@ -274,8 +273,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 
 	As explained in the previous section, the standard way to make the model more efficient is to rely on linearly relaxing some of the binary variables into linear variables.
     The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when all variables are binary, the classical MILP encoding 
-	of \cite{MILP}, while fully accurate, will likely result into looser bounds as well. Notice that this was already witnessed in \cite{ITNE}, and some additional constraints were added to make the classical model more accurate:
-	the {\em diff variables} were used as specific constraints added to the classical encoding (Eq. (3) in \cite{ITNE}). 
+	of \cite{MILP}, while fully accurate, will likely result in looser bounds as well. Notice that this was already witnessed in \cite{ITNE}, and some additional constraints were added to make the classical model more accurate: the {\em diff variables} were used as specific constraints added to the classical encoding (Eq. (3) in \cite{ITNE}). 
 	%We will compare the different methods in Table \ref{table.classical}.
 
 	\fi
@@ -297,10 +295,10 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
     Prop. \ref{Prop2} can be decoupled from the binary variable $a'_j$
 	appearing in the classical encoding of $\hat{x}'_j = \ReLU(x'_j)$. 
 	This would mean having 3 binary variables, which would be too costly. 
-	The variables $a'_j$ used for $x'_j$ is thus linearly relaxed, while
-	both variables $a,a'$ used in the encoding of $\hat{y}_j$ are kept binary. We call this the {\em 2b+1} model, which uses 2 binary variables per neuron, 
+	The variable $a'_j$ used for $x'_j$ is thus linearly relaxed, while
+	both variables $ a$ and $,a'$ used in the encoding of $\hat{y}_j$ are kept binary. We call this the {\em 2b+1} model, which uses 2 binary variables per neuron, 
 	as the classical and {\em Diff} encodings.
-	The decoupling between $a'$ and $a_j$ removes complicated constraints in the MILP encoding, which helps the solver. This however also means that  the {\em 2b+1} model is not as accurate as the {\em Diff} model asymptotically.
+	The decoupling between $a'$ and $a_j$ removes complicated constraints in the MILP encoding, which helps the solver. This, however, also means that the {\em 2b+1} model is not as accurate as the {\em Diff} model asymptotically.
 
 
 	\subsection{The efficient {\em 1b} model}
@@ -308,7 +306,8 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 
 		\begin{figure}[t!]
 		\centering
-	\hspace*{10ex}\begin{tikzpicture}
+	%\hspace*{10ex}
+    \begin{tikzpicture}
 		\begin{axis}[
 			xlabel={$y_i$},
 			ylabel={$\hat{y}_i$},
@@ -365,11 +364,11 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	
 
 	\iffalse
-	Based on above constraints, we can sketch this simplified model:
+	Based on the above constraints, we can sketch this simplified model:
 	\begin{enumerate}
 		\item For each input node, each output node, and each pre-activation and post-activation node in the hidden layers,  set one variable $y_i$. 
 		\item Set constraints for input nodes.
-		\item Set linear constraints . In this case, since the meaning of $y_i$ is $x_i-x'_i$, this constraints will not use the bias.
+		\item Set linear constraints. In this case, since the meaning of $y_i$ is $x_i-x'_i$, these constraints will not use the bias.
 		\item Between pre- and post- activation nodes, set the MILP constraint described above.
 	\end{enumerate}
 	
@@ -390,8 +389,9 @@ $\beta^{\varepsilon}_{C,D} = \max_{|I-I'| \leq \varepsilon}((x_C - x'_C)-
 
 Upper bounds  $\bar{\beta}^{\varepsilon}_{C,D} \geq \beta^{\varepsilon}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
 $\underline{\beta}^{\varepsilon}_{C,D} \leq \beta^{\varepsilon}_{C,D}$
-will allow us to evaluate how large is the gap= 
-$\frac{(\bar{\beta}^{\varepsilon}_{C,D} - \underline{\beta}^{\varepsilon}_{C,D})} {\underline{\beta}^{\varepsilon}_{C,D}}$. MILP solvers, e.g. Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\varepsilon}_{C,D}$
+allow us to evaluate how large the gap 
+%$\frac{(\bar{\beta}^{\varepsilon}_{C,D} - \underline{\beta}^{\varepsilon}_{C,D})} {\underline{\beta}^{\varepsilon}_{C,D}}$
+$(\bar{\beta}^{\varepsilon}_{C,D} - \underline{\beta}^{\varepsilon}_{C,D}) / \underline{\beta}^{\varepsilon}_{C,D}$ is. MILP solvers, e.g., Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\varepsilon}_{C,D}$
 as well as a lower bound ("solution") $\underline{\beta}^{\varepsilon}_{C,D}$.
 
 

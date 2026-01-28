@@ -1,7 +1,7 @@
 While deep neural networks (DNNs) have demonstrated remarkable capabilities, achieving human-like or even superior performance across a wide range of tasks, their robustness is often compromised by their susceptibility to input perturbations \cite{szegedy}. This vulnerability has catalyzed the formal verification community to develop various methodologies, each presenting a unique trade-off between completeness and computational efficiency~\cite{Marabou,Reluplex,deeppoly}. 
-This surge in innovation has also led to the inception of competitions such as VNNComp~\cite{VNNcomp}, which aims to systematically evaluate the performance of neural network verification tools. Notable examples include NNenum~\cite{nnenum}, Marabou~\cite{Marabou,Marabou2}, and PyRAT~\cite{pyrat}, as well as frameworks such as MnBAB~\cite{ferrari2022complete} (which builds upon ERAN~\cite{deeppoly} and PRIMA~\cite{prima}) and $\alpha,\beta$-CROWN~\cite{crown,xu2020fast}, the winner of the last 4 VNNComp, based on branch-and-bound methodology \cite{cutting,BaB}.
+This surge in innovation has also led to the establishment of competitions such as VNNComp~\cite{VNNcomp}, which systematically evaluate the performance of neural network verification tools. Notable examples include NNenum~\cite{nnenum}, Marabou~\cite{Marabou,Marabou2}, and PyRAT~\cite{pyrat}, as well as frameworks such as MnBAB~\cite{ferrari2022complete} (which builds upon ERAN~\cite{deeppoly} and PRIMA~\cite{prima}) and $\alpha,\beta$-CROWN~\cite{crown,xu2020fast}, the winner of the last 4 VNNComp, based on branch-and-bound methodology \cite{cutting,BaB}.
 
-These tools focus on {\em local} robustness: given a DNN, an image, and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned to the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric, every subpixel of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is, 2 levels of gray/blue/red/green). 
+These tools focus on {\em local} robustness: given a DNN, an image, and a small neighborhood around this image, they verify whether all images in the neighborhood are assigned the same classification. This neighborhood is provided by a maximal perturbation of the input image, often an $L_\infty$-norm constraint. Under this metric, every subpixel of the input image can vary in a very small range, typically $\frac{2}{255}$ (that is, 2 levels of gray/blue/red/green). 
 Although it is not necessarily the most meaningful perturbation,
 $L_\infty$ is the usual choice because it is perfectly linear  
 (subpixel perturbations are independent), which is easier to verify.
@@ -12,7 +12,7 @@ For instance, consider an autonomous vehicle processing a live video feed: image
 
 \smallskip
 
-In this paper, we consider {\em global} robustness, that is we do not restrict the certification process to the neighborhood of a specific, fixed input. We follow a two-step procedure. 
+In this paper, we consider {\em global} robustness, that is, we do not restrict the certification process to the neighborhood of a specific, fixed input. We follow a two-step procedure. 
 The first step, performed offline, computes global bounds on the maximum possible shift between output values of different decision classes due to a perturbation, following an approach similar to VHAGaR~\cite{vhagar}. 
 %
 Specifically, for any two decision classes $C$ and $D$ and perturbation $\varepsilon$, we compute an 
@@ -20,7 +20,7 @@ upper bound
 $\bar{\beta}^\varepsilon_{C,D}$ of $\max_{I,I', |I-I'| \leq \epsilon}(
 x_C - x'_C + x'_D - x_D)$, where $x_{C,D},x'_{C,D}$ are the output values of class $C,D$ from image $I$ and $I'$. 
 %
-Unlike local robustness methods, which require $k$ separate calls, computationally expensive calls to certify $k$ images, the global bound $\bar{\beta}^\varepsilon_{C,D}$ is computed offline once per network and remains valid across the entire input space. 
+Unlike local robustness methods, which require $k$ separate, computationally expensive calls to certify $k$ images, the global bound $\bar{\beta}^\varepsilon_{C,D}$ is computed offline once per network and remains valid across the entire input space. 
 
 The second step is real-time, being performed with the DNN inference of the image $I$ considered: it suffices to consider the class $C$ with the highest output value $x_C$, and check whether for every other class $D \neq C$, 
 $x_C - x_D > \bar{\beta}^\varepsilon_{C,D}$. 
@@ -32,6 +32,14 @@ This check typically requires only a few dozen CPU instructions, which can be co
 
 Our main contributions address the challenges of computing the {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$ for all pairs of classes $(C,D)$:
 \begin{enumerate}
+\item We develop a novel {\em Diff MILP encoding} for the global robustness problem, 
+    where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}), see Section \ref{s.diff}. 
+    We keep the same number (2) of binary variables per ReLU as
+    the {\em classical MILP model} \cite{MILP} employed in \cite{vhagar,lipshitz,ITNE}.
+    However, they compute the small values of the {\em diff variables} as the difference between 2 larger values, 
+which is asymptotically correct but results in poor {\em practical} accuracy on, among others, the linear relaxation \cite{diff}, while 
+our {\em Diff MILP model} is more accurate in practice.
+\iffalse
 	\item We develop a novel {\em Diff MILP encoding} for the global robustness problem, 
 	where the variables are the values of the perturbed neurons, as well as the difference between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}), see Section \ref{s.diff}. 
 	Compared with the {\em classical MILP model} \cite{MILP} employed in 
@@ -45,6 +53,7 @@ Our main contributions address the challenges of computing the {\em global bound
 	%The number of variables a priori doubles compared with local robustness, from each neuron value in the perturbed image to each neuron value in the perturbed image {\em and} in the original image, as the original image is no more fixed. 
 	%Recall that the worst case complexity of MILP is exponential in the number of binary variables \cite{DivideAndSlide}. 
 	%A straightforward MILP model would be to use the  for each of these variables, as in \cite{vhagar,lipshitz}. The main issue with the classical model is that its linear relaxations is extremely inaccurate, as the variables are independent of each other. Instead, we develop another exact MILP model, 
+\fi
 
 	\item Further, from the {\em Diff MILP model}, which is exact, 
 	we develop two abstract MILP models, which are more efficient but also asymptotically less accurate than {\em Diff}. 

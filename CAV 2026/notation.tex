@@ -4,7 +4,7 @@
 	In this paper, we will use lower case Latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
 	capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
 	To simplify the notations, we restrict the presentation to feed-forward, 
-	fully connected ReLU Deep Neural Networks (DNN for short), where the activation function is $\ReLU : \mathbb{R} \rightarrow \mathbb{R}$ with
+	fully connected ReLU Deep Neural Networks (DNN for short), where the activation function is $\ReLU: \mathbb{R} \rightarrow \mathbb{R}$ with
 	$\ReLU(x)=x$ for $x \geq 0$ and $\ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
 	
 	%In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
@@ -39,8 +39,8 @@
     \item  $y_j = x_j - x'_j$ the {\em diff variable}, with 
     $\hat{y}_j = \hat{x}_j - \hat{x}'_j$ (and {\em not} 
     $\hat{y}_i = \ReLU(x_j-x'_j)$), 
-	as first proposed by [cite DIFF \cite{diff}].
-	%, 	similarly than in the Interleaving Twin-Network Encoding (ITNE) model of \cite{lipshitz,ITNE}. 
+	as first proposed by \cite{diff}.
+	%, 	similar to the Interleaving Twin-Network Encoding (ITNE) model of \cite{lipshitz,ITNE}. 
     \end{itemize}
      
     %Concerning the verification problem, we focus on the global-robustness question. Global robustness asks to determine how the output of a neural network will be affected under a certain kind of small perturbations to any possible input. In this view, Lipschitz continuity is a good characterization of global robustness.
@@ -57,7 +57,7 @@
 	\begin{align*}
 		\forall \boldsymbol{x} \forall\boldsymbol{y} (|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|)
 	\end{align*} 
-	In our practice, when we need global robustness, we will compute an optimization question respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
+	In our practice, when we need global robustness, we will compute an optimization question with respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
 		\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
 	\end{align} And this will lead to the following definition
 	
@@ -70,7 +70,7 @@
 		
 	\end{definition}
 	
-	From $\varepsilon$-diff bound, we cannot directly obtain a Lipschitz bound for the function, but we can get the following weaker bound:
+	From the $\varepsilon$-diff bound, we cannot directly obtain a Lipschitz bound for the function, but we can get the following weaker bound:
 	
 	\begin{definition}[Lipschitz above $\varepsilon$ constant]
 		Suppose we have a function $f$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ and $||$ is $L_\infty$ norm. 
@@ -151,10 +151,9 @@
 	
 	\subsection{MILP encoding for local ReLU}
 	
-	Mixed Integer Linear Programming (MILP) can encode faithfully ReLU DNNs:
-	For an unstable neuron $n$, that is with values 
-    $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, 
-    the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one binary / integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
+	Mixed Integer Linear Programming (MILP) can encode ReLU DNNs faithfully:
+	For an unstable neuron $n$, that is, with values 
+    $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one binary/integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
 	
 	\vspace{-0.4cm}
 	\begin{equation} 
@@ -169,7 +168,7 @@ A solution $x,\hat{x},a$  of the above MILP program (\ref{eq11}) satisfies $\hat
 and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 \end{proposition}
 
-	%For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help getting more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
+	%For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help get more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables, and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
 	
     \iffalse
 	The global structure is as follows, using Gurobi as an example:
@@ -185,13 +184,13 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
     The encoding from $(\hat{x}_j)_{j \text{ in layer } i}$ to 
 	$(x_{j'})_{j' \text{ in layer } i+1}$ variables is simply the linear combination 
 	$\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i$.
-	Hence the full MILP model uses exactly as many binary variables as 
+	Hence, the full MILP model uses exactly as many binary variables as 
 	unstable ReLUs.
 	%This exact MILP encoding is often too computationally intensive, as the worst-case complexity of MILP is exponential in the number of integer variables \cite{DivideAndSlide}.
     
     \subsection{LP relaxation}
 
-	MILP instances can be linearly relaxed into LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. As solving LP instances is polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP relaxation}.
+	MILP instances can be linearly relaxed into LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. Since solving LP instances takes polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP relaxation}.
     % We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof.
 	
 	
@@ -208,7 +207,7 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 	
 	%We will denote the above model by MILP$_X$. We say that a node is {\em opened} if it is in $X$. 
 	
-	%To reduce the runtime, we will limit the size of subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach: computing lower and upper bounds $\LB,\UB$ for neurons $n$ of a each layer iteratively, that are used when computing values of the next layer.
+	%To reduce the runtime, we will limit the size of the subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach: computing lower and upper bounds $\LB,\UB$ for neurons $n$ of each layer iteratively, which are used when computing values of the next layer.
 	
 	\iffalse
 	\subsection{SAS}
@@ -223,7 +222,7 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 	accurately represents how much opening neuron $n < z$ reduces the maximum computed for $z$
 	compared with using only LP. 
 	
-	First, SAS will call solvers to compute the LP model to get a solution, which is reasonably fast as there is no binary variables. 
+	First, SAS will call solvers to compute the LP model to get a solution, which is reasonably fast, as there are no binary variables. 
 	
 	Next, for a neuron $b$ on the layer before layer $\ell_z$, we define:
 	
@@ -259,7 +258,7 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 		\Utility\_\max\nolimits^z(a) &= \Delta(z) = -\sum_{b \in \ell} W_{bz} \Delta(\hat{b})&&
 	\end{flalign*}
 	
-	From paper CITE, we know that $\Utility$ is a safe overapproximation in the sense of following proposition:
+	From paper CITE, we know that $\Utility$ is a safe overapproximation in the sense of the following proposition:
 	
 	\begin{proposition}
 		$0 \leq \Improve\max^z(a) \leq \Utility\max^z(a)$. 

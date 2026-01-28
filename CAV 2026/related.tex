@@ -3,9 +3,9 @@
 While \cite{diff} does not tackle global robustness per se, it is one of the first works to consider {\em differential} verification, introducing the {\em diff} variables that are used here and also in \cite{ITNE}. The paper \cite{diff} did not consider MILP encoding.
 
 Some works \cite{Leino,Zhang22a,Sun22,Chen21,REGLO} focus on training a network to be - rather than proving the DNN is - globally robust.
-Other works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g. using probabilistic guarantees \cite{Levy23,Mangal19}.
+Other works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g., using probabilistic guarantees \cite{Levy23,Mangal19}.
 
-More related, several works  \cite{Marabou,lipshitz,ITNE,GROCET} consider certifying {\em restricted} Lipschitz bound, to understand how the output can change given an input perturbations. However, they do not consider whether the classification changes. 
+More related, several works  \cite{Marabou,lipshitz,ITNE,GROCET} consider certifying {\em restricted} Lipschitz bound, to understand how the output can change given an input perturbation. However, they do not consider whether the classification changes. 
 
 The most related work is VHAGaR \cite{vhagar}, which computes 
 bounds $\bar{\alpha}^\varepsilon_{i,j}$ similar to our bounds 

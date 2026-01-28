@@ -16,13 +16,11 @@
 %As explained in the previous section, global robustness is a very complex problem. On top of efficient MILP encodings, 
 
 Upper bounds $\bar{\beta}$ obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD)} \cite{OOD} inputs far away from the training dataset, need to be accounted for.
-We propose to leverage on Principal Component Analysis (PCA) \cite{Paco},
+We propose to leverage Principal Component Analysis (PCA) \cite{Paco},
 %Model Order Reduction, 
 stemming from Engineering Science, to focus on faithfully representing common inputs from the dataset ({\em ID}: in distribution). OOD inputs may be represented unfaithfully (with (ID) representation closer to the dataset), which is reasonable as the DNN is unlikely to provide reasonable answers on OOD inputs anyway. 
 To make sure that a dataset is faithfully represented, we can check the accuracy of the DNN on the representation of this ID dataset.
-Last, examples corresponding to 
-%This will have several benefits: the search is faster, it produces better, and 
-the lower bounds $\underline{\beta}$ with PCA will be much more natural (ID) wrt the dataset (compare Fig.~\ref{fig3} and Fig.~\ref{fig4}).
+Last, examples corresponding to the lower bounds $\underline{\beta}$ with PCA will be much more natural (ID) wrt the dataset (compare Fig.~\ref{fig3} and Fig.~\ref{fig4}).
 
 %The simplest Model Order Reduction uses 
  PCA is a %Model Order Reduction 
@@ -47,25 +45,24 @@ $\underline{\beta}^{.5}_{6,8}=.518$, as obtained as solution by the {\em Diff} m
 
 
 \begin{enumerate}
-\item {\em Training} the PCA encoding and decoding from the Training Dataset (e.g. MNIST, FMNIST, CIFAR10). Notice that the original DNN has been previously trained from this Training Dataset.
+\item {\em Training} the PCA encoding and decoding from the Training Dataset (e.g., MNIST, FMNIST, CIFAR10). Notice that the original DNN has been previously trained on this training dataset.
 
-\item {\em In Exploitation}, the {\bf PCA-DNN} is formed by calls to PCA-encoding then PCA-decoding and then original DNN. 
+\item {\em In Exploitation}, the {\bf PCA-DNN} is formed by calls to PCA-encoding, then PCA-decoding, and then the original DNN. 
 Input images from the dataset are minimally changed by the PCA coding/decoding. 
 Although the direct images input (after coding/decoding) of the DNN are full size (784 dimensions for MNIST), they live in a reduced space. 
-We check the accuracy of the PCA-DNN, that is the $\%$ of images where the class predicted matches the ground truth. We set the PCA dimension as small as possible (for more efficiency) such that the loss of accuracy of PCA-DNN is minimal ($ \leq 1 \%$) wrt the original DNN without PCA
-(20 for MNIST in Fig.~\ref{fig.MNIST}).
+We check the accuracy of the PCA-DNN, that is, the $\%$ of images where the class predicted matches the ground truth. We set the PCA dimension as small as possible (for more efficiency) such that the loss of accuracy of PCA-DNN is minimal ($ \leq 1 \%$) wrt the original DNN without PCA (20 for MNIST in Fig.~\ref{fig.MNIST}).
 % enccode/decode.
 
 
 \item {\em In Bound Computation}, we consider as variables the pixels of the original image $I$ and perturbed image $I'$, then the reduced PCA dimensions ($20 \times 2$ from $I$ and $I'$), and feed that to the first layer of the DNN (linear transformation). 
 Compared to computing bounds on the original DNN, we only add {\em linear} variables, as few as 2x the reduced PCA-dimensions.
-The associated constraints, which come from PCA encode/decode, are also linear. Next, we have the exact same MILP encoding (e.g. {\em Diff} encoding) for the DNN. Hence, the number of {\em binary} variable for PCA-DNN is the same as without PCA. Finally, the goal is to optimize e.g. $\beta^\varepsilon_{6,8}$, the value of $y_6 - y_8 = x_6 - x'_6 + x'_8 - x_8$,  where $y_C$ is the {\em diff} variable of the output neuron for class $C \in \{6, 8\}$.
+The associated constraints, which come from the PCA encode/decode, are also linear. Next, we have the exact same MILP encoding (e.g., {\em Diff} encoding) for the DNN. Hence, the number of {\em binary} variables for PCA-DNN is the same as without PCA. Finally, the goal is to optimize e.g. $\beta^\varepsilon_{6,8}$, the value of $y_6 - y_8 = x_6 - x'_6 + x'_8 - x_8$,  where $y_C$ is the {\em diff} variable of the output neuron for class $C \in \{6, 8\}$.
 \end{enumerate}
 
 We report in Fig.~\ref{fig3} the image and perturbed image reaching the maximal lower bound $\underline{\beta}^{.5}_{6,8}=.518$ 
 obtained when using the original DNN (without PCA).
-These images are improbable to be input wrt the MNIST (digit classification) dataset.
-When using the PCA-DNN, the image and perturbed image in Fig.~\ref{fig4} are much more natural, because the output of the PCA encoding/decoding (from  reduced space) is its own image, and thus can be used as original input, producing the maximal $\underline{\beta}_{6,8}=.084$.
+These images are unlikely to be input to the MNIST (digit classification) dataset.
+When using the PCA-DNN, the image and perturbed image in Fig.~\ref{fig4} are much more natural, because the output of the PCA encoding/decoding (from reduced space) is its own image, and thus can be used as original input, producing the maximal $\underline{\beta}_{6,8}=.084$.
 Notice that the lower bound $\underline{\beta}$ is lower when using PCA-DNN, which is perfectly normal as we restrict the {\em output} to be from a reduced space not too far from the MNIST dataset. This will also be the case for the upper bound $\overline{\beta}$, which is very desirable as it improves robustness certification. 
 %On the other hand, 
 Last, the input of PCA-DNN is not restricted, and results from real-time verification hold for any arbitrary image, even OOD images.
@@ -75,7 +72,7 @@ Last, the input of PCA-DNN is not restricted, and results from real-time verific
 	\centering
 \includegraphics[scale=0.4]{redimage.png} \hspace{1.5cm}
 \includegraphics[scale=0.4]{redperturb.png}
-\caption{An (ID) image for MNIST and its perturbation when using the {\bf PCA-DNN} with 20-dimension, maximizing $\underline{\beta}^{.5}_{6,8} = .084$, as obtained by the{\em Diff} model.}
+\caption{An (ID) image for MNIST and its perturbation when using the {\bf PCA-DNN} with 20 dimensions, maximizing $\underline{\beta}^{.5}_{6,8} = .084$, as obtained by the{\em Diff} model.}
 \vspace{-0.2cm}
 \label{fig4}
 \end{figure*}	
