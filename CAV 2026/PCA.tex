@@ -1,17 +1,12 @@
 \section{Principal Component Analysis for Bound Computation}
 
-\begin{figure*}[b!]
-    \centering
-    \vspace{-0.3cm}
-    \includegraphics[scale=0.75]{MNIST.pdf} 
-    \caption{The pipeline training and exploiting the {\bf PCA-DNN} on MNIST dataset.}
-    \label{fig.MNIST}
-\end{figure*}	
 
-\eca{Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic, since they must accommodate all possible points, including out of distribution (OOD) \cite{OOD} samples far from the training dataset. Thus, we propose to leverage principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the verification objective to common, i.e., in-distribution (ID), data. 
-%
-While OOD inputs may be represented unfaithfully into this ID subspace, this is justified by the DNN's inherent lack of robustness outside the training distribution. 
-To ensure that a dataset is faithfully represented, we verify the DNN's accuracy on the representation of this ID dataset \todo{on the representation of this ID dataset? what?}. In addition, we can observe that examples corresponding to the lower bounds $\underline{\beta}$ with PCA are more "natural" (ID) wrt the dataset (compare Fig.~\ref{fig3} and Fig.~\ref{fig4}).}
+Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic, since they must accommodate all possible inputs, including out of distribution (OOD) \cite{OOD} samples far from the training dataset. Worst-case for $\bar{\beta}$ are indeed produced by such OOD 
+samples, see Fig.~\ref{fig3}.
+We propose to leverage principal component analysis (PCA) \cite{Paco}, a technique from engineering science, restricting the output (hence lowering the upper bounds) {\em without} restricting the input. The idea is to represent faithfully common ({\em in-distribution (ID)}) inputs, while OOD inputs may be represented unfaithfully. This is justified by DNNs' inherent inaccuracy on OOD inputs, so misrepresenting them does not make DNNs any worse. 
+To ensure that ID inputs are faithfully represented, we verify that
+the PCA-representation does not lower the DNN accuracy on these inputs.
+With PCA, the worst-case are more "natural" (ID) wrt the dataset (see Fig.~\ref{fig4}).
 
 \iffalse
 Upper bounds $\bar{\beta}$ obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD)} \cite{OOD} inputs far away from the training dataset, need to be accounted for.
@@ -38,10 +33,19 @@ The PCA-pipeline is as follows (see Fig.~\ref{fig.MNIST} for an example on the M
 	\centering
 \includegraphics[scale=0.4]{image.png} \hspace{1.5cm}
 \includegraphics[scale=0.4]{perturb.png}
-\caption{An (OOD) image for MNIST and its perturbation ($L1$-difference of $.5$ in a unique pixel at x=14, y=8 from top) maximizing
-$\underline{\beta}^{.5}_{6,8}=.518$, as obtained as solution by the {\em Diff} model (without PCA).}
+\caption{An (OOD) image for MNIST and its perturbation (in a unique pixel at x=14, y=8 from top) maximizing
+$\underline{\beta}^{.5}_{6,8}=.518$, as obtained by the {\em Diff} model.}
 \label{fig3}
 \end{figure*}	
+\begin{figure*}[b!]
+	\centering
+\includegraphics[scale=0.35]{redimage.png} \hspace{1.5cm}
+\includegraphics[scale=0.35]{redperturb.png}
+\caption{An (ID) image for MNIST and its perturbation when using the PCA-representation, maximizing $\underline{\beta}^{.5}_{6,8} = .084$, as obtained by the{\em Diff} model.}
+\vspace{-0.2cm}
+\label{fig4}
+\end{figure*}	
+
 
 
 \begin{enumerate}
@@ -52,6 +56,14 @@ Input images from the dataset are minimally changed by the PCA coding/decoding.
 Although the direct images input (after coding/decoding) of the DNN are full size (784 dimensions for MNIST), they live in a reduced space. 
 We check the accuracy of the PCA-DNN, that is, the $\%$ of images where the class predicted matches the ground truth. We set the PCA dimension as small as possible (for more efficiency) such that the loss of accuracy of PCA-DNN is minimal ($ \leq 1 \%$) wrt the original DNN without PCA (20 for MNIST in Fig.~\ref{fig.MNIST}).
 % enccode/decode.
+
+\begin{figure*}[t!]
+    \centering
+    \vspace{-0.3cm}
+    \includegraphics[scale=0.75]{MNIST.pdf} 
+    \caption{The pipeline training and exploiting the {\bf PCA-DNN} on MNIST dataset.}
+    \label{fig.MNIST}
+\end{figure*}	
 
 
 \item {\em In Bound Computation}, we consider as variables the pixels of the original image $I$ and perturbed image $I'$, then the reduced PCA dimensions ($20 \times 2$ from $I$ and $I'$), and feed that to the first layer of the DNN (linear transformation). 
@@ -68,14 +80,6 @@ Notice that the lower bound $\underline{\beta}$ is lower when using PCA-DNN, whi
 Last, the input of PCA-DNN is not restricted, and results from real-time verification hold for any arbitrary image, even OOD images.
 
 
-\begin{figure*}[t!]
-	\centering
-\includegraphics[scale=0.4]{redimage.png} \hspace{1.5cm}
-\includegraphics[scale=0.4]{redperturb.png}
-\caption{An (ID) image for MNIST and its perturbation when using the {\bf PCA-DNN} with 20 dimensions, maximizing $\underline{\beta}^{.5}_{6,8} = .084$, as obtained by the{\em Diff} model.}
-\vspace{-0.2cm}
-\label{fig4}
-\end{figure*}	
 
 
 
