@@ -1,12 +1,12 @@
 \section{Principal Component Analysis for Bound Computation}
 
 
-Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic, since they must accommodate all possible inputs, including out of distribution (OOD) \cite{OOD} samples far from the training dataset. Worst-case for $\bar{\beta}$ are indeed produced by such OOD 
+Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic, since they must accommodate all possible inputs, including out of distribution (OOD) \cite{OOD} samples far from the training dataset. Worst-cases for $\bar{\beta}$ are indeed produced by such OOD 
 samples, see Fig.~\ref{fig3}.
 We propose to leverage principal component analysis (PCA) \cite{Paco}, a technique from engineering science, restricting the output (hence lowering the upper bounds) {\em without} restricting the input. The idea is to represent faithfully common ({\em in-distribution (ID)}) inputs, while OOD inputs may be represented unfaithfully. This is justified by DNNs' inherent inaccuracy on OOD inputs, so misrepresenting them does not make DNNs any worse. 
 To ensure that ID inputs are faithfully represented, we verify that
 the PCA-representation does not lower the DNN accuracy on these inputs.
-With PCA, the worst-case are more "natural" (ID) wrt the dataset (see Fig.~\ref{fig4}).
+With PCA, the worst-cases are more "natural" (ID) wrt the dataset (see Fig.~\ref{fig4}).
 
 \iffalse
 Upper bounds $\bar{\beta}$ obtained on the full input space are particularly pessimistic, as all inputs, including {\em Out of Distribution (OOD)} \cite{OOD} inputs far away from the training dataset, need to be accounted for.
