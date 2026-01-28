@@ -442,9 +442,8 @@ Assume by contradiction that $D \neq C$ is the decision on $I'$.
   \qed
 \end{proof}
 
-The overhead (1,2 above) after 0 amounts to $2k-1$ operations, 
-where $k=\#$Class. 
-That is, 19 operations in total for $k=10$ classes. 
-More precisely: $(k-1)$ ADD(+), 
+The overhead (steps 1,2 above) on top of the standard inference step 0, 
+amounts to $2k-1$ operations, where $k=\#$Class. 
+That is, 19 operations in total for $k=10$ classes (cases of MNIST, Fashion MNSIT and CIFAR-10). More precisely: $(k-1)$ ADD(+), 
 $(k-1)$ COMP(<) and $1$ OR($\bigvee$) of ($k-1$) bits.
 This can be performed extremely fast, even on limited hardware.
