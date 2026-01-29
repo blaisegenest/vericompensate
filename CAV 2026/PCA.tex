@@ -31,12 +31,11 @@ $\underline{\beta}^{.5}_{6,8}=.518$, as obtained by the {\em Diff} model.}
 
 
 \begin{enumerate}
-\item {\em Training} the PCA-encoding and decoding on the training dataset (e.g., MNIST, FMNIST, CIFAR10) \eca{to define the PCA-representation}. Note that the original DNN has been previously trained on this training dataset.
+\item {\em Training} the PCA-encoding and decoding on the training dataset (e.g., MNIST, FMNIST, CIFAR10). Note that the original DNN has been previously learned on this training dataset.
 
-\item {\em In Exploitation}, the {\bf PCA-DNN} is formed by calls to PCA-encoding, then PCA-decoding, and then the original DNN. 
-The dataset input images are minimally changed by the PCA-encoding/decoding. 
-Although \eca{the reconstructed images (after encoding/decoding) input to the DNN} are full size (784 dimensions for MNIST), they lie in a reduced space. 
-We check the accuracy of the PCA-DNN, that is, the $\%$ of images where the predicted class matches the ground truth. We set the PCA dimension as small as possible (for efficiency) \eca{while ensuring that} the PCA-DNN accuracy loss is minimal ($ \leq 1 \%$) wrt the original DNN without PCA (20 for MNIST in Fig.~\ref{fig.MNIST}).
+\item {\em In Exploitation}, the {\bf PCA-DNN} is formed by calls to PCA-encoding, then PCA-decoding (forming the PCA-representation of the input), and then the original DNN. 
+%The dataset input images are minimally changed by the PCA-encoding/decoding. 
+Although PCA-representations are full size (784 pixels for MNIST), they lie in a reduced space. We check the accuracy of the PCA-DNN, that is, the $\%$ of images where the predicted class matches the ground truth. We set the PCA dimension as small as possible (for efficiency) while ensuring that the PCA-DNN accuracy loss is minimal ($ \leq 1 \%$) wrt the original DNN without PCA (20 for MNIST in Fig.~\ref{fig.MNIST}).
 
 \begin{figure*}[t!]
     \centering
@@ -54,9 +53,12 @@ The associated constraints, which come from the PCA-encode/decode, are also line
 
 We report in Fig.~\ref{fig3} the image and perturbed image reaching the maximal lower bound $\underline{\beta}^{.5}_{6,8}=.518$ 
 obtained when using the original DNN (without PCA).
-These images are unlikely to be input to the MNIST digit classification dataset.
+They are unlikely to be input to the MNIST digit classification dataset (OOD).
 %
-In contrast, when using the PCA-DNN, the image and perturbed image in Fig.~\ref{fig4} are much more natural. This occurs because the output of the PCA-encoding/decoding (from reduced space) is its own image\todo{the same image? or same dimension? img is like slightly changed}, and thus can be used as original input, producing the maximal $\underline{\beta}_{6,8}=.084$.
+\eca{In contrast, there are natural (ID) images and perturbed images 
+reaching the maximal lower bound $\underline{\beta}^{.5}_{6,8}=.084$ 
+of the {\em  PCA-DNN} (Fig.~\ref{fig4}): among all the images producing a given worst-case PCA-representation, we can chose the PCA-representation itself, which is ID.}
+% This occurs because the output of the PCA-encoding/decoding (from reduced space) is its own image, and thus can be used as original input, producing the maximal $\underline{\beta}_{6,8}=.084$.
 Note that the lower bound $\underline{\beta}$ is lower for the PCA-DNN, which is perfectly normal as we restrict the network's {\em output} to a reduced space close to the MNIST dataset. This will also be the case for the upper bound $\overline{\beta}$, which is very desirable as it improves robustness certification. 
 %On the other hand, 
 
