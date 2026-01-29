@@ -2,9 +2,19 @@
 
 Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic, since they must accommodate all possible inputs, including out-of-distribution (OOD) \cite{OOD} samples far from the training dataset. Worst cases for $\bar{\beta}$ are indeed produced by such OOD samples, see Fig.~\ref{fig3}.
 
-\eca{To address this, we leverage principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the output (hence lowering the upper bounds) {\em without} restricting the input. Specifically, PCA extracts the most important linear components of a dataset by computing linear operators to project data from the full input dimension to a reduced feature space (encoding) and back (decoding). This reduced feature space retains the most important features of the full-dimensional space. This enables it to represent faithfully common ({\em in-distribution (ID)}) inputs, while representing OOD inputs unfaithfully. In addition, observe that, with PCA, the worst cases are more "natural" (ID) and representation of the actual dataset (see Fig.~\ref{fig4}). Since DDNs are inherently inaccurate on OOD inputs, misrepresenting them does not make DNNs any worse. To ensure that ID inputs are faithfully represented, we verify that the PCA representation does not lower the DNN accuracy on these inputs.}
+\eca{To address this, we leverage principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the output (hence lowering the upper bounds) {\em without} restricting the input. 
+Specifically, PCA extracts the most important linear components of a dataset by computing linear operators to project data from the full input dimension to a reduced feature space (encoding) and back (decoding). 
+We form the {\em PCA-DNN} by appending an encoding and decoding stage to the input of the DNN, transforming an image into its {\em PCA-representation}
+see Fig.~\ref{fig.MNIST}.
+%This reduced feature space retains the most important features of the dataset. 
+The {\em PCA-representation} is faithful for common ({\em in-distribution (ID)}, e.g. Fig.~\ref{fig4}) inputs, and possible unfaithful for OOD inputs. Since DNNs are inherently inaccurate on OOD inputs, misrepresenting them does not impact accuracy: we check that the PCA-DNN is as accurate as the DNN
+on the dataset. Inputs of PCA-DNN are not restricted, and results from real-time verification of PCA-DNN hold for any arbitrary image, even OOD.}
 
-The PCA pipeline is as follows (see Fig.~\ref{fig.MNIST} for an example on the MNIST dataset):
+
+
+%In addition, observe that, with PCA, the worst cases are more "natural" (ID) and representation of the actual dataset (see Fig.~\ref{fig4}). 
+
+The PCA pipeline is as follows (see Fig.~\ref{fig.MNIST} for an example on MNIST):
 
 \begin{figure*}[b!]
 	\centering
@@ -54,7 +64,6 @@ These images are unlikely to be input to the MNIST (digit classification) datase
 When using the PCA-DNN, the image and perturbed image in Fig.~\ref{fig4} are much more natural, because the output of the PCA encoding/decoding (from reduced space) is its own image, and thus can be used as original input, producing the maximal $\underline{\beta}_{6,8}=.084$.
 Notice that the lower bound $\underline{\beta}$ is lower when using PCA-DNN, which is perfectly normal as we restrict the {\em output} to be from a reduced space not too far from the MNIST dataset. This will also be the case for the upper bound $\overline{\beta}$, which is very desirable as it improves robustness certification. 
 %On the other hand, 
-Last, the input of PCA-DNN is not restricted, and results from real-time verification hold for any arbitrary image, even OOD images.
 
 
 
