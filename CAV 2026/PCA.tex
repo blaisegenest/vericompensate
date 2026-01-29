@@ -4,7 +4,7 @@ Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to
 
 \eca{To address this, we leverage principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the output (hence lowering the upper bounds) {\em without} restricting the input. 
 Specifically, PCA extracts the most important linear components of a dataset by computing linear operators to project data from the full input dimension to a reduced feature space (encoding) and back (decoding). 
-We form the {\em PCA-DNN} by appending an encoding and decoding stage to the input of the DNN, transforming an image into its {\em PCA-representation}
+We form the {\em PCA-DNN} by appending a PCA-encoding and -decoding stage to the input of the DNN, transforming an image into its {\em PCA-representation},
 see Fig.~\ref{fig.MNIST}.
 %This reduced feature space retains the most important features of the dataset. 
 The {\em PCA-representation} is faithful for common ({\em in-distribution (ID)}, e.g. Fig.~\ref{fig4}) inputs, and possible unfaithful for OOD inputs. Since DNNs are inherently inaccurate on OOD inputs, misrepresenting them does not impact accuracy: we check that the PCA-DNN is as accurate as the DNN
