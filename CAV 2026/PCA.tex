@@ -5,9 +5,9 @@ Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to
 To address this, we employ principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.}
 Specifically, PCA extracts the most important linear components of a dataset by computing linear operators to project data from the full input dimension to a reduced feature space (PCA-encoding) and back (PCA-decoding).
 
-We construct the {\em PCA-DNN} by prepending \eca{PCA-encoding and -decoding} to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
+We construct the {\em PCA-DNN} by prepending \eca{PCA-encoding then decoding} to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
 %This reduced feature space retains the most important features of the dataset. 
-The {\em PCA-representation} is faithful for common {\em in-distribution (ID)} inputs (e.g., Fig.~\ref{fig4}), though it may become unfaithful for OOD inputs. Since DNNs are inherently unreliable on OOD inputs, misrepresenting them does not impact accuracy, \eca{which we check empirically}.
+The PCA-representation is faithful for common {\em in-distribution (ID)} inputs (e.g., Fig.~\ref{fig4}), though it may become unfaithful for OOD inputs. Since DNNs are inherently unreliable on OOD inputs, misrepresenting them does not impact accuracy, \eca{which we check empirically}.
 % verify that the PCA-DNN is as accurate as the original DNN on the dataset. 
 Crucially, the PCA-DNN inputs are not restricted: results from the PCA-DNN real-time verification hold for any arbitrary image, even OOD. The PCA-pipeline is as follows (see Fig.~\ref{fig.MNIST} for an example on MNIST):
 
