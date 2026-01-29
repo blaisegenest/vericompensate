@@ -12,7 +12,7 @@ the linear constraint $|x_j-x'_j| \leq \varepsilon$ is used for each {\em input}
 
 We now explain how to encode $L_1$-perturbations bounded by $\varepsilon$,
 using additional variables that are linear only. Let $n$ be the number of input neurons. 
-We use $n$ additional linear variables $(A_i)_{i \leq n}$, with the following  constraints:
+We use $n$ additional linear variables $(A_j)_{j \leq n}$, with the following  constraints:
 \begin{align}\label{L1constraint}\begin{cases}
 	A_j \geq x_j - x'_j &\text{ for all }j \leq n\\ 
 	A_j \geq x'_j - x_j &\text{ for all }j \leq n\\
@@ -41,7 +41,7 @@ for a neuron $j$ of layer $\ell$, the value of variable $x_j$ is defined by the 
 
 In the same way, $x'_j = \sum_{i \in \ell-1} \alpha_i \hat{x}'_i$ 
 for variable $x'_j$ associated with the perturbed image $I'$, using the same $\alpha_i$ associated with the DNN weights. Similarly, 
-if the {\em Diff} variables $y_j = x'_j - x_j$ are considered as defined in Section 2, with $\hat{y}_j = \hat{x}_j - \hat{x}'_j$, then we simply have 
+if the {\em Diff} variables $y_j = x_j - x'_j$ are considered as defined in Section 2, with $\hat{y}_j = \hat{x}_j - \hat{x}'_j$, then we simply have 
 $y_j = \sum_{i \in \ell-1} \alpha_i \hat{y}_i$.
 
 It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y_j$ to $\hat{x_j},\hat{x}'_j$ and/or $\hat{y}_j$, which is the complex part, with different possible solutions explored in the following with different sets of variables considered. 
@@ -152,7 +152,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 		\end{axis}
 	\end{tikzpicture}
 	\caption{The function computing $\hat{y}_j=\ReLU(x_j=y_j+x'_j)-\ReLU(x'_j)$ 
-	depending on $y_j$ and on $x'_j$.}
+	depending on $y_j$ and on $x'_j$ \eca{for the \emph{Diff} MILP encoding}.}
 	\label{fig.2v}
 \end{figure}
 	
@@ -212,7 +212,7 @@ $\hat{y}_j = -x'_j$. This is true thanks to inequalities in line 5.
 \textbf{$\mathbf{a = 1, a' = 1}$:} 
 In this case, $y_j+x'_j\geq 0$ and $x'_j \geq 0 $ (lines 1\&2). We thus have to show that $\hat{y}_j = y_j$. This is true thanks to inequalities in line 6.
 
-Equations not mentionned are mooot, as shown in the appendix.
+Equations not mentioned are moot, as shown in the appendix.
 	\qed
 \end{proof}
 
@@ -328,38 +328,38 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 			\addplot[blue, thick] {0}; 
 			
 			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(-2,-2)};
-			\node[label={above:$(-\gamma_i,-\gamma_i)$}] at (axis cs: -1.24, -2.2) {};
+			\node[label={above:$(-\gamma_j,-\gamma_j)$}] at (axis cs: -1.24, -2.2) {};
 			
 			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(2,2)};
-			\node[label={above:$(\gamma_i,\gamma_i)$}] at (axis cs: 1.4, 1.65) {};
+			\node[label={above:$(\gamma_j,\gamma_j)$}] at (axis cs: 1.4, 1.65) {};
 		\addplot[dashed, thick, blue] coordinates {(-2,-2) (2,0)};
 			\addplot[dashed, thick, blue] coordinates {(-2,0) (2,2)};
-			\node[label={above:\scriptsize $LP\ relaxation$}] at (axis cs: -0.7, 0.8) {};
-			\node[label={above:\scriptsize $LP\ relaxation$}] at (axis cs: 0.5, -1.4) {};
+			\node[label={above:\scriptsize $\text{LP\ relaxation}$}] at (axis cs: -0.7, 0.8) {};
+			\node[label={above:\scriptsize $\text{LP\ relaxation}$}] at (axis cs: 0.5, -1.4) {};
 		\end{axis}
 	\end{tikzpicture}
-\caption{Possible values of $\hat{y}_i$ depending on $y_i$ for the {\em 1b} model.}
+\caption{Possible values of $\hat{y}_j$ depending on $y_j$ for the {\em 1b} model.}
 	\label{fig.1v}
 \end{figure}
 
 
 
 	To simplify further and limit the number of (binary) variables, 
-    we introduce an efficient {\em 1b} model which only uses the diff variables $y_i,\hat{y}_i$. Again, we study the range of values $\hat{y}_i$ can take according to the value of $y_i$, as depicted in Fig.~\ref{fig.1v}. This is a projection of Fig.~\ref{fig.2v} onto $y_i,\hat{y}_i$.
+    we introduce an efficient {\em 1b} model which only uses the diff variables $y_j,\hat{y}_j$. Again, we study the range of values $\hat{y}_j$ can take according to the value of $y_j$, as depicted in Fig.~\ref{fig.1v}. This is a projection of Fig.~\ref{fig.2v} onto $y_j,\hat{y}_j$.
     
 
     \begin{proposition}
     \label{prop3}
-    Given $y_i \in [-\gamma_i,\gamma_i]$, 
-    $\hat{y}_i$ is a solution of the MILP program :\begin{align*}
-		\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
-		\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
+    Given $y_j \in [-\gamma_j,\gamma_j]$, 
+    $\hat{y}_j$ is a solution of the MILP program :\begin{align*}
+		\hat{y}_j &\leq a \gamma_j               &\quad \hat{y}_j &\geq y_j - a \gamma_j \\
+		\hat{y}_j &\geq (a-1) \gamma_j           &\quad \hat{y}_j &\leq y_j + (1-a) \gamma_j
 	\end{align*} where $a \in \{0,1\}$ is a binary variable.
 	\end{proposition}
 
     We can easily check that the LP relaxation of this MILP program,
 	depicted in broken lines on Fig.~\ref{fig.1v}, is exactly (\ref{eq.lpr}).
-	As the {\em 1b} model is a projection of the {\em Diff} model and also of the {\em 2b+1} models, 	the LP relaxations of the {\em Diff} and the {\em 2b+1} models contain (\ref{eq.lpr}).  Proof of Prop.~\ref{prop3} is in appendix.
+	As the {\em 1b} model is a projection of the {\em Diff} model and also of the {\em 2b+1} models, 	the LP relaxations of the {\em Diff} and the {\em 2b+1} models contain (\ref{eq.lpr}).  Proof of Proposition~\ref{prop3} is in appendix.
 	%Notice that (\ref{eq.lpr}) corresponds to Eq. (3) in \cite{ITNE}, 
 	%which is added explicitly to the classical model in their ITNE model.
 	
@@ -386,10 +386,19 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	
 \section{Real-time verification}
 
+\eca{As explained in the introduction, our objective is to compute upper and lower bounds for 
+$\beta^{\varepsilon}_{C,D} = 
+	\max_{I,I', |I-I'| \leq \epsilon}(x_C - x'_C + x'_D - x_D) = 
+    \max_{|I-I'| \leq \varepsilon}(y_C - y_D)
+$,
+where $x_{C,D},x'_{C,D}$ are the output values of class $C,D$ from image $I$ to the perturbed image $I'$ or the differential between $I,I'$ output values, respectively.}
+
+\iffalse
 %As explained in the introduction, 
 The objective we want to compute upper and lower bounds on is 
 $\beta^{\varepsilon}_{C,D} = \max_{|I-I'| \leq \varepsilon}((x_C - x'_C)- 
 (x_D - x'_D)) = \max_{|I-I'| \leq \varepsilon}(y_C - y_D)$, for $x_{C,D},x'_{C,D}, y_{C,D}$ the value of the output neuron associated with class $C,D$ from input image $I$, perturbed image $I'$ or the differential between $I,I'$ respectively.
+\fi
 
 Upper bounds  $\bar{\beta}^{\varepsilon}_{C,D} \geq \beta^{\varepsilon}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
 $\underline{\beta}^{\varepsilon}_{C,D} \leq \beta^{\varepsilon}_{C,D}$
