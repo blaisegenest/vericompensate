@@ -2,16 +2,17 @@
 
 Let $N$ be the number of neurons of a DNN. Compared with local robustness which considers only variables $(x'_j)_{j \leq N}$ for the perturbed image $I'$, global robustness considers also variables $(x_j)_{j \leq N}$ for the ({\em non}-fixed) input image $I$, and thus necessitates double the number of (binary) variables (for $I$ and for $I'$). Worst-case complexity being exponential in the number of binary variables, global robustness (e.g., ITNE and VHAGaR \cite{ITNE,vhagar}) is much harder than local robustness.
 
-\subsection{Encoding $L_\infty$- and $L_1$-perturbations for input variables}
+\subsection{Encoding $L_1$-perturbations for input variables}
 \label{s.L1}
 
-To encode $L_\infty$-perturbations bounded by $\varepsilon$,
-the linear constraint $|x_j-x'_j| \leq \varepsilon$ is used for each {\em input} neuron $j$. 
+The standard encoding of $L_\infty$-perturbations bounded by $\varepsilon$ uses
+linear constraint $x_j-\varepsilon \leq x'_j \leq x_j+\varepsilon$ 
+for each {\em input} neuron $j$. 
 
 \smallskip
 
-We now explain how to encode $L_1$-perturbations bounded by $\varepsilon$,
-using additional variables that are linear only. Let $n$ be the number of input neurons. 
+We now explain how to encode $L_1$-perturbations 
+$\sum_{j\leq n} |x_j-x'_j| \leq \varepsilon$, using additional variables that are linear only. Let $n$ be the number of input neurons. 
 We use $n$ additional linear variables $(A_j)_{j \leq n}$, with the following  constraints:
 \begin{align}\label{L1constraint}\begin{cases}
 	A_j \geq x_j - x'_j &\text{ for all }j \leq n\\ 
@@ -151,8 +152,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 			\node[label={$(-\gamma_j,\gamma_j, 0)$}] at (axis cs: -1, 0.8 ,0) {};			
 		\end{axis}
 	\end{tikzpicture}
-	\caption{The function computing $\hat{y}_j=\ReLU(x_j=y_j+x'_j)-\ReLU(x'_j)$ 
-	depending on $y_j$ and on $x'_j$ \eca{for the \emph{Diff} MILP encoding}.}
+	\caption{Function $(y_j,x'_j) \mapsto	\hat{y}_j=\ReLU(x_j=y_j+x'_j)-\ReLU(x'_j)$}
 	\label{fig.2v}
 \end{figure}
 	
@@ -303,7 +303,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	The variable $a'_j$ used for $x'_j$ is thus linearly relaxed, while
 	both variables $ a$ and $,a'$ used in the encoding of $\hat{y}_j$ are kept binary. We call this the {\em 2b+1} model, which uses 2 binary variables per neuron, 
 	as the classical and {\em Diff} encodings.
-	The decoupling between $a'$ and $a_j$ removes complicated constraints in the MILP encoding, which helps the solver. This, however, also means that the {\em 2b+1} model is not as accurate as the {\em Diff} model asymptotically.
+	The decoupling between $a'$ and $a_j$ removes constraints in the MILP encoding, which helps the solver. This, however, also means that the {\em 2b+1} model is not as accurate as the {\em Diff} model asymptotically.
 
 
 	\subsection{The efficient {\em 1b} model}
@@ -386,12 +386,12 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 	
 \section{Real-time verification}
 
-\eca{As explained in the introduction, our objective is to compute upper and lower bounds for 
+As explained in the introduction, our objective is to compute upper and lower bounds for 
 $\beta^{\varepsilon}_{C,D} = 
 	\max_{I,I', |I-I'| \leq \epsilon}(x_C - x'_C + x'_D - x_D) = 
     \max_{|I-I'| \leq \varepsilon}(y_C - y_D)
 $,
-where $x_{C,D},x'_{C,D}$ are the output values of class $C,D$ from image $I$ to the perturbed image $I'$ or the differential between $I,I'$ output values, respectively.}
+where $x_{C,D},x'_{C,D}$ are the output values of class $C,D$ from image $I$ to the perturbed image $I'$ or the differential between $I,I'$ output values, respectively.
 
 \iffalse
 %As explained in the introduction, 

@@ -37,7 +37,7 @@
     \item $x_j,\hat{x}_j$, for neurons $j$ with input image $I$, 
     \item $x'_j,\hat{x}'_j$, for neurons $j$ with input the perturbed $I'$, 
     \item  $y_j = x_j - x'_j$ the {\em diff variable}, with 
-    $\hat{y}_j = \hat{x}_j - \hat{x}'_j$ (and not
+    $\hat{y}_j = \hat{x}_j - \hat{x}'_j$ (and {\em not}
     $\hat{y}_j 	 = \ReLU(x_j-x'_j)$), 
 	as first proposed by \cite{diff}.
 	%, 	similar to the Interleaving Twin-Network Encoding (ITNE) model of \cite{lipshitz,ITNE}. 
@@ -152,7 +152,7 @@
 	\subsection{MILP encoding for local ReLU}
 	
 	Mixed Integer Linear Programming (MILP) can encode ReLU DNNs faithfully:
-	For an unstable neuron $n$, that is, with values 
+	For an {\em unstable} neuron $n$, that is, with values 
     $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one binary/integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
 	
 	\vspace{-0.4cm}
