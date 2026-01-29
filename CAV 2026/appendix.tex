@@ -2,6 +2,32 @@
 
 \section{Proof of Proposition 2 and 3}
 
+\setcounter{proposition}{1}
+
+\begin{proposition}
+	\label{Prop2}
+	Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of the MILP program:
+	\begin{align*}
+		& \begin{aligned}
+			y_j + x'_j &\leq a\beta_j        &
+			y_j &+ x'_j \geq (1-a)\alpha_j \\
+			x'_j       &\leq a'\beta_j       & 
+			x'_j       &\geq (1-a')\alpha_j \\
+			\hat{y}_j  &\leq a\gamma_j       &
+			\hat{y}_j  &\geq -a'\gamma_j \\
+			\hat{y}_j  &\leq y_j + x'_j - (1-a)\alpha_j &
+			\hat{y}_j  &\geq y_j + x'_j - a'\beta_j \\
+			\hat{y}_j  &\leq -x'_j + a\beta_j &
+			\hat{y}_j  &\geq -x'_j + (1-a')\alpha_j \\
+			\hat{y}_j  &\leq y_j + (1-a)\gamma_j  &
+			\hat{y}_j  &\geq y_j - (1-a')\gamma_j
+		\end{aligned}
+	\end{align*} 
+	where $a,a' \in \{0,1\}$ are binary variables, 
+	and $a'$ is shared with the classical MILP
+	encoding for $\hat{x}'_j=\ReLU(x'_j)$.
+\end{proposition}
+
 \begin{proof}[of Proposition 2]
 	First, we list the inequalities: \begin{align*}
 		& \begin{aligned}
@@ -48,7 +74,7 @@
  	\hat{y}_j  \leq 0 &\leq y_j + \gamma_j  &
  	\hat{y}_j  \geq 0 &\geq y_j - \gamma_j
  \end{aligned}
- \end{align*} Therefore all 3 rest lines are tautology.
+ \end{align*} Therefore all 3 rest lines are implied by other inequalities.
  
  
 \textbf{$\mathbf{a = 1, a' = 0}$:} In this case, the inequalities become: \begin{align*}
@@ -83,7 +109,7 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 		\hat{y}_j  \leq& y_j+x'_j \leq y_j  &
 		\hat{y}_j  \geq& 0 \geq y_j - \gamma_j
 	\end{aligned}
-\end{align*}Therefore all 3 rest lines are tautology.
+\end{align*}Therefore all 3 rest lines are implied by other inequalities.
 	
 
 	
@@ -120,7 +146,7 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 		\hat{y}_j  &\leq 0 \leq y_j + \gamma_j  &
 		\hat{y}_j  &\geq  y_j
 	\end{aligned}
-\end{align*}Therefore all 3 rest lines are tautology.
+\end{align*}Therefore all 3 rest lines are implied by other inequalities.
 
 
 
@@ -153,12 +179,19 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 		\hat{y}_j  &\leq -x'_j+(y_j+x'_j)\leq -x'_j + \beta_j &
 		\hat{y}_j  &\geq y_j - (y_j+x'_j)\geq -x'_j \\
 	\end{aligned}
-\end{align*}Therefore all 3 rest lines are tautology.
+\end{align*}Therefore all 3 rest lines are implied by other inequalities.
 	
 	\qed
 \end{proof}
 
-
+  \begin{proposition}
+	\label{prop3}
+	Given $y_i \in [-\gamma_i,\gamma_i]$, 
+	$\hat{y}_i$ is a solution of the MILP program :\begin{align*}
+		\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
+		\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
+	\end{align*} where $a \in \{0,1\}$ is a binary variable.
+\end{proposition}
 
 \begin{proof}[of Proposition 3] First, we list the inequalities: \begin{align*}
 		\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
@@ -170,14 +203,14 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 	\textbf{$\mathbf{a = 0}$:} In this case, the inequalities become: \begin{align*}
 		\hat{y}_i &\leq 0               &\quad \hat{y}_i &\geq y_i \\
 		\hat{y}_i &\geq -\gamma_i           &\quad \hat{y}_i &\leq y_i + \gamma_i
-	\end{align*} Now we can see, $y_i\leq 0$ (line 1). Line 2 becomes tautology since \begin{align*}
+	\end{align*} Now we can see, $y_i\leq 0$ (line 1) and $y_i\leq\hat{y}_i\leq 0 $. Line 2 is implied by other inequalities since \begin{align*}
 	\hat{y}_i &\geq y_i \geq -\gamma_i           &\quad \hat{y}_i &\leq 0 \leq y_i + \gamma_i
 	\end{align*}
 
 	\textbf{$\mathbf{a = 1}$:} In this case, the inequalities become: \begin{align*}
 		\hat{y}_i &\leq \gamma_i               &\quad \hat{y}_i &\geq y_i - \gamma_i \\
 		\hat{y}_i &\geq 0           &\quad \hat{y}_i &\leq y_i 
-	\end{align*} Now we can see, $y_i\geq 0$ (line 2). Line 1 becomes tautology since \begin{align*}
+	\end{align*} Now we can see, $y_i\geq 0$ (line 2) and $0\leq\hat{y}_i\leq y_i $. Line 1 is implied by other inequalities since \begin{align*}
 	\hat{y}_i &\leq y_i\leq \gamma_i               &\quad \hat{y}_i &\geq 0 \geq y_i - \gamma_i 
 	\end{align*}
 		
