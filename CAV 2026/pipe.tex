@@ -39,11 +39,11 @@ In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02
         \hline
 		Pipe & Timeout & ITNE & {\em Diff} & {\em 2$b+$1} & {\em 1$b$}
         \\\hline 
-		  & 1000s & .045 & .042 & .041 & {\bf .036}
+		  & 1000s & 0.045 & 0.042 & 0.041 & {\bf 0.036}
 		\\
-        Surrogate  & 14400s & .042 & .036 & {\bf .035} & .036
+        Surrogate  & 14400s & 0.042 & 0.036 & {\bf 0.035} & 0.036
 		\\
-        LB = $.025$  & 72000s & .042 & .034 & {\bf .033} & .036
+        LB = $.025$  & 72000s & 0.042 & 0.034 & {\bf 0.033} & 0.036
         \\\hline
 	\end{tabular}
 	\caption{Comparison of upper bound (lower is better $\downarrow$) between {\em Diff}, {\em 2$b+$1}, {\em 1$b$} with ITNE on the pipe system with timeouts of 1000s, 14440s and 72000s.}
@@ -56,15 +56,15 @@ In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02
 \centering
 \includegraphics[scale=0.36]{deform.png} \hspace{0.1cm}
 \includegraphics[scale=0.36]{strain.png}
-\caption{2 slightly different deformations and their associated quite different strain as obtained by the {\em Diff} model with $200 $ binary variable.}
+\caption{2 slightly different deformations and their associated quite different strain as obtained by the {\em Diff} model with $200 $ binary variables.}
 \vspace{-0.2cm}
 \label{fig5}
 \end{figure*}	
 
-	For the pipe system, we compared in Table \ref{table.pipe} the different models ITNE, {\em Diff}, {\em "2b+1","1b"} to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. 
-    The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the {\em $2b+1$} model, slightly better than the bound $.0337$ found within the same time by the {\em Diff} model, and better than the bound found $0.356$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is sensitively worse than even the {\em "$1b$"} with 1000s of timeout, at $0.416$ despite a very long time out. The certified lower bound is not too far, at $.025$.
+	For the pipe system, we compare in Table \ref{table.pipe} the different models ITNE, {\em Diff}, {\em $2b+1$,$1b$} to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. 
+    The bounds we found are quite accurate, with a best bound of $0.0329$ obtained by the {\em $2b+1$} model, slightly better than the bound $0.0337$ found within the same time by the {\em Diff} model, and better than the bound found $0.356$ by the {\em $1b$} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is significantly worse than even the {\em $1b$} with 1000 s of timeout, at $0.416$ despite a very long timeout. The certified lower bound is not too far, at $0.025$.
     
-    We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather reflects correctly the physical system.
+    We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<0.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather correctly reflects the physical system.
 
 
 	
