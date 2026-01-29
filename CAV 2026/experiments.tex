@@ -5,9 +5,9 @@
 	ITNE \cite{ITNE} was reimplemented using the same path as our code, except for the MILP variable $x_j$ using the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). The Julia VHAGaR code 
 	from \url{https://github.com/ananmkabaha/VHAGaR} \cite{vhagar} was run on the same hardware.
 	
-	We consider 4 pretrained DNNs on 3 different datasets (MNIST, Fashion MNIST, and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at 
+	We consider 4 pretrained DNNs on 3 different datasets (MNIST, Fashion-MNIST, and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at 
 	\url{https://github.com/eth-sri/eran} ("5x100"). We also considered 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
-	from \cite{vhagar} ("conv1"). We will also consider 3 PCA-DNNs, as detailed in Section~\ref{s62}
+	from \cite{vhagar} ("conv1"). We will also consider 3 PCA-DNNs, as detailed in Section~\ref{s62}.
 	%The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
 
 \iffalse	
@@ -66,26 +66,26 @@ VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR conv
 	\centering
 	\begin{tabular}{||c||c|c|c|c|c||}\hline\hline
 	Benchmark & model & Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ & $\%$ of gap $\downarrow$ \\\hline \hline
-	MNIST   & Vhagar & 20.51 & 9.20 & 9.20 & 118 $\%$
+	MNIST   & Vhagar & 20.51 & 9.20 & 9.20 & 118$\%$
     \\
-	M-Conv & ITNE & 12.77 & 9.41 & 9.41 & 35 $\%$
+	M-Conv & ITNE & 12.77 & 9.41 & 9.41 & 35$\%$
 	\\ 
-    TO=1000s & {\em Diff} & {\bf 11.59}  & 9.38 & 9.38 & {\bf 23 $\%$}
+    TO=1000s & {\em Diff} & {\bf 11.59}  & 9.38 & 9.38 & {\bf 23$\%$}
     \\\hline \hline
 
-	FMNIST & Vhagar &  $41.52$ & $21.23$ & $21.23$ & 93 $\%$ 
+	FMNIST & Vhagar &  $41.52$ & $21.23$ & $21.23$ & 93$\%$ 
     \\
-	F-Conv  & ITNE &  $27.57$ &  $22.12$ & $22.12$ & 24 $\%$
+	F-Conv  & ITNE &  $27.57$ &  $22.12$ & $22.12$ & 24$\%$
 	\\ 
-    TO=1000s & {\em Diff} &  {\bf 23.67} &  $22.31$ &  $22.31$ & {\bf 6 $\%$}
+    TO=1000s & {\em Diff} &  {\bf 23.67} &  $22.31$ &  $22.31$ & {\bf 6$\%$}
     \\\hline 
 
 
-	FMNIST & Vhagar &  $37.26$ &  $22.00$ & $22.00$ & 72 $\%$
+	FMNIST & Vhagar &  $37.26$ &  $22.00$ & $22.00$ & 72$\%$
     \\
-	F-Conv  & ITNE &  $24.56$ &  $22.20$ & $22.20$ & 10 $\%$
+	F-Conv  & ITNE &  $24.56$ &  $22.20$ & $22.20$ & 10$\%$
 	\\ 
-    TO=14400s & {\em Diff} &    {\bf 22.56} &  $22.32$ &  $22.32$ & {\bf 1 $\%$}
+    TO=14400s & {\em Diff} &    {\bf 22.56} &  $22.32$ &  $22.32$ & {\bf 1$\%$}
     \\\hline \hline
 	
 	CIFAR-10  & Vhagar & does & not & run & -
@@ -96,14 +96,14 @@ VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR conv
 	\\
 	& {\em 2b+1} &  25.31 & 19.77 & - & $23\%$
 	\\
-	& Best &  {\bf 23.44}  &  &  & {\bf 16} $\%$
+	& Best &  {\bf 23.44}  &  &  & {\bf 16}$\%$
     \\\hline
     
 	CIFAR-10  & Vhagar & does & not & run & -
     \\
 	C-Conv  & ITNE &  & & &
 	\\ 
-    TO=14400s & {\em Diff} &  {\bf 20.67}  & 19.03 & 19.03 & {\bf 6} $\%$
+    TO=14400s & {\em Diff} &  {\bf 20.67}  & 19.03 & 19.03 & {\bf 6}$\%$
 	\\
 	 & {\em 2b+1} &  {\bf }  &  &  & $\%$
     \\\hline \hline
@@ -126,35 +126,35 @@ VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR conv
 	$L_\infty=0.05$ & Timeout & MILP model: & VHAGaR &  ITNE & {\em Diff} & {\em 2b+1} & {\em Best} \\\hline \hline
 	  & 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ &  20.80 & 12.32 & {\em 11.14} & {\em \bf 10.95} & {\bf \em 10.85}
     \\
-	MNIST-Conv & & ($\%$ of gap $\downarrow$) & (120$\%$) & (29 $\%$) & ({\em 17} $\%$) & ({\em \bf 15} $\%$) & ({\bf \em 14} $\%$)
+	MNIST-Conv & & ($\%$ of gap $\downarrow$) & (120$\%$) & (29$\%$) & ({\em 17}$\%$) & ({\em \bf 15}$\%$) & ({\bf \em 14}$\%$)
 	\\
 	 LB $\underline{\alpha}$= 9.51 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 17.54 & 11.15 & {\bf \em 10.14} & {\em 10.29} & {\bf \em 10.07}
     \\
-	  & & ($\%$ of gap $\downarrow$) &  (84$\%$) & (17 $\%$) & ({\bf \em 7} $\%$) & ({\em 8} $\%$) & ({\bf \em 6} $\%$) 
+	  & & ($\%$ of gap $\downarrow$) &  (84$\%$) & (17$\%$) & ({\bf \em 7}$\%$) & ({\em 8}$\%$) & ({\bf \em 6}$\%$) 
     \\\hline
 
 	
 	& 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ & 41.52 & 26.61 & {\bf \em 23.27}  & {\em 24.09} & {\bf \em 22.78}
     \\
-	FMNIST-Conv & & ($\%$ of gap $\downarrow$) & (93 $\%$) & (20 $\%$) & ({\bf \em 5} $\%$) & ({\em 10} $\%$) & ({\bf \em 3} $\%$)
+	FMNIST-Conv & & ($\%$ of gap $\downarrow$) & (93$\%$) & (20$\%$) & ({\bf \em 5}$\%$) & ({\em 10}$\%$) & ({\bf \em 3}$\%$)
     \\
 
 
 	LB $\underline{\alpha}$= 22.21 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 37.26 & 24.06 & {\bf \em 22.42 } & {\em  23.80} & {\bf \em 22.34}
     \\
-	 & & ($\%$ of gap $\downarrow$) & (72 $\%$) &  (9 $\%$) & ({\bf \em 1} $\%$) & ({\em 9} $\%$) & ({\bf \em .6} $\%$)
+	 & & ($\%$ of gap $\downarrow$) & (72$\%$) &  (9$\%$) & ({\bf \em 1}$\%$) & ({\em 9}$\%$) & ({\bf \em 0.6}$\%$)
     \\\hline
 	
 
 	& 1000s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 36.57* & 27.15 & 
 	{\em 25.94} & {\bf \em 24.52}& {\bf \em 23.29}
     \\
-	CIFAR-Conv & & ($\%$ of gap $\downarrow$) & (55* $\%$) & (28 $\%$) & ({\em 24} $\%$) & ({\bf \em 20} $\%$) & ({\bf \em 15} $\%$)
+	CIFAR-Conv & & ($\%$ of gap $\downarrow$) & (55*$\%$) & (28$\%$) & ({\em 24}$\%$) & ({\bf \em 20}$\%$) & ({\bf \em 15}$\%$)
 	\\
     
 	LB $\underline{\alpha}$= 19.04 & 14400s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 31.53* & 22.73 & {\bf \em 21.77} & {\em 21.81} & {\bf \em 20.38}
     \\
-	 & & ($\%$ of gap $\downarrow$) & (39* $\%$) & (12 $\%$) & ({\bf \em 10} $\%$) & ({\bf \em 10} $\%$) & ({\bf \em 5}$\%$)
+	 & & ($\%$ of gap $\downarrow$) & (39*$\%$) & (12$\%$) & ({\bf \em 10}$\%$) & ({\bf \em 10}$\%$) & ({\bf \em 5}$\%$)
 		\\\hline
     
      \end{tabular}
@@ -185,34 +185,34 @@ Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower t
 %		Benchmark & MILP model: & {\em Diff} & {\em 2b+1} & {\em 1b} & {\em Best} \\\hline \hline
 %		MNIST-FC  & Bound $\downarrow$ &&&&
 %		\\
-%		TO=1000s & $\%$ of gap $\downarrow$ &&&&
+%		TO=1000s &$\%$ of gap $\downarrow$ &&&&
 %		\\ \hline
 %		TO=14400s  & Bound $\downarrow$ &&&&
 %		\\
-%		& $\%$ of gap $\downarrow$ &&&&
+%		&$\%$ of gap $\downarrow$ &&&&
 %		
 %		\\\hline \hline
 %		
 %		FMNIST-CNN1 & Bound $\downarrow$ & 8.90 & 7.55 & 9.84 & 7.548
 %		\\
-%		TO=1000s & $\%$ of gap $\downarrow$ & 112 $\%$  & 80 $\%$ & 135 $\%$ & 80 $\%$
+%		TO=1000s &$\%$ of gap $\downarrow$ & 112$\%$  & 80$\%$ & 135$\%$ & 80$\%$
 %		\\\hline 
 %		
 %		
 %		TO=14400s & Bound $\downarrow$ & 7.43 & 6.37 & 9.62 & 6.22
 %		\\
-%		& $\%$ of gap $\downarrow$ & 77 $\%$  & 53 $\%$ & 129 $\%$ & 49 $\%$
+%		&$\%$ of gap $\downarrow$ & 77$\%$  & 53$\%$ & 129$\%$ & 49$\%$
 %		\\\hline \hline
 %		
 %		
 %		CIFAR10-CNN1  & Bound $\downarrow$ & 8.30 & 8.14 & 8.17 & 7.77 
 %		\\
-%		TO=1000s & $\%$ of gap $\downarrow$ & 150 $\%$  & 145 $\%$ & 145 $\%$ & 133 $\%$
+%		TO=1000s &$\%$ of gap $\downarrow$ & 150$\%$  & 145$\%$ & 145$\%$ & 133$\%$
 %		\\\hline
 %		
 %		TO=14400s  & Bound $\downarrow$ & 7.19 & 7.45 & 7.31 & 6.67
 %		\\
-%		& $\%$ of gap $\downarrow$ & 114 $\%$  & 123 $\%$ & 118 $\%$ & 99 $\%$
+%		&$\%$ of gap $\downarrow$ & 114$\%$  & 123$\%$ & 118$\%$ & 99$\%$
 %		\\\hline \hline
 %		
 %	\end{tabular}
@@ -226,11 +226,11 @@ Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower t
 	
 \label{s62}
 
-We then turn to test with $L_1$ perturbations and comparing between DNNs and their PCA-DNN versions (which are not supported in VHAGaR). Here, we consider MNIST-FC, which has a higher accuracy than MNIST-Conv, 
+We then turn to testing with $L_1$ perturbations and comparing between DNNs and their PCA-DNN versions (which are not supported in VHAGaR). Here, we consider MNIST-FC, which has a higher accuracy than MNIST-Conv, 
 to test a different architecture than convolutional Networks.
 
 We recall that PCA-DNNs are generated following the process described in Section 5: for each PCA dimension, we report in Table \ref{table.pca} the accuracy loss from using PCA-DNN rather than the original DNN.
-We set the dimension at the minimal dimension reaching at most 1$\%$ 
+We set the dimension at the minimal dimension that results in at most 1$\%$ 
 loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively.
 
 
@@ -382,23 +382,23 @@ We now turn to how many images can be certified robust in real-time using the {\
 		Benchmark & $L_1=1$ & $L_1=2$ & $L_1=3$ & $L_1=4$ & Latency overhead 
 		
 		\\\hline 
-		MNIST-FC  & 0$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
+		MNIST-FC  & 0$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5 ms
 		\\
 		
-		PCA-MNIST-FC  & {\color{blue} 80$\%$}  & 21 $\%$ & 1 $\%$ & 0 $\%$ & 0.5ms
+		PCA-MNIST-FC  & {\color{blue} 80$\%$}  & 21$\%$ & 1$\%$ & 0$\%$ & 0.5 ms
 		\\ \hline 
 		
  		FMNIST-Conv & 
-		{\color{blue} 75$\%$}  & 50 $\%$ & 28$\%$ &	12$\%$  & 0.5ms
+		{\color{blue} 75$\%$}  & 50$\%$ & 28$\%$ &	12$\%$  & 0.5 ms
 		\\
 
 		PCA-FMNIST-Conv & 
-		92 $\%$ &	86 $\%$ &	79 $\%$ & {\color{blue} 70$\%$}  & 0.5ms
+		92$\%$ &	86$\%$ &	79$\%$ & {\color{blue} 70$\%$}  & 0.5 ms
 		\\\hline
 		
-		CIFAR10-Conv  & 39 $\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5ms
+		CIFAR10-Conv  & 39$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5 ms
 		\\ 
-		PCA-CIFAR10-Conv  & 92 $\%$ & {\color{blue} 72$\%$} & 61 $\%$ & 51 $\%$ & 0.5ms
+		PCA-CIFAR10-Conv  & 92$\%$ & {\color{blue} 72$\%$} & 61$\%$ & 51$\%$ & 0.5 ms
 		\\\hline
 	\end{tabular}
 
@@ -411,7 +411,7 @@ We now turn to how many images can be certified robust in real-time using the {\
     \label{table.cert}
 \end{table}
 
-With that, we can certify at least $70\%$ of the images for all 3 PCA-DNN label for a $L_1$-perturbation of $1$, and even up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST. We are unable to do it for the non-PCA version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its PCA-version. \eca{Overall, PCA improves tremendously real-time verification.}
+With that, we can certify at least $70\%$ of the images for all 3 PCA-DNN label for a $L_1$-perturbation of $1$, and even up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST. We are unable to do it for the non-PCA version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its PCA-version. Overall, PCA significantly improves real-time verification.
 
 \iffalse
 To remove improbable images and limit the space of search, 

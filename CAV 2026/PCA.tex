@@ -53,11 +53,11 @@ The associated constraints, which come from the PCA-encode/decode, are also line
 
 We report in Fig.~\ref{fig3} the image and perturbed image reaching the maximal lower bound $\underline{\beta}^{.5}_{6,8}=0.518$ 
 obtained when using the original DNN (without PCA).
-They are unlikely to be input to the MNIST digit classification dataset (OOD).
+They are OOD inputs to the MNIST digit classification dataset.
 %
 In contrast, there are natural (ID) images and perturbed images 
-reaching the maximal lower bound $\underline{\beta}^{.5}_{6,8}=.084$ 
-of the {\em  PCA-DNN} (Fig.~\ref{fig4}): among all the images producing a given worst-case PCA-representation, we can chose the PCA-representation itself, which is ID.
+reaching the maximal lower bound $\underline{\beta}^{.5}_{6,8}=0.084$ 
+of the {\em  PCA-DNN} (Fig.~\ref{fig4}): among all the images producing a given worst-case PCA-representation, we can choose the PCA-representation itself, which is ID.
 % This occurs because the output of the PCA-encoding/decoding (from reduced space) is its own image, and thus can be used as original input, producing the maximal $\underline{\beta}_{6,8}=.084$.
 Note that the lower bound $\underline{\beta}$ is lower for the PCA-DNN, which is perfectly normal as we restrict the network's {\em output} to a reduced space close to the MNIST dataset. This will also be the case for the upper bound $\overline{\beta}$, which is very desirable as it improves robustness certification. 
 %On the other hand, 
