@@ -225,22 +225,20 @@ Now we finish the proof. \qed
 	\begin{table}[b!]
 	\centering
 	\begin{tabular}{|c|c||c|c||c|}\hline
-		Network & Target & PCA Dim  & Full Dim& Ratio ($\%$) \\\hline \hline 
-		MNIST-FC  & $L_1, \beta$ & 2.00 & 33.68 & 5.9\\\hline
-		MNIST-FC  & $L_\infty, \beta$ & &  &\\\hline
-		MNIST-FC  & $L_\infty, \alpha$ & &  &\\\hline\hline
+		Network & Target & PCA & Full& Ratio \\\hline \hline 
+		MNIST-FC  & $L_1$ & 2.00 & 33.68 & {\bf 16.84x}\\\hline
+		MNIST-FC  & $L_\infty$ & &  &\\\hline\hline
 		
-		MNIST-Conv1  & $L_1, \beta$ &  &  &\\\hline
-		MNIST-Conv1  & $L_\infty, \beta$ &  &  &\\\hline
-		MNIST-Conv1  & $L_\infty, \alpha$ & 3.16 & 10.14  & 31.2\\\hline\hline
+		MNIST-Conv1  & $L_1$ &  &  &\\\hline
+		MNIST-Conv1  & $L_\infty$ &  &  &\\\hline\hline
+	
 		
-		FMNIST-Conv1  & $L_1, \beta$ & 1.95 & 6.37  & 30.6\\\hline
-		FMNIST-Conv1 & $L_\infty, \beta$ & 18.61 & 25.56  & 72.8 \\\hline
-		FMNIST-Conv1  & $L_\infty, \alpha$ & 20.79 & 22.42  & 92.7\\\hline\hline
+		FMNIST-Conv1  & $L_1$ & 1.95 & 6.37  & {\bf 3.27x}\\\hline
+		FMNIST-Conv1 & $L_\infty$ & 18.61 & 25.56  & {\bf +37\%} \\\hline\hline
 		
-		CIFAR-10-Conv1  & $L_1, \beta$ & 1.15 & 7.19 & 16.0 \\\hline
-		CIFAR-10-Conv1  & $L_\infty, \beta$ & 15.09 & 32.77  & 46.0\\\hline
-		CIFAR-10-Conv1  & $L_\infty, \alpha$ & 14.23 & 32.88  & 43.3\\\hline
+		CIFAR-10-Conv1  & $L_1$ & 1.15 & 7.19 & {\bf 6.25x} \\\hline
+		CIFAR-10-Conv1  & $L_\infty$ & 15.09 & 32.77  & {\bf 2.17x} \\\hline\hline
+
 	\end{tabular}
 	\caption{
 	}
