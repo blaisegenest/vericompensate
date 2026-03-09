@@ -216,3 +216,32 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 		
 Now we finish the proof. \qed
 \end{proof}
+
+
+\section{A table comparing PCA and FULL}
+
+
+
+	\begin{table}[b!]
+	\centering
+	\begin{tabular}{|c|c||c|c|c|}\hline
+		Network & Target & PCA Dim  & Full Dim& Ratio ($\%$) \\\hline \hline 
+		MNIST-FC  & $L_1, \beta$ & 2.18 & 37.24 & \\\hline
+		MNIST-FC  & $L_\infty, \beta$ & &  &\\\hline
+		MNIST-FC  & $L_\infty, \alpha$ & &  &\\\hline
+		
+		MNIST-Conv1  & $L_1, \beta$ &  &  &\\\hline
+		MNIST-Conv1  & $L_\infty, \beta$ &  &  &\\\hline
+		MNIST-Conv1  & $L_\infty, \alpha$ & 3.16 & 10.14  &\\\hline
+		
+		FMNIST-Conv1  & $L_1, \beta$ & 2.34 & 7.43  &\\\hline
+		FMNIST-Conv1 & $L_\infty, \beta$ & 21.22 & 25.55  &\\\hline
+		FMNIST-Conv1  & $L_\infty, \alpha$ & 20.79 & 22.42  &\\\hline
+		
+		CIFAR-10-Conv1  & $L_1, \beta$ & 1.56 & 7.19 & \\\hline
+		CIFAR-10-Conv1  & $L_\infty, \beta$ & 10.45 & 22.38  &\\\hline
+		CIFAR-10-Conv1  & $L_\infty, \alpha$ & 6.67 & 22.77  &\\\hline
+	\end{tabular}
+	\caption{
+	}
+\end{table}
