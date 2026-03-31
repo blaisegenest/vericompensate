@@ -38,14 +38,14 @@ $||\vec{x} - \vec{x}'||_{L_1} = \sum_{j\leq n} |x_j-x'_j| \leq \varepsilon$.
 
 
 There are two kinds of propagation of values for variables: 
-for a neuron $j$ of layer $\ell$, the value of variable $x_j$ is defined by the constraint $x_j = \sum_{i \in \ell-1} \alpha_i \hat{x_i}$, which is a simple linear operation from the output $(\hat{x_i})_{i \in \ell-1}$ of neurons $i$ in layer $\ell-1$.
+for a neuron $j$ of layer $\ell$, the value of variable $x_j$ is defined by the constraint $x_j = \sum_{i \in \ell-1} \alpha_i \hat{x}_i$, which is a simple linear operation from the output $(\hat{x}_i)_{i \in \ell-1}$ of neurons $i$ in layer $\ell-1$.
 
 In the same way, $x'_j = \sum_{i \in \ell-1} \alpha_i \hat{x}'_i$ 
 for variable $x'_j$ associated with the perturbed image $I'$, using the same $\alpha_i$ associated with the DNN weights. Similarly, 
 if the {\em Diff} variables $y_j = x_j - x'_j$ are considered as defined in Section 2, with $\hat{y}_j = \hat{x}_j - \hat{x}'_j$, then we simply have 
 $y_j = \sum_{i \in \ell-1} \alpha_i \hat{y}_i$.
 
-It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y_j$ to $\hat{x_j},\hat{x}'_j$ and/or $\hat{y}_j$, which is the complex part, with different possible solutions explored in the following with different sets of variables considered. 
+It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y_j$ to $\hat{x}_j,\hat{x}'_j$ and/or $\hat{y}_j$, which is the complex part, with different possible solutions explored in the following with different sets of variables considered. 
 
 
 
@@ -55,7 +55,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	
 \subsection{The classical encoding of ReLUs for global robustness}
 	
-    The classical encoding is used (with variants) by VHAGaR \cite{vhagar} and ITNE \cite{ITNE}. For each neuron $j$, variables $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ are considered. For each ReLU $j$, a binary variable $a_j$ and related constraints from the classical encoding (\ref{eq11}) \cite{MILP} are used to set $\hat{x}_j$, and an {\em independent} binary variable $a'_j$ and related constraints from the classical encoding are used to set $\hat{x}_j$. We call this encoding $\mathcal{M}^{classical}$.
+    The classical encoding is used (with variants) by VHAGaR \cite{vhagar} and ITNE \cite{ITNE}. For each neuron $j$, variables $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ are considered. For each ReLU $j$, a binary variable $a_j$ and related constraints from the classical encoding (\ref{eq11}) \cite{MILP} are used to set $\hat{x}_j$, and an {\em independent} binary variable $a'_j$ and related constraints from the classical encoding are used to set $\hat{x}'_j$. We call this encoding $\mathcal{M}^{classical}$.
 	
 	The key values to compute are the {\em diff}erential values of $y_j$ between $x_j$ and $x'_j$. Most of the values of $y_j$ are likely small because they are inherited from a small perturbation between $I$ and $I'$.
 	However, $\mathcal{M}^{classical}$ only maintains $x_j$ and $x'_j$ separately, and both can take large values. This results into poor evaluation of $y_j$. This problem was first raised and experimentally demonstrated in \cite{diff}.
@@ -94,7 +94,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 
     However, unlike ITNE, 
 	%Interleaving Twin-Network Encoding (ITNE) of \cite{lipshitz,ITNE} which relies on the classical MILP encoding (\ref{eq11}) \cite{MILP} to compute $\hat{y}_j$ from the difference between 
-	%$\ReLU(x'_j + y_j) = \ReLU(x_j) = \hat{x_j}$
+	%$\ReLU(x'_j + y_j) = \ReLU(x_j) = \hat{x}_j$
 	%and $\hat{x}'_j$, 
 	the {\em Diff} MILP model encodes the equation for $\hat{y}_j$ directly, without resorting to the classical encoding from $x_j(=y_j+x'_j)$ to 
 	$\ReLU(x_j)$ and using $\hat{y}_j= \ReLU(x_j) - \ReLU(x'_j)$, which is correct but does not encode explicitly that $\hat{y}_j$ is small when $y_j$ is small, since both ReLUs can be large and they are encoded independently, see also \cite{diff}. Instead, we study the function from $(x'_j,y_j)$ to $\hat{y}_j$, and encode it into the novel MILP {\em Diff} model.
@@ -170,7 +170,7 @@ and use it in the MILP encoding of $\hat{y}_j = \ReLU(x_j)-\ReLU(x'_j)$:
 
 \begin{proposition}
     \label{Prop2}
-Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of the MILP program:
+Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$ and $\alpha_j<0<\beta_j$, we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of the MILP program:
 	\begin{align*}
 		& \begin{aligned}
 			y_j + x'_j &\leq a\beta_j        &
@@ -234,7 +234,7 @@ This is a simplification (due to the noticed symmetry) of the additional linear 
 \paragraph{A proof of Prop.~\ref{Prop2}}
 
 We do a case analysis depending on the value of both binary variables. 
-First, we know the constraints for $\hat{x_i}'=\ReLU(x_i')$ are exact (see 
+First, we know the constraints for $\hat{x}_i'=\ReLU(x_i')$ are exact (see 
 Prop.~\ref{Prop1}). 
 
 We have 2 binary variables and 4 cases in total. We only need to check that, in all 4 cases, $$\hat{y}_i = \ReLU(x'_i+y_i)-\ReLU(x'_i).$$
