@@ -1,0 +1,72 @@
+\section{Principal Component Analysis for Bound Computation}
+
+Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic, since they must accommodate all possible inputs, including out-of-distribution (OOD) \citet{OOD} samples far from the training dataset. Worst cases $\underline{\beta}$ for $\beta$ are indeed produced by such OOD samples, see Fig.~\ref{fig3}.
+%
+To address this, we employ principal component analysis (PCA) \citet{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
+Specifically, PCA extracts the most important linear components of a dataset by computing linear operators to project data from the full input dimension to a reduced feature space (PCA-encoding) and back (PCA-decoding).
+
+We construct the {\em PCA-DNN} by prepending PCA-encoding and decoding to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
+%This reduced feature space retains the most important features of the dataset. 
+The PCA-representation is faithful for common {\em in-distribution (ID)} inputs (e.g., Fig.~\ref{fig4}), though it may become unfaithful for OOD inputs. Since DNNs are inherently unreliable on OOD inputs, misrepresenting them does not impact accuracy, which we check empirically.
+% verify that the PCA-DNN is as accurate as the original DNN on the dataset. 
+Crucially, the PCA-DNN inputs are not restricted: results from the PCA-DNN real-time verification hold for any arbitrary image, even OOD. The PCA-pipeline is as follows (see Fig.~\ref{fig.MNIST} for an example on MNIST):
+
+\begin{figure*}[b!]
+	\centering
+\includegraphics[scale=0.4]{image.png} \hspace{1.5cm}
+\includegraphics[scale=0.4]{perturb.png}
+\caption{An (OOD) image for MNIST and its perturbation (in a unique pixel at x=14, y=8 from top) maximizing
+$\underline{\beta}^{.5}_{6,8}=.518$, as obtained by the {\em Diff} model.}
+\label{fig3}
+\end{figure*}	
+\begin{figure*}[b!]
+	\centering
+\includegraphics[scale=0.35]{redimage.png} \hspace{1.5cm}
+\includegraphics[scale=0.35]{redperturb.png}
+\caption{An (ID) image for MNIST and its perturbation when using the PCA-representation, maximizing $\underline{\beta}^{.5}_{6,8} = .084$, as obtained by the{\em Diff} model.}
+\vspace{-0.2cm}
+\label{fig4}
+\end{figure*}	
+
+
+
+\begin{enumerate}
+\item {\em Training} the PCA-encoding and decoding on the training dataset (e.g., MNIST, FMNIST, CIFAR10). Note that the original DNN has been previously learned on this training dataset.
+
+\item {\em In Exploitation}, the {\bf PCA-DNN} is formed by calls to PCA-encoding, then PCA-decoding (forming the PCA-representation of the input), and then the original DNN. 
+%The dataset input images are minimally changed by the PCA-encoding/decoding. 
+Although PCA-representations are full size (784 pixels for MNIST), they lie in a reduced space. We check the accuracy of the PCA-DNN, that is, the $\%$ of images where the predicted class matches the ground truth. We set the PCA dimension as small as possible (for efficiency) while ensuring that the PCA-DNN accuracy loss is minimal ($ \leq 1 \%$) wrt the original DNN without PCA (20 for MNIST in Fig.~\ref{fig.MNIST}).
+
+\begin{figure*}[t!]
+    \centering
+    \vspace{-0.3cm}
+    \includegraphics[scale=0.75]{MNIST.pdf} 
+    \caption{The pipeline training and exploiting the {\bf PCA-DNN} on MNIST dataset.}
+    \label{fig.MNIST}
+\end{figure*}	
+
+
+\item {\em In Bound Computation}, we treat the pixels of the original image $I$ and the perturbed image $I'$ as variables, along with the reduced PCA dimensions ($20 \times 2$ from $I$ and $I'$). These are then fed to the first layer of the DNN (linear transformation). 
+Compared to computing bounds on the original DNN, we only add {\em linear} variables, as few as 2x the reduced PCA dimensions.
+The associated constraints, which come from the PCA-encode/decode, are also linear. Next, we have the exact same MILP encoding (e.g., {\em Diff} encoding) for the DNN. Hence, the number of {\em binary} variables for PCA-DNN is the same as without PCA. Finally, the goal is to optimize, e.g., $\beta^\varepsilon_{6,8}$, the value of $y_6 - y_8 = x_6 - x'_6 + x'_8 - x_8$,  where $y_C$ is the {\em diff} variable of the output neuron for class $C \in \{6, 8\}$.
+\end{enumerate}
+
+We report in Fig.~\ref{fig3} the image and perturbed image reaching the maximal lower bound $\underline{\beta}^{.5}_{6,8}=0.518$ 
+obtained when using the original DNN (without PCA).
+They are OOD inputs to the MNIST digit classification dataset.
+%
+In contrast, there are natural (ID) images and perturbed images 
+reaching the maximal lower bound $\underline{\beta}^{.5}_{6,8}=0.084$ 
+of the {\em  PCA-DNN} (Fig.~\ref{fig4}): among all the images producing a given worst-case PCA-representation, we can choose the PCA-representation itself, which is ID.
+% This occurs because the output of the PCA-encoding/decoding (from reduced space) is its own image, and thus can be used as original input, producing the maximal $\underline{\beta}_{6,8}=.084$.
+Note that the lower bound $\underline{\beta}$ is lower for the PCA-DNN, which is perfectly normal as we restrict the network's {\em output} to a reduced space close to the MNIST dataset. This will also be the case for the upper bound $\overline{\beta}$, which is very desirable as it improves robustness certification. 
+%On the other hand, 
+
+
+
+
+
+%
+%It was also used to obtain the PCA encoding and decoding, transforming the images into a reduced basis. The number of PCA dimensions was chosen such that the exploitation accuracy remains constant. That is, encoding into a PCA basis and decoding it results in the same accuracy, as illustrated in ``Exploitation''. 
+%
+%Last, for the ``bound computation'', we determine an $L_1$-perturbation $\varepsilon$. The search space for bound computation is 20-dimensional. However, the bound itself is computed on the full space. This is possible since PCA is a \emph{linear operation} based on the eigenvectors of the covariance matrix and its transpose for the PCA decoding (inverse).
