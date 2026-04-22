@@ -9,8 +9,12 @@ More related, several works  \citet{Marabou,lipshitz,ITNE,GROCET} consider certi
 %
 Closest to our work is VHAGaR \citet{vhagar}, which computes 
 bounds $\bar{\alpha}^\varepsilon_{i,j}$ similar to our bounds 
-$\bar{\beta}^\varepsilon_{i,j}$, but limited to $L_\infty$-perturbations and variants. Crucially, VHAGaR bounds are not small enough for real-time robustness verification, whereas our bounds are.
+$\bar{\beta}^\varepsilon_{i,j}$, but limited to $L_\infty$-perturbations and variants. Crucially, VHAGaR bounds are not small enough for real-time robustness verification, whereas our bounds are. One reason is {\em Diff} MILP is more accurate in practice, the other is that LAE-DNNis intrinsically more robust.
+{\color{red}Paragraph on (L)AE-DNN}
 
-Technically, none of the MILP-based works \citet{vhagar,lipshitz,ITNE} consider $L_1$-perturba-tions or PCA. Further, they use the classical MILP encoding from \citet{MILP}, and not our novel {\em Diff} model, nor even the "1b" model. Note that \citet{ITNE} considers the {\em diff variables} $y,\hat{y}$, adding explicitly one {\em linear} constraint $\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ implied by each of our three MILP models {\em Diff}, "2b+1" and "1b" models; Eq. (3) in \citet{ITNE} corresponding essentially to it. \citet{vhagar} does things differently, adding per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations. 
+
+
+
+Technically, none of the MILP-based works \citet{vhagar,lipshitz,ITNE} consider $L_1$-perturbations. Further, they use the classical MILP encoding from \citet{MILP}, and not our novel {\em Diff} model, nor even the "1b" model. Note that \citet{ITNE} considers the {\em diff variables} $y,\hat{y}$, adding explicitly one {\em linear} constraint $\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ implied by each of our three MILP models {\em Diff}, "2b+1" and "1b" models; Eq. (3) in \citet{ITNE} corresponding essentially to it. \citet{vhagar} does things differently, adding per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations. 
 %(and to some extent to $L_\infty$-perturbations). 
 

@@ -1,5 +1,7 @@
 \section{Experimental Evaluation}
-	
+
+\label{sec.exp}
+
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090 (not used, Gurobi is CPU only). 
 	ITNE \citet{ITNE} was reimplemented using the same path as our code, except for the MILP variable $x_j$ using the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). The Julia VHAGaR code 

@@ -1,7 +1,7 @@
 Deep neural networks (DNNs) are often brittle to small perturbations, which has led to extensive research to certify their robustness. While most existing methods focus on {\em local} robustness, i.e., in the neighborhood of fixed specific inputs, these techniques are often impractical for guaranteeing robustness to {\em real-time} inputs on embedded systems, due to excessive latency and computational cost.
 
 To tackle real-time certification, we proceed in two steps. First, offline, we solve {\em global} robustness problems, which are significantly more complex than local robustness. We then use the results online to perform real-time certification. Offline, we compute {\em bounds} on the difference of output values across different DNN decision classes under both $L_\infty$- {\em and} $L_1$-perturbations. 
-{\color{red} On vanila DNNs however, global bounds are deemed to be overly pessimistic, because of inputs that are not In Distribution (ID).
+{\color{red} On vanilla DNNs however, global bounds are deemed to be overly pessimistic, because of inputs that are not In Distribution (ID).
 %, in particular 
 %Out of Distribution (OOD) inputs. While {\em characterizing} OOD inputs to be removed is impractical, we propose an efficient alternative: 
 We propose to project inputs on an AutoEncoder (AE) latent space learnt from ID samples.
