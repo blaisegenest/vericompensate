@@ -1,8 +1,14 @@
-\section{Principal Component Analysis for Bound Computation}
+\section{(Linear) Auto-Encoders projecting to  In-Distribution subspace}
 
-Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic, since they must accommodate all possible inputs, including out-of-distribution (OOD) \citet{OOD} samples far from the training dataset. Worst cases $\underline{\beta}$ for $\beta$ are indeed produced by such OOD samples, see Fig.~\ref{fig3}.
+Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs not In (Training) Distribution( ID) \citet{OOD}. Worst feasible solutions are indeed produced by such samples, see Fig.~\ref{fig3} (left).
+Considering all inputs with the original DNN will thus produce 
+high global upper bounds $\bar{\beta}$, no matter the method employed. Restricting to ID inputs seems unpractical, as there is no established characterization of ID inputs. We propose an efficient alternative.
+
+
+
+
 %
-To address this, we employ principal component analysis (PCA) \citet{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
+%To address this, we employ principal component analysis (PCA) \citet{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
 Specifically, PCA extracts the most important linear components of a dataset by computing linear operators to project data from the full input dimension to a reduced feature space (PCA-encoding) and back (PCA-decoding).
 
 We construct the {\em PCA-DNN} by prepending PCA-encoding and decoding to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
@@ -13,12 +19,16 @@ Crucially, the PCA-DNN inputs are not restricted: results from the PCA-DNN real-
 
 \begin{figure*}[b!]
 	\centering
-\includegraphics[scale=0.4]{image.png} \hspace{1.5cm}
-\includegraphics[scale=0.4]{perturb.png}
-\caption{An (OOD) image for MNIST and its perturbation (in a unique pixel at x=14, y=8 from top) maximizing
-$\underline{\beta}^{.5}_{6,8}=.518$, as obtained by the {\em Diff} model.}
+\includegraphics[scale=0.35]{image.png} 
+\includegraphics[scale=0.35]{perturb.png} \hspace{0.5cm}
+\includegraphics[scale=0.3]{redimage.png}
+\includegraphics[scale=0.3]{redperturb.png}
+\caption{Left: pair (I,I') image and its perturbation (in a unique pixel at x=14, y=8 from top) maximizing $\underline{\beta}^{.5}_{6,8}=.518$ for DNN. Right: a pair (I,I') 
+maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LEA-DNN.}
 \label{fig3}
 \end{figure*}	
+
+\iffalse
 \begin{figure*}[b!]
 	\centering
 \includegraphics[scale=0.35]{redimage.png} \hspace{1.5cm}
@@ -27,7 +37,7 @@ $\underline{\beta}^{.5}_{6,8}=.518$, as obtained by the {\em Diff} model.}
 \vspace{-0.2cm}
 \label{fig4}
 \end{figure*}	
-
+\fi
 
 
 \begin{enumerate}
@@ -37,6 +47,7 @@ $\underline{\beta}^{.5}_{6,8}=.518$, as obtained by the {\em Diff} model.}
 %The dataset input images are minimally changed by the PCA-encoding/decoding. 
 Although PCA-representations are full size (784 pixels for MNIST), they lie in a reduced space. We check the accuracy of the PCA-DNN, that is, the $\%$ of images where the predicted class matches the ground truth. We set the PCA dimension as small as possible (for efficiency) while ensuring that the PCA-DNN accuracy loss is minimal ($ \leq 1 \%$) wrt the original DNN without PCA (20 for MNIST in Fig.~\ref{fig.MNIST}).
 
+\iffalse
 \begin{figure*}[t!]
     \centering
     \vspace{-0.3cm}
@@ -44,7 +55,7 @@ Although PCA-representations are full size (784 pixels for MNIST), they lie in a
     \caption{The pipeline training and exploiting the {\bf PCA-DNN} on MNIST dataset.}
     \label{fig.MNIST}
 \end{figure*}	
-
+\fi
 
 \item {\em In Bound Computation}, we treat the pixels of the original image $I$ and the perturbed image $I'$ as variables, along with the reduced PCA dimensions ($20 \times 2$ from $I$ and $I'$). These are then fed to the first layer of the DNN (linear transformation). 
 Compared to computing bounds on the original DNN, we only add {\em linear} variables, as few as 2x the reduced PCA dimensions.

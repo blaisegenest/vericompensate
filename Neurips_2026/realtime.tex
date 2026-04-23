@@ -1,0 +1,81 @@
+\section{Real-time verification}
+
+As explained in the introduction, our objective is to compute upper and lower bounds for 
+$\beta^{\varepsilon}_{C,D} = 
+	\max_{I,I', |I-I'| \leq \epsilon}(x_C - x'_C + x'_D - x_D) = 
+    \max_{|I-I'| \leq \varepsilon}(y_C - y_D)
+$,
+where $x_{A}$, resp. $x'_{A}$ are the output values of class $A \in \{C,D\}$  from image $I$, resp. from the perturbed image $I'$.
+The associated MILP objective function is:
+{\bf Maximize} $x_C - x'_C + x'_D - x_D$ subject to the constraints above.
+
+Let $\bar{\beta}^{\varepsilon}_{C,D}$ be an (upper) bound
+and$\underline{\beta}^{\varepsilon}_{C,D}$ be a feasible solution of $x_C - x'_C + x'_D - x_D$, the pair 
+$(\underline{\beta}^{\varepsilon}_{C,D} ,\bar{\beta}^{\varepsilon}_{C,D})$ being obtainable by calling Gurobi once. We have $\underline{\beta}^{\varepsilon}_{C,D} \leq \beta^{\varepsilon}_{C,D} \leq \bar{\beta}^{\varepsilon}_{C,D}$.
+
+
+
+\iffalse
+%As explained in the introduction, 
+The objective we want to compute upper and lower bounds on is 
+$\beta^{\varepsilon}_{C,D} = \max_{|I-I'| \leq \varepsilon}((x_C - x'_C)- 
+(x_D - x'_D)) = \max_{|I-I'| \leq \varepsilon}(y_C - y_D)$, for $x_{C,D},x'_{C,D}, y_{C,D}$ the value of the output neuron associated with class $C,D$ from input image $I$, perturbed image $I'$ or the differential between $I,I'$ respectively.
+
+
+Upper bounds 
+$\bar{\beta}^{\varepsilon}_{C,D} \geq \beta^{\varepsilon}_{C,D}$ will allow us to verify in real-time whether a new incoming image can be certified to be robust for the perturbation. Lower bounds
+$\underline{\beta}^{\varepsilon}_{C,D} \leq \beta^{\varepsilon}_{C,D}$
+allow us to evaluate how large the gap 
+%$\frac{(\bar{\beta}^{\varepsilon}_{C,D} - \underline{\beta}^{\varepsilon}_{C,D})} {\underline{\beta}^{\varepsilon}_{C,D}}$
+$(\bar{\beta}^{\varepsilon}_{C,D} - \underline{\beta}^{\varepsilon}_{C,D}) / \underline{\beta}^{\varepsilon}_{C,D}$ is. MILP solvers, e.g., Gurobi, provide both an upper bound ("bound") $\bar{\beta}^{\varepsilon}_{C,D}$
+as well as a lower bound ("solution") $\underline{\beta}^{\varepsilon}_{C,D}$.
+\fi
+
+\iffalse
+Related bounds were proposed in \citet{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. 
+Namely, VHAGaR \citet{vhagar} defines $\alpha^{\varepsilon}_{C,D}$, computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$:
+\begin{align*}
+	\alpha^{\varepsilon}_{C,D} &= \max_{|I-I'| \leq \varepsilon} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
+\end{align*}
+
+Notice that  
+$\alpha^{\varepsilon}_{C,D}$ is not symmetrical, while 
+$\beta^{\varepsilon}_{C,D}$ is.
+\fi
+
+    
+Assume we have computed (offline) $\bar{\beta}^{\varepsilon}_{C,D}$ for each $C,D$. Now in real-time:
+\begin{enumerate}  
+  \item[0] Run inference on the DNN to obtain the values $x_D$ of output neuron for each class D. Let $C$ be the class with maximal $x_{C}$, that is, the class predicted by the DNN. These are the basic inference operations standardly performed for classification by a DNN.
+  \item[1] Compute for each class $D \neq C$
+  a bit $b_D=1$ iff $x_D +\bar{\beta}^{\varepsilon}_{C,D} > x_C$.
+  \item[2] Return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
+\end{enumerate}
+
+\begin{proposition}
+  If "certified robust" is returned over input $I$, 
+  then for all perturbed input $I'$ with  $|I - I'| \leq \varepsilon$,
+  the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$. % for perturbation $\varepsilon$.
+\end{proposition}
+
+\iffalse
+\begin{proof}
+  Let $C$ be the decision of the DNN on $I$.
+Assume by contradiction that $D \neq C$ is the decision on $I'$. 
+  We know that 
+  $x_D +\bar{\beta}^{\varepsilon}_{C,D} < x_C$
+  because "certified robust" is returned over input $I$.
+  That  is, $x_D - x_C +\bar{\beta}^{\varepsilon}_{C,D} < 0$
+
+  By definition of $\bar{\beta}^{\varepsilon}_{C,D}$,
+  we have $x'_D - x'_C + x_C - x_D \leq \bar{\beta}^{\varepsilon}_{C,D}$.
+  ($I$ and $I'$ have symmetrical roles), 
+  that is 
+  $x'_D - x'_C \leq x_D - x_C + \bar{\beta}^{\varepsilon}_{C,D} < 0$.
+  That is $x'_D < x'_C$, a contradiction with $D$ is the decision on $I'$.
+\end{proof}
+\fi
+
+The overhead (steps 1,2 above) on top of the standard inference step 0, is $3(k-1)$ operations, i.e. linear in $k$ the number of classes.
+For $k=10$ classes (cases of MNIST, Fashion MNSIT and CIFAR-10), it amounts to 29 operations in total: $(k-1)$ ADD(+), 
+$(k-1)$ COMP(<) and $k-1$ OR. This can be performed extremely fast, even on limited hardware.
