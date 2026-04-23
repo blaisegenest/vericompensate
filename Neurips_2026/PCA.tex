@@ -1,21 +1,29 @@
 \section{(Linear) Auto-Encoders projecting to  In-Distribution subspace}
 
-Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs not In (Training) Distribution( ID) \citet{OOD}. Worst feasible solutions are indeed produced by such samples, see Fig.~\ref{fig3} (left).
+Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs not In (training) Distribution (ID) \citet{OOD}. Such samples display large value for 
+$x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left).
 Considering all inputs with the original DNN will thus produce 
-high global upper bounds $\bar{\beta}$, no matter the method employed. Restricting to ID inputs seems unpractical, as there is no established characterization of ID inputs. We propose an efficient alternative.
-
-
-
-
-%
+high global upper bounds $\bar{\beta}$, no matter the method employed. Restricting to ID inputs seems unpractical, as there is no established characterization of ID inputs. We propose an efficient alternative:
 %To address this, we employ principal component analysis (PCA) \citet{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
-Specifically, PCA extracts the most important linear components of a dataset by computing linear operators to project data from the full input dimension to a reduced feature space (PCA-encoding) and back (PCA-decoding).
+Extract the most important components of the ID dataset using an Auto-Encoder (AE), and project away the other components from an input before feeding it to the DNN. In practice, we train the AE on the ID dataset to obtain the ID latentspace.
+We then define the AE-DNN architecture as first using the AE-coder to reduce to the latent space, then use the decoder to go back to the full space (called projected input), and finally calling the DNN on the projected input, see Fig \ref{fig:AE-DNN}. 
+%Such architecture has been used previously, e.g. by \citet{MEnet}, but for a different purpose.
 
-We construct the {\em PCA-DNN} by prepending PCA-encoding and decoding to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
+%AE-DNN will behave largely as the original DNN on ID inputs. However, 
+%
+Computing bounds $\bar{\beta}$ on non-linear AE-DNN is more costly than on original DNN, as additional integer vairables are required. From now on, we consider {Linear AE-DNN (LAE-DNN)}.
+
+%We construct the {\em PCA-DNN} by prepending PCA-encoding and decoding to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
 %This reduced feature space retains the most important features of the dataset. 
-The PCA-representation is faithful for common {\em in-distribution (ID)} inputs (e.g., Fig.~\ref{fig4}), though it may become unfaithful for OOD inputs. Since DNNs are inherently unreliable on OOD inputs, misrepresenting them does not impact accuracy, which we check empirically.
-% verify that the PCA-DNN is as accurate as the original DNN on the dataset. 
-Crucially, the PCA-DNN inputs are not restricted: results from the PCA-DNN real-time verification hold for any arbitrary image, even OOD. The PCA-pipeline is as follows (see Fig.~\ref{fig.MNIST} for an example on MNIST):
+Call $dim$ the dimension of the full space, and $n$ the size of the latent space of the LAE trained on an ID dataset. LAE-Decoding is a linear function. By optimality, it can be assumed to be of rank $n$. That is, it defines $n$ linearly independent vetors of dimension $1 \times dim$.
+%This set of $n$ vectors can be completed with $dim-n$ vectors into a basis of the full space. 
+An optimal choice of LAE-encode is the projection of input to these $n$ vectors. That is, calling LAE-decode and LAE-encode projects away features not on the ID latent-space.
+That is, on ID inputs, LAE-DNN will behave largely as the original DNN. However, global bounds on the LAE-DNNs will be smaller than on the original DNN, because of the projection to the ID latent space.
+Indeed, largest $x_C - x'_C + x'_D - x_D$ found 
+on LEA-DNN is 6 times smaller than on DNN, and corresponds to more ID images, see Fig.~\ref{fig3} (right).
+
+
+
 
 \begin{figure*}[b!]
 	\centering
