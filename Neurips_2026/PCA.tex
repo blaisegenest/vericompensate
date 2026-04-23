@@ -1,7 +1,8 @@
 \section{(Linear) Auto-Encoders projecting to  In-Distribution subspace}
 
+{\color{red}
 Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs not In (training) Distribution (ID) \citet{OOD}. Such samples display large value for 
-$x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left).
+$x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left) for MNIST.
 Considering all inputs with the original DNN will thus produce 
 high global upper bounds $\bar{\beta}$, no matter the method employed. Restricting to ID inputs seems unpractical, as there is no established characterization of ID inputs. We propose an efficient alternative:
 %To address this, we employ principal component analysis (PCA) \citet{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
@@ -15,24 +16,28 @@ Computing bounds $\bar{\beta}$ on non-linear AE-DNN is more costly than on origi
 
 %We construct the {\em PCA-DNN} by prepending PCA-encoding and decoding to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
 %This reduced feature space retains the most important features of the dataset. 
-Call $dim$ the dimension of the full space, and $n$ the size of the latent space of the LAE trained on an ID dataset. LAE-Decoding is a linear function. By optimality, it can be assumed to be of rank $n$. That is, it defines $n$ linearly independent vetors of dimension $1 \times dim$.
+Call $dim$ the dimension of the full space, and $n$ the size of the latent space of the LAE trained on an ID dataset. LAE-Decoding is a linear function. By optimality, it can be assumed to be of rank $n$: it defines $n$ linearly independent vetors of dimension $1 \times dim$.
 %This set of $n$ vectors can be completed with $dim-n$ vectors into a basis of the full space. 
 An optimal choice of LAE-encode is the projection of input to these $n$ vectors. That is, calling LAE-decode and LAE-encode projects away features not on the ID latent-space.
-That is, on ID inputs, LAE-DNN will behave largely as the original DNN. However, global bounds on the LAE-DNNs will be smaller than on the original DNN, because of the projection to the ID latent space.
+Hence, on ID inputs, LAE-DNN will behave largely as the original DNN. However, global bounds on the LAE-DNNs will be smaller than on the original DNN, because of the projection to the ID latent space.
 Indeed, largest $x_C - x'_C + x'_D - x_D$ found 
-on LEA-DNN is 6 times smaller than on DNN, and corresponds to more ID images, see Fig.~\ref{fig3} (right).
+on LAE-DNN is 6 times smaller than on DNN, and corresponds to more ID images, see Fig.~\ref{fig3} (right).
 
 
+\begin{proposition}
+ For all DNN and all latent space dimension $n$, $\beta^\varepsilon_{C,D}(\text{LAE-DNN}) \leq \beta^{\varepsilon}_{C,D}(\text{DNN})$.
+\end{proposition}
 
+In practice, the upper bound computed are better (3-15x) for LAE-DNN than for DNN (Section \ref{sec:realtime}).
 
-\begin{figure*}[b!]
+\begin{figure*}[t!]
 	\centering
 \includegraphics[scale=0.35]{image.png} 
 \includegraphics[scale=0.35]{perturb.png} \hspace{0.5cm}
 \includegraphics[scale=0.3]{redimage.png}
 \includegraphics[scale=0.3]{redperturb.png}
 \caption{Left: pair (I,I') image and its perturbation (in a unique pixel at x=14, y=8 from top) maximizing $\underline{\beta}^{.5}_{6,8}=.518$ for DNN. Right: a pair (I,I') 
-maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LEA-DNN.}
+maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LAE-DNN.}
 \label{fig3}
 \end{figure*}	
 
@@ -48,12 +53,15 @@ maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LEA-DNN.}
 \fi
 
 
-\begin{enumerate}
-\item {\em Training} the PCA-encoding and decoding on the training dataset (e.g., MNIST, FMNIST, CIFAR10). Note that the original DNN has been previously learned on this training dataset.
 
-\item {\em In Exploitation}, the {\bf PCA-DNN} is formed by calls to PCA-encoding, then PCA-decoding (forming the PCA-representation of the input), and then the original DNN. 
+{\em Training:} LAE is trained on an ID dataset with several values of latent space $n$. We set the size $n$ by checking the accuracy of LAE-DNN, that is, the $\%$ of images where the predicted class matches the ground truth. We set $n$ as small as possible (for efficiency) while ensuring that the LAE-DNN accuracy loss is minimal ($ \leq 1 \%$) wrt the original DNN (20 for DNN=FC-MNIST). 
+Such an $n$ exists as for $n=dim$ LAE-DNN=DNN.
+
+
+Then, we compute bounds on LEA-DNN from the full input space, as described in the previous section. In exploitation, we call LEA-DNN on any given input, and use the global bound on LEA-DNN to 
+do real-time robustnesss certification.
 %The dataset input images are minimally changed by the PCA-encoding/decoding. 
-Although PCA-representations are full size (784 pixels for MNIST), they lie in a reduced space. We check the accuracy of the PCA-DNN, that is, the $\%$ of images where the predicted class matches the ground truth. We set the PCA dimension as small as possible (for efficiency) while ensuring that the PCA-DNN accuracy loss is minimal ($ \leq 1 \%$) wrt the original DNN without PCA (20 for MNIST in Fig.~\ref{fig.MNIST}).
+%Although PCA-representations are full size (784 pixels for MNIST), they lie in a reduced space. 
 
 \iffalse
 \begin{figure*}[t!]
@@ -63,12 +71,11 @@ Although PCA-representations are full size (784 pixels for MNIST), they lie in a
     \caption{The pipeline training and exploiting the {\bf PCA-DNN} on MNIST dataset.}
     \label{fig.MNIST}
 \end{figure*}	
-\fi
 
-\item {\em In Bound Computation}, we treat the pixels of the original image $I$ and the perturbed image $I'$ as variables, along with the reduced PCA dimensions ($20 \times 2$ from $I$ and $I'$). These are then fed to the first layer of the DNN (linear transformation). 
-Compared to computing bounds on the original DNN, we only add {\em linear} variables, as few as 2x the reduced PCA dimensions.
+
+we treat the pixels of the original image $I$ and the perturbed image $I'$ as variables, along with the reduced PCA dimensions ($20 \times 2$ from $I$ and $I'$). These are then fed to the first layer of the DNN (linear transformation). 
+%Compared to computing bounds on the original DNN, we only add {\em linear} variables, as few as 2x the reduced PCA dimensions.
 The associated constraints, which come from the PCA-encode/decode, are also linear. Next, we have the exact same MILP encoding (e.g., {\em Diff} encoding) for the DNN. Hence, the number of {\em binary} variables for PCA-DNN is the same as without PCA. Finally, the goal is to optimize, e.g., $\beta^\varepsilon_{6,8}$, the value of $y_6 - y_8 = x_6 - x'_6 + x'_8 - x_8$,  where $y_C$ is the {\em diff} variable of the output neuron for class $C \in \{6, 8\}$.
-\end{enumerate}
 
 We report in Fig.~\ref{fig3} the image and perturbed image reaching the maximal lower bound $\underline{\beta}^{.5}_{6,8}=0.518$ 
 obtained when using the original DNN (without PCA).
@@ -81,7 +88,7 @@ of the {\em  PCA-DNN} (Fig.~\ref{fig4}): among all the images producing a given 
 Note that the lower bound $\underline{\beta}$ is lower for the PCA-DNN, which is perfectly normal as we restrict the network's {\em output} to a reduced space close to the MNIST dataset. This will also be the case for the upper bound $\overline{\beta}$, which is very desirable as it improves robustness certification. 
 %On the other hand, 
 
-
+\fi
 
 
 
@@ -89,3 +96,6 @@ Note that the lower bound $\underline{\beta}$ is lower for the PCA-DNN, which is
 %It was also used to obtain the PCA encoding and decoding, transforming the images into a reduced basis. The number of PCA dimensions was chosen such that the exploitation accuracy remains constant. That is, encoding into a PCA basis and decoding it results in the same accuracy, as illustrated in ``Exploitation''. 
 %
 %Last, for the ``bound computation'', we determine an $L_1$-perturbation $\varepsilon$. The search space for bound computation is 20-dimensional. However, the bound itself is computed on the full space. This is possible since PCA is a \emph{linear operation} based on the eigenvectors of the covariance matrix and its transpose for the PCA decoding (inverse).
+
+
+}
