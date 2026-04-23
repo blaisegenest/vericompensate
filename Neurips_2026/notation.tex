@@ -18,7 +18,6 @@
 	We call $d_i$ the number of neurons of hidden layer 
 	$i \in \{1, \ldots, \ell-1\}$,
 	$d_0$ the input dimension, and $d_\ell$ the output dimension.
-	
 	Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
 	denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
 	\begin{align*}
@@ -26,22 +25,11 @@
 		\hat{\boldsymbol{z}}^{i} = \ReLU({\boldsymbol{z}}^i).
 	\end{align*} 
 	
-	The vector $\hat{\boldsymbol{z}}$ is called post-activation values, 
-	$\boldsymbol{z}$ is called pre-activation values, 
+	The vector $\hat{\boldsymbol{z}}$ is called post-activation values, $\boldsymbol{z}$ pre-activation values, 
 	and $\boldsymbol{z}^{i}_j$ is used to denote the $j$-th neuron in the $i$-th layer. 
 	For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. %Finally, pre- and post-activation neurons are called \emph{nodes}.
 	% and when we refer to a specific node/neuron, we use $a,b,c,d,n$ to denote them, and $W_{a,b} \in \mathbb{R}$ to denote the weight from neuron $a$ to $b$. Similarly, for input $\boldsymbol{x}$, we denote by $\val_{\boldsymbol{x}}(a)$ the value of neuron $a$ when the input is $\boldsymbol{x}$.	For convenience, we write $n < z$ if neuron $n$ is on a layer before $\ell_z$, and $n \leq z$ if $n< z$ or $n=z$.
 	
-    In this paper, we consider the {\em global} verification problem, where we optimize over all images $I$ and perturbations $I'$ of $I$ with $|I-I'| \leq \varepsilon$. We will consider three kinds of variables: 
-    \begin{itemize}
-    \item $x_j,\hat{x}_j$, for neurons $j$ with input image $I$, 
-    \item $x'_j,\hat{x}'_j$, for neurons $j$ with input the perturbed $I'$, 
-    \item  $y_j = x_j - x'_j$ the {\em diff variable}, with 
-    $\hat{y}_j = \hat{x}_j - \hat{x}'_j$ (and {\em not}
-    $\hat{y}_j 	 = \ReLU(x_j-x'_j)$), 
-	as first proposed by \citet{diff}.
-	%, 	similar to the Interleaving Twin-Network Encoding (ITNE) model of \citet{lipshitz,ITNE}. 
-    \end{itemize}
      
     %Concerning the verification problem, we focus on the global-robustness question. Global robustness asks to determine how the output of a neural network will be affected under a certain kind of small perturbations to any possible input. In this view, Lipschitz continuity is a good characterization of global robustness.
 	
@@ -148,11 +136,9 @@
 	%\section{MILP for local robustness}
 	
 	
-\newpage
+
 	
-	\subsection{MILP encoding for local ReLU}
-	
-	Mixed Integer Linear Programming (MILP) can encode ReLU DNNs faithfully:
+	\textbf{Mixed Integer Linear Programming (MILP)} can encode ReLU DNNs faithfully:
 	For an {\em unstable} neuron $n$, that is, with values 
     $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one binary/integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \citet{MILP}:
 	
@@ -182,21 +168,15 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
     
     \fi
     
-    The encoding from $(\hat{x}_j)_{j \text{ in layer } i}$ to 
-	$(x_{j'})_{j' \text{ in layer } i+1}$ variables is simply the linear combination 
-	$\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i$.
-	Hence, the full MILP model uses exactly as many binary variables as 
-	unstable ReLUs.
 	%This exact MILP encoding is often too computationally intensive, as the worst-case complexity of MILP is exponential in the number of integer variables \citet{DivideAndSlide}.
     
-    \subsection{LP relaxation}
-
-	MILP instances can be linearly relaxed into LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. Since solving LP instances takes polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds. This approach is termed the {\em LP relaxation}.
+    \paragraph{LP relaxation:}
+	MILP instances can be linearly relaxed into LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. Since solving LP instances takes polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds \citet{DivideAndSlide}. This approach is termed the {\em LP relaxation}.
     % We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof.
 	
 	
 	%\subsection{partial MILP}
-	
+	\iffalse
 	Intermediate between these 2 extreme cases, there is {\em partial MILP} 
     (pMILP for short) to get trade-offs between accuracy and runtime
 	\citet{DivideAndSlide}:
@@ -205,7 +185,7 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 		\item binary for neurons in $X$ (exact encoding of the ReLU),
 		\item linear for neurons not in $X$ (linear relaxation).
 	\end{itemize}
-	
+	\fi
 	%We will denote the above model by MILP$_X$. We say that a node is {\em opened} if it is in $X$. 
 	
 	%To reduce the runtime, we will limit the size of the subset $X$. This a priori hurts accuracy. To recover some of this accuracy, we use an iterative approach: computing lower and upper bounds $\LB,\UB$ for neurons $n$ of each layer iteratively, which are used when computing values of the next layer.
@@ -265,3 +245,31 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 		$0 \leq \Improve\max^z(a) \leq \Utility\max^z(a)$. 
 	\end{proposition}
 	\fi
+
+	\paragraph{MILP constaints for global robustness:}
+
+In this paper, we consider the {\em global} verification problem, where we optimize over all images $I$ and perturbations $I'$ of $I$ with $|I-I'| \leq \varepsilon$. We will consider:
+    \begin{itemize}
+    \item $x_j,\hat{x}_j$, for neurons $j$ with input image $I$; $x'_j,\hat{x}'_j$, for neurons $j$ with input the perturbed $I'$, 
+    \item  $y_j = x_j - x'_j$ and 
+	$\hat{y}_j = \hat{x}_j - \hat{x}'_j$ 
+	the {\em diff variable} proposed by \citet{diff}. 
+	%({\em not} $\hat{y}_j 	 = \ReLU(x_j-x'_j)$).
+	%, 	similar to the Interleaving Twin-Network Encoding (ITNE) model of \citet{lipshitz,ITNE}. 
+    \end{itemize}
+
+	The classical encoding \citet{classical} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
+	resp. $a'_j$ for the encoding of $\hat{x}_j=\ReLU(x_j)$,
+	resp. $\hat{x}'_j=\ReLU(x'_j)$, for all neurons $j$.
+	Here are the set of constraints to encode the global robustness problem with $L_\infty \leq \varepsilon$ norm:
+
+	\begin{itemize}
+	   \item for all {\em input} neuron $j$ (in layer 0), $|x_j-x'_j|\leq \varepsilon$ [$L_\infty$ norm]
+	   \item for all neuron $j$ from layer $i\geq 1$, 
+	   $x_j = [\boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}]_j+ \vb^i_j$ and 
+	 $x'_j = [\boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}'^{i-1}]_j+ \vb^i_j$.
+	   \item for all neuron $j$, 
+	   $\hat{x}_j$, resp $\hat{x}'_j$, uses eq. (1) with integer variable $a_j$, resp. $a'_j$.
+	\end{itemize}
+    
+The objective function of the MILP program is defined in the next section.
