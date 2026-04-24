@@ -261,10 +261,10 @@ In this paper, we consider the {\em global} verification problem, where we optim
 	The classical encoding \citet{classical} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
 	resp. $a'_j$ for the encoding of $\hat{x}_j=\ReLU(x_j)$,
 	resp. $\hat{x}'_j=\ReLU(x'_j)$, for all neurons $j$.
-	Here are the {\bf set of constraints} to encode the global robustness problem with $L_\infty \leq \varepsilon$ norm:
+	Here are the {\bf set of constraints} $\mathcal{M}^{classical}$ to encode the global robustness problem with $L_\infty \leq \varepsilon$ norm:
 
 	\begin{itemize}
-	   \item for all {\em input} neuron $j$ (in layer 0), $|x_j-x'_j|\leq \varepsilon$ [$L_\infty$ norm]
+	   \item for all {\em input} neuron $j$ (in layer 0), $-\varepsilon \leq x_j-x'_j \leq \varepsilon$ [$L_\infty$ norm]
 	   \item for all neuron $j$ from layer $i\geq 1$, 
 	   $x_j = [\boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}]_j+ \vb^i_j$ and 
 	 $x'_j = [\boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}'^{i-1}]_j+ \vb^i_j$.
