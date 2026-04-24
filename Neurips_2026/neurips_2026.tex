@@ -142,7 +142,7 @@
 	
 	First, the LAE-DNN architecture, which allows to project away non-ID features, avoiding very large $\beta$ associated with 
 	non-ID inputs (see Fig. \ref{fig3}). On vanilla DNN architecture, real-time certification would not be possible (lower bounds imply that), irrespective of the computational method used.
-	Second, we developped the new {\em Diff} MILP method which is more accurate for global robustness than the classical MILP encoding. This reuslts into $25\%$ lower bounds in average than the state of the art ITNE model \citet{ITNE}. Following \citet{diff}, the idea is to look at (small) {\em diff}erential variables $y$ natively rather than represent them as difference of 2 larger variables $x,x'$.
+	Second, we developped the new {\em Diff} MILP method which is more accurate for global robustness than the classical MILP encoding. This results into $25\%$ lower bounds in average than the state of the art ITNE model \citet{ITNE}. Following \citet{diff}, the idea is to look at (small) {\em diff}erential variables $y$ natively rather than represent them as difference of 2 larger variables $x,x'$.
 	
 	This is a concept and feasibility paper, showing the feasibility 
 	of real-time certification. Many implementation details are out of the scope of the paper: testing many LAE algorithms, possibly non linear, non MILP techniques, more activation function, larger DNNs, etc.
