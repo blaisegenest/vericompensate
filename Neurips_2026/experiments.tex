@@ -1,15 +1,60 @@
 \section{Experimental Evaluation}
 
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{||c c||c c c c c ||c|}\hline
+	$L_\infty=0.05$ & Timeout & MILP model: & VHAGaR &  ITNE & {\em Diff} & {\em 2b+1} & {\em Best} \\\hline \hline
+	  & 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ &  20.80 & 12.32 & {\em 11.14} & {\em \bf 10.95} & {\bf \em 10.85}
+    \\
+	MNIST-Conv & & ($\%$ of gap $\downarrow$) & (120$\%$) & (29$\%$) & ({\em 17}$\%$) & ({\em \bf 15}$\%$) & ({\bf \em 14}$\%$)
+	\\
+	 LB $\underline{\alpha}$= 9.51 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 17.54 & 11.15 & {\bf \em 10.14} & {\em 10.29} & {\bf \em 10.07}
+    \\
+	  & & ($\%$ of gap $\downarrow$) &  (84$\%$) & (17$\%$) & ({\bf \em 7}$\%$) & ({\em 8}$\%$) & ({\bf \em 6}$\%$) 
+    \\\hline
+
+	
+	& 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ & 41.52 & 26.61 & {\bf \em 23.27}  & {\em 24.09} & {\bf \em 22.78}
+    \\
+	FMNIST-Conv & & ($\%$ of gap $\downarrow$) & (93$\%$) & (20$\%$) & ({\bf \em 5}$\%$) & ({\em 10}$\%$) & ({\bf \em 3}$\%$)
+    \\
+
+
+	LB $\underline{\alpha}$= 22.21 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 37.26 & 24.06 & {\bf \em 22.42 } & {\em  23.80} & {\bf \em 22.34}
+    \\
+	 & & ($\%$ of gap $\downarrow$) & (72$\%$) &  (9$\%$) & ({\bf \em 1}$\%$) & ({\em 9}$\%$) & ({\bf \em 0.6}$\%$)
+    \\\hline
+	
+
+	& 1000s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 36.57* & 27.15 & 
+	{\em 25.94} & {\bf \em 24.52}& {\bf \em 23.29}
+    \\
+	CIFAR-Conv & & ($\%$ of gap $\downarrow$) & (55*$\%$) & (28$\%$) & ({\em 24}$\%$) & ({\bf \em 20}$\%$) & ({\bf \em 15}$\%$)
+	\\
+    
+	LB $\underline{\alpha}$= 19.04 & 14400s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 31.53* & 22.73 & {\bf \em 21.77} & {\em 21.81} & {\bf \em 20.38}
+    \\
+	 & & ($\%$ of gap $\downarrow$) & (39*$\%$) & (12$\%$) & ({\bf \em 10}$\%$) & ({\bf \em 10}$\%$) & ({\bf \em 5}$\%$)
+		\\\hline
+    
+     \end{tabular}
+	\caption{Upper bound $\bar{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, averaging bounds $\bar{\alpha}_{C,D}$ over all pair of classes $(C,D)$. {\em Best} computes the average $\bar{\alpha}$ using the lowest $\bar{\alpha}_{C,D}$ computed by {\em Diff} and {\em 2b+1} for each $(C,D)$. Lower gaps using {\em Best} means that there are cases $(C,D)$ where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite. * means that VHAGaR failed to compute bounds for some cases $(C,D)$ of CIFAR-Conv. 
+	For such cases, we used numbers from ITNE instead (which is overperforming VHAGaR in every test), so these numbers are an optimistic evaluation for VHAGaR.}
+	\vspace{-0.4cm}
+    \label{table.classical}
+\end{table}
+
+
 \label{sec.exp}
 
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090 (not used, Gurobi is CPU only). 
 	ITNE \citet{ITNE} was reimplemented using the same path as our code, except for the MILP variable $x_j$ using the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). The Julia VHAGaR code 
-	from \url{https://github.com/ananmkabaha/VHAGaR} \citet{vhagar} was run on the same hardware.
+	from \url{https://github.com/ananmkabaha/VHAGaR} was run on the same hardware.
 	
 	We consider 4 pretrained DNNs on 3 different datasets (MNIST, Fashion-MNIST, and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at 
 	\url{https://github.com/eth-sri/eran} ("5x100"). We also considered 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
-	from \citet{vhagar} ("conv1"). We will also consider 3 PCA-DNNs, as detailed in Section~\ref{s62}.
+	from \citet{vhagar} ("conv1"). We will also consider 3 LAE-DNNs, see Section~\ref{s62}.
 	%The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
 
 \iffalse	
@@ -122,49 +167,6 @@ VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR conv
 
 
 
-\begin{table}[t!]
-	\centering
-	\begin{tabular}{||c c||c c c c c ||c|}\hline
-	$L_\infty=0.05$ & Timeout & MILP model: & VHAGaR &  ITNE & {\em Diff} & {\em 2b+1} & {\em Best} \\\hline \hline
-	  & 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ &  20.80 & 12.32 & {\em 11.14} & {\em \bf 10.95} & {\bf \em 10.85}
-    \\
-	MNIST-Conv & & ($\%$ of gap $\downarrow$) & (120$\%$) & (29$\%$) & ({\em 17}$\%$) & ({\em \bf 15}$\%$) & ({\bf \em 14}$\%$)
-	\\
-	 LB $\underline{\alpha}$= 9.51 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 17.54 & 11.15 & {\bf \em 10.14} & {\em 10.29} & {\bf \em 10.07}
-    \\
-	  & & ($\%$ of gap $\downarrow$) &  (84$\%$) & (17$\%$) & ({\bf \em 7}$\%$) & ({\em 8}$\%$) & ({\bf \em 6}$\%$) 
-    \\\hline
-
-	
-	& 1000s & up. Bound $\overline{\alpha}$ $\downarrow$ & 41.52 & 26.61 & {\bf \em 23.27}  & {\em 24.09} & {\bf \em 22.78}
-    \\
-	FMNIST-Conv & & ($\%$ of gap $\downarrow$) & (93$\%$) & (20$\%$) & ({\bf \em 5}$\%$) & ({\em 10}$\%$) & ({\bf \em 3}$\%$)
-    \\
-
-
-	LB $\underline{\alpha}$= 22.21 & 14400s & up. Bound $\overline{\alpha}$ $\downarrow$ & 37.26 & 24.06 & {\bf \em 22.42 } & {\em  23.80} & {\bf \em 22.34}
-    \\
-	 & & ($\%$ of gap $\downarrow$) & (72$\%$) &  (9$\%$) & ({\bf \em 1}$\%$) & ({\em 9}$\%$) & ({\bf \em 0.6}$\%$)
-    \\\hline
-	
-
-	& 1000s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 36.57* & 27.15 & 
-	{\em 25.94} & {\bf \em 24.52}& {\bf \em 23.29}
-    \\
-	CIFAR-Conv & & ($\%$ of gap $\downarrow$) & (55*$\%$) & (28$\%$) & ({\em 24}$\%$) & ({\bf \em 20}$\%$) & ({\bf \em 15}$\%$)
-	\\
-    
-	LB $\underline{\alpha}$= 19.04 & 14400s  & up. Bound $\overline{\alpha}$ $\downarrow$ & 31.53* & 22.73 & {\bf \em 21.77} & {\em 21.81} & {\bf \em 20.38}
-    \\
-	 & & ($\%$ of gap $\downarrow$) & (39*$\%$) & (12$\%$) & ({\bf \em 10}$\%$) & ({\bf \em 10}$\%$) & ({\bf \em 5}$\%$)
-		\\\hline
-    
-     \end{tabular}
-	\caption{Upper bound $\bar{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, averaging bounds $\bar{\alpha}_{C,D}$ over all pair of classes $(C,D)$. {\em Best} computes the average $\bar{\alpha}$ using the lowest $\bar{\alpha}_{C,D}$ computed by {\em Diff} and {\em 2b+1} for each $(C,D)$. Lower gaps using {\em Best} means that there are cases $(C,D)$ where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite. * means that VHAGaR failed to compute bounds for some cases $(C,D)$ of CIFAR-Conv. 
-	For such cases, we used numbers from ITNE instead (which is overperforming VHAGaR in every test), so these numbers are an optimistic evaluation for VHAGaR.}
-	\vspace{-0.4cm}
-    \label{table.classical}
-\end{table}
 
 \smallskip 
 
@@ -224,39 +226,39 @@ Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower t
 
 
 
-\subsection{Experimental results for $L_1=1$ and PCA-DNN.}
+\subsection{Experimental results for $L_1=1$ and LAE-DNN.}
 	
 \label{s62}
 
-We then turn to testing with $L_1$ perturbations and comparing between DNNs and their PCA-DNN versions (which are not supported in VHAGaR). Here, we consider MNIST-FC, which has a higher accuracy than MNIST-Conv, 
+We then turn to testing with $L_1$ perturbations and comparing between DNNs and their LAE-DNN versions (which are not supported in VHAGaR). Here, we consider MNIST-FC, which has a higher accuracy than MNIST-Conv, 
 to test a different architecture than convolutional Networks.
 
-We recall that PCA-DNNs are generated following the process described in Section 5: for each PCA dimension, we report in Table \ref{table.pca} the accuracy loss from using PCA-DNN rather than the original DNN.
+We recall that LAE-DNNs are generated following the process described in Section 5: for each latent space dimension, we report in Table \ref{table.LAE} the accuracy loss from using LAE-DNN rather than the original DNN.
 We set the dimension at the minimal dimension that results in at most 1$\%$ 
 loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively.
 
 
-\begin{table}[t!]
+\begin{table}[b!]
 	\centering
 	\begin{tabular}{|c c c c c c c c c |}\hline
-		PCA dimension: & 15 & 20 & 25 & 30 & 35 & 40 & ... & 60 
+		latent space dimension: & 15 & 20 & 25 & 30 & 35 & 40 & ... & 60 
 		
 		\\\hline
-		PCA-MNIST-FC  & 2$\%$ & {\color{blue} 0$\%$} & 0$\%$& 0$\%$ & 0$\%$& 0$\%$ & &0$\%$
+		LAE-MNIST-FC  & 2$\%$ & {\color{blue} 0$\%$} & 0$\%$& 0$\%$ & 0$\%$& 0$\%$ & &0$\%$
 		\\	
- 		PCA-FMNIST-Conv & 5$\%$ &	3$\%$ &	{\color{blue} 1$\%$} & 0$\%$& 0$\%$	&0$\%$ & &	0$\%$ 
+ 		LAE-FMNIST-Conv & 5$\%$ &	3$\%$ &	{\color{blue} 1$\%$} & 0$\%$& 0$\%$	&0$\%$ & &	0$\%$ 
 		\\
-		PCA-CIFAR10-Conv  & 16$\%$ &	14$\%$ &	12$\%$ & 10$\%$ &	14$\%$ &	5$\%$ &	& {\color{blue} $1\%$}
+		LAE-CIFAR10-Conv  & 16$\%$ &	14$\%$ &	12$\%$ & 10$\%$ &	14$\%$ &	5$\%$ &	& {\color{blue} $1\%$}
 		\\\hline
 	\end{tabular}
 
-	\caption{Loss of accuracy of PCA-DNN vs DNN (no PCA) according to the PCA dimension.
+	\caption{Loss of accuracy of LAE-DNN vs DNN (no LAE) according to the latent space dimension.
 	{\color{blue} Blue} corresponds to the minimal dimension ensuring loss $\leq 1\%$.}
 	\vspace{-0.4cm}
-    \label{table.pca}
+    \label{table.LAE}
 \end{table}
 
-We consider the $\bar{\beta}$ bounds reached for $L_1$-perturbation  at most 1, on the 3 original DNNs MNIST-FC, FMNIST-Conv and CIFAR10-Conv, plus their PCA variants for the dimension computed in Table~\ref{table.pca}.
+We consider the $\bar{\beta}$ bounds reached for $L_1$-perturbation  at most 1, on the 3 original DNNs MNIST-FC, FMNIST-Conv and CIFAR10-Conv, plus their LAE variants for the dimension computed in Table~\ref{table.LAE}.
 We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{table.classical}.
 
 
@@ -272,7 +274,7 @@ We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{
 		LB $\underline{\beta}$= 0.50 & 14400s & 45.3 & 37.24 & 36.96 & {\bf 33.68} & {\bf 33.67}
 		
 		\\\hline
-		PCA-MNIST-FC  & 1000s & 2.52 & {\bf 2.43} & {\bf 2.43} & 2.68 & {\bf 2.41}
+		LAE-MNIST-FC  & 1000s & 2.52 & {\bf 2.43} & {\bf 2.43} & 2.68 & {\bf 2.41}
 		\\
 		LB $\underline{\beta}$= 0.12 & 14400s & 2.33 & 2.18 & {\bf 2.00} & 2.46 & {\bf 2.00}
 		\\ \hline \hline
@@ -282,7 +284,7 @@ We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{
 		LB $\underline{\beta} = 4.16$ & 14400s & 11.03 & 7.43 & {\bf 6.37} & 9.62 & {\bf 6.22}
 		\\\hline
 
-		PCA-FMNIST-Conv & 1000s & 3.64 & 3.02 & 3.02 & {\bf 2.74} & {\bf 2.74}
+		LAE-FMNIST-Conv & 1000s & 3.64 & 3.02 & 3.02 & {\bf 2.74} & {\bf 2.74}
 		\\
 		LB $\underline{\beta}= 0.96$ & 14400s & 2.67 & 2.34  & {\bf 1.95} & 2.52 & {\bf 1.95}
 		\\\hline  \hline
@@ -293,7 +295,7 @@ We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{
 		\\
 		LB $\underline{\beta}= 3.38$ & 14400s & 10.49 & {\bf 7.19} & 7.45 & 7.31 & {\bf 6.67}
 		\\\hline
-		PCA-CIFAR10-Conv  & 1000s & 1.70 & 1.63 & 1.54 & {\bf 1.28} & {\bf 1.28}
+		LAE-CIFAR10-Conv  & 1000s & 1.70 & 1.63 & 1.54 & {\bf 1.28} & {\bf 1.28}
 		\\
 		LB $\underline{\beta}$= 0.0015 & 14400s & 1.67 & 1.56 & 1.52 & {\bf 1.15} & {\bf 1.15}
 		\\
@@ -303,8 +305,8 @@ We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{
 
 	\end{tabular}
 	\caption{Comparison of upper bound $\overline{\beta}$ (lower is better $\downarrow$) averaged over all bounds $\overline{\beta}_{i,j}$,
-	between ITNE and {\em Best} of {\em Diff, 2b+1 and 1b}, for original DNNs as well as PCA-DNNs over MNIST, FMNIST and CIFAR datasets. %Best report is the average of the best for every case.
-	 %We use PCA dimension = 20 for MNIST-FC, PCA dimension = 25 for FMNIST CNN1, and PCA dimension = 45 for CIFAR10 CNN1.
+	between ITNE and {\em Best} of {\em Diff, 2b+1 and 1b}, for original DNNs as well as LAE-DNNs over MNIST, FMNIST and CIFAR datasets. %Best report is the average of the best for every case.
+	 %We use latent space dimension = 20 for MNIST-FC, latent space dimension = 25 for FMNIST CNN1, and latent space dimension = 45 for CIFAR10 CNN1.
 	 }
 	\label{table.L1}
 \end{table}
@@ -317,7 +319,7 @@ $L_1$ perturbations, from 1.5 to 600. Using
 the faster {\em 1b} model now becomes pertinent. In half of the cases, {\em 1b} actually produces the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provide better bounds. ITNE is significantly worse, producing $25\%$ worse bounds 
 $\bar{\beta}$ on average than {\em Best}.
 
-Comparing with and without PCA, as expected, PCA-DNNs allow reaching much smaller upper bounds $\bar{\beta}$ than without PCA, $15$x for MNIST-FC, $3$x for FMNIST-Conv, and $7$x for CIFAR10-Conv. MNIST-FC is harder to solve than FMNIST-Conv, although they are comparable benchmarks, because fully connected architectures are richer than convolutional architectures of the same size. PCA-CIFAR10-Conv is the hardest test, because the dimension (60) is not as reduced as for MNIST and FMNIST (20 and 25).
+Comparing with and without LAE, as expected, LAE-DNNs allow reaching much smaller upper bounds $\bar{\beta}$ than without LAE, $15$x for MNIST-FC, $3$x for FMNIST-Conv, and $7$x for CIFAR10-Conv. MNIST-FC is harder to solve than FMNIST-Conv, although they are comparable benchmarks, because fully connected architectures are richer than convolutional architectures of the same size. LAE-CIFAR10-Conv is the hardest test, because the dimension (60) is not as reduced as for MNIST and FMNIST (20 and 25).
 
 
 
@@ -387,20 +389,20 @@ We now turn to how many images can be certified robust in real-time using the {\
 		MNIST-FC  & 0$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5 ms
 		\\
 		
-		PCA-MNIST-FC  & {\color{blue} 80$\%$}  & 21$\%$ & 1$\%$ & 0$\%$ & 0.5 ms
+		LAE-MNIST-FC  & {\color{blue} 80$\%$}  & 21$\%$ & 1$\%$ & 0$\%$ & 0.5 ms
 		\\ \hline 
 		
  		FMNIST-Conv & 
 		{\color{blue} 75$\%$}  & 50$\%$ & 28$\%$ &	12$\%$  & 0.5 ms
 		\\
 
-		PCA-FMNIST-Conv & 
+		LAE-FMNIST-Conv & 
 		92$\%$ &	86$\%$ &	79$\%$ & {\color{blue} 70$\%$}  & 0.5 ms
 		\\\hline
 		
 		CIFAR10-Conv  & 39$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5 ms
 		\\ 
-		PCA-CIFAR10-Conv  & 92$\%$ & {\color{blue} 72$\%$} & 61$\%$ & 51$\%$ & 0.5 ms
+		LAE-CIFAR10-Conv  & 92$\%$ & {\color{blue} 72$\%$} & 61$\%$ & 51$\%$ & 0.5 ms
 		\\\hline
 	\end{tabular}
 
@@ -413,11 +415,11 @@ We now turn to how many images can be certified robust in real-time using the {\
     \label{table.cert}
 \end{table}
 
-With that, we can certify at least $70\%$ of the images for all 3 PCA-DNN label for a $L_1$-perturbation of $1$, and even up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST. We are unable to do it for the non-PCA version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its PCA-version. Overall, PCA significantly improves real-time verification.
+With that, we can certify at least $70\%$ of the images for all 3 LAE-DNN label for a $L_1$-perturbation of $1$, and even up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST. We are unable to do it for the non-LAE version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its LAE-version. Overall, LAE significantly improves real-time verification.
 
 \iffalse
 To remove improbable images and limit the space of search, 
-we consider a PCA model order reduction \citet{Paco}: We reduced to 20 dimensions, because the MNIST $100 \times 5$ DNN considered, once run on images obtained from projecting to the 20 dimension space and projected back to the full dimension space displays the same accuracy of $97$\% as the DNN on the original images. This means that considering the reduced 20 dimensional space
+we consider a LAE model order reduction \citet{Paco}: We reduced to 20 dimensions, because the MNIST $100 \times 5$ DNN considered, once run on images obtained from projecting to the 20 dimension space and projected back to the full dimension space displays the same accuracy of $97$\% as the DNN on the original images. This means that considering the reduced 20 dimensional space
 does not incur any loss in accuracy, which is the only thing which matters. On this reduced space, bounds obtained are much more precise, and one can certify in real-time robustness of images.
 
 
