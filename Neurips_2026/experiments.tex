@@ -38,7 +38,8 @@
 		\\\hline
     
      \end{tabular}
-	\caption{Upper bound $\bar{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, averaging bounds $\bar{\alpha}_{C,D}$ over all pair of classes $(C,D)$. {\em Best} computes the average $\bar{\alpha}$ using the lowest $\bar{\alpha}_{C,D}$ computed by {\em Diff} and {\em 2b+1} for each $(C,D)$. Lower gaps using {\em Best} means that there are cases $(C,D)$ where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite. * means that VHAGaR failed to compute bounds for some cases $(C,D)$ of CIFAR-Conv. 
+	\caption{Upper bound $\bar{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, averaging bounds $\bar{\alpha}_{C,D}$ over all pair of classes $(C,D)$. {\em Best} reports the average $\bar{\alpha}$ using the lowest $\bar{\alpha}_{C,D}$ computed 
+	in parallel by {\em Diff} and {\em 2b+1} for each $(C,D)$. Lower gaps using {\em Best} means that there are cases $(C,D)$ where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite. * means that VHAGaR failed to compute bounds for some cases $(C,D)$ of CIFAR-Conv. 
 	For such cases, we used numbers from ITNE instead (which is overperforming VHAGaR in every test), so these numbers are an optimistic evaluation for VHAGaR.}
 	\vspace{-0.4cm}
     \label{table.classical}
@@ -102,7 +103,7 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 
 
 
-\subsection{Comparison for global robustness with VHAGaR and ITNE ($L_\infty$)}
+\subsection{Comparison for global robustness with $L_\infty$ between {\em Diff}, VHAGaR and ITNE}
 
 We use VHAGaR benchmarks to be able to compare: 
 VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR convolutional DNNs, for which the VHAGaR reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model finds. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall that most robustness tools, e.g., $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
@@ -170,7 +171,7 @@ VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR conv
 
 \smallskip 
 
-\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ found is close to the lower bound $\underline{\alpha}$ found, with at most a $6\%$ gap. Using the {\em 1b} model is not useful, as its abstraction will lose more than $6\%$. 
+\noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ is close to the lower bound $\underline{\alpha}$, with at most a $6\%$ gap. Using the {\em 1b} model is not useful, as its abstraction will lose more than $6\%$. 
 %That is why it is not reported in Table \ref{table.classical}. 
 VHAGaR computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with a gap $40-120\%$. Although we are using its benchmarks, VHAGaR methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \citet{vhagar}): ITNE is better, with gaps from $9-17\%$.
 Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, {\em 2b+1} is more accurate for shorter timeout, and {\em Diff} is more accurate when there is sufficient time, as expected. 
@@ -226,16 +227,17 @@ Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower t
 
 
 
-\subsection{Experimental results for $L_1=1$ and LAE-DNN.}
+\subsection{Comparison between LAE-DNNs and DNNs for $L_1$ perturbations.}
 	
 \label{s62}
 
 We then turn to testing with $L_1$ perturbations and comparing between DNNs and their LAE-DNN versions (which are not supported in VHAGaR). Here, we consider MNIST-FC, which has a higher accuracy than MNIST-Conv, 
 to test a different architecture than convolutional Networks.
 
-We recall that LAE-DNNs are generated following the process described in Section 5: for each latent space dimension, we report in Table \ref{table.LAE} the accuracy loss from using LAE-DNN rather than the original DNN.
+Recall that LAE-DNNs are generated following the process described in Section 5: for each latent space dimension, we report in Table \ref{table.LAE} the accuracy loss from using LAE-DNN vs using the original DNN. {\color{red} Concerning the LAE algorithm, we experimented with PCA 
+\citet{Paco}}.
 We set the dimension at the minimal dimension that results in at most 1$\%$ 
-loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively.
+loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively, i.e. $>35$x dimension reduction.
 
 
 \begin{table}[b!]
@@ -252,7 +254,7 @@ loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR
 		\\\hline
 	\end{tabular}
 
-	\caption{Loss of accuracy of LAE-DNN vs DNN (no LAE) according to the latent space dimension.
+	\caption{Loss of accuracy of LAE-DNN vs DNN according to the latent space dimension.
 	{\color{blue} Blue} corresponds to the minimal dimension ensuring loss $\leq 1\%$.}
 	\vspace{-0.4cm}
     \label{table.LAE}
@@ -304,8 +306,8 @@ We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{
 		\\\hline
 
 	\end{tabular}
-	\caption{Comparison of upper bound $\overline{\beta}$ (lower is better $\downarrow$) averaged over all bounds $\overline{\beta}_{i,j}$,
-	between ITNE and {\em Best} of {\em Diff, 2b+1 and 1b}, for original DNNs as well as LAE-DNNs over MNIST, FMNIST and CIFAR datasets. %Best report is the average of the best for every case.
+	\caption{Comparison of upper bound $\overline{\beta}$ (lower is better $\downarrow$) averaged over all bounds $\overline{\beta}_{C,D}$,
+	between ITNE and {\em Best} of {\em Diff, 2b+1 and 1b}, for DNNs and LAE-DNNs over MNIST, FMNIST and CIFAR10. %Best report is the average of the best for every case.
 	 %We use latent space dimension = 20 for MNIST-FC, latent space dimension = 25 for FMNIST CNN1, and latent space dimension = 45 for CIFAR10 CNN1.
 	 }
 	\label{table.L1}
@@ -319,7 +321,12 @@ $L_1$ perturbations, from 1.5 to 600. Using
 the faster {\em 1b} model now becomes pertinent. In half of the cases, {\em 1b} actually produces the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provide better bounds. ITNE is significantly worse, producing $25\%$ worse bounds 
 $\bar{\beta}$ on average than {\em Best}.
 
-Comparing with and without LAE, as expected, LAE-DNNs allow reaching much smaller upper bounds $\bar{\beta}$ than without LAE, $15$x for MNIST-FC, $3$x for FMNIST-Conv, and $7$x for CIFAR10-Conv. MNIST-FC is harder to solve than FMNIST-Conv, although they are comparable benchmarks, because fully connected architectures are richer than convolutional architectures of the same size. LAE-CIFAR10-Conv is the hardest test, because the dimension (60) is not as reduced as for MNIST and FMNIST (20 and 25).
+LAE-DNNs reach much smaller upper bounds $\bar{\beta}$ than DNN: $15$x for MNIST-FC, $3$x for FMNIST-Conv, and $7$x for CIFAR10-Conv. 
+%MNIST-FC is harder to solve than FMNIST-Conv, although they are comparable benchmarks, because fully connected architectures are richer than convolutional architectures of the same size. 
+LAE-CIFAR10-Conv is the hardest test, because the latent space dimension (60) is not as small as for MNIST and FMNIST (20 and 25), which is due to the fact that the original CIFAR-10 dimensions (3072) is 4x larger than for MNIST (784).
+Further, the {\em upper} bound $\bar{\beta}$ for LAE-CIFAR10-Conv (0.99) is much smaller than the {\em lower} bound $\underline{\beta}$ 
+for CIFAR10-Conv (3.38), meaning that no other method 
+would reach for CIFAR10-Conv bound less than three times as high as the bound of our MILP models for LAE-CIFAR10-Conv. For FMNIST-Conv, it is 2 times.
 
 
 
@@ -374,9 +381,12 @@ ITNE, $1000$ &  $1.371$ & $.085$& {\bf .085}  \\\hline\hline
 
 %\paragraph{Reduced Space}
 
-\subsection{Real-Time verification of Robustness}
+\subsection{Real-Time verification of Robustness from 
+$(\bar{\beta}^\varepsilon_{C,D})_{C<D \leq 10}$}
 
-We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{i,j}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}. We set a threshold of $70\%$ to evaluate how large the $L_1$  perturbation can be while still certifying at least this threshold: a threshold much lower than $70\%$ would mean labeling too many incoming images as uncertified, which would degrade the system too much.
+We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{C,D}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}.
+The complexity being strictly linear with the number of classes, 
+dataset with 100 classes would need 5ms to be treated, 200images/second per CPU core. We set a threshold of $70\%$ to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
 
 
 
@@ -407,7 +417,7 @@ We now turn to how many images can be certified robust in real-time using the {\
 	\end{tabular}
 
 	\caption{Percentage of images certified robust in real-time 
-	using the Best computed $(\beta^{1}_{i,j})_{i < j \leq 10}$, 
+	using the Best computed $(\beta^{1}_{C,D})_{C < D \leq 10}$, 
 	for different values of $L_1$-perturbations.
 	{\color{blue} Blue} depicts the largest perturbation ensuring $\geq 70\%$ of images being robust. The latency overhead is the same as the number of classes (10) for all datasets.}
     %Latency overhead are the same as the number of classes is the same (=10) for all datasets.} 
@@ -415,7 +425,7 @@ We now turn to how many images can be certified robust in real-time using the {\
     \label{table.cert}
 \end{table}
 
-With that, we can certify at least $70\%$ of the images for all 3 LAE-DNN label for a $L_1$-perturbation of $1$, and even up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST. We are unable to do it for the non-LAE version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its LAE-version. Overall, LAE significantly improves real-time verification.
+With that, we can certify at least $70\%$ of the images for all 3 LAE-DNNs for a $L_1$-perturbation of $1$, and even up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST. We are unable to do it for the non-LAE version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its LAE-version. Overall, LAE-DNNs are amenable to certification in real-time, unlike vanilla DNNs.
 
 \iffalse
 To remove improbable images and limit the space of search, 

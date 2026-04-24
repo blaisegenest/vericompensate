@@ -3,8 +3,7 @@
 {\color{red}
 Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs not In (training) Distribution (ID) \citet{OOD}. Such samples display large value for 
 $x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left) for MNIST.
-Considering all inputs with the original DNN will thus produce 
-high global upper bounds $\bar{\beta}$, no matter the method employed. Restricting to ID inputs seems unpractical, as there is no established characterization of ID inputs. We propose an efficient alternative:
+Considering the full input space on the original DNN will thus produce high global upper bounds $\bar{\beta}$, no matter the method employed. Restricting to ID inputs seems unpractical, as there is no established characterization of ID inputs. We propose an efficient alternative:
 %To address this, we employ principal component analysis (PCA) \citet{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
 Extract the most important components of the ID dataset using an Auto-Encoder (AE), and project away the other components from an input before feeding it to the DNN. In practice, we train the AE on the ID dataset to obtain the ID latentspace.
 We then define the AE-DNN architecture as first using the AE-coder to reduce to the latent space, then use the decoder to go back to the full space (called projected input), and finally calling the DNN on the projected input, see Fig \ref{fig:AE-DNN}. 
