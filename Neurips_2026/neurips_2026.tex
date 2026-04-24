@@ -137,15 +137,15 @@
 	
 	
 	\section{Conclusion}
+	{\color{red}
+	In this paper, we tackled real-time (few ms) certification for DNN robustness, which has never been performed before at the best of our knowledge. The main idea we develop is to proceed in 2 steps: first, compute {\em once, offline} global robustness bounds $\bar{\beta}$ on the DNN. Then use a very simplistic look-up table based on $\bar{\beta}$ to perform the {\em online} certification.	We developped 2 original techniques of independent interest, necessary to obtain good enough offline bounds $\bar{\beta}$. 
 	
-	In this paper, we introduced a novel {\em Diff} MILP model for {\em global} verification questions, which is more accurate than the classical MILP model,
-	even when using optimizations, namely the ITNE model of \citet{lipshitz,ITNE}
-	and VHAGaR \citet{vhagar}; see Table \ref{table.classical}. 
-	We also explained how to support $L_1$-perturbations efficiently on top of classical $L_\infty$-perturbations.
-	Further, using simpler models, namely with the {\em 2b+1}
-	or the {\em 1b} models, abstracting away some features of the {\em Diff} model, even better bounds can be reached for the complex questions of global robustness with $L_1$ bounds (Tables 3, 5). 	
-	To further lower the bounds by $3-20$ times, we resort to PCA, concentrating the accuracy around the datasets, potentially being inaccurate for OOD inputs, over which the DNN is mostly inaccurate anyway, without sacrificing DNN accuracy over the dataset. 
-	This results into, to the best of our knowledge, the first {\em real-time} robustness certification reported for a DNN, with $\geq 70\%$ of robustness for an $L_1$-perturbation of $\geq 1$ for different datasets. Still, global verification is only at its beginning, and combining different methods is necessary to scale to more complex DNNs.
+	First, the LAE-DNN architecture, which allows to project away non ID-features, avoiding very large $\beta$ associated with non ID inputs (see Fig. \ref{fig3}). On vanilla DNN architecture, real-time certification would not be possible (lower bounds imply that), irrespective of the computational method used.
+	Second, we developped the new {\em Diff} MILP method which is more accurate for global robustness than the classical MILP encoding. This reuslts into $25\%$ lower bounds in average than the state of the art ITNE model \citet{ITNE}. Following \citet{diff}, the idea is to look at (small) {\em diff}erential variables $y$ natively rather than represent them as difference of 2 larger variables $x,x'$.
+	
+	This is a concept and feasibility paper, showing the feasibility 
+	of real-time certification. Many implementation details are out of the scope of the paper: testing many LAE algorithms, possibly non linear, non MILP techniques, more activation function, larger DNNs, etc.
+	}
 	
 	\newpage
 	
