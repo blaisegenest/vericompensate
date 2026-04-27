@@ -107,10 +107,39 @@ We did check that this worst-case found, displayed in Fig. \ref{fig5} and which 
 
 \section{Proof of Propositions}
 
-\setcounter{proposition}{3}
+\setcounter{proposition}{1}
+
+The proof of Proposition 1 is from the reference. In this section, we list the proofs of other proposition.
+
 
 \begin{proposition}
-	\label{Prop2}
+	If "certified robust" is returned over input $I$, 
+	then for all perturbed input $I'$ with  $|I - I'| \leq \varepsilon$,
+	the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$. % for perturbation $\varepsilon$.
+\end{proposition}
+\begin{proof}[Proof of Proposition 2] By definition, "certified robust" means that for any $D\neq C$, $b_D = 0$, which means that $\bar{\beta}^{\varepsilon}_{C,D} \leq x_C - x_D$. 
+	
+	Then by the definition, for the image $I'$ that $|I - I'|\leq \varepsilon$, we have $(x_C-x_D) - (x'_C-x'_D)\leq \bar{\beta}^{\varepsilon}_{C,D}$. Hence, $x'_C-x'_D\geq (x_C-x_D)-\bar{\beta}^{\varepsilon}_{C,D}> 0$. This argument works for all $D\neq C$, therefore the output for $I'$ is still $C$.
+\end{proof}
+
+
+
+\begin{proposition}
+	\label{Prop3}
+	For all DNN and all latent space dimension $n$, $\beta^\varepsilon_{C,D}(\text{LAE-DNN}) \leq \beta^{\varepsilon}_{C,D}(\text{DNN})$.
+\end{proposition}
+
+\begin{proof}[Proof of Proposition 3] Notice the fact that, for any input $I$ to the LAE-DNN, its the projection after encoding and decoding $I'$ is still a possible input for the original DNN, and the output is the same as the output of the original DNN given input I'.
+	
+Therefore the output space of LAE-DNN is a subset of the original DNN. Hence we have $\beta^\varepsilon_{C,D}(\text{LAE-DNN}) \leq \beta^{\varepsilon}_{C,D}(\text{DNN})$.
+	
+\end{proof}
+
+
+
+
+\begin{proposition}
+	\label{Prop4}
 	Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of the MILP program:
 	\begin{align*}
 		& \begin{aligned}
@@ -290,7 +319,7 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 \end{proof}
 
   \begin{proposition}
-	\label{prop3}
+	\label{prop5}
 	Given $y_i \in [-\gamma_i,\gamma_i]$, 
 	$\hat{y}_i$ is a solution of the MILP program :\begin{align*}
 		\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
