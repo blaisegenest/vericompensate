@@ -1,8 +1,113 @@
 
+\section{Pipe system}
 
-\section{Proof of Proposition 2 and 3}
 
-\setcounter{proposition}{1}
+Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of DNN-regressor due to small perturbations of the input.
+We consider here a pipe system and its DNN regressor from \cite{aiware},
+that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of these 3000 points.
+Compared to the classification tasks where the DNN is learned in a standard way and PCA is later applied to reduce the output dimension without compromising the accuracy, the DNN regressor has been learned on the reduced PCA basis directly, for both the high dimensional input and the high dimensional output (3000 dimensions each).
+
+
+
+\begin{figure*}[t!]
+	\centering
+	\includegraphics[scale=0.6]{PIPE.pdf} 
+	\vspace{-0.5cm}
+	\caption{Training and bound computation on the pipe use case. 
+		Two PCAs are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learned from reduced deformation input to reduced strain output.}
+	\vspace{-0.2cm}
+	\label{fig.PIPE}
+\end{figure*}	
+
+
+Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learned has 2 fully connected layers, 50 neurons each, learned as a surrogate model, with 10 reduced input and 26 reduced output.
+
+In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
+
+
+
+
+
+
+%\begin{table}[b!]
+%	\centering
+%	\begin{tabular}{||l|c|c|c||}\hline\hline
+%			model, nbr binary var &        Bound $\downarrow$ &  Sol. &      Worst-Case $\uparrow$ \\\hline \hline
+%		Classical, $100$ &    $.320$ &  $.320$ & $.017$ 
+%	    \\\hline
+%		ITNE, $100$ &    $.042$ &  $.037$ & $.022$
+%		\\ \hline
+%	    2v model, $100$ &    {\bf .040} &  $.037$ &  $.018$ 
+%	    \\\hline \hline
+%	     2v model New, $100$ &    {\bf .039} &  $.029$ &  $.020$ 
+%	    \\\hline \hline
+%	    Classical, $200$ &  .186  &  $.022$ & $.022$ 
+%	    \\\hline
+%		ITNE, $200$ &    $.045$ &  $.023$ & .023
+%	    \\\hline
+%		2v model, $200$&     {\bf .042} &  $.023$ &   .023 
+%	    \\\hline \hline
+%		\end{tabular}
+%	\caption{Comparison of the classical encoding, ITNE, and our "2v" model on the pipe system with a fixed timeout of 1000s, with either $100$, 
+%	    or the full $200$ binary variables.}
+%    \label{table.classical}
+%\end{table}
+
+
+
+
+
+
+%We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \citet{lipshitz,ITNE}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \citet{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
+%
+%
+%Table \ref{table.classical}, $100$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \citet{ITNE} recovers most but not all the bound of the "2v" model.
+%
+%Further, even using a fully accurate model with all $100$ variables encoded as binary variables, the "2v" model produces bounds $>4$ times better than the classical model, due to the internal Branch and Bound process to compute bounds, which uses linear relaxation. Again, 
+%Eq. (3) from \citet{ITNE} recovers most but not all the accuracy of the "2v" model.
+%Overall, the "2v" model produces better bounds, even with short time-outs, despite its higher complexity.
+
+
+
+
+
+
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{|c | c c c c c|} 
+		\hline
+		Pipe & Timeout & ITNE & {\em Diff} & {\em 2$b+$1} & {\em 1$b$}
+		\\\hline 
+		& 1000s & 0.045 & 0.042 & 0.041 & {\bf 0.036}
+		\\
+		Surrogate  & 14400s & 0.042 & 0.036 & {\bf 0.035} & 0.036
+		\\
+		LB = $.025$  & 72000s & 0.042 & 0.034 & {\bf 0.033} & 0.036
+		\\\hline
+	\end{tabular}
+	\caption{Comparison of upper bound (lower is better $\downarrow$) between {\em Diff}, {\em 2$b+$1}, {\em 1$b$} with ITNE on the pipe system with timeouts of 1000s, 14440s and 72000s.}
+	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
+\label{table.pipe}
+\end{table}
+
+
+\begin{figure*}[t!]
+\centering
+\includegraphics[scale=0.36]{deform.png} \hspace{0.1cm}
+\includegraphics[scale=0.36]{strain.png}
+\caption{2 slightly different deformations and their associated quite different strain as obtained by the {\em Diff} model with $200 $ binary variables.}
+\vspace{-0.2cm}
+\label{fig5}
+\end{figure*}	
+
+For the pipe system, we compare in Table \ref{table.pipe} the different models ITNE, {\em Diff}, {\em $2b+1$,$1b$} to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. 
+The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the {\em $2b+1$} model, slightly better than the bound $.0337$ found within the same time by the {\em Diff} model, and better than the bound found $.0356$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is significantly worse than even the {\em "$1b$"} with 1000s of timeout, at $.0416$ despite a very long time out. The certified lower bound is not too far, at $.025$.
+
+We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<0.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather correctly reflects the physical system.
+
+\section{Proof of Propositions}
+
+\setcounter{proposition}{3}
 
 \begin{proposition}
 	\label{Prop2}
@@ -28,7 +133,7 @@
 	encoding for $\hat{x}'_j=\ReLU(x'_j)$.
 \end{proposition}
 
-\begin{proof}[of Proposition 2]
+\begin{proof}[Proof of Proposition 4]
 	First, we list the inequalities: \begin{align*}
 		& \begin{aligned}
 			y_j + x'_j &\leq a\beta_j        &
@@ -181,7 +286,7 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 	\end{aligned}
 \end{align*}Therefore all 3 rest lines are implied by other inequalities.
 	
-	\qed
+
 \end{proof}
 
   \begin{proposition}
@@ -193,7 +298,7 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 	\end{align*} where $a \in \{0,1\}$ is a binary variable.
 \end{proposition}
 
-\begin{proof}[of Proposition 3] First, we list the inequalities: \begin{align*}
+\begin{proof}[Proof of Proposition 5] First, we list the inequalities: \begin{align*}
 		\hat{y}_i &\leq a \gamma_i               &\quad \hat{y}_i &\geq y_i - a \gamma_i \\
 		\hat{y}_i &\geq (a-1) \gamma_i           &\quad \hat{y}_i &\leq y_i + (1-a) \gamma_i
 	\end{align*}
@@ -214,32 +319,32 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 	\hat{y}_i &\leq y_i\leq \gamma_i               &\quad \hat{y}_i &\geq 0 \geq y_i - \gamma_i 
 	\end{align*}
 		
-Now we finish the proof. \qed
+Now we finish the proof. 
 \end{proof}
 
 
-\section{A table comparing PCA and FULL}
-
-
-
-	\begin{table}[b!]
-	\centering
-	\begin{tabular}{|c|c||c|c||c|}\hline
-		Network & Norm & Full& PCA &  Ratio \\\hline \hline 
-		MNIST-FC  & $L_1$ & 33.68 & 2.00  & {\bf 16.84$\times$}\\\hline
-		MNIST-FC  & $L_\infty$ & 180.73 & 66.11 & {\bf 2.73$\times$} \\\hline\hline
-		
-		MNIST-Conv1  & $L_1$ & 3.24 & 1.16 & {\bf 2.79$\times$}\\\hline
-		MNIST-Conv1  & $L_\infty$ & 1.96 & 0.83 & {\bf 2.36 $\times$}\\\hline\hline
-	
-		
-		FMNIST-Conv1  & $L_1$ & 6.37& 1.95   & {\bf 3.27$\times$}\\\hline
-		FMNIST-Conv1 & $L_\infty$ & 2.44& 1.36   & {\bf 1.79$\times$} \\\hline\hline
-		
-		CIFAR-10-Conv1  & $L_1$ &7.19 & 1.15 &  {\bf 6.25$\times$} \\\hline
-		CIFAR-10-Conv1  & $L_\infty$ & 4.33 & 1.24   & {\bf 3.49 $\times$} \\\hline\hline
-
-	\end{tabular}
-	\caption{
-	}
-\end{table}
+%\section{A table comparing PCA and FULL}
+%
+%
+%
+%	\begin{table}[b!]
+%	\centering
+%	\begin{tabular}{|c|c||c|c||c|}\hline
+%		Network & Norm & Full& PCA &  Ratio \\\hline \hline 
+%		MNIST-FC  & $L_1$ & 33.68 & 2.00  & {\bf 16.84$\times$}\\\hline
+%		MNIST-FC  & $L_\infty$ & 180.73 & 66.11 & {\bf 2.73$\times$} \\\hline\hline
+%		
+%		MNIST-Conv1  & $L_1$ & 3.24 & 1.16 & {\bf 2.79$\times$}\\\hline
+%		MNIST-Conv1  & $L_\infty$ & 1.96 & 0.83 & {\bf 2.36 $\times$}\\\hline\hline
+%	
+%		
+%		FMNIST-Conv1  & $L_1$ & 6.37& 1.95   & {\bf 3.27$\times$}\\\hline
+%		FMNIST-Conv1 & $L_\infty$ & 2.44& 1.36   & {\bf 1.79$\times$} \\\hline\hline
+%		
+%		CIFAR-10-Conv1  & $L_1$ &7.19 & 1.15 &  {\bf 6.25$\times$} \\\hline
+%		CIFAR-10-Conv1  & $L_\infty$ & 4.33 & 1.24   & {\bf 3.49 $\times$} \\\hline\hline
+%
+%	\end{tabular}
+%	\caption{
+%	}
+%\end{table}
