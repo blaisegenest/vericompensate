@@ -50,12 +50,12 @@
 
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090 (not used, Gurobi is CPU only). 
-	ITNE \citet{ITNE} was reimplemented using the same path as our code, except for the MILP variable $x_j$ using the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). The Julia VHAGaR code 
+	ITNE \cite{ITNE} was reimplemented using the same path as our code, except for the MILP variable $x_j$ using the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). The Julia VHAGaR code 
 	from \url{https://github.com/ananmkabaha/VHAGaR} was run on the same hardware.
 	
 	We consider 4 pretrained DNNs on 3 different datasets (MNIST, Fashion-MNIST, and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at 
 	\url{https://github.com/eth-sri/eran} ("5x100"). We also considered 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
-	from \citet{vhagar} ("conv1"). We will also consider 3 LAE-DNNs, see Section~\ref{s62}.
+	from \cite{vhagar} ("conv1"). We will also consider 3 LAE-DNNs, see Section~\ref{s62}.
 	%The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
 
 \iffalse	
@@ -89,13 +89,13 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 %    \label{table.classical}
 %\end{table}
 %
-%We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \citet{lipshitz ,ITNE}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \citet{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
+%We start by evaluating how accurate the 2v model is vs the classical encoding vs the interleaving twin-network encoding (ITNE) from \cite{lipshitz ,ITNE}, that we reimplement by considering the classical encoding plus the explicit constraints $\frac{x_i-x_i' - \gamma}{2} \leq \hat{x}_i-\hat{x}_i' \leq \frac{x_i-x_i' + \gamma}{2}$, corresponding to Eq. (3) of \cite{ITNE} (and also to our (\ref{eq.lpr})). We compare when half the ReLUs are approximated with the LP relaxation, and when all the ReLUs are encoded exactly. We consider the pipe surrogate as it is easier to verify, and set the time-out at 1000s for all models.
 %
 %
-%Table \ref{table.classical}, $100$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \citet{ITNE} recovers most but not all the bound of the "2v" model.
+%Table \ref{table.classical}, $100$, confirms that the LP relaxation of the classical model is extremely poor, with bounds $8$ times worse than using our "2v" model, when 50 variables use LP relaxation. Adding explicitly LP relaxation constraints of Eq. (3) from \cite{ITNE} recovers most but not all the bound of the "2v" model.
 %
 %Further, even using a fully accurate model with all $100$ variables encoded as binary variables, the "2v" model produces bounds $>4$ times better than the classical model, due to the internal Branch and Bound process to compute bounds, which uses linear relaxation. Again, 
-%Eq. (3) from \citet{ITNE} recovers most but not all the accuracy of the "2v" model.
+%Eq. (3) from \cite{ITNE} recovers most but not all the accuracy of the "2v" model.
 %Overall, the "2v" model produces better bounds, even with short time-outs, despite its higher complexity.
 
 
@@ -173,7 +173,7 @@ VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR conv
 
 \noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ is close to the lower bound $\underline{\alpha}$, with at most a $6\%$ gap. Using the {\em 1b} model is not useful, as its abstraction will lose more than $6\%$. 
 %That is why it is not reported in Table \ref{table.classical}. 
-VHAGaR computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with a gap $40-120\%$. Although we are using its benchmarks, VHAGaR methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \citet{vhagar}): ITNE is better, with gaps from $9-17\%$.
+VHAGaR computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with a gap $40-120\%$. Although we are using its benchmarks, VHAGaR methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
 Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, {\em 2b+1} is more accurate for shorter timeout, and {\em Diff} is more accurate when there is sufficient time, as expected. 
 Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower than both {\em Diff} and {\em 2b+1} in every test.
 
@@ -235,7 +235,7 @@ We then turn to testing with $L_1$ perturbations and comparing between DNNs and 
 to test a different architecture than convolutional Networks.
 
 Recall that LAE-DNNs are generated following the process described in Section 5: for each latent space dimension, we report in Table \ref{table.LAE} the accuracy loss from using LAE-DNN vs using the original DNN. {\color{red} Concerning the LAE algorithm, we experimented with PCA 
-\citet{Paco}}.
+\cite{Paco}}.
 We set the dimension at the minimal dimension that results in at most 1$\%$ 
 loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively, i.e. $>35$x dimension reduction.
 
@@ -429,7 +429,7 @@ With that, we can certify at least $70\%$ of the images for all 3 LAE-DNNs for a
 
 \iffalse
 To remove improbable images and limit the space of search, 
-we consider a LAE model order reduction \citet{Paco}: We reduced to 20 dimensions, because the MNIST $100 \times 5$ DNN considered, once run on images obtained from projecting to the 20 dimension space and projected back to the full dimension space displays the same accuracy of $97$\% as the DNN on the original images. This means that considering the reduced 20 dimensional space
+we consider a LAE model order reduction \cite{Paco}: We reduced to 20 dimensions, because the MNIST $100 \times 5$ DNN considered, once run on images obtained from projecting to the 20 dimension space and projected back to the full dimension space displays the same accuracy of $97$\% as the DNN on the original images. This means that considering the reduced 20 dimensional space
 does not incur any loss in accuracy, which is the only thing which matters. On this reduced space, bounds obtained are much more precise, and one can certify in real-time robustness of images.
 
 

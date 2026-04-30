@@ -2,7 +2,7 @@
 \label{s.notation}
 
 	In this paper, we will use lower case Latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
-	capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \citet{crown}.
+	capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
 	To simplify the notations, we restrict the presentation to feed-forward, 
 	fully connected ReLU Deep Neural Networks (DNN for short), where the activation function is $\ReLU: \mathbb{R} \rightarrow \mathbb{R}$ with
 	$\ReLU(x)=x$ for $x \geq 0$ and $\ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
@@ -140,7 +140,7 @@
 	
 	\textbf{Mixed Integer Linear Programming (MILP)} can encode ReLU DNNs faithfully:
 	For an {\em unstable} neuron $n$, that is, with values 
-    $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one binary/integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \citet{MILP}:
+    $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one binary/integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
 	
 	\vspace{-0.4cm}
 	\begin{equation} 
@@ -149,13 +149,13 @@
 	\end{equation}
 	
 \begin{proposition}
-\citet{MILP}
+\cite{MILP}
 \label{Prop1}
 A solution $x,\hat{x},a$  of the above MILP program (\ref{eq11}) satisfies $\hat{x} = \ReLU(x)$,
 and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 \end{proposition}
 
-	%For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \citet{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help get more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables, and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
+	%For all $x \in [\LB(n),\UB(n)] \setminus 0$, there exists a unique solution $(a,\hat{x})$ that meets these constraints, with $\hat{x}=\ReLU(x)$ \cite{MILP}. The value of $a$ is 0 if $x < 0$, and 1 if $x>0$, and can be either if $x=0$. This encoding approach can be applied to every (unstable) ReLU node, and optimizing its value can help get more accurate bounds. However, for networks with hundreds of {\em unstable} nodes, the resulting MILP formulation will contain numerous integer variables, and generally bounds obtained will not be accurate, even using powerful commercial solvers such as Gurobi.
 	
     \iffalse
 	The global structure is as follows, using Gurobi as an example:
@@ -168,10 +168,10 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
     
     \fi
     
-	%This exact MILP encoding is often too computationally intensive, as the worst-case complexity of MILP is exponential in the number of integer variables \citet{DivideAndSlide}.
+	%This exact MILP encoding is often too computationally intensive, as the worst-case complexity of MILP is exponential in the number of integer variables \cite{DivideAndSlide}.
     
     \paragraph{LP relaxation:}
-	MILP instances can be linearly relaxed into LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. Since solving LP instances takes polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds \citet{DivideAndSlide}. This approach is termed the {\em LP relaxation}.
+	MILP instances can be linearly relaxed into LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. Since solving LP instances takes polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds \cite{DivideAndSlide}. This approach is termed the {\em LP relaxation}.
     % We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof.
 	
 	
@@ -179,7 +179,7 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 	\iffalse
 	Intermediate between these 2 extreme cases, there is {\em partial MILP} 
     (pMILP for short) to get trade-offs between accuracy and runtime
-	\citet{DivideAndSlide}:
+	\cite{DivideAndSlide}:
 	Let $X$ be a subset of the set of unstable neurons, and $n$ a neuron for which we want to compute upper and lower bounds on values: the pMILP based on $X$ to compute neuron $n$ uses the MILP encoding (\ref{eq11}), where variable $a$ is:
 	\begin{itemize}
 		\item binary for neurons in $X$ (exact encoding of the ReLU),
@@ -253,12 +253,12 @@ In this paper, we consider the {\em global} verification problem, where we optim
     \item $x_j,\hat{x}_j$, for neurons $j$ with input image $I$; $x'_j,\hat{x}'_j$, for neurons $j$ with input the perturbed $I'$, 
     \item  $y_j = x_j - x'_j$ and 
 	$\hat{y}_j = \hat{x}_j - \hat{x}'_j$ 
-	the {\em diff variable} proposed by \citet{diff}. 
+	the {\em diff variable} proposed by \cite{diff}. 
 	%({\em not} $\hat{y}_j 	 = \ReLU(x_j-x'_j)$).
-	%, 	similar to the Interleaving Twin-Network Encoding (ITNE) model of \citet{lipshitz,ITNE}. 
+	%, 	similar to the Interleaving Twin-Network Encoding (ITNE) model of \cite{lipshitz,ITNE}. 
     \end{itemize}
 
-	The classical encoding \citet{classical} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
+	The classical encoding \cite{classical} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
 	resp. $a'_j$ for the encoding of $\hat{x}_j=\ReLU(x_j)$,
 	resp. $\hat{x}'_j=\ReLU(x'_j)$, for all neurons $j$.
 	Here are the {\bf set of constraints} $\mathcal{M}^{classical}$ to encode the global robustness problem with $L_\infty \leq \varepsilon$ norm:

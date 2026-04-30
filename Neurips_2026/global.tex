@@ -56,16 +56,16 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 	
 \subsection{The classical encoding of ReLUs for global robustness}
 	
-    The classical encoding is used (with variants) by VHAGaR \citet{vhagar} and ITNE \citet{ITNE}. For each neuron $j$, variables $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ are considered. For each ReLU $j$, a binary variable $a_j$ and related constraints from the classical encoding (\ref{eq11}) \citet{MILP} are used to set $\hat{x}_j$, and an {\em independent} binary variable $a'_j$ and related constraints from the classical encoding are used to set $\hat{x}'_j$. We call this encoding $\mathcal{M}^{classical}$.
+    The classical encoding is used (with variants) by VHAGaR \cite{vhagar} and ITNE \cite{ITNE}. For each neuron $j$, variables $x_j,\hat{x}_j$ and $x'_j,\hat{x}'_j$ are considered. For each ReLU $j$, a binary variable $a_j$ and related constraints from the classical encoding (\ref{eq11}) \cite{MILP} are used to set $\hat{x}_j$, and an {\em independent} binary variable $a'_j$ and related constraints from the classical encoding are used to set $\hat{x}'_j$. We call this encoding $\mathcal{M}^{classical}$.
 	
 	The key values to compute are the {\em diff}erential values of $y_j$ between $x_j$ and $x'_j$. Most of the values of $y_j$ are likely small because they are inherited from a small perturbation between $I$ and $I'$.
-	However, $\mathcal{M}^{classical}$ only maintains $x_j$ and $x'_j$ separately, and both can take large values. This results into poor evaluation of $y_j$. This problem was first raised and experimentally demonstrated in \citet{diff}.
+	However, $\mathcal{M}^{classical}$ only maintains $x_j$ and $x'_j$ separately, and both can take large values. This results into poor evaluation of $y_j$. This problem was first raised and experimentally demonstrated in \cite{diff}.
 
 	Similarly, the standard way to make the MILP model more efficient is to linearly relax some of the binary variables (see Section~\ref{s.notation}). The problem is that the LP relaxation of $\mathcal{M}^{classical}$ is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers. 
 	%to provide bounds for each branch. 
-	So even without explicit LP relaxation, the classical MILP encoding of \citet{MILP}, while asymptotically accurate, will result in looser bounds in practice. 
+	So even without explicit LP relaxation, the classical MILP encoding of \cite{MILP}, while asymptotically accurate, will result in looser bounds in practice. 
 	
-	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \citet{ITNE}, see also Section \ref{s.diff}), while VHAGaR reduces the number of binary variables depending on the perturbation used \citet{vhagar}.
+	To improve this, ITNE adds some linear constraints to the model (Eq. (3) in \cite{ITNE}, see also Section \ref{s.diff}), while VHAGaR reduces the number of binary variables depending on the perturbation used \cite{vhagar}.
 	
 	
 	%We will compare the different methods in Table \ref{table.classical}.
@@ -85,7 +85,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 \subsection{The exact {\em Diff} MILP encoding for global robustness}
 	\label{s.diff}
 
-We now present our main methodological contribution, the {\em Diff} MILP encoding. It considers variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em Diff variables} \citet{diff}, with 
+We now present our main methodological contribution, the {\em Diff} MILP encoding. It considers variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em Diff variables} \cite{diff}, with 
 	$y_j = x_j - x'_j$ and $\hat{y}_j= \ReLU({x}_j) - \ReLU(x'_j)$. 
 	Note that, since the image $I$ and the deformation $I'$ have perfectly symmetrical roles and assuming that $\gamma_j$ is an {\em upper} bound of $y_j$, then $-\gamma_j$ is a {\em lower} bound for $y_j$.
 
@@ -94,11 +94,11 @@ We now present our main methodological contribution, the {\em Diff} MILP encodin
 	the MILP constraints from the classical encoding (\ref{eq11}), including
 	one binary variable $a'_j$, similar to ITNE.
     However, unlike ITNE, 
-	%Interleaving Twin-Network Encoding (ITNE) of \citet{lipshitz,ITNE} which relies on the classical MILP encoding (\ref{eq11}) \citet{MILP} to compute $\hat{y}_j$ from the difference between 
+	%Interleaving Twin-Network Encoding (ITNE) of \cite{lipshitz,ITNE} which relies on the classical MILP encoding (\ref{eq11}) \cite{MILP} to compute $\hat{y}_j$ from the difference between 
 	%$\ReLU(x'_j + y_j) = \ReLU(x_j) = \hat{x}_j$
 	%and $\hat{x}'_j$, 
 	the {\em Diff} MILP model encodes the equation for $\hat{y}_j$ directly, without resorting to the classical encoding from $x_j(=y_j+x'_j)$ to 
-	$\ReLU(x_j)$ and using $\hat{y}_j= \ReLU(x_j) - \ReLU(x'_j)$, which is correct but does not encode explicitly that $\hat{y}_j$ is small when $y_j$ is small, since both ReLUs can be large and they are encoded independently, see also \citet{diff}. Instead, we study the function from $(x'_j,y_j)$ to $\hat{y}_j$, and encode it into the novel MILP {\em Diff} model.
+	$\ReLU(x_j)$ and using $\hat{y}_j= \ReLU(x_j) - \ReLU(x'_j)$, which is correct but does not encode explicitly that $\hat{y}_j$ is small when $y_j$ is small, since both ReLUs can be large and they are encoded independently, see also \cite{diff}. Instead, we study the function from $(x'_j,y_j)$ to $\hat{y}_j$, and encode it into the novel MILP {\em Diff} model.
     
 
 
@@ -229,7 +229,7 @@ The LP relaxation of ${\cal M}^{classical}$ will miss this totally, while the LP
 \frac{y_j-\gamma_j}{2} \leq \hat{y}_j \leq \frac{y_j+\gamma_j}{2}
 \end{align}
 %which is not the case of ${\cal M}^{classical}$. 
-This is a simplification (due to symmetry) of the additional linear constraint (3) of \citet{ITNE}.
+This is a simplification (due to symmetry) of the additional linear constraint (3) of \cite{ITNE}.
 % used explicitly in ITNE.
 	
 
@@ -281,7 +281,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 
 	As explained in the previous section, the standard way to make the model more efficient is to rely on linearly relaxing some of the binary variables into linear variables.
     The problem is that the LP relaxation of this classical encoding is extremely inaccurate, as variables $x_j,x'_j$ dependencies are due solely on the function definition through common ancestor variables in previous layers - as this is approximated with LP, most of the dependencies will be lost. On top of being an issue with partial MILP models, LP relaxation is also used during the Branch and Bound process internal to MILP solvers to provide bounds for each branch. So even when all variables are binary, the classical MILP encoding 
-	of \citet{MILP}, while fully accurate, will likely result in looser bounds as well. Notice that this was already witnessed in \citet{ITNE}, and some additional constraints were added to make the classical model more accurate: the {\em diff variables} were used as specific constraints added to the classical encoding (Eq. (3) in \citet{ITNE}). 
+	of \cite{MILP}, while fully accurate, will likely result in looser bounds as well. Notice that this was already witnessed in \cite{ITNE}, and some additional constraints were added to make the classical model more accurate: the {\em diff variables} were used as specific constraints added to the classical encoding (Eq. (3) in \cite{ITNE}). 
 	%We will compare the different methods in Table \ref{table.classical}.
 
 	\fi
@@ -370,7 +370,7 @@ the range of values $\hat{y}_j$ can take (see Figure in Appendix) corresponds to
 	We can easily check that the LP relaxation of this MILP program,
 	depicted in broken lines on Fig.~\ref{fig.1v}, is exactly (\ref{eq.lpr}).
 	As the {\em 1b} model is a projection of the {\em Diff} model and also of the {\em 2b+1} models, 	the LP relaxations of the {\em Diff} and the {\em 2b+1} models contain (\ref{eq.lpr}).  Proof of Proposition~\ref{prop3} is in the appendix.
-	%Notice that (\ref{eq.lpr}) corresponds to Eq. (3) in \citet{ITNE}, 
+	%Notice that (\ref{eq.lpr}) corresponds to Eq. (3) in \cite{ITNE}, 
 	%which is added explicitly to the classical model in their ITNE model.
 	\fi
 	

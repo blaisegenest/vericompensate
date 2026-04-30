@@ -32,8 +32,8 @@ as well as a lower bound ("solution") $\underline{\beta}^{\varepsilon}_{C,D}$.
 \fi
 
 \iffalse
-Related bounds were proposed in \citet{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. 
-Namely, VHAGaR \citet{vhagar} defines $\alpha^{\varepsilon}_{C,D}$, computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$:
+Related bounds were proposed in \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. 
+Namely, VHAGaR \cite{vhagar} defines $\alpha^{\varepsilon}_{C,D}$, computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$:
 \begin{align*}
 	\alpha^{\varepsilon}_{C,D} &= \max_{|I-I'| \leq \varepsilon} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
 \end{align*}
