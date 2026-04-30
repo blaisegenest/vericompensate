@@ -1,5 +1,12 @@
 \section{(Linear) Auto-Encoders projecting to  In-Distribution subspace}
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{lae-pipeline.pdf}
+    \caption{LAE pipeline reducing the latent dimensionality of a DNN input space.}
+    \label{fig:AE-DNN}
+\end{figure}
+
 {\color{red}
 Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs not In (training) Distribution (ID) \cite{OOD}. Such samples display large value for 
 $x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left) for MNIST.

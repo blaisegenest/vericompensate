@@ -41,7 +41,7 @@ Our main contributions address the challenge of computing {\em global bounds} $\
 which implies large lower bounds (see Section \ref{sec.exp})
 on ${\beta}^\varepsilon_{C,D}$, meaning that {\em no} techniques 
 can ever produce manageable upper bound $\bar{\beta}^\varepsilon_{C,D}$.  While {\em characterizing} ID inputs to restrict to them is impractical, we propose an efficient alternative to project inputs to an ID subspace: 
-learn from ID samples an autoencoder (AE), and then use the AE-DNN architecture \cite{ae} to first project the input on the small latent space.%, which aligns well with ID samples.
+learn from ID samples an autoencoder (AE), and then use the AE-DNN architecture (Fig.~\ref{fig:AE-DNN}) to first project the input on the small latent space.%, which aligns well with ID samples.
 The size of the latent space is selected so that the AE-DNN accuracy is close to the accuracy of the original DNN.
 %, meaning that the ID directions selected are sufficient for the DNN task.
  We experimented with Linear AE (LAE): the encoding may not be as efficient as non-Linear AE, but obtaining the bound is computationally lighter. This results to latent spaces $>35$x smaller than full spaces over 3 datasets, and LAE-DNNs bounds $\bar{\beta}^\varepsilon_{C,D}$ computed are $3-15$x smaller than for DNNs.}
