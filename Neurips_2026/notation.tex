@@ -250,7 +250,7 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 	\end{proposition}
 	\fi
 
-	\paragraph{MILP constaints for global robustness:}
+\section{Classical MILP encoding for global robustness and L1-perturbations}
 
 In this paper, we consider the {\em global} verification problem, where we optimize over all images $I$ and perturbations $I'$ of $I$ with $|I-I'| \leq \varepsilon$. We will consider:
     \begin{itemize}
@@ -265,15 +265,40 @@ In this paper, we consider the {\em global} verification problem, where we optim
 	The classical encoding \cite{vhagar} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
 	resp. $a'_j$ for the encoding of $\hat{x}_j=\ReLU(x_j)$,
 	resp. $\hat{x}'_j=\ReLU(x'_j)$, for all neurons $j$.
-	Here are the {\bf set of constraints} $\mathcal{M}^{classical}$ to encode the global robustness problem with $L_\infty \leq \varepsilon$ norm:
+	Here are the {\bf set of constraints} $\mathcal{M}^{classical}$ to encode the global robustness problem with $L_\infty$-perturbations $ \leq \varepsilon$:
 
 	\begin{itemize}
-	   \item for all {\em input} neuron $j$ (in layer 0), $-\varepsilon \leq x_j-x'_j \leq \varepsilon$ [$L_\infty$ norm]
+	   \item for all {\em input} neuron $j$ (in layer 0), $-\varepsilon \leq x_j-x'_j \leq \varepsilon$ \quad \, \quad  [$L_\infty$-perturbation $\leq \varepsilon$],
 	   \item for all neuron $j$ from layer $i\geq 1$, 
 	   $x_j = [\boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}]_j+ \vb^i_j$ and 
-	 $x'_j = [\boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}'^{i-1}]_j+ \vb^i_j$.
+	 $x'_j = [\boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}'^{i-1}]_j+ \vb^i_j$,
 	   \item for all neuron $j$, 
 	   $\hat{x}_j$, resp $\hat{x}'_j$, uses eq. (1) with integer variable $a_j$, resp. $a'_j$.
 	\end{itemize}
-    
-The objective function of the MILP program is defined in the next section.
+
+	To encode $L_1$-perturbations, we propose the following new encoding {\em without} extra binary variables. 
+	We use $k$ (= number of input neurons) additional {\em linear} variables 
+	$(A_j)_{j \leq k}$, with constraints:
+
+\label{s.L1}
+
+
+	\begin{enumerate}
+\item for all {\em input} neuron $j$ (in layer 0), 
+	$A_j \geq x_j - x'_j $ and $A_j \geq x'_j - x_j$,
+
+\item $\sum_{j\leq k} A_j \leq \varepsilon$ 
+\quad \, \quad [$L_1$-perturbations $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$].
+	\end{enumerate}
+
+
+
+\begin{proposition}
+	\label{prop.L1}
+ Constraints 1 and 2 above are equivalent with $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$.
+\end{proposition}
+
+
+The proof or Prop. \ref{prop.L1} can be found in Appendix 
+\ref{app.L1}. 
+It is crucial that no exra binary variables are used, as the complexity of solving an MILP problem is bounded by $2^{bin} \times LP$ \cite{DivideAndSlide}, where $bin$ is the number of binary variables and $LP$ is the P-time complexity of solving the LP problem. The objective function of the MILP program is defined in the next section.

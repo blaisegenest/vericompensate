@@ -1,7 +1,7 @@
 \section{Diff MILP Models for Global Robustness}
 
-\paragraph{Encoding $L_1$-perturbations:}
-\label{s.L1}
+%\paragraph{Encoding $L_1$-perturbations:}
+
 
 %The standard encoding of $L_\infty$-perturbations bounded by $\varepsilon$ uses
 %linear constraint $x_j-\varepsilon \leq x'_j \leq x_j+\varepsilon$ 
@@ -9,15 +9,6 @@
 
 %\smallskip
 
-Let $n$ be the number of input neurons. 
-To encode $L_1$-perturbations, 
-we use $n$ additional variables $(A_j)_{j \leq n}$ that are linear only. We have $\sum_{j\leq n} |x_j-x'_j| \leq \varepsilon$ iff
-
-\begin{align}\label{L1constraint}\begin{cases}
-	A_j \geq x_j - x'_j &\text{ for all }j \leq n\\ 
-	A_j \geq x'_j - x_j &\text{ for all }j \leq n\\
-	\sum_{j\leq n} A_j \leq \varepsilon	&\end{cases}
-\end{align}
 
 \iffalse
 \begin{proof}
