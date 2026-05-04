@@ -234,10 +234,11 @@ Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower t
 We then turn to testing with $L_1$ perturbations and comparing between DNNs and their LAE-DNN versions (which are not supported in VHAGaR). Here, we consider MNIST-FC, which has a higher accuracy than MNIST-Conv, 
 to test a different architecture than convolutional Networks.
 
-Recall that LAE-DNNs are generated following the process described in Section 5: for each latent space dimension, we report in Table \ref{table.LAE} the accuracy loss from using LAE-DNN vs using the original DNN. {\color{red} Concerning the LAE algorithm, we experimented with PCA 
-\cite{Paco}}.
+Recall that LAE-DNNs are generated following the process described in Section 5: for each latent space dimension, we report in Table \ref{table.LAE} the accuracy loss from using LAE-DNN vs using the original DNN. 
+Concerning the LAE algorithm, we experimented with PCA 
+\cite{Paco}.
 We set the dimension at the minimal dimension that results in at most 1$\%$ 
-loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively, i.e. $>35$x dimension reduction.
+loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR10-Conv respectively, i.e. $>35$x dimension reduction in every case.
 
 
 \begin{table}[b!]
@@ -317,7 +318,7 @@ We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{
 
 \noindent {\bf Discussion:} Compared with $L_\infty$ (Table~\ref{table.classical}), the gap between the upper bound $\bar{\beta}$ and 
 the lower bound $\underline{\beta}$ is much larger with 
-$L_1$ perturbations, from 1.5 to 600. Using 
+$L_1$ perturbations, from $1.5$x to $600$x. Using 
 the faster {\em 1b} model now becomes pertinent. In half of the cases, {\em 1b} actually produces the best results. When the timeout is large enough compared to the complexity of the model, 2$b+$1 and sometimes {\em Diff} provide better bounds. ITNE is significantly worse, producing $25\%$ worse bounds 
 $\bar{\beta}$ on average than {\em Best}.
 
