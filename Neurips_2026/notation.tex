@@ -276,7 +276,7 @@ In this paper, we consider the {\em global} verification problem, where we optim
 	   $\hat{x}_j$, resp $\hat{x}'_j$, uses eq. (1) with integer variable $a_j$, resp. $a'_j$.
 	\end{itemize}
 
-	To encode $L_1$-perturbations, we propose the following new encoding {\em without} extra binary variables. 
+	To encode an $L_1$-perturbation, we propose the following new encoding {\em without} extra binary variables. 
 	We use $k$ (= number of input neurons) additional {\em linear} variables 
 	$(A_j)_{j \leq k}$, with constraints:
 
@@ -288,7 +288,7 @@ In this paper, we consider the {\em global} verification problem, where we optim
 	$A_j \geq x_j - x'_j $ and $A_j \geq x'_j - x_j$,
 
 \item $\sum_{j\leq k} A_j \leq \varepsilon$ 
-\quad \, \quad [$L_1$-perturbations $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$].
+\quad \, \quad [$L_1$-perturbation $\leq \varepsilon$].
 	\end{enumerate}
 
 
