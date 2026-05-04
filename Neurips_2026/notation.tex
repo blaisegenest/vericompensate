@@ -5,7 +5,8 @@
 	capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
 	To simplify the notations, we restrict the presentation to feed-forward, 
 	fully connected ReLU Deep Neural Networks (DNN for short), where the activation function is $\ReLU: \mathbb{R} \rightarrow \mathbb{R}$ with
-	$\ReLU(x)=x$ for $x \geq 0$ and $\ReLU(x)=0$ for $x \leq 0$, which we extend componentwise on vectors.
+	$\ReLU(x)=x$ for $x \geq 0$ and $\ReLU(x)=0$ for $x \leq 0$.
+	% which we extend componentwise on vectors.
 	
 	%In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
 	
@@ -19,12 +20,14 @@
 	$i \in \{1, \ldots, \ell-1\}$,
 	$d_0$ the input dimension, and $d_\ell$ the output dimension.
 	Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
-	denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with
+	denoting $\hat{\boldsymbol{z}}^{0}={\boldsymbol{z}}^0$, we define inductively the value vectors $\boldsymbol{z}^i,\hat{\vz}^i$ at layer $1 \leq i \leq \ell$ with:
 	\begin{align*}
 		\boldsymbol{z}^{i} = \boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}+ \vb^i \qquad \, \qquad
 		\hat{\boldsymbol{z}}^{i} = \ReLU({\boldsymbol{z}}^i).
 	\end{align*} 
 	
+\vspace{-0.4cm}
+
 	The vector $\hat{\boldsymbol{z}}$ is called post-activation values, $\boldsymbol{z}$ pre-activation values, 
 	and $\boldsymbol{z}^{i}_j$ is used to denote the $j$-th neuron in the $i$-th layer. 
 	For $\boldsymbol{x}=\vz^0$ the (vector of) input, we denote by $f(\boldsymbol{x})=\vz^\ell$ the output. %Finally, pre- and post-activation neurons are called \emph{nodes}.
@@ -138,9 +141,10 @@
 	
 
 	
-	\textbf{Mixed Integer Linear Programming (MILP)} can encode ReLU DNNs faithfully:
+	\textbf{Mixed Integer Linear Programming (MILP)} can encode ReLU DNNs
+faithfully	(extentions to other activation functions e.g. maxpool in \cite{DivideAndSlide}):
 	For an {\em unstable} neuron $n$, that is, with values 
-    $x \in [\LB(n),\UB(n)]$ with $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula with one binary/integer variable $a$ valued in $\{0,1\}$, using constants $\UB(n),\LB(n)$ with 4 constraints \cite{MILP}:
+    $x \in [\LB(n),\UB(n)]$ with constants $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula \cite{MILP} with one binary/integer variable $a$ valued in $\{0,1\}$, using constraints:
 	
 	\vspace{-0.4cm}
 	\begin{equation} 
@@ -258,7 +262,7 @@ In this paper, we consider the {\em global} verification problem, where we optim
 	%, 	similar to the Interleaving Twin-Network Encoding (ITNE) model of \cite{lipshitz,ITNE}. 
     \end{itemize}
 
-	The classical encoding \cite{classical} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
+	The classical encoding \cite{vhagar} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
 	resp. $a'_j$ for the encoding of $\hat{x}_j=\ReLU(x_j)$,
 	resp. $\hat{x}'_j=\ReLU(x'_j)$, for all neurons $j$.
 	Here are the {\bf set of constraints} $\mathcal{M}^{classical}$ to encode the global robustness problem with $L_\infty \leq \varepsilon$ norm:
