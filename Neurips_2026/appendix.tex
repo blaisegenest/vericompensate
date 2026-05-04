@@ -160,7 +160,38 @@ Therefore the output space of LAE-DNN is a subset of the original DNN. Hence we 
 
 \section{Proof of Proposition 4 and 5}
 
-
+\begin{figure}[b!]
+	\centering
+	%\hspace*{10ex}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel={$y_i$},
+			ylabel={$\hat{y}_i$},
+			xmin=-2, xmax=2,
+			ymin=-2, ymax=2,
+			axis lines=center,
+			samples=100, 
+			unit vector ratio=1 1 1, scale=1, xtick   = {-2,2},
+			xticklabels = {$-\gamma_i$,$\gamma_i$},
+			yticklabels = {},
+			]
+			\addplot[blue, thick, fill=blue, fill opacity=0.4] {x} \closedcycle; 
+			\addplot[blue, thick] {0}; 
+			
+			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(-2,-2)};
+			\node[label={above:$(-\gamma_j,-\gamma_j)$}] at (axis cs: -1.24, -2.2) {};
+			
+			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(2,2)};
+			\node[label={above:$(\gamma_j,\gamma_j)$}] at (axis cs: 1.4, 1.65) {};
+			\addplot[dashed, thick, blue] coordinates {(-2,-2) (2,0)};
+			\addplot[dashed, thick, blue] coordinates {(-2,0) (2,2)};
+			\node[label={above:\scriptsize $\text{LP\ relaxation}$}] at (axis cs: -0.7, 0.8) {};
+			\node[label={above:\scriptsize $\text{LP\ relaxation}$}] at (axis cs: 0.5, -1.4) {};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Possible values of $\hat{y}_j$ depending on $y_j$ for the {\em 1b} model.}
+	\label{fig.1v}
+\end{figure}
 
 \begin{proposition}
 	\label{Prop4}
