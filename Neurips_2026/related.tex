@@ -6,7 +6,7 @@ The paper \cite{diff} did not consider MILP encoding.
 Some works \cite{Leino,Zhang22a,Sun22,Chen21,REGLO} focus on training a network to be, rather than proving the DNN is, globally robust.
 %A key aspect of global robustness involves ensuring that analyzed data is both semantically meaningful and in-distribution (ID). 
 Our approach to obtain DNN with better global robustness bounds uses (linear) auto encoders~\cite{hinton2006reducing}.
-The (L)AE-DNN architectures (Fig.~\ref{fig:AE-DNN}) projects the input on a dimensionaly reduced space to filter non-ID features 
+The (L)AE-DNN architectures (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) projects the input on a dimensionaly reduced space to filter non-ID features 
 \cite{aggarwalOutlierAnalysis2017}.
 
 Some works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g., using probabilistic guarantees \cite{Levy23,Mangal19}.

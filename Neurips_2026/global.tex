@@ -83,13 +83,14 @@ We now present our main methodological contribution, the {\em Diff} MILP encodin
 
 	To encode the equation describing $\hat{x}'_j$, we use 
 	the MILP constraints from the classical encoding (\ref{eq11}), including
-	one binary variable $a'_j$, similar to ITNE.
+	one binary variable $a'_j$, similar to ITNE \cite{ITNE}.
     However, unlike ITNE, 
 	%Interleaving Twin-Network Encoding (ITNE) of \cite{lipshitz,ITNE} which relies on the classical MILP encoding (\ref{eq11}) \cite{MILP} to compute $\hat{y}_j$ from the difference between 
 	%$\ReLU(x'_j + y_j) = \ReLU(x_j) = \hat{x}_j$
 	%and $\hat{x}'_j$, 
 	the {\em Diff} MILP model encodes the equation for $\hat{y}_j$ directly, without resorting to the classical encoding from $x_j(=y_j+x'_j)$ to 
-	$\ReLU(x_j)$ and using $\hat{y}_j= \ReLU(x_j) - \ReLU(x'_j)$, which is correct but does not encode explicitly that $\hat{y}_j$ is small when $y_j$ is small, since both ReLUs can be large and they are encoded independently, see also \cite{diff}. Instead, we study the function from $(x'_j,y_j)$ to $\hat{y}_j$, and encode it into the novel MILP {\em Diff} model.
+	$\ReLU(x_j)$ and using $\hat{y}_j= \ReLU(x_j) - \ReLU(x'_j)$, which is correct but does not encode explicitly that $\hat{y}_j$ is small when $y_j$ is small, since both ReLUs can be large and they are encoded independently, see also \cite{diff}. Instead, we study the function from $(x'_j,y_j)$ to $\hat{y}_j$, and encode it as the new %to the novel MILP 
+	{\em Diff} model.
     
 
 
@@ -151,18 +152,18 @@ We now present our main methodological contribution, the {\em Diff} MILP encodin
 
 We first display on Figure \ref{fig.2v} the function $f(x'_j,y_j)=\hat{y}_j$ for $y_j \in [- \gamma_j, \gamma_j]$. 
 	When $x'_j \leq 0$ and $x_j = x'_j+y_j \leq 0$, we have $\hat{y}_j = \ReLU(x_j) - \ReLU(x'_j) = 0-0=0$. For $x'_j \geq 0$ and $x_j = x'_j+y_j \geq 0$, we have $\hat{y}_j= \ReLU(x_j)-\ReLU(x'_j)=x_j - x'_j = y_j$. 
-    Between these two linear planes, we have two more presenting intermediate cases, so 4 linear planes in total.
+    Between these two linear planes, we have two more plans presenting intermediate cases, so 4 linear planes in total.
 	
 
 Recall first that $a'_j$ is the binary variable used in the 
- classical MILP encoding for $\hat{x}'_j=\ReLU(x'_j)$.
-We set $a'=a'_j$ (whose value is already settled, see Proposition \ref{Prop1}),
-and use it in the MILP encoding of $\hat{y}_j = \ReLU(x_j)-\ReLU(x'_j)$:
+classical MILP encoding for $\hat{x}'_j=\ReLU(x'_j)$.
+Its value $a'=a'_j$ is settled by Prop.~\ref{Prop1},
+reused in the MILP encoding of $\hat{y}_j = \ReLU(x_j)-\ReLU(x'_j)$:
 
 
 \begin{proposition}
     \label{Prop2}
-Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$ and $\alpha_j<0<\beta_j$, we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of the MILP program:
+Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$ with  $\alpha_j<0<\beta_j$, we have that $\hat{y}_j = \ReLU(x_j=y_j + x'_j) - \ReLU(x'_j)$ is the solution of the MILP program:
 	\begin{align*}
 		& \begin{aligned}
 			y_j + x'_j &\leq a\beta_j        &
@@ -180,11 +181,11 @@ Assuming $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_
 		\end{aligned}
 	\end{align*} 
     where $a,a' \in \{0,1\}$ are binary variables, 
-    and $a'$ is shared with the classical MILP
-    encoding for $\hat{x}'_j=\ReLU(x'_j)$.
+    $a'$ being shared with the classical MILP
+    encoding for $\hat{x}'_j$.
 \end{proposition}
 
-To encode both $\hat{y}_j$ and $\hat{x}'_j$, the {\em Diff} encoding needs 2 binary variables, similar to the classical encoding.
+To encode both $\hat{y}_j$ and $\hat{x}'_j$, the {\em Diff} encoding uses 2 binary variables, similar to the classical encoding.
 
 \iffalse
 \begin{proof}[sketch]
@@ -292,7 +293,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 \label{s.1b}
 
 
-	We propose an abstraction of the {\em Diff} encoding: 
+	We propose abstractions of the {\em Diff} encoding: 
 	the binary variables $a'$ appearing in 
     Prop. \ref{Prop2} can be decoupled from the binary variable $a'_j$ 	appearing in the classical encoding of $\hat{x}'_j = \ReLU(x'_j)$. 
 	This would mean having 3 binary variables, which would be too costly. 
@@ -350,7 +351,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
     \begin{proposition}
     \label{prop3}
     Given $y_j \in [-\gamma_j,\gamma_j]$, 
-the range of values $\hat{y}_j$ can take (see Figure in Appendix) corresponds to solutions of the following {\em 1b} MILP program with binary variable $a \in \{0,1\}$:
+the range of values $\hat{y}_j$ can take (see Figure \ref{fig.1v} in Appendix) corresponds to solutions of the following {\em 1b} MILP program with binary variable $a \in \{0,1\}$:
 	\begin{align*}
 		\hat{y}_j &\leq a \gamma_j               &\quad \hat{y}_j &\geq y_j - a \gamma_j \\
 		\hat{y}_j &\geq (a-1) \gamma_j           &\quad \hat{y}_j &\leq y_j + (1-a) \gamma_j
