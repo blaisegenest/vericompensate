@@ -384,6 +384,9 @@ ITNE, $1000$ &  $1.371$ & $.085$& {\bf .085}  \\\hline\hline
 \subsection{Real-Time verification of Robustness from 
 $(\bar{\beta}^\varepsilon_{C,D})_{C<D \leq 10}$}
 
+\label{sec:realtime}
+
+
 We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{C,D}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}.
 The complexity being strictly linear with the number of classes, 
 dataset with 100 classes would need 5ms to be treated, 200images/second per CPU core. We set a threshold of $70\%$ to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
