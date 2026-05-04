@@ -5,8 +5,9 @@ The paper \cite{diff} did not consider MILP encoding.
 %
 Some works \cite{Leino,Zhang22a,Sun22,Chen21,REGLO} focus on training a network to be, rather than proving the DNN is, globally robust.
 %A key aspect of global robustness involves ensuring that analyzed data is both semantically meaningful and in-distribution (ID). 
-Our approach to obtain DNN with better global robustness bounds uses linear auto encoders~\cite{hinton2006reducing}.
-The AE-DNN architectures (Fig.~\ref{fig:AE-DNN}) is novel, projecting the input on a dimensionaly reduced space to filter non ID features \cite{aggarwalOutlierAnalysis2017}.
+Our approach to obtain DNN with better global robustness bounds uses (linear) auto encoders~\cite{hinton2006reducing}.
+The (L)AE-DNN architectures (Fig.~\ref{fig:AE-DNN}) projects the input on a dimensionaly reduced space to filter non-ID features 
+\cite{aggarwalOutlierAnalysis2017}.
 
 Some works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g., using probabilistic guarantees \cite{Levy23,Mangal19}.
 %More related, s
@@ -14,9 +15,16 @@ Several works \cite{Marabou,lipshitz,ITNE,GROCET} consider certifying {\em restr
 %
 Closest to our work is VHAGaR \cite{vhagar}, which computes 
 bounds $\bar{\alpha}^\varepsilon_{i,j}$ similar to our bounds 
-$\bar{\beta}^\varepsilon_{i,j}$, but limited to $L_\infty$-perturbations and variants. Crucially, VHAGaR bounds are not small enough for real-time robustness verification, whereas our bounds are. One reason is {\em Diff} MILP is more accurate in practice, the other is that LAE-DNNis intrinsically more robust.
+$\bar{\beta}^\varepsilon_{i,j}$.
+%, but limited to $L_\infty$-perturbations and variants. 
+Crucially, VHAGaR bounds are not small enough for real-time robustness verification, whereas our bounds are. 
+%One reason is {\em Diff} MILP is more accurate in practice.
 
-Technically, none of the MILP-based works \cite{vhagar,lipshitz,ITNE} consider $L_1$-perturbations. Further, they use the classical MILP encoding from \cite{MILP}, and not our novel {\em Diff} model, nor even the "1b" model. Note that \cite{ITNE} considers the {\em diff variables} $y,\hat{y}$, adding explicitly one {\em linear} constraint $\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ implied by each of our three MILP models {\em Diff}, "2b+1" and "1b" models; Eq. (3) in \cite{ITNE} corresponding essentially to it. \cite{vhagar} does things differently, adding per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations. 
+Technically, none of the MILP-based works \cite{vhagar,lipshitz,ITNE} consider $L_1$-perturbations. Further, they use the classical MILP encoding from \cite{MILP}.
+%, and not our novel {\em Diff} model, nor even the "1b" model. 
+Note that \cite{ITNE} considers the {\em diff variables} $y,\hat{y}$, adding explicitly one {\em linear} constraint (Eq. (3) in \cite{ITNE})
+%$\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ 
+implied by each of our three MILP models {\em Diff}, "2b+1" and "1b" models. \cite{vhagar} does things differently, adding per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations. 
 %(and to some extent to $L_\infty$-perturbations). 
 
 
