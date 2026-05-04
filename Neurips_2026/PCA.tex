@@ -1,5 +1,7 @@
 \section{(Linear) Auto-Encoders projecting to  In-Distribution subspace}
 
+\label{sec.pca}
+
 Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs {\em not} In (training) Distribution (ID) \cite{OOD}. Such samples display large value for 
 $x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left) for MNIST.
 Considering the full input space on the original DNN will thus produce high global upper bounds $\bar{\beta}$, no matter the method employed to compute the bound (e.g. MILP). Restricting to ID inputs seems unpractical, as there is no established characterization of ID inputs. We propose an efficient alternative:
