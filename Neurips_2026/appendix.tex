@@ -40,7 +40,7 @@ then for all perturbed input $I'$ with  $|I - I'| \leq \varepsilon$,
 the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$. % for perturbation $\varepsilon$.
 \end{proposition}
 
-\begin{proof}[Proof] By definition, "certified robust" means that for any $D\neq C$, $b_D = 0$, which means that $\bar{\beta}^{\varepsilon}_{C,D} \leq x_C - x_D$. 
+\begin{proof}[Proof] By definition, "certified robust" means that for any $D\neq C$, $b_D = 0$, which means that $\bar{\beta}^{\varepsilon}_{C,D} < x_C - x_D$. 
 
 Then by the definition, for the image $I'$ that $|I - I'|\leq \varepsilon$, we have $(x_C-x_D) - (x'_C-x'_D)\leq \bar{\beta}^{\varepsilon}_{C,D}$. Hence, $x'_C-x'_D\geq (x_C-x_D)-\bar{\beta}^{\varepsilon}_{C,D}> 0$. This argument works for all $D\neq C$, therefore the output for $I'$ is still $C$.
 \end{proof}
@@ -150,7 +150,7 @@ We first prove that the {\em Diff} model encodes exacly $\hat{y}$.
  	\end{aligned}
  \end{align*} Now we can see, $y_j+x'_j\leq 0$ and $x'_j \leq 0$ (lines 1\&2), $\hat{y}_j=0$ (line 3). 
  
- For other 3 lines, by above discussing and the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, they are implied by the following inequalities respectively (one for one) \begin{align*}
+ For the other 3 lines, by above discussion and the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, they are implied by the following inequalities respectively (one for one) \begin{align*}
  & \begin{aligned}
  	\hat{y}_j  \leq 0 &\leq y_j + x'_j -\alpha_j &
  	\hat{y}_j  \geq 0 &\geq y_j + x'_j  \\
@@ -367,7 +367,7 @@ Compared to the classification tasks where the DNN is learned in a standard way 
 
 Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learned has 2 fully connected layers, 50 neurons each, learned as a surrogate model, with 10 reduced input and 26 reduced output.
 
-In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
+In terms of perturbation, we consider a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
 
 
 
@@ -386,7 +386,7 @@ In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02
 		LB = $.025$  & 72000s & 0.042 & 0.034 & {\bf 0.033} & 0.036
 		\\\hline
 	\end{tabular}
-	\caption{Comparison of upper bound (lower is better $\downarrow$) between {\em Diff}, {\em 2$b+$1}, {\em 1$b$} with ITNE on the pipe system with timeouts of 1000s, 14440s and 72000s.}
+	\caption{Comparison of upper bound (lower is better $\downarrow$) between {\em Diff}, {\em 2$b+$1}, {\em 1$b$} with ITNE on the pipe system with timeouts of 1000s, 14400s and 72000s.}
 	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
 \label{table.pipe}
 \end{table}
@@ -395,9 +395,9 @@ In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02
 
 
 For the pipe system, we compare in Table \ref{table.pipe} the different models ITNE, {\em Diff}, {\em $2b+1$,$1b$} to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. 
-The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the {\em $2b+1$} model, slightly better than the bound $.0337$ found within the same time by the {\em Diff} model, and better than the bound found $.0356$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is significantly worse than even the {\em "$1b$"} with 1000s of timeout, at $.0416$ despite a very long time out. The certified lower bound is not too far, at $.025$.
+The bounds we found are quite accurate, with a best bound of $.033$ obtained by the {\em $2b+1$} model, slightly better than the bound $.034$ found within the same time by the {\em Diff} model, and better than the bound found $.036$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is significantly worse than even the {\em "$1b$"} with 1000s of timeout, at $.042$ despite a very long time out. The certified lower bound is not too far, at $.025$.
 
-We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<0.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather correctly reflects the physical system.
+We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather correctly reflects the physical system.
 
 
 \begin{figure*}[h!]

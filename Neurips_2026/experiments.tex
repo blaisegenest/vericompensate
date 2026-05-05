@@ -38,7 +38,7 @@
 		\\\hline
     
      \end{tabular}
-	\caption{Upper bound $\bar{\alpha}$ and (gap to lower bound $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, averaging bounds $\bar{\alpha}_{C,D}$ over all pair of classes $(C,D)$. {\em Best} reports the average $\bar{\alpha}$ using the lowest $\bar{\alpha}_{C,D}$ computed 
+	\caption{Upper bound $\bar{\alpha}$ and (gap to lower bound LB $\underline{\alpha}$), lower is better, for $L_\infty=0.05$ perturbation, averaging bounds $\bar{\alpha}_{C,D}$ over all pair of classes $(C,D)$. {\em Best} reports the average $\bar{\alpha}$ using the lowest $\bar{\alpha}_{C,D}$ computed 
 	in parallel by {\em Diff} and {\em 2b+1} for each $(C,D)$. Lower gaps using {\em Best} means that there are cases $(C,D)$ where {\em Diff} is much better than {\em 2b+1}, and cases where it is the opposite. * means that VHAGaR failed to compute bounds for some cases $(C,D)$ of CIFAR-Conv. 
 	For such cases, we used numbers from ITNE instead (which is overperforming VHAGaR in every test), so these numbers are an optimistic evaluation for VHAGaR.}
 	\vspace{-0.4cm}
@@ -327,7 +327,7 @@ LAE-DNNs reach much smaller upper bounds $\bar{\beta}$ than DNN: $15$x for MNIST
 LAE-CIFAR10-Conv is the hardest test, because the latent space dimension (60) is not as small as for MNIST and FMNIST (20 and 25), which is due to the fact that the original CIFAR-10 dimensions (3072) is 4x larger than for MNIST (784).
 Further, the {\em upper} bound $\bar{\beta}$ for LAE-CIFAR10-Conv (0.99) is much smaller than the {\em lower} bound $\underline{\beta}$ 
 for CIFAR10-Conv (3.38), meaning that no other method 
-would reach for CIFAR10-Conv bound less than three times as high as the bound of our MILP models for LAE-CIFAR10-Conv. For FMNIST-Conv, it is 2 times.
+would reach for CIFAR10-Conv a bound less than three times as high as the bound of our MILP models for LAE-CIFAR10-Conv. For FMNIST-Conv, it is 2 times.
 
 
 
@@ -389,8 +389,8 @@ $(\bar{\beta}^\varepsilon_{C,D})_{C<D \leq 10}$}
 
 
 We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{C,D}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}.
-The complexity being strictly linear with the number of classes, 
-dataset with 100 classes would need 5ms to be treated, 200images/second per CPU core. We set a threshold of $70\%$ to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
+The complexity being linear with the number of classes, 
+dataset with 100 classes would need $\approx$ 5ms to be treated, 200 images/second per CPU core. We set a threshold of $70\%$ to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
 
 
 
