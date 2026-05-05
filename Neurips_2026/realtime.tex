@@ -80,5 +80,5 @@ Assume by contradiction that $D \neq C$ is the decision on $I'$.
 The proof or Prop. \ref{prop.realtime} can be found in Appendix 
 \ref{app.realtime}.
 The overhead (steps 1,2 above) on top of the standard inference step 0, is $3(k-1)$ operations, i.e. linear in $k$ the number of classes.
-For $k=10$ classes (cases of MNIST, Fashion MNSIT and CIFAR-10), it amounts to 29 operations in total: $(k-1)$ ADD(+), 
+For $k=10$ classes (cases of MNIST, Fashion MNSIT and CIFAR-10), it amounts to 27 operations in total: $(k-1)$ ADD(+), 
 $(k-1)$ COMP(<) and $k-1$ OR. This can be performed extremely fast, even on limited hardware.

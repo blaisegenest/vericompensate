@@ -298,9 +298,9 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
     Prop. \ref{Prop2} can be decoupled from the binary variable $a'_j$ 	appearing in the classical encoding of $\hat{x}'_j = \ReLU(x'_j)$. 
 	This would mean having 3 binary variables, which would be too costly. 
 	The variable $a'_j$ used for $x'_j$ is thus linearly relaxed, while
-	both variables $ a$ and $a'$ used in the encoding of $\hat{y}_j$ are kept binary. We call this the {\em 2b+1} model.
+	both variables $a$ and $a'$ used in the encoding of $\hat{y}_j$ are kept binary. We call this the {\em 2b+1} model.
 	%, which uses 2 binary variables per neuron, as the classical and {\em Diff} encodings.
-	The decoupling between $a'$ and $a_j$ removes constraints in the MILP encoding, which helps the solver. However, the {\em 2b+1} model is not as accurate as the {\em Diff} model asymptotically.
+	The decoupling between $a'$ and $a'_j$ removes constraints in the MILP encoding, which helps the solver. However, the {\em 2b+1} model is not as accurate as the {\em Diff} model asymptotically.
 
 
 	%\subsection{The efficient {\em 1b} model}

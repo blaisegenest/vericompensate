@@ -142,7 +142,7 @@
 
 	
 	\textbf{Mixed Integer Linear Programming (MILP)} can encode ReLU DNNs
-faithfully	(extentions to other activation functions e.g. maxpool in \cite{DivideAndSlide}):
+faithfully	(extensions to other activation functions e.g. maxpool in \cite{DivideAndSlide}):
 	For an {\em unstable} neuron $n$, that is, with values 
     $x \in [\LB(n),\UB(n)]$ with constants $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula \cite{MILP} with one binary/integer variable $a$ valued in $\{0,1\}$, using constraints:
 	
@@ -298,4 +298,4 @@ In this paper, we consider the {\em global} verification problem, where we optim
 
 The proof or Prop. \ref{prop.L1} can be found in Appendix 
 \ref{app.L1}. 
-It is crucial that no exra binary variables are used, as the complexity of solving an MILP problem is bounded by $2^{bin} \times LP$ \cite{DivideAndSlide}, where $bin$ is the number of binary variables and $LP$ is the P-time complexity of solving the LP problem. The objective function of the MILP program is defined in the next section.
+It is crucial that no extra binary variables are used, as the complexity of solving an MILP problem is bounded by $2^{bin} \times LP$ \cite{DivideAndSlide}, where $bin$ is the number of binary variables and $LP$ is the P-time complexity of solving the LP problem. The objective function of the MILP program is defined in the next section.
