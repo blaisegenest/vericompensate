@@ -45,6 +45,16 @@ the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around 
 Then by the definition, for the image $I'$ that $|I - I'|\leq \varepsilon$, we have $(x_C-x_D) - (x'_C-x'_D)\leq \bar{\beta}^{\varepsilon}_{C,D}$. Hence, $x'_C-x'_D\geq (x_C-x_D)-\bar{\beta}^{\varepsilon}_{C,D}> 0$. This argument works for all $D\neq C$, therefore the output for $I'$ is still $C$.
 \end{proof}
 
+We now compare our bound $\beta$ with the bound $\alpha$ considered by Vhagar \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. 
+Namely, VHAGaR \cite{vhagar} defines $\alpha^{\varepsilon}_{C,D}$, computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$:
+\begin{align*}
+	\alpha^{\varepsilon}_{C,D} &= \max_{|I-I'| \leq \varepsilon} (x_C-\max_{E\neq C}x_E) &\text{s.t. }  x'_D \geq \max_{E\neq D}x'_E \wedge x_C \geq \max_{E\neq C}x_E 
+\end{align*}
+
+Notice that  
+$\alpha^{\varepsilon}_{C,D}$ is not symmetrical, while 
+$\beta^{\varepsilon}_{C,D}$ is.
+
 
 
 
@@ -342,7 +352,6 @@ Now we finish the proof.
 
 
 \section{Appendix for Section 7: {\em Diff} for robustness in regression tasks}
-
 
 
 Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of DNN-regressor due to small perturbations of the input.

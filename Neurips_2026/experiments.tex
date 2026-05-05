@@ -106,7 +106,10 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 \subsection{Comparison for global robustness with $L_\infty$ between {\em Diff}, VHAGaR and ITNE}
 
 We use VHAGaR benchmarks to be able to compare: 
-VHAGaR bound $\alpha$ (see Section 4), perturbation $L_\infty=0.05$, VHAGaR convolutional DNNs, for which the VHAGaR reduction rules of binary variables are implemented. We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model finds. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall that most robustness tools, e.g., $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
+VHAGaR bound $\alpha$ 
+computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$ (see \cite{vhagar} and appendix \ref{app.realtime}) instead of $\beta$ from section \ref{sec.realtime}, perturbation 
+$L_\infty=0.05$, VHAGaR convolutional DNNs, for which the VHAGaR reduction rules of binary variables are implemented. 
+We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model finds. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall that most robustness tools, e.g., $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
 
 \iffalse
 
