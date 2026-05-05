@@ -352,7 +352,7 @@ Now we finish the proof.
 
 \begin{figure*}[b!]
 	\centering
-	\includegraphics[scale=0.7]{PIPE.pdf} 
+	\includegraphics[scale=0.75]{PIPE.pdf} 
 	\vspace{-0.5cm}
 	\caption{Training and bound computation on the pipe use case. 
 		Two LAE-encoders are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learned from reduced deformation input to reduced strain output.}
@@ -411,7 +411,7 @@ The bounds we found are quite accurate, with a best bound of $.033$ obtained by 
 We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather correctly reflects the physical system.
 
 
-\begin{figure*}[h!]
+\begin{figure*}[b!]
 \centering
 \includegraphics[scale=0.36]{deform.png} \hspace{0.1cm}
 \includegraphics[scale=0.36]{strain.png}
