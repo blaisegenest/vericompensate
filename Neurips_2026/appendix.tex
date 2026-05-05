@@ -350,6 +350,17 @@ First, we provide in Fig.~\ref{fig.1v} the possible values $\hat{y}_j$ can take 
 Now we finish the proof. 
 \end{proof}
 
+\begin{figure*}[b!]
+	\centering
+	\includegraphics[scale=0.7]{PIPE.pdf} 
+	\vspace{-0.5cm}
+	\caption{Training and bound computation on the pipe use case. 
+		Two LAE-encoders are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learned from reduced deformation input to reduced strain output.}
+	\vspace{-0.2cm}
+	\label{fig.PIPE}
+\end{figure*}	
+
+
 
 \section{Appendix for Section 7: {\em Diff} for robustness in regression tasks}
 
@@ -361,15 +372,6 @@ Compared to the classification tasks where the DNN is learned in a standard way 
 
 
 
-\begin{figure*}[h!]
-	\centering
-	\includegraphics[scale=0.8]{PIPE.pdf} 
-	%\vspace{-0.5cm}
-	\caption{Training and bound computation on the pipe use case. 
-		Two LAE-encoders are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learned from reduced deformation input to reduced strain output.}
-	\vspace{-0.2cm}
-	\label{fig.PIPE}
-\end{figure*}	
 
 
 
@@ -382,7 +384,7 @@ In terms of perturbation, we consider a conjunction of $L_1 \leq 3.9$ and $L_\in
 
 
 
-\begin{table}[t!]
+\begin{table}[h!]
 	\centering
 	\begin{tabular}{|c | c c c c c|} 
 		\hline
@@ -418,6 +420,7 @@ We did check that this worst-case found, displayed in Fig. \ref{fig5} and which 
 \end{figure*}	
 
 
+\newpage
 
 \section{NeurIPS Paper Checklist}
 
@@ -481,8 +484,6 @@ We did check that this worst-case found, displayed in Fig. \ref{fig5} and which 
 	\item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
 	\item[] Justification: The paper complies with the NeurIPS Code of Ethics. The proposed work does not involve human subjects, crowdsourcing, or sensitive data, and therefore does not raise any of the ethical concerns described in the guidelines.
 
-	
-	\newpage
 
 	\item {\bf Broader impacts}
 	\item[] Question: Does the paper discuss both potential positive societal impacts and negative societal impacts of the work performed?
