@@ -65,8 +65,7 @@ to $B'$. As explained, the optimal choice for LAE-encode is to mimic the basis t
 \end{proposition}
 
 \begin{proof}[Proof] 
-	Let $I,I'$ be pair maximizing $\beta^\varepsilon_{C,D}(\text{LAE-DNN})$.
-	Let $J$ be the projected input 
+	Let $(I,I')$ be a pair of image and its perturbation maximizing $\beta^\varepsilon_{C,D}(\text{LAE-DNN})$. Let $J$ be the projected input 
 	$J=$LAE-decode(LAE-encode($I$)) from $I$.
 	We have $J=$LAE-decode(LAE-encode($J$)) as a projection is invariant.
 	The same is true for $J'=$LAE-decode(LAE-encode($J'$)) the projected input
@@ -81,10 +80,9 @@ Some may see Out of Distribution (OOD) detection as an alternative to (L)AE-DNN.
 There is a key difference: in OOD detection, the main problem is OOD inputs leading to output of DNN very similar to ID inputs. In OOD detection, these are dangerous inputs, not easy to detect and filter out. 
 In our case, these inputs are perfectly harmless, as 
 they do not increase the bound $\bar{\beta}^{\varepsilon}_{C,D}$. 
-What we need to filter out are OOD inputs leading to outputs of the DNN that are far away from ID outputs, which are the one creating large bounds $\bar{\beta}^{\varepsilon}_{C,D}$.
+What we need to filter out are OOD inputs leading to outputs of the DNN that are far away from ID outputs, which are the ones creating large bounds $\bar{\beta}^{\varepsilon}_{C,D}$.
 
-Reciprocally, LAE-DNN does not overcome the issue of OOD inputs: the DNN could
-still provide label (with high confidence)  which does not correspond with the input. LAE-DNN only focuses on ensuring that the answer given will be robust, i.e. small changes in the input will not modify the output too much. The bottom line is that OOD is orthogonal with the focus of the paper.
+Reciprocally, (L)AE-DNN does not overcome the issue considered by OOD detection either: (L)EA-DNN could still provide label (with high confidence)  which does not correspond with the (OOD) input. LAE-DNN focuses on ensuring that the answer given will be robust, i.e. small changes in the input will not modify the output too much, but prediction on the image and its perturbation could be equally misleading. The bottom line is that OOD detection is orthogonal with the focus of (L)AE-DNN.
 
 
 \section{Appendix for Section 6: {\em Diff} and {\em 1b} MILP models}
@@ -354,15 +352,17 @@ Compared to the classification tasks where the DNN is learned in a standard way 
 
 
 
-\begin{figure*}[t!]
+\begin{figure*}[h!]
 	\centering
-	\includegraphics[scale=0.6]{PIPE.pdf} 
-	\vspace{-0.5cm}
+	\includegraphics[scale=0.8]{PIPE.pdf} 
+	%\vspace{-0.5cm}
 	\caption{Training and bound computation on the pipe use case. 
 		Two LAE-encoders are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learned from reduced deformation input to reduced strain output.}
 	\vspace{-0.2cm}
 	\label{fig.PIPE}
 \end{figure*}	
+
+
 
 
 Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learned has 2 fully connected layers, 50 neurons each, learned as a surrogate model, with 10 reduced input and 26 reduced output.
@@ -371,7 +371,9 @@ In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02
 
 
 
-\begin{table}[b!]
+
+
+\begin{table}[t!]
 	\centering
 	\begin{tabular}{|c | c c c c c|} 
 		\hline
@@ -390,20 +392,21 @@ In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02
 \end{table}
 
 
-\begin{figure*}[t!]
-\centering
-\includegraphics[scale=0.36]{deform.png} \hspace{0.1cm}
-\includegraphics[scale=0.36]{strain.png}
-\caption{2 slightly different deformations and their associated quite different strain as obtained by the {\em Diff} model with $200 $ binary variables.}
-\vspace{-0.2cm}
-\label{fig5}
-\end{figure*}	
+
 
 For the pipe system, we compare in Table \ref{table.pipe} the different models ITNE, {\em Diff}, {\em $2b+1$,$1b$} to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. 
 The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the {\em $2b+1$} model, slightly better than the bound $.0337$ found within the same time by the {\em Diff} model, and better than the bound found $.0356$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is significantly worse than even the {\em "$1b$"} with 1000s of timeout, at $.0416$ despite a very long time out. The certified lower bound is not too far, at $.025$.
 
 We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<0.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather correctly reflects the physical system.
 
+
+\begin{figure*}[h!]
+\centering
+\includegraphics[scale=0.36]{deform.png} \hspace{0.1cm}
+\includegraphics[scale=0.36]{strain.png}
+\caption{2 slightly different deformations and their associated quite different strain as obtained by the {\em Diff} model with $200 $ binary variables.}
+\label{fig5}
+\end{figure*}	
 
 
 
@@ -470,7 +473,8 @@ We did check that this worst-case found, displayed in Fig. \ref{fig5} and which 
 	\item[] Justification: The paper complies with the NeurIPS Code of Ethics. The proposed work does not involve human subjects, crowdsourcing, or sensitive data, and therefore does not raise any of the ethical concerns described in the guidelines.
 
 	
-	
+	\newpage
+
 	\item {\bf Broader impacts}
 	\item[] Question: Does the paper discuss both potential positive societal impacts and negative societal impacts of the work performed?
 	\item[] Answer: \answerNA{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
