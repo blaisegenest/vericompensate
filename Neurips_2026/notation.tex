@@ -266,7 +266,6 @@ In this paper, we consider the {\em global} verification problem, where we optim
 	resp. $a'_j$ for the encoding of $\hat{x}_j=\ReLU(x_j)$,
 	resp. $\hat{x}'_j=\ReLU(x'_j)$, for all neurons $j$.
 	Here are the {\bf set of constraints} $\mathcal{M}^{classical}$ to encode the global robustness problem with $L_\infty$-perturbations $ \leq \varepsilon$:
-
 	\begin{itemize}
 	   \item for all {\em input} neuron $j$ (in layer 0), $-\varepsilon \leq x_j-x'_j \leq \varepsilon$ \quad \, \quad  [$L_\infty$-perturbation $\leq \varepsilon$],
 	   \item for all neuron $j$ from layer $i\geq 1$, 
@@ -276,13 +275,11 @@ In this paper, we consider the {\em global} verification problem, where we optim
 	   $\hat{x}_j$, resp $\hat{x}'_j$, uses eq. (1) with integer variable $a_j$, resp. $a'_j$.
 	\end{itemize}
 
+\label{s.L1}
+
 	To encode an $L_1$-perturbation, we propose the following new encoding {\em without} extra binary variables. 
 	We use $k$ (= number of input neurons) additional {\em linear} variables 
 	$(A_j)_{j \leq k}$, with constraints:
-
-\label{s.L1}
-
-
 	\begin{enumerate}
 \item for all {\em input} neuron $j$ (in layer 0), 
 	$A_j \geq x_j - x'_j $ and $A_j \geq x'_j - x_j$,
