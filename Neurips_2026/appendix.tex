@@ -59,7 +59,6 @@ We can complete it in a basis $B'$ of size $dim$.
 There exists a basis transformation from the natural basis of dimension $dim$ 
 to $B'$. As explained, the optimal choice for LAE-encode is to mimic the basis transformation, dropping all the coefficients not corresponding to the first $n$ coefficients. Hence, LAE-decode(LAE-encode) is a projection on these $n$ independant vectors, no matter how LAE-encode, LAE-decode are constructed: the only choice for LAE is the choice of the $n$ independant vectors to project on.
 
-
 \begin{proposition}
 	\label{Prop3}
 	For all DNN and all latent space dimension $n$, $\beta^\varepsilon_{C,D}(\text{LAE-DNN}) \leq \beta^{\varepsilon}_{C,D}(\text{DNN})$.
@@ -83,6 +82,10 @@ There is a key difference: in OOD detection, the main problem is OOD inputs lead
 In our case, these inputs are perfectly harmless, as 
 they do not increase the bound $\bar{\beta}^{\varepsilon}_{C,D}$. 
 What we need to filter out are OOD inputs leading to outputs of the DNN that are far away from ID outputs, which are the one creating large bounds $\bar{\beta}^{\varepsilon}_{C,D}$.
+
+Reciprocally, LAE-DNN does not overcome the issue of OOD inputs: the DNN could
+still provide label (with high confidence)  which does not correspond with the input. LAE-DNN only focuses on ensuring that the answer given will be robust, i.e. small changes in the input will not modify the output too much. The bottom line is that OOD is orthogonal with the focus of the paper.
+
 
 \section{Appendix for Section 6: {\em Diff} and {\em 1b} MILP models}
 
@@ -347,7 +350,7 @@ Now we finish the proof.
 Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of DNN-regressor due to small perturbations of the input.
 We consider here a pipe system and its DNN regressor from \cite{aiware},
 that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of these 3000 points.
-Compared to the classification tasks where the DNN is learned in a standard way and PCA is later applied to reduce the output dimension without compromising the accuracy, the DNN regressor has been learned on the reduced PCA basis directly, for both the high dimensional input and the high dimensional output (3000 dimensions each).
+Compared to the classification tasks where the DNN is learned in a standard way and LAE is later applied to reduce the output dimension without compromising the accuracy, the DNN regressor has been learned on the reduced LAE feature space directly, for both the high dimensional input and the high dimensional output (3000 dimensions each).
 
 
 
@@ -356,7 +359,7 @@ Compared to the classification tasks where the DNN is learned in a standard way 
 	\includegraphics[scale=0.6]{PIPE.pdf} 
 	\vspace{-0.5cm}
 	\caption{Training and bound computation on the pipe use case. 
-		Two PCAs are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learned from reduced deformation input to reduced strain output.}
+		Two LAEs are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learned from reduced deformation input to reduced strain output.}
 	\vspace{-0.2cm}
 	\label{fig.PIPE}
 \end{figure*}	
