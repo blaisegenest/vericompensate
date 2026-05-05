@@ -1,70 +1,6 @@
 
-\section{Pipe system}
 
-
-Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of DNN-regressor due to small perturbations of the input.
-We consider here a pipe system and its DNN regressor from \cite{aiware},
-that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of these 3000 points.
-Compared to the classification tasks where the DNN is learned in a standard way and PCA is later applied to reduce the output dimension without compromising the accuracy, the DNN regressor has been learned on the reduced PCA basis directly, for both the high dimensional input and the high dimensional output (3000 dimensions each).
-
-
-
-\begin{figure*}[t!]
-	\centering
-	\includegraphics[scale=0.6]{PIPE.pdf} 
-	\vspace{-0.5cm}
-	\caption{Training and bound computation on the pipe use case. 
-		Two PCAs are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learned from reduced deformation input to reduced strain output.}
-	\vspace{-0.2cm}
-	\label{fig.PIPE}
-\end{figure*}	
-
-
-Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learned has 2 fully connected layers, 50 neurons each, learned as a surrogate model, with 10 reduced input and 26 reduced output.
-
-In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
-
-
-
-\begin{table}[b!]
-	\centering
-	\begin{tabular}{|c | c c c c c|} 
-		\hline
-		Pipe & Timeout & ITNE & {\em Diff} & {\em 2$b+$1} & {\em 1$b$}
-		\\\hline 
-		& 1000s & 0.045 & 0.042 & 0.041 & {\bf 0.036}
-		\\
-		Surrogate  & 14400s & 0.042 & 0.036 & {\bf 0.035} & 0.036
-		\\
-		LB = $.025$  & 72000s & 0.042 & 0.034 & {\bf 0.033} & 0.036
-		\\\hline
-	\end{tabular}
-	\caption{Comparison of upper bound (lower is better $\downarrow$) between {\em Diff}, {\em 2$b+$1}, {\em 1$b$} with ITNE on the pipe system with timeouts of 1000s, 14440s and 72000s.}
-	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
-\label{table.pipe}
-\end{table}
-
-
-\begin{figure*}[t!]
-\centering
-\includegraphics[scale=0.36]{deform.png} \hspace{0.1cm}
-\includegraphics[scale=0.36]{strain.png}
-\caption{2 slightly different deformations and their associated quite different strain as obtained by the {\em Diff} model with $200 $ binary variables.}
-\vspace{-0.2cm}
-\label{fig5}
-\end{figure*}	
-
-For the pipe system, we compare in Table \ref{table.pipe} the different models ITNE, {\em Diff}, {\em $2b+1$,$1b$} to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. 
-The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the {\em $2b+1$} model, slightly better than the bound $.0337$ found within the same time by the {\em Diff} model, and better than the bound found $.0356$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is significantly worse than even the {\em "$1b$"} with 1000s of timeout, at $.0416$ despite a very long time out. The certified lower bound is not too far, at $.025$.
-
-We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<0.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather correctly reflects the physical system.
-
-
-\section{Appendix for Section 1}
-
-\section{Appendix for Section 2}
-
-\section{Appendix for Section 3}
+\section{Appendix for Section 3: $L_1$-perturbations}
 
 \label{app.L1}
 
@@ -73,31 +9,55 @@ We did check that this worst-case found, displayed in Fig. \ref{fig5} and which 
 
 
 \begin{proposition}
-	The combine of two constraints below are equivalent with $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$:
+	The following system of LP constraints is equivalent with $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$ ($L_1$-perturbation):
 	
 	\begin{enumerate}
 		\item for all {\em input} neuron $j$ (in layer 0), 
 		$A_j \geq x_j - x'_j $ and $A_j \geq x'_j - x_j$,
 		
-		\item $\sum_{j\leq k} A_j \leq \varepsilon$ 
-		\quad \, \quad [$L_1$-perturbation $\leq \varepsilon$].
+		\item $\sum_{j\leq k} A_j \leq \varepsilon$.
 	\end{enumerate}
 \end{proposition}
 
 
-\begin{proof}[Proof] $\Rightarrow$ side: For any solution to the constraint $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$, we show that it also satisfies the combined constraints. Notice that the variables $A_j$ only appear in this group of constraints. So we let $A_j = |x_j-x'_j|$ for each $j$. Then for each $j$, $A_j = |x_j-x'_j|\geq x_j - x'_j, A_j = |x_j-x'_j|\geq x'_j - x_j$,  and $$\sum_{j\leq k} A_j = \sum_{j\leq k} |x_j-x'_j| \leq\varepsilon.$$
+\begin{proof}[Proof] First implication: For any solution to the constraint $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$, we show that it also satisfies the combined constraints. 
+	%Notice that the variables $A_j$ only appear in this group of constraints. So 
+	We let $A_j = |x_j-x'_j|$ for each $j$. For each $j$, $A_j = |x_j-x'_j|\geq x_j - x'_j, A_j = |x_j-x'_j|\geq x'_j - x_j$,  and $$\sum_{j\leq k} A_j = \sum_{j\leq k} |x_j-x'_j| \leq\varepsilon.$$
 	
 	
-$\Leftarrow$ side: Similarly, if solution satisfies the combined constraints, then for any $j$, we have $$A_j \geq \max\{x'_j - x_j, x_j - x'_j\} = |x_j-x'_j|.$$ Hence $$\sum_{j\leq k} |x_j-x'_j| \leq \sum_{j\leq k} A_j\leq\varepsilon.$$
+Reverse implication: Similarly, if $A_j$ satisfies the system of LP constraints, then for any $j$, we have $$A_j \geq \max\{x'_j - x_j, x_j - x'_j\} = |x_j-x'_j|.$$ Hence $$\sum_{j\leq k} |x_j-x'_j| \leq \sum_{j\leq k} A_j\leq\varepsilon.$$
 \end{proof}
 
 
 
-\section{Appendix for Section 4}
-
-
+\section{Appendix for Section 4: Real-Time Certification}
 
 \label{app.realtime}
+
+\begin{proposition}
+If "certified robust" is returned over input $I$, 
+then for all perturbed input $I'$ with  $|I - I'| \leq \varepsilon$,
+the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$. % for perturbation $\varepsilon$.
+\end{proposition}
+
+\begin{proof}[Proof] By definition, "certified robust" means that for any $D\neq C$, $b_D = 0$, which means that $\bar{\beta}^{\varepsilon}_{C,D} \leq x_C - x_D$. 
+
+Then by the definition, for the image $I'$ that $|I - I'|\leq \varepsilon$, we have $(x_C-x_D) - (x'_C-x'_D)\leq \bar{\beta}^{\varepsilon}_{C,D}$. Hence, $x'_C-x'_D\geq (x_C-x_D)-\bar{\beta}^{\varepsilon}_{C,D}> 0$. This argument works for all $D\neq C$, therefore the output for $I'$ is still $C$.
+\end{proof}
+
+
+
+
+
+\section{Appendix for Section 5: LAE-DNN}
+
+
+
+Let us precise LAE-encode and LAE-decode properties.
+LAE-encode defines $n$ independant vectors of dimension $1\times dim$.
+We can complete it in a basis $B'$ of size $dim$.
+There exists a basis transformation from the natural basis of dimension $dim$ 
+to $B'$. As explained, the optimal choice for LAE-encode is to mimic the basis transformation, dropping all the coefficients not corresponding to the first $n$ coefficients. Hence, LAE-decode(LAE-encode) is a projection on these $n$ independant vectors, no matter how LAE-encode, LAE-decode are constructed: the only choice for LAE is the choice of the $n$ independant vectors to project on.
 
 
 \begin{proposition}
@@ -105,49 +65,28 @@ $\Leftarrow$ side: Similarly, if solution satisfies the combined constraints, th
 	For all DNN and all latent space dimension $n$, $\beta^\varepsilon_{C,D}(\text{LAE-DNN}) \leq \beta^{\varepsilon}_{C,D}(\text{DNN})$.
 \end{proposition}
 
-\begin{proof}[Proof] Notice the fact that, for any input $I$ to the LAE-DNN, its the projection after encoding and decoding $I'$ is still a possible input for the original DNN, and the output is the same as the output of the original DNN given input I'.
+\begin{proof}[Proof] 
+	Let $I,I'$ be pair maximizing $\beta^\varepsilon_{C,D}(\text{LAE-DNN})$.
+	Let $J$ be the projected input 
+	$J=$LAE-decode(LAE-encode($I$)) from $I$.
+	We have $J=$LAE-decode(LAE-encode($J$)) as a projection is invariant.
+	The same is true for $J'=$LAE-decode(LAE-encode($J'$)) the projected input
+	from $I'$. 
+	Hence $J,J'$ also maximizes $\beta^\varepsilon_{C,D}(\text{LAE-DNN})$.
 	
-Therefore the output space of LAE-DNN is a subset of the original DNN. Hence we have $\beta^\varepsilon_{C,D}(\text{LAE-DNN}) \leq \beta^{\varepsilon}_{C,D}(\text{DNN})$.
-	
+    $J,J'$ are valid input for DNN as well, with the same $x_C-x_D+x'_D-x'_C$
+	as $\beta^\varepsilon_{C,D}(\text{LAE-DNN})$. Hence, $\beta^\varepsilon_{C,D}(\text{LAE-DNN}) \leq \beta^{\varepsilon}_{C,D}(\text{DNN})$.
 \end{proof}
 
-\section{Appendix for Section 5}
+Some may see Out of Distribution (OOD) detection as an alternative to (L)AE-DNN. 
+There is a key difference: in OOD detection, the main problem is OOD inputs leading to output of DNN very similar to ID inputs. In OOD detection, these are dangerous inputs, not easy to detect and filter out. 
+In our case, these inputs are perfectly harmless, as 
+they do not increase the bound $\bar{\beta}^{\varepsilon}_{C,D}$. 
+What we need to filter out are OOD inputs leading to outputs of the DNN that are far away from ID outputs, which are the one creating large bounds $\bar{\beta}^{\varepsilon}_{C,D}$.
 
+\section{Appendix for Section 6: {\em Diff} and {\em 1b} MILP models}
 
-\section{Appendix for Section 6}
-
-\begin{figure}[b!]
-	\centering
-	%\hspace*{10ex}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel={$y_i$},
-			ylabel={$\hat{y}_i$},
-			xmin=-2, xmax=2,
-			ymin=-2, ymax=2,
-			axis lines=center,
-			samples=100, 
-			unit vector ratio=1 1 1, scale=1, xtick   = {-2,2},
-			xticklabels = {$-\gamma_i$,$\gamma_i$},
-			yticklabels = {},
-			]
-			\addplot[blue, thick, fill=blue, fill opacity=0.4] {x} \closedcycle; 
-			\addplot[blue, thick] {0}; 
-			
-			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(-2,-2)};
-			\node[label={above:$(-\gamma_j,-\gamma_j)$}] at (axis cs: -1.24, -2.2) {};
-			
-			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(2,2)};
-			\node[label={above:$(\gamma_j,\gamma_j)$}] at (axis cs: 1.4, 1.65) {};
-			\addplot[dashed, thick, blue] coordinates {(-2,-2) (2,0)};
-			\addplot[dashed, thick, blue] coordinates {(-2,0) (2,2)};
-			\node[label={above:\scriptsize $\text{LP\ relaxation}$}] at (axis cs: -0.7, 0.8) {};
-			\node[label={above:\scriptsize $\text{LP\ relaxation}$}] at (axis cs: 0.5, -1.4) {};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Possible values of $\hat{y}_j$ depending on $y_j$ for the {\em 1b} model.}
-	\label{fig.1v}
-\end{figure}
+We first prove that the {\em Diff} model encodes exacly $\hat{y}$.
 
 \begin{proposition}
 	\label{Prop4}
@@ -326,8 +265,46 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 	\end{aligned}
 \end{align*}Therefore all 3 rest lines are implied by other inequalities.
 	
-
 \end{proof}
+
+
+We now turn to the {\em 1b} MILP model. 
+First, we provide in Fig.~\ref{fig.1v} the possible values $\hat{y}_j$ can take depending on $y_j$. 
+
+
+\begin{figure}[b!]
+	\centering
+	%\hspace*{10ex}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel={$y_i$},
+			ylabel={$\hat{y}_i$},
+			xmin=-2, xmax=2,
+			ymin=-2, ymax=2,
+			axis lines=center,
+			samples=100, 
+			unit vector ratio=1 1 1, scale=1, xtick   = {-2,2},
+			xticklabels = {$-\gamma_i$,$\gamma_i$},
+			yticklabels = {},
+			]
+			\addplot[blue, thick, fill=blue, fill opacity=0.4] {x} \closedcycle; 
+			\addplot[blue, thick] {0}; 
+			
+			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(-2,-2)};
+			\node[label={above:$(-\gamma_j,-\gamma_j)$}] at (axis cs: -1.24, -2.2) {};
+			
+			\addplot[only marks, mark=*, mark size=2pt, blue] coordinates {(2,2)};
+			\node[label={above:$(\gamma_j,\gamma_j)$}] at (axis cs: 1.4, 1.65) {};
+			\addplot[dashed, thick, blue] coordinates {(-2,-2) (2,0)};
+			\addplot[dashed, thick, blue] coordinates {(-2,0) (2,2)};
+			\node[label={above:\scriptsize $\text{LP\ relaxation}$}] at (axis cs: -0.7, 0.8) {};
+			\node[label={above:\scriptsize $\text{LP\ relaxation}$}] at (axis cs: 0.5, -1.4) {};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Possible values of $\hat{y}_j$ depending on $y_j$ for the {\em 1b} model.}
+	\label{fig.1v}
+\end{figure}
+
 
   \begin{proposition}
 	\label{prop5}
@@ -363,7 +340,68 @@ Now we finish the proof.
 \end{proof}
 
 
-\section{Appendix for Section 7}
+\section{Appendix for Section 7: {\em Diff} for robustness in regression tasks}
+
+
+
+Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of DNN-regressor due to small perturbations of the input.
+We consider here a pipe system and its DNN regressor from \cite{aiware},
+that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of these 3000 points.
+Compared to the classification tasks where the DNN is learned in a standard way and PCA is later applied to reduce the output dimension without compromising the accuracy, the DNN regressor has been learned on the reduced PCA basis directly, for both the high dimensional input and the high dimensional output (3000 dimensions each).
+
+
+
+\begin{figure*}[t!]
+	\centering
+	\includegraphics[scale=0.6]{PIPE.pdf} 
+	\vspace{-0.5cm}
+	\caption{Training and bound computation on the pipe use case. 
+		Two PCAs are used, for the input (deformation) and for the output space (plastic strain). The surrogate is learned from reduced deformation input to reduced strain output.}
+	\vspace{-0.2cm}
+	\label{fig.PIPE}
+\end{figure*}	
+
+
+Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learned has 2 fully connected layers, 50 neurons each, learned as a surrogate model, with 10 reduced input and 26 reduced output.
+
+In terms of perturbation, a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
+
+
+
+\begin{table}[b!]
+	\centering
+	\begin{tabular}{|c | c c c c c|} 
+		\hline
+		Pipe & Timeout & ITNE & {\em Diff} & {\em 2$b+$1} & {\em 1$b$}
+		\\\hline 
+		& 1000s & 0.045 & 0.042 & 0.041 & {\bf 0.036}
+		\\
+		Surrogate  & 14400s & 0.042 & 0.036 & {\bf 0.035} & 0.036
+		\\
+		LB = $.025$  & 72000s & 0.042 & 0.034 & {\bf 0.033} & 0.036
+		\\\hline
+	\end{tabular}
+	\caption{Comparison of upper bound (lower is better $\downarrow$) between {\em Diff}, {\em 2$b+$1}, {\em 1$b$} with ITNE on the pipe system with timeouts of 1000s, 14440s and 72000s.}
+	%L1 corresponds to $3.9$ or $4$, and results should be the sum of 10 pixels, so around 10 times higher values.}
+\label{table.pipe}
+\end{table}
+
+
+\begin{figure*}[t!]
+\centering
+\includegraphics[scale=0.36]{deform.png} \hspace{0.1cm}
+\includegraphics[scale=0.36]{strain.png}
+\caption{2 slightly different deformations and their associated quite different strain as obtained by the {\em Diff} model with $200 $ binary variables.}
+\vspace{-0.2cm}
+\label{fig5}
+\end{figure*}	
+
+For the pipe system, we compare in Table \ref{table.pipe} the different models ITNE, {\em Diff}, {\em $2b+1$,$1b$} to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. 
+The bounds we found are quite accurate, with a best bound of $.0329$ obtained by the {\em $2b+1$} model, slightly better than the bound $.0337$ found within the same time by the {\em Diff} model, and better than the bound found $.0356$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is significantly worse than even the {\em "$1b$"} with 1000s of timeout, at $.0416$ despite a very long time out. The certified lower bound is not too far, at $.025$.
+
+We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<0.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather correctly reflects the physical system.
+
+
 
 
 \section{NeurIPS Paper Checklist}
@@ -501,3 +539,5 @@ Now we finish the proof.
 %	\caption{
 %	}
 %\end{table}
+
+
