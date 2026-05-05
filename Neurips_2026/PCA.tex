@@ -64,7 +64,7 @@ maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LAE-DNN.}
 
 {\em Training:} LAE is trained on an ID dataset with several values of latent space $n$. We set the size $n$ by checking the accuracy of LAE-DNN, that is, the $\%$ of images where the predicted class matches the ground truth. We set $n$ as small as possible (for efficiency) while ensuring that the LAE-DNN accuracy loss is minimal ($ \leq 1 \%$) wrt the original DNN.
 Such an $n$ exists as LAE-decode(LAE-encode)= Id and LAE-DNN=DNN for $n=dim$.
-For MNIST, FMNIST, CIFAR10, $n \leq \frac{dim}{35}$ (see Section \ref{s62}). 
+For MNIST, FMNIST, CIFAR10, $n \leq \frac{dim}{30}$ (see Section \ref{s62}). 
 
 
 {\em Offline:} Global bounds $\bar{\beta}$ are computed on LAE-DNN (on the full input space). The upper bound computed are better (by a factor 3 to 15) for LAE-DNN than for DNN (Table \ref{table.L1} in Section \ref{s62}).
