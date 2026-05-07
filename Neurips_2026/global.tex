@@ -152,7 +152,7 @@ We now present our main methodological contribution, the {\em Diff} MILP encodin
 
 We first display on Figure \ref{fig.2v} the function $f(x'_j,y_j)=\hat{y}_j$ for $y_j \in [- \gamma_j, \gamma_j]$. 
 	When $x'_j \leq 0$ and $x_j = x'_j+y_j \leq 0$, we have $\hat{y}_j = \ReLU(x_j) - \ReLU(x'_j) = 0-0=0$. For $x'_j \geq 0$ and $x_j = x'_j+y_j \geq 0$, we have $\hat{y}_j= \ReLU(x_j)-\ReLU(x'_j)=x_j - x'_j = y_j$. 
-    Between these two linear planes, we have two more plans presenting intermediate cases, so 4 linear planes in total.
+    Between these two linear planes, we have two more planes presenting intermediate cases, so 4 linear planes in total.
 	
 
 Recall first that $a'_j$ is the binary variable used in the 
@@ -344,7 +344,7 @@ Intuitively, the {\em diff values} will be small as they will be carrying the di
 
 
 	To simplify further and limit the number of (binary) variables, 
-    we introduce the efficient {\em 1b} model which only uses the diff variables $y_j,\hat{y}_j$, and do not consider variables $x'_j,\hat{x}'_j$. 
+    we introduce the efficient {\em 1b} model, which only uses the {\em diff} variables $y_j,\hat{y}_j$, and do not consider variables $x'_j,\hat{x}'_j$. 
 	% as depicted in Fig.~\ref{fig.1v}. This is a projection of Fig.~\ref{fig.2v} onto $y_j,\hat{y}_j$.
     
 

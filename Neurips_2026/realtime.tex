@@ -58,7 +58,7 @@ Assume we have computed (offline) $\bar{\beta}^{\varepsilon}_{C,D}$ for each $C,
   \label{prop.realtime}
   If "certified robust" is returned over input $I$, 
   then for all perturbed input $I'$ with  $|I - I'| \leq \varepsilon$,
-  the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around $I$. % for perturbation $\varepsilon$.
+  the DNN has the same decision on $I$ and on $I'$, i.e., the DNN is robust around $I$. % for perturbation $\varepsilon$.
 \end{proposition}
 
 \iffalse
@@ -81,6 +81,6 @@ Assume by contradiction that $D \neq C$ is the decision on $I'$.
 
 The proof or Prop. \ref{prop.realtime} can be found in Appendix 
 \ref{app.realtime}.
-The overhead (steps 1,2 above) on top of the standard inference step 0, is $3(k-1)$ operations, i.e. linear in $k$ the number of classes.
+The overhead (steps 1,2 above) on top of the standard inference step 0, is $3(k-1)$ operations, i.e,. linear in $k$, the number of classes.
 For $k=10$ classes (cases of MNIST, Fashion MNIST and CIFAR-10), it amounts to 27 operations in total: $(k-1)$ ADD(+), 
 $(k-1)$ COMP(<) and $k-1$ OR. This can be performed extremely fast, even on limited hardware.

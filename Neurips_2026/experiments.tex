@@ -264,7 +264,7 @@ loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR
     \label{table.LAE}
 \end{table}
 
-We consider the $\bar{\beta}$ bounds reached for $L_1$-perturbation  at most 1, on the 3 original DNNs MNIST-FC, FMNIST-Conv and CIFAR10-Conv, plus their LAE variants for the dimension computed in Table~\ref{table.LAE}.
+We consider the $\bar{\beta}$ bounds reached for $L_1$-perturbation  at most 1, on the 3 original DNNs MNIST-FC, FMNIST-Conv, and CIFAR10-Conv, plus their LAE variants for the dimension computed in Table~\ref{table.LAE}.
 We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{table.classical}.
 
 
@@ -392,8 +392,7 @@ $(\bar{\beta}^\varepsilon_{C,D})_{C<D \leq 10}$}
 
 
 We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{C,D}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}.
-The complexity being linear with the number of classes, 
-dataset with 100 classes would need $\approx$ 5ms to be treated, 200 images/second per CPU core. We set a threshold of $70\%$ to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
+The complexity being linear with the number of classes, a dataset with 100 classes would need $\approx$ 5ms to be treated, 200 images/second per CPU core. We set a threshold of $70\%$ to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
 
 
 

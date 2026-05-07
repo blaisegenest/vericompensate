@@ -16,7 +16,7 @@
 	An $\ell$-layer DNN is provided by $\ell$ weight matrices 
 	$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
 	and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
-	We call $d_i$ the number of neurons of hidden layer 
+	We call $d_i$ the number of neurons in the hidden layer 
 	$i \in \{1, \ldots, \ell-1\}$,
 	$d_0$ the input dimension, and $d_\ell$ the output dimension.
 	Given an input vector $\boldsymbol{z}^0 \in \mathbb{R}^{d_0}$, 
@@ -142,7 +142,7 @@
 
 	
 	\textbf{Mixed Integer Linear Programming (MILP)} can encode ReLU DNNs
-faithfully	(extensions to other activation functions e.g. maxpool in \cite{DivideAndSlide}):
+faithfully	(extensions to other activation functions, e.g., maxpool in \cite{DivideAndSlide}):
 	For an {\em unstable} neuron $n$, that is, with values 
     $x \in [\LB(n),\UB(n)]$ with constants $\LB(n)<0<\UB(n)$, the value $\hat{x}$ of $\ReLU(x)$ can be encoded exactly in an MILP formula \cite{MILP} with one binary/integer variable $a$ valued in $\{0,1\}$, using constraints:
 	
@@ -264,7 +264,7 @@ In this paper, we consider the {\em global} verification problem, where we optim
 
 	The classical encoding \cite{vhagar} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
 	resp. $a'_j$ for the encoding of $\hat{x}_j=\ReLU(x_j)$,
-	resp. $\hat{x}'_j=\ReLU(x'_j)$, for all neurons $j$.
+	resp. $\hat{x}'_j=\ReLU(x'_j)$, for all neuron $j$.
 	Here are the {\bf set of constraints} $\mathcal{M}^{classical}$ to encode the global robustness problem with $L_\infty$-perturbations $ \leq \varepsilon$:
 	\begin{itemize}
 	   \item for all {\em input} neuron $j$ (in layer 0), $-\varepsilon \leq x_j-x'_j \leq \varepsilon$ \quad \, \quad  [$L_\infty$-perturbation $\leq \varepsilon$],
@@ -272,12 +272,12 @@ In this paper, we consider the {\em global} verification problem, where we optim
 	   $x_j = [\boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}^{i-1}]_j+ \vb^i_j$ and 
 	 $x'_j = [\boldsymbol{W}^i\cdot \hat{\boldsymbol{z}}'^{i-1}]_j+ \vb^i_j$,
 	   \item for all neuron $j$, 
-	   $\hat{x}_j$, resp $\hat{x}'_j$, uses eq. (1) with integer variable $a_j$, resp. $a'_j$.
+	   $\hat{x}_j$, resp. $\hat{x}'_j$, use Eq. (1) with integer variable $a_j$, resp. $a'_j$.
 	\end{itemize}
 
 \label{s.L1}
 
-	To encode an $L_1$-perturbation, we propose the following encoding {\em without} extra binary variables. Suprisingly, we could not find any reference to such an encoding in the literature.
+	To encode an $L_1$-perturbation, we propose the following encoding {\em without} extra binary variables. Surprisingly, we could not find any reference to such an encoding in the literature.
 	We use $k$ (= number of input neurons) additional {\em linear} variables 
 	$(A_j)_{j \leq k}$, with constraints:
 	\begin{enumerate}
@@ -292,7 +292,7 @@ In this paper, we consider the {\em global} verification problem, where we optim
 
 \begin{proposition}
 	\label{prop.L1}
- Constraints 1 and 2 above are equivalent with $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$.
+ Constraints 1 and 2 above are equivalent to $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$.
 \end{proposition}
 
 

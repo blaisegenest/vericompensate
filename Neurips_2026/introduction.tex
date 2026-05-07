@@ -37,11 +37,11 @@ Our main contributions address the challenge of computing {\em global bounds} $\
 
 \begin{enumerate}
 
-	\item {\em Auto-Encoders for ID Projection.} For vanilla DNNs, global bounds are particularly pessimistic (see Section \ref{sec.exp}), because inputs far away from the training dataset
+	\item {\em Auto-Encoders for ID Projection.} For vanilla DNNs, global bounds are particularly pessimistic (see Section \ref{sec.pca}), because inputs far away from the training dataset
 	need to be accounted for. Indeed, on input not {\em In Distribution (ID)}, DNNs typically behave erratically \cite{OOD}.
 This implies that {\em no} techniques 
 can ever produce manageable upper bound $\bar{\beta}^\varepsilon_{C,D}$
-for vanilla DNNs. While explicitly {\em characterizing} ID inputs to restrict the analysis to them is impractical, we propose an efficient alternative to project inputs to an ID subspace: Learn from ID samples an autoencoder (AE), and then use the AE-DNN architecture (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) to project the input on the small latent space of size $n$,%, which aligns well with ID samples.
+for vanilla DNNs. While explicitly {\em characterizing} ID inputs to restrict the analysis to them is impractical, we propose an efficient alternative to project inputs to an ID subspace: Learn from ID samples an auto-encoder (AE), and then use the AE-DNN architecture (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) to project the input on the small latent space of size $n$, %, which aligns well with ID samples.
 selected to ensure that the accuracies of the AE-DNN and DNN are within $1$ \%.
 %, meaning that the ID directions selected are sufficient for the DNN task.
 We experimented with Linear AE (LAE): While the encoding may not be as efficient as with non-Linear AE, the latter would significantly increase the computational cost. This results in $>30$x smaller $n$ on standard datasets, leading 
@@ -84,11 +84,11 @@ In terms of perturbations, we consider conjunctions of $L_\infty$- and $L_1$-nor
 
 
 Experimentally, the {\em Diff MILP model} computes upper bounds
-$\bar{\beta}^{\varepsilon}_{C,D}$ which reduces the gap to the lower bound compared with the optimized versions of the classical MILP encoding (see Table \ref{table.classical}). Optimizations are namely reducing the number of binary variables (VHAGaR \cite{vhagar}) or adding linear constraints 
+$\bar{\beta}^{\varepsilon}_{C,D}$, which reduces the gap to the lower bound compared with the optimized versions of the classical MILP encoding (see Table \ref{table.classical}). Optimizations are namely reducing the number of binary variables (VHAGaR \cite{vhagar}) or adding linear constraints 
 (ITNE \cite{ITNE}). The abstractions {\em 2b+1} and {\em 1b} variants offer different trade-offs, reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
 %Further, using PCA reduces the upper bound $\bar{\beta}^{\varepsilon}_{C,D}$ by $3$ to $20$ times.
 Overall, using both LAE-DNNs and {\em Diff}, {\em 2b+1}, or {1b}  MILP model, enables the real-time certification of $\geq 70\%$ of fresh images for an $L_1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets, respectively, see Table \ref{table.cert}. The online process only adds  $\approx 0.5$ ms of latency per image, and $\approx 2000$ images/second can be treated per CPU core.
 
 This is a Concept and Feasibility paper. 
-Our techniques are tested on several DNNs and datasets, but DNN size is limited (though concrete examples are tackled). 
-Linear AE and Linear and ReLU activation functions are the ones we experimented on. We strongly believe that the methodology is novel, impactful, and not intrinsically limited to these restrictions, that will eventually be lifted.
+Our techniques are tested on several DNNs and datasets, but the DNN size is limited (though concrete examples are tackled). 
+Linear AE and Linear and ReLU activation functions are the ones we experimented on. We strongly believe that the methodology is novel, impactful, and not intrinsically limited to these restrictions, which will eventually be lifted.
