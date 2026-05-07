@@ -42,7 +42,7 @@ the DNN has the same decision on $I$ and on $I'$, i.e. the DNN is robust around 
 
 \begin{proof}[Proof] By definition, "certified robust" means that for any $D\neq C$, $b_D = 0$, which means that $\bar{\beta}^{\varepsilon}_{C,D} < x_C - x_D$. 
 
-Then by the definition, for the image $I'$ that $|I - I'|\leq \varepsilon$, we have $(x_C-x_D) - (x'_C-x'_D)\leq \bar{\beta}^{\varepsilon}_{C,D}$. Hence, $x'_C-x'_D\geq (x_C-x_D)-\bar{\beta}^{\varepsilon}_{C,D}> 0$. This argument works for all $D\neq C$, therefore the output for $I'$ is still $C$.
+Then by the definition, for the image $I'$ that $|I - I'|\leq \varepsilon$, we have $(x_C-x_D) - (x'_C-x'_D)\leq \bar{\beta}^{\varepsilon}_{C,D}$. Hence, $x'_C-x'_D\geq (x_C-x_D)-\bar{\beta}^{\varepsilon}_{C,D}> 0$. This argument works for all $D\neq C$, therefore, the output for $I'$ is still $C$.
 \end{proof}
 
 We now compare our bound $\beta$ with the bound $\alpha$ considered by Vhagar \cite{vhagar}, for an evaluation purpose only (how narrow is the gap) rather than to verify robustness in real-time. 
@@ -64,10 +64,10 @@ $\beta^{\varepsilon}_{C,D}$ is.
 
 
 Let us precise LAE-encode and LAE-decode properties.
-LAE-encode defines $n$ independant vectors of dimension $1\times dim$.
+LAE-encode defines $n$ independent vectors of dimension $1\times dim$.
 We can complete it in a basis $B'$ of size $dim$.
 There exists a basis transformation from the natural basis of dimension $dim$ 
-to $B'$. As explained, the optimal choice for LAE-encode is to mimic the basis transformation, dropping all the coefficients not corresponding to the first $n$ coefficients. Hence, LAE-decode(LAE-encode) is a projection on these $n$ independant vectors, no matter how LAE-encode, LAE-decode are constructed: the only choice for LAE is the choice of the $n$ independant vectors to project on.
+to $B'$. As explained, the optimal choice for LAE-encode is to mimic the basis transformation, dropping all the coefficients not corresponding to the first $n$ coefficients. Hence, LAE-decode(LAE-encode) is a projection on these $n$ independent vectors, no matter how LAE-encode, LAE-decode are constructed: the only choice for LAE is the choice of the $n$ independent vectors to project on.
 
 \begin{proposition}
 	\label{Prop3}
@@ -82,7 +82,7 @@ to $B'$. As explained, the optimal choice for LAE-encode is to mimic the basis t
 	from $I'$. 
 	Hence $J,J'$ also maximizes $\beta^\varepsilon_{C,D}(\text{LAE-DNN})$.
 	
-    $J,J'$ are valid input for DNN as well, with the same $x_C-x_D+x'_D-x'_C$
+    $J,J'$ are valid inputs for DNN as well, with the same $x_C-x_D+x'_D-x'_C$
 	as $\beta^\varepsilon_{C,D}(\text{LAE-DNN})$. Hence, $\beta^\varepsilon_{C,D}(\text{LAE-DNN}) \leq \beta^{\varepsilon}_{C,D}(\text{DNN})$.
 \end{proof}
 
@@ -92,12 +92,12 @@ In our case, these inputs are perfectly harmless, as
 they do not increase the bound $\bar{\beta}^{\varepsilon}_{C,D}$. 
 What we need to filter out are OOD inputs leading to outputs of the DNN that are far away from ID outputs, which are the ones creating large bounds $\bar{\beta}^{\varepsilon}_{C,D}$.
 
-Reciprocally, (L)AE-DNN does not overcome the issue considered by OOD detection either: (L)EA-DNN could still provide label (with high confidence)  which does not correspond with the (OOD) input. LAE-DNN focuses on ensuring that the answer given will be robust, i.e. small changes in the input will not modify the output too much, but prediction on the image and its perturbation could be equally misleading. The bottom line is that OOD detection is orthogonal with the focus of (L)AE-DNN.
+Reciprocally, (L)AE-DNN does not overcome the issue considered by OOD detection either: (L)EA-DNN could still provide a label (with high confidence) that does not correspond with the (OOD) input. LAE-DNN focuses on ensuring that the answer given will be robust, i.e., small changes in the input will not modify the output too much, but prediction on the image and its perturbation could be equally misleading. The bottom line is that OOD detection is orthogonal to the focus of (L)AE-DNN.
 
 
 \section{Appendix for Section 6: {\em Diff} and {\em 1b} MILP models}
 
-We first prove that the {\em Diff} model encodes exacly $\hat{y}$.
+We first prove that the {\em Diff} model encodes exactly $\hat{y}$.
 
 \begin{proposition}
 	\label{Prop4}
@@ -141,7 +141,7 @@ We first prove that the {\em Diff} model encodes exacly $\hat{y}$.
 		\end{aligned}
 	\end{align*} 
 	
-	Follow the discuss in the proof of main text, we need to check the other inequalities of each cases.
+	Following the discussion in the proof of the main text, we need to check the other inequalities in each case.
 	
  \textbf{$\mathbf{a = 0, a' = 0}$:}  In this case, the inequalities become: \begin{align*}
  	& \begin{aligned}
@@ -160,7 +160,7 @@ We first prove that the {\em Diff} model encodes exacly $\hat{y}$.
  	\end{aligned}
  \end{align*} Now we can see, $y_j+x'_j\leq 0$ and $x'_j \leq 0$ (lines 1\&2), $\hat{y}_j=0$ (line 3). 
  
- For the other 3 lines, by above discussion and the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, they are implied by the following inequalities respectively (one for one) \begin{align*}
+ For the other 3 lines, by the above discussion and the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, they are implied by the following inequalities respectively (one for one) \begin{align*}
  & \begin{aligned}
  	\hat{y}_j  \leq 0 &\leq y_j + x'_j -\alpha_j &
  	\hat{y}_j  \geq 0 &\geq y_j + x'_j  \\
@@ -169,7 +169,7 @@ We first prove that the {\em Diff} model encodes exacly $\hat{y}$.
  	\hat{y}_j  \leq 0 &\leq y_j + \gamma_j  &
  	\hat{y}_j  \geq 0 &\geq y_j - \gamma_j
  \end{aligned}
- \end{align*} Therefore all 3 rest lines are implied by other inequalities.
+ \end{align*} Therefore, all 3 rest lines are implied by other inequalities.
  
  
 \textbf{$\mathbf{a = 1, a' = 0}$:} In this case, the inequalities become: \begin{align*}
@@ -189,13 +189,13 @@ We first prove that the {\em Diff} model encodes exacly $\hat{y}$.
 	\end{aligned}
 \end{align*} Now we can see, $y_j+x'_j\geq 0$ and $x'_j \leq 0$ (lines 1\&2), hence $y_j \geq 0$; and $\hat{y}_j= y_j + x'_j$ (line 4). 
 
-By above discussing,  we have: \begin{align*}
+By the above discussion,  we have: \begin{align*}
 	& \begin{aligned}
 		\hat{y}_j  \leq& y_j+x'_j \leq y_j  &\hat{y}_j  \geq& y_j+x'_j \geq 0
 	\end{aligned}
 \end{align*}
 
-Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, all 3 other lines are implied by the following inequalities respectively (one for one): \begin{align*}
+Then, by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, all 3 other lines are implied by the following inequalities respectively (one for one): \begin{align*}
 	& \begin{aligned}
 		\hat{y}_j  \leq&  y_j \leq \gamma_j       &
 		\hat{y}_j  \geq& y_j+x'_j \geq 0 \\
@@ -204,7 +204,7 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 		\hat{y}_j  \leq& y_j+x'_j \leq y_j  &
 		\hat{y}_j  \geq& 0 \geq y_j - \gamma_j
 	\end{aligned}
-\end{align*}Therefore all 3 rest lines are implied by other inequalities.
+\end{align*}Therefore, all 3 rest lines are implied by other inequalities.
 	
 
 	
@@ -225,14 +225,14 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 	\end{aligned}
 \end{align*} Now we can see, $y_j+x'_j\leq 0$ and $x'_j \geq 0$ (lines 1\&2), hence $y_j \leq 0$; and $\hat{y}_j= - x'_j$ (line 5). 
 
-By above discussing,  we have: \begin{align*}
+By the above discussion,  we have: \begin{align*}
 	& \begin{aligned}
 		\hat{y}_j  &\leq -x'_j\leq 0      & \hspace*{4ex}
 		\hat{y}_j  &\geq -x'_j \geq -x'_j+(y_j+x'_j) \geq y_j
 	\end{aligned}
 \end{align*}
 
-Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, all 3 other lines are implied by the following inequalities respectively (one for one):\begin{align*}
+Then, by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, all 3 other lines are implied by the following inequalities, respectively (one for one):\begin{align*}
 	& \begin{aligned}
 		\hat{y}_j  &\leq -x'_j\leq 0      &
 		\hat{y}_j  &\geq y_j\geq -\gamma_j \\
@@ -241,7 +241,7 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 		\hat{y}_j  &\leq 0 \leq y_j + \gamma_j  &
 		\hat{y}_j  &\geq  y_j
 	\end{aligned}
-\end{align*}Therefore all 3 rest lines are implied by other inequalities.
+\end{align*}Therefore, all 3 rest lines are implied by other inequalities.
 
 
 
@@ -265,7 +265,7 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 \end{align*} Now we can see, $y_j+x'_j\geq 0$ and $x'_j \geq 0$ (lines 1\&2) and $\hat{y}_j= y_j$ (line 6). 
 
 
-Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, all 3 other lines are implied by the following inequalities respectively (one for one):\begin{align*}
+Then, by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ and $x'_j,y_j+x'_j \in [\alpha_j,\beta_j]$, all 3 other lines are implied by the following inequalities respectively (one for one):\begin{align*}
 	& \begin{aligned}
 		\hat{y}_j  &\leq y_j\leq \gamma_j       &
 		\hat{y}_j  &\geq y_j\geq -\gamma_j \\
@@ -274,7 +274,7 @@ Then by the assumption of the proposition that $y_j \in [-\gamma_j, \gamma_j]$ a
 		\hat{y}_j  &\leq -x'_j+(y_j+x'_j)\leq -x'_j + \beta_j &
 		\hat{y}_j  &\geq y_j - (y_j+x'_j)\geq -x'_j \\
 	\end{aligned}
-\end{align*}Therefore all 3 rest lines are implied by other inequalities.
+\end{align*}Therefore, all 3 rest lines are implied by other inequalities.
 	
 \end{proof}
 
@@ -365,10 +365,10 @@ Now we finish the proof.
 \section{Appendix for Section 7: {\em Diff} for robustness in regression tasks}
 
 
-Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of DNN-regressor due to small perturbations of the input.
+Our {\em Diff} model is not only accurate for classification. It can also provide upper bounds on the output of the DNN-regressor due to small perturbations of the input.
 We consider here a pipe system and its DNN regressor from \cite{aiware},
 that predicts the plastic strain in 3000 points of a mesh over a pipe given the deformation of each of these 3000 points.
-Compared to the classification tasks where the DNN is learned in a standard way and LAE is later applied to reduce the output dimension without compromising the accuracy, the DNN regressor has been learned on the reduced LAE feature space directly, for both the high dimensional input and the high dimensional output (3000 dimensions each).
+Compared to the classification tasks where the DNN is learned in a standard way and LAE is later applied to reduce the output dimension without compromising the accuracy, the DNN regressor has been learned on the reduced LAE feature space directly, for both the high-dimensional input and the high-dimensional output (3000 dimensions each).
 
 
 
@@ -376,9 +376,9 @@ Compared to the classification tasks where the DNN is learned in a standard way 
 
 
 
-Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learned has 2 fully connected layers, 50 neurons each, learned as a surrogate model, with 10 reduced input and 26 reduced output.
+Figure \ref{fig.PIPE} describes the pipeline used to learn the DNN regressor for the pipe system. The DNN that has been learned has 2 fully connected layers, 50 neurons each, learned as a surrogate model, with 10 reduced inputs and 26 reduced outputs.
 
-In terms of perturbation, we consider a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
+In terms of perturbation, we consider a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximize the sum of the difference in output of 10 selected points in the mesh between the input and its deformation.
 
 
 
@@ -406,7 +406,7 @@ In terms of perturbation, we consider a conjunction of $L_1 \leq 3.9$ and $L_\in
 
 
 For the pipe system, we compare in Table \ref{table.pipe} the different models ITNE, {\em Diff}, {\em $2b+1$,$1b$} to produce bounds on the sum of the difference of strain over 10 specific points of the mesh, for a physically relevant perturbation of the deformation. 
-The bounds we found are quite accurate, with a best bound of $.033$ obtained by the {\em $2b+1$} model, slightly better than the bound $.034$ found within the same time by the {\em Diff} model, and better than the bound found $.036$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is significantly worse than even the {\em "$1b$"} with 1000s of timeout, at $.042$ despite a very long time out. The certified lower bound is not too far, at $.025$.
+The bounds we found are quite accurate, with a best bound of $.033$ obtained by the {\em $2b+1$} model, slightly better than the bound $.034$ found within the same time by the {\em Diff} model, and better than the bound found $.036$ by the {\em "$1b$"} model, although this bound has been found 70 times faster due to the simpler model ({\em 1}$b$ converges after 1000s). ITNE is significantly worse than even the {\em "$1b$"} with 1000s of timeout, at $.042$ despite a very long timeout. The certified lower bound is not too far, at $.025$.
 
 We did check that this worst-case found, displayed in Fig. \ref{fig5} and which is not too far from the actual worst case that is known to be $<.033$, is coherent with the physical finite element model the DNN surrogate has been learned from. Hence, this brittleness of the surrogate is {\em not} a hallucination due to the learning process, but rather correctly reflects the physical system.
 
@@ -450,21 +450,21 @@ We did check that this worst-case found, displayed in Fig. \ref{fig5} and which 
 	\item {\bf Experimental result reproducibility}
 	\item[] Question: Does the paper fully disclose all the information needed to reproduce the main experimental results of the paper to the extent that it affects the main claims and/or conclusions of the paper (regardless of whether the code and data are provided or not)?
 	\item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-	\item[] Justification: The whole process of the method and all datasets, models and hyperparameters are clearly stated in Section 5, 6, and 7.
+	\item[] Justification: The whole process of the method and all datasets, models, and hyperparameters are clearly stated in Sections 5, 6, and 7.
 
 	
 	
 	\item {\bf Open access to data and code}
 	\item[] Question: Does the paper provide open access to the data and code, with sufficient instructions to faithfully reproduce the main experimental results, as described in supplemental material?
 	\item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-	\item[] Justification: The DNNs are openly available, as well as the datasets. The algorithms are clearly provided, and results can be replicated using Gurobi as solver using one's prefered code base. We will release the code upon acceptance of the paper.
+	\item[] Justification: The DNNs are openly available, as well as the datasets. The algorithms are clearly provided, and results can be replicated using Gurobi as solver using one's preferred code base. We will release the code upon acceptance of the paper.
 
 	
 	
 	\item {\bf Experimental setting/details}
 	\item[] Question: Does the paper specify all the training and test details (e.g., data splits, hyperparameters, how they were chosen, type of optimizer) necessary to understand the results?
 	\item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-	\item[] Justification: All datasets, models and hyperparameters are clearly stated.
+	\item[] Justification: All datasets, models, and hyperparameters are clearly stated.
 
 	
 	\item {\bf Experiment statistical significance}
@@ -500,7 +500,7 @@ We did check that this worst-case found, displayed in Fig. \ref{fig5} and which 
 	\item {\bf Licenses for existing assets}
 	\item[] Question: Are the creators or original owners of assets (e.g., code, data, models), used in the paper, properly credited and are the license and terms of use explicitly mentioned and properly respected?
 	\item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-	\item[] Justification: The original owners of assets code, data, models used in the paper are properly credited. The license and terms of use explicitly are mentioned and properly respected.
+	\item[] Justification: The original owners of assets, code, data, and models used in the paper are properly credited. The license and terms of use are explicitly mentioned and properly respected.
 	\item[] Guidelines:
 	
 	
