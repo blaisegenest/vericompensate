@@ -62,7 +62,7 @@ than full space on standard datasets, leading to bounds $\bar{\beta}^\varepsilon
 We develop the {\em Diff} MILP encoding for the global robustness problem.
 In this model, the variables are the values of the perturbed neurons, as well as the differences between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}), see Section \ref{s.diff}. By comparison, the {\em classical} MILP model \cite{MILP} employed in \cite{vhagar,lipshitz,ITNE} 
 computes the {\em diff variables} as the difference between 2 larger values.
-Both encodings are {\em asymptotically} exact (infinite runtime), but the {\em Diff} model is more accurate in practice (iso finite runtime) due to better linear relaxation.
+Both encodings are {\em asymptotically} exact (for infinite runtime), but the {\em Diff} model is more accurate in practice (iso finite runtime) due to better linear relaxation.
 %, with the same number of variables.
 Further, from the {\em Diff MILP model}, which is asymptotically exact, we develop two abstract MILP models, which are more efficient but also asymptotically less accurate than {\em Diff}, namely  the {\em 2b+1} and  the {\em 1b} models.
 	
