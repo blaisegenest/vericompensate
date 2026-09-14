@@ -37,16 +37,24 @@ Our main contributions address the challenge of computing {\em global bounds} $\
 
 \begin{enumerate}
 
-	\item {\em Auto-Encoders for ID Projection.} For vanilla DNNs, global bounds are particularly pessimistic (see Section \ref{sec.pca}), because inputs far away from the training dataset
+	\item {\em The AE-DNN architecture.} For vanilla DNNs, global bounds are particularly pessimistic (see Section \ref{sec.pca}), because inputs far away from the training dataset
 	need to be accounted for. Indeed, on input not {\em In Distribution (ID)}, DNNs typically behave erratically \cite{OOD}.
 This implies that {\em no} techniques 
 can ever produce manageable upper bound $\bar{\beta}^\varepsilon_{C,D}$
-for vanilla DNNs. While explicitly {\em characterizing} ID inputs to restrict the analysis to them is impractical, we propose an efficient alternative: Learn from ID samples an auto-encoder (AE), and then use the AE-DNN architecture (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) to project the input on a smaller latent space. %, which aligns well with ID samples.
-
-selected to ensure that the accuracies of the AE-DNN and DNN are within $1$ \%.
+for vanilla DNNs. 
+%While explicitly {\em characterizing} ID inputs to restrict the analysis to them is impractical, 
+We propose %an efficient alternative: 
+to use the AE-DNN architecture (Fig.~\ref{fig:AE-DNN} from 
+Section~\ref{sec.pca}). 
+The AE-DNN first uses an auto-encoder (AE) learnt from ID samples, so that the large input space is projected to a small latent space which aligns well with ID samples. It is then projected back to full space before being input to the original DNN. 
+%In this way, the AE-DNN characteristics are close to the original DNN on ID-input.
+Non-ID samples will be projected by the AE-DNN to the ID-compatible latent space, so that they do not create artificially large global bounds.
+We select the size of the latent space to ensure that the accuracies (which by definition only cares about ID inputs) of the AE-DNN and DNN are within $1$ \%. 
+Last, we propose to use  {\em in exploitation} the AE-DNN rather than the original DNN, as their characteristics on ID-inputs are similar but 
+global bounds are much better, enabling real-time certification for AE-DNNs.
 %, meaning that the ID directions selected are sufficient for the DNN task.
-We experimented with Linear AE (LAE): While the encoding may not be as efficient as with non-Linear AE, the latter would significantly increase the computational cost. This results in $>30$x smaller $n$ on standard datasets, leading 
-to LAE-DNNs bounds $\bar{\beta}^\varepsilon_{C,D}$ $3$-$15$x smaller than vanilla DNNs bounds.
+We experimented with Linear AEs (LAE): While the encoding may not be as efficient as with non-Linear AE, the latter would significantly increase the computational cost. The latent space is $>30$x smaller 
+than full space on standard datasets, leading to bounds $\bar{\beta}^\varepsilon_{C,D}$ $3$-$15$x smaller than for vanilla DNNs.
 %	 Specifically, we use PCA to faithfully represent common inputs from the dataset. OOD inputs may be represented unfaithfully, which is reasonable as the DNN is unlikely to provide a reasonable answer on OOD inputs anyway. For instance, $20$ linear components represent MNIST inputs faithfully: the PCA-DNN does not lose accuracy on the MNIST dataset.
 
 
@@ -54,7 +62,7 @@ to LAE-DNNs bounds $\bar{\beta}^\varepsilon_{C,D}$ $3$-$15$x smaller than vanill
 We develop the {\em Diff} MILP encoding for the global robustness problem.
 In this model, the variables are the values of the perturbed neurons, as well as the differences between the original and the perturbed neuron values (called the {\em diff variables}, introduced in \cite{diff}). We study and encode how the {\em diff variables} evolve after passing through a ReLU (Prop.~\ref{Prop2}), see Section \ref{s.diff}. By comparison, the {\em classical} MILP model \cite{MILP} employed in \cite{vhagar,lipshitz,ITNE} 
 computes the {\em diff variables} as the difference between 2 larger values.
-Both encodings are {\em asymptotically} exact, but the {\em Diff} model is more accurate in practice.
+Both encodings are {\em asymptotically} exact (infinite runtime), but the {\em Diff} model is more accurate in practice (iso finite runtime) due to better linear relaxation.
 %, with the same number of variables.
 Further, from the {\em Diff MILP model}, which is asymptotically exact, we develop two abstract MILP models, which are more efficient but also asymptotically less accurate than {\em Diff}, namely  the {\em 2b+1} and  the {\em 1b} models.
 	
@@ -81,14 +89,21 @@ Further, from the {\em Diff MILP model}, which is asymptotically exact, we devel
 \end{enumerate}
 
 
-In terms of perturbations, we consider conjunctions of $L_\infty$- and $L_1$-norms, which allow to accurately describe perturbations. For instance, "each subpixel is perturbed by at most $\frac{50}{255}$ ($L_\infty$) and the sum of the absolute value of perturbations over all subpixels is at most $1$" ($L_1$-perturbation). While $L_1$ perturbations are not linear (because of the absolute values), and thus they are seldom used, we show in Section~\ref{s.L1} how to use them as a perturbation in the MILP model without incurring any expensive binary variables (only cheap linear variables are necessary). 
+In terms of perturbations, we consider conjunctions of $L_\infty$- and $L_1$-norms, which allow to accurately describe perturbations. For instance, "each subpixel is perturbed by at most $\frac{50}{255}$ ($L_\infty$) and the sum of the absolute value of perturbations over all subpixels is at most $1$" ($L_1$-perturbation). 
+%While $L_1$ perturbations are not linear (because of the absolute values), and thus they are seldom used, they can be used as perturbation in the MILP model without incurring any expensive binary variables (only cheap linear variables are necessary) (Section~\ref{s.L1}). 
 
 
-Experimentally, the {\em Diff MILP model} computes upper bounds
-$\bar{\beta}^{\varepsilon}_{C,D}$, which reduces the gap to the lower bound compared with the optimized versions of the classical MILP encoding (see Table \ref{table.classical}). Optimizations are namely reducing the number of binary variables (VHAGaR \cite{vhagar}) or adding linear constraints 
-(ITNE \cite{ITNE}). The abstractions {\em 2b+1} and {\em 1b} variants offer different trade-offs, reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
+Experimentally, 
+compared with the optimized versions of the classical MILP encoding
+(VHAGaR \cite{vhagar} and ITNE \cite{ITNE}),
+the {\em Diff MILP model} computes upper bounds
+$\bar{\beta}^{\varepsilon}_{C,D}$ with smaller gaps to the lower bound (see Table \ref{table.classical}). 
+%Optimizations are namely reducing the number of binary variables (VHAGaR \cite{vhagar}) or adding linear constraints (ITNE \cite{ITNE}). 
+The abstractions {\em 2b+1} and {\em 1b} variants offer different trade-offs, reaching better bounds than the {\em Diff MILP} model when the instance is very complex, or when runtime is limited (Table \ref{table.L1}).  
 %Further, using PCA reduces the upper bound $\bar{\beta}^{\varepsilon}_{C,D}$ by $3$ to $20$ times.
-Overall, using both LAE-DNNs and {\em Diff}, {\em 2b+1}, or {1b}  MILP model, enables the real-time certification of $\geq 70\%$ of fresh images for an $L_1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets, respectively, see Table \ref{table.cert}. The online process only adds  $\approx 0.5$ ms of latency per image, and $\approx 2000$ images/second can be treated per CPU core.
+Overall, using {\em Diff}, {\em 2b+1}, and {\em 1b}  MILP models, 
+enables the real-time certification of $\geq 70\%$ of fresh images 
+on LAE-DNNs used in exploitation, for an $L_1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets, respectively, see Table \ref{table.cert}. The online process only adds  $\approx 0.5$ ms of latency per image, and $\approx 2000$ images/second can be treated per CPU core.
 
 This is a Concept and Feasibility paper. 
 Our techniques are tested on several DNNs and datasets, but the DNN size is limited (though concrete examples are tackled). 
