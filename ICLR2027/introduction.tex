@@ -41,7 +41,8 @@ Our main contributions address the challenge of computing {\em global bounds} $\
 	need to be accounted for. Indeed, on input not {\em In Distribution (ID)}, DNNs typically behave erratically \cite{OOD}.
 This implies that {\em no} techniques 
 can ever produce manageable upper bound $\bar{\beta}^\varepsilon_{C,D}$
-for vanilla DNNs. While explicitly {\em characterizing} ID inputs to restrict the analysis to them is impractical, we propose an efficient alternative to project inputs to an ID subspace: Learn from ID samples an auto-encoder (AE), and then use the AE-DNN architecture (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) to project the input on the small latent space of size $n$, %, which aligns well with ID samples.
+for vanilla DNNs. While explicitly {\em characterizing} ID inputs to restrict the analysis to them is impractical, we propose an efficient alternative: Learn from ID samples an auto-encoder (AE), and then use the AE-DNN architecture (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) to project the input on a smaller latent space. %, which aligns well with ID samples.
+
 selected to ensure that the accuracies of the AE-DNN and DNN are within $1$ \%.
 %, meaning that the ID directions selected are sufficient for the DNN task.
 We experimented with Linear AE (LAE): While the encoding may not be as efficient as with non-Linear AE, the latter would significantly increase the computational cost. This results in $>30$x smaller $n$ on standard datasets, leading 
