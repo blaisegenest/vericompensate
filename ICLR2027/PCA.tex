@@ -1,13 +1,12 @@
-\section{(Linear) Auto-Encoders to project on  ID-compatible subspace}
+\section{The AE-DNN alternative for real-time certification}
 
 \label{sec.pca}
 
-Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs {\em not} In (training) Distribution (ID) \cite{OOD}. Such samples display large value for $x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left) for MNIST. So no matter what the method employed, the computed upper bound
-$\bar{\beta}_{C,D}^{\varepsilon}$ will be overly large. 
+Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs {\em not} In (training) Distribution (ID) \cite{OOD}. Such samples display large value for $x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left) for MNIST. So no matter what the method employed to compute them, the  upper bounds $\bar{\beta}_{C,D}^{\varepsilon}$ will be overly large as they have to be at least as large as the values obtained for these samples. 
 %Considering the full input space on the original DNN will thus produce high global upper bounds $\bar{\beta}$, no matter the method employed to compute the bound (e.g., MILP). 
 %Restricting to ID inputs seems impractical, as there is no established characterization of ID inputs. 
-We propose an efficient alternative:
-Construct an AE-DNN, described hereafter, 
+
+We propose an efficient  {\em alternative} to use the original vanilla DNN: Construct an AE-DNN, described hereafter, 
 and use it in exploitation instead of the original DNN.
 It keeps very similar behavior on ID inputs (which is what matters in exploitation), but differs vastly on non ID-inputs (which is not important in exploitation) to avoid the large bounds $\bar{\beta}_{C,D}^{\varepsilon}$, and thus AE-DNN is more amenable to real-time certification.
 %To address this, we employ principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
@@ -76,6 +75,7 @@ For MNIST, FMNIST, CIFAR10, $n \leq \frac{dim}{30}$ (see Section \ref{s62}).
 {\em Online Exploitation:} LAE-DNN performs inference, 
 %, as described in the previous section. 
 and the global bounds of LAE-DNN are used, certifying in real-time robustness for $\approx 4$ times larger $\varepsilon$ than for DNN (Table \ref{table.cert} in Section \ref{sec:realtime}).
+The prediction from LAE-DNN is used, as this is the one we have robustness guarantees about.
 %The dataset input images are minimally changed by the PCA-encoding/decoding. 
 %Although PCA-representations are full size (784 pixels for MNIST), they lie in a reduced space. 
 
