@@ -5,10 +5,10 @@ We then use the results online to perform real-time certification.
 On vanilla DNNs, however, global bounds are deemed overly pessimistic, because of inputs that are not In Distribution (ID).
 %, in particular 
 %Out of Distribution (OOD) inputs. While {\em characterizing} OOD inputs to be removed is impractical, we propose an efficient alternative: 
-We propose an alternative "AE-DNN" to vanilla DNN 
+We propose alternative "AE-DNNs" to vanilla DNNs 
 to use in exploitation, projecting  
 inputs on an AutoEncoder (AE) latent space learnt from ID samples.
-With a sufficiently large latent space, ID inputs are only changed slightly and (Linear) AE-DNNs are as accurate as original DNNs, with much smaller (3-15x) global bounds than the original DNN.
+With a sufficiently large latent space, ID inputs are only changed slightly and (Linear) AE-DNNs are as accurate as original DNNs, with much smaller (3-15x) global bounds than the original Vanilla DNNs.
 To compute these bounds accurately, we develop novel {\em Diff} MILP models, explicitly representing the small {\em diff}erential variables between the input and its perturbation, instead of implicitly representing them as differences between 2 larger values (standard MILP encoding). 
 %To further improve the bounds, we employ principal component analysis (PCA) to focus on {\em realistic} in-distribution inputs. 
 Online, our method certifies in real-time over 70\% of incoming images across standard benchmarks for MNIST, Fashion MNIST and CIFAR-10 AE-DNNs used {\em in exploitation}, with $L_1$-perturbations of $1, 4, 2$, respectively, requiring only 0.5 ms of latency on a single CPU core.
