@@ -45,8 +45,8 @@ for vanilla DNNs.
 %While explicitly {\em characterizing} ID inputs to restrict the analysis to them is impractical, 
 We propose %an efficient alternative: 
 to use the AE-DNN architecture (Fig.~\ref{fig:AE-DNN} from 
-Section~\ref{sec.pca}). 
-The AE-DNN first uses an auto-encoder (AE) learnt from ID samples, so that the large input space is projected to a small latent space which aligns well with ID samples. It is then projected back to full space before being input to the original DNN. 
+Section~\ref{sec.pca}) {\em in exploitation}, as an alternative
+to the original vanilla DNNs. The AE-DNN first uses an auto-encoder (AE) learnt from ID samples, so that the large input space is projected to a small latent space which aligns well with ID samples. It is then projected back to full space before being input to the original DNN. 
 %In this way, the AE-DNN characteristics are close to the original DNN on ID-input.
 Non-ID samples will be projected by the AE-DNN to the ID-compatible latent space, so that they do not create artificially large global bounds.
 We select the size of the latent space to ensure that the accuracies (which by definition only cares about ID inputs) of the AE-DNN and DNN are within $1$ \%. 
