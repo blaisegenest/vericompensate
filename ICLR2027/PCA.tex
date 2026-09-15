@@ -19,13 +19,12 @@ and finally call DNN on this projected input.
 %AE-DNN will behave largely as the original DNN on ID inputs. However, 
 %
 In the following, we consider {\em Linear} AE-DNN ({\em LAE-DNN}), as the MILP model for {\em non-linear} AE-DNN would be more complex, needing additional integer variables wrt the original DNN or LAE-DNN.
-
 %We construct the {\em PCA-DNN} by prepending PCA-encoding and decoding to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
 %This reduced feature space retains the most important features of the dataset. 
 Call $dim$ the dimension of the full space, and $n$ the size of the latent space of the LAE trained on an ID dataset. LAE-decode is a linear function. By optimality, it can be assumed to be of rank $n$: it defines $n$ linearly independent vectors of dimension $1 \times dim$.
 %This set of $n$ vectors can be completed with $dim-n$ vectors into a basis of the full space. 
-An optimal choice of LAE-encode is the projection of the input to these $n$ vectors. That is, calling LAE-decode and LAE-encode filters out features not in the ID latent space.
-Hence, on ID inputs, LAE-DNN will behave largely as the original DNN. However, global bounds on the LAE-DNNs will be smaller than on the original DNN, because of the projection to the ID latent space.
+An optimal choice of LAE-encode is the projection of the input to these $n$ vectors. That is, calling LAE-decode and LAE-encode filters out features not in the latent space.
+Hence, on ID inputs, LAE-DNN will behave largely as the original DNN. However, global bounds on the LAE-DNNs will be smaller than on the original DNN, because of the projection to the latent space.
 Indeed, largest $x_C - x'_C + x'_D - x_D$ found 
 on LAE-DNN is 6 times smaller than on DNN, and corresponds to more ID images, see Fig.~\ref{fig3} (right).
 
@@ -46,7 +45,7 @@ maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LAE-DNN.}
 \label{fig3}
 \end{figure*}	
 
-\begin{figure}[b!]
+\begin{figure}[t!]
     \centering
     \includegraphics[width=0.8\textwidth]{lae-pipeline.pdf}
     \caption{(L)AE-DNN architecture, filtering out non-ID features before applying DNN.}
@@ -67,15 +66,14 @@ maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LAE-DNN.}
 
 
 
-{\em Training:} LAE is trained on an ID dataset with several values of latent space $n$. We set the size $n$ by checking the accuracy of LAE-DNN, that is, the $\%$ of images where the predicted class matches the ground truth. We set $n$ as small as possible (for efficiency) while ensuring that the LAE-DNN accuracy loss is minimal ($ \leq 1 \%$) wrt the original DNN.
-Such an $n$ exists as LAE-decode(LAE-encode)= Id and LAE-DNN=DNN for $n=dim$.
+{\em Training:} LAE is trained on an ID dataset with several values of latent space dimension $n$. We set the size $n$ by checking the accuracy of LAE-DNN, that is, the $\%$ of images where the predicted class matches the ground truth. We set $n$ as small as possible (for efficiency) while ensuring that the LAE-DNN accuracy loss is minimal ($ \leq 1 \%$) wrt the original DNN. Such an $n$ exists as LAE-decode(LAE-encode)= Id for $n=dim$, and thus LAE-DNN=DNN.
 For MNIST, FMNIST, CIFAR10, $n \leq \frac{dim}{30}$ (see Section \ref{s62}). 
 
 
 {\em Offline:} Global bounds $\bar{\beta}$ are computed on LAE-DNN (on the full input space). The upper bounds computed are better (by a factor 3 to 15) for LAE-DNN than for DNN (Table \ref{table.L1} in Section \ref{s62}).
 
 
-{\em Online:} on any input, LAE-DNN performs inference, 
+{\em Online Exploitation:} LAE-DNN performs inference, 
 %, as described in the previous section. 
 and the global bounds of LAE-DNN are used, certifying in real-time robustness for $\approx 4$ times larger $\varepsilon$ than for DNN (Table \ref{table.cert} in Section \ref{sec:realtime}).
 %The dataset input images are minimally changed by the PCA-encoding/decoding. 
