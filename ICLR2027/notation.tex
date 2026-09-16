@@ -1,18 +1,11 @@
 \section{Notations and Preliminaries}
 \label{s.notation}
 
-	In this paper, we will use lower case Latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
-	capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
+	%In this paper, we will use lower case Latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
+	%capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
 	To simplify the notations, we restrict the presentation to feed-forward, 
 	fully connected ReLU Deep Neural Networks (DNN for short), where the activation function is $\ReLU: \mathbb{R} \rightarrow \mathbb{R}$ with
 	$\ReLU(x)=x$ for $x \geq 0$ and $\ReLU(x)=0$ for $x \leq 0$.
-	% which we extend componentwise on vectors.
-	
-	%In this paper, we will not use tensors with a dimension higher than matrices: those will be flattened.
-	
-	%\subsection{Neural Network and Verification}
-	
-	
 	An $\ell$-layer DNN is provided by $\ell$ weight matrices 
 	$\boldsymbol{W}^i \in \mathbb{R}^{d_i\times d_{i-1}}$
 	and $\ell$ bias vectors $\vb^i \in \mathbb{R}^{d_i}$, for $i=1, \ldots, \ell$.
@@ -250,9 +243,8 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 	\end{proposition}
 	\fi
 
-\section{Classical MILP encoding for global robustness and L1-perturbations}
-
-In this paper, we consider the {\em global} verification problem, where we optimize over all images $I$ and perturbations $I'$ of $I$ with $|I-I'| \leq \varepsilon$. We will consider:
+\paragraph{Classical MILP encoding for global robustness:}
+In this paper, we consider the {\em global} verification problem, where we optimize over all images $I$ and perturbations $I'$ of $I$ with $|I-I'| \leq \varepsilon$. Consider:
     \begin{itemize}
     \item $x_j,\hat{x}_j$, for neurons $j$ with input image $I$; $x'_j,\hat{x}'_j$, for neurons $j$ with input the perturbed $I'$, 
     \item  $y_j = x_j - x'_j$ and 
@@ -262,10 +254,10 @@ In this paper, we consider the {\em global} verification problem, where we optim
 	%, 	similar to the Interleaving Twin-Network Encoding (ITNE) model of \cite{lipshitz,ITNE}. 
     \end{itemize}
 
-	The classical encoding \cite{vhagar} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
+	The classical encoding \cite{MILP} uses linear variables $x_j,\hat{x}_j, x'_j,\hat{x}'_j$, as well as integer variables $a_j$,
 	resp. $a'_j$ for the encoding of $\hat{x}_j=\ReLU(x_j)$,
 	resp. $\hat{x}'_j=\ReLU(x'_j)$, for all neuron $j$.
-	Here are the {\bf set of constraints} $\mathcal{M}^{classical}$ to encode the global robustness problem with $L_\infty$-perturbations $ \leq \varepsilon$:
+	Here are the {\bf set of constraints} $\mathcal{M}^{classical}$ to encode  global robustness with $L_\infty$-perturbations $ \leq \varepsilon$:
 	\begin{itemize}
 	   \item for all {\em input} neuron $j$ (in layer 0), $-\varepsilon \leq x_j-x'_j \leq \varepsilon$ \quad \, \quad  [$L_\infty$-perturbation $\leq \varepsilon$],
 	   \item for all neuron $j$ from layer $i\geq 1$, 
@@ -277,7 +269,7 @@ In this paper, we consider the {\em global} verification problem, where we optim
 
 \label{s.L1}
 
-	To encode an $L_1$-perturbation, we use the following encoding {\em without} extra binary variables. 
+	\paragraph{Handling $L_1$:} To encode an $L_1$-perturbation, we use the following encoding {\em without} extra binary variables. 
 	%Surprisingly, we could not find any reference to such an encoding in the literature.
 	We use $k$ (= number of input neurons) additional {\em linear} variables 
 	$(A_j)_{j \leq k}$, with constraints:
@@ -292,11 +284,15 @@ In this paper, we consider the {\em global} verification problem, where we optim
 
 
 \begin{proposition}
-	\label{prop.L1}\cite[Sec.~2.2.3]{mosek_cookbook}
+	\label{prop.L1}
+	%\cite[Sec.~2.2.3]{mosek_cookbook}
+	\cite{mosek_cookbook}
  Constraints 1 and 2 above are equivalent to $\sum_{j\leq k} |x_j-x'_j| \leq \varepsilon$.
 \end{proposition}
 
 
-The proof or Prop. \ref{prop.L1} can be found in Appendix 
-\ref{app.L1}. 
-It is crucial that no extra binary variables are used, as the complexity of solving an MILP problem is bounded by $2^{bin} \times LP$ \cite{DivideAndSlide}, where $bin$ is the number of binary variables and $LP$ is the P-time complexity of solving the LP problem. The objective function of the MILP program is defined in the next section.
+%The proof or Prop. \ref{prop.L1} can be found in Appendix \ref{app.L1}. 
+%It is crucial that 
+The complexity of solving an MILP problem is bounded by $2^{bin} \times LP$ \cite{DivideAndSlide}, where $bin$ is the number of binary variables and $LP$ the P-time complexity of solving LP. 
+No extra binary variables are used in the $L_1$ encoding.
+The MILP objective function is defined in the next section.

@@ -50,12 +50,12 @@
 
 	We implemented our code in Python 3.8.
 	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090 (not used, Gurobi is CPU only). 
-	ITNE \cite{ITNE} was reimplemented using the same path as our code, except for the MILP variable $x_j$ using the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). The Julia VHAGaR code 
+	ITNE \cite{ITNE} was reimplemented using the same path as our code, with the MILP variable $x_j$ using the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). The Julia VHAGaR code 
 	from \url{https://github.com/ananmkabaha/VHAGaR} was run on the same hardware.
 	
-	We consider 4 pretrained DNNs on 3 different datasets (MNIST, Fashion-MNIST, and CIFAR10). Namely,  MNIST-FC, a fully connected DNN available at 
-	\url{https://github.com/eth-sri/eran} ("5x100"). We also considered 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
-	from \cite{vhagar} ("conv1"). We will also consider 3 LAE-DNNs, see Section~\ref{s62}.
+	We consider 4 pretrained Vanilla DNNs on 3 different datasets (MNIST, Fashion-MNIST, and CIFAR10). Namely,  MNIST-FC, a fully-connected DNN from \url{https://github.com/eth-sri/eran} ("5x100"), and 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 
+	from \cite{vhagar} ("conv1"). 
+	We will also consider 3 LAE-DNNs, see Section~\ref{s62}.
 	%The pipe considers a conjunction of $L_1 \leq 3.9$ and $L_\infty \leq .02$ perturbations, physically pertinent dimensions, and maximizes the sum of the difference in output of 10 selected points in the mesh between input and its deformation.
 
 \iffalse	
@@ -105,8 +105,8 @@ For each benchmark, we report three values: the bound obtained (lower value is b
 
 \subsection{Comparison for global robustness with $L_\infty$ between {\em Diff}, VHAGaR and ITNE}
 
-We use VHAGaR benchmarks to be able to compare: 
-VHAGaR bound $\alpha$ 
+To be able to compare with VHAGaR, we use their benchmarks: 
+VHAGaR bounds $\alpha_{C,D}$ 
 computing the perturbation necessary to switch an image classified as class $C$ into an image classified as class $D$ (see \cite{vhagar} and appendix \ref{app.realtime}) instead of $\beta$ from section \ref{sec.realtime}, perturbation 
 $L_\infty=0.05$, VHAGaR convolutional DNNs, for which the VHAGaR reduction rules of binary variables are implemented. 
 We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\alpha}$ each MILP model finds. For each DNN, we report the best lower bound $\underline{\alpha}$ among the MILP models, and report the gap between $\bar{\alpha}$ and  $\underline{\alpha}$ as $\%$ of increase over $\underline{\alpha}$. We report results in Table \ref{table.classical}. Recall that most robustness tools, e.g., $\alpha,\beta$-Crown, can only handle {\em local} robustness and cannot be tested.
@@ -237,7 +237,7 @@ Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower t
 We then turn to testing with $L_1$ perturbations and comparing between DNNs and their LAE-DNN versions (which are not supported in VHAGaR). Here, we consider MNIST-FC, which has a higher accuracy than MNIST-Conv, 
 to test a different architecture than convolutional Networks.
 
-Recall that LAE-DNNs are generated following the process described in Section 5: for each latent space dimension, we report in Table \ref{table.LAE} the accuracy loss from using LAE-DNN vs using the original DNN. 
+LAE-DNNs are generated as described in Section 5: for each latent space dimension, we report in Table \ref{table.LAE} the accuracy loss from using LAE-DNNs vs using the Vanilla DNNs. 
 Concerning the LAE algorithm, we experimented with PCA 
 \cite{Paco}.
 We set the dimension at the minimal dimension that results in at most 1$\%$ 
@@ -260,16 +260,9 @@ loss of accuracy, that is $20, 25$ and $60$ for  MNIST-FC, FMNIST-Conv and CIFAR
 
 	\caption{Loss of accuracy of LAE-DNN vs DNN according to the latent space dimension.
 	{\color{blue} Blue} corresponds to the minimal dimension ensuring loss $\leq 1\%$.}
-	\vspace{-0.4cm}
+	%\vspace{-0.4cm}
     \label{table.LAE}
 \end{table}
-
-We consider the $\bar{\beta}$ bounds reached for $L_1$-perturbation  at most 1, on the 3 original DNNs MNIST-FC, FMNIST-Conv, and CIFAR10-Conv, plus their LAE variants for the dimension computed in Table~\ref{table.LAE}.
-We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{table.classical}.
-
-
-
-
 
 \begin{table}[b!]
 	\centering
@@ -316,6 +309,16 @@ We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{
 	 }
 	\label{table.L1}
 \end{table}
+
+
+
+
+We consider the $\bar{\beta}$ bounds reached for $L_1$-perturbation  at most 1, on the 3 original DNNs MNIST-FC, FMNIST-Conv, and CIFAR10-Conv, plus their LAE variants for the dimension computed in Table~\ref{table.LAE}.
+We report the results in Table~\ref{table.L1}, in the same format as Table~\ref{table.classical}.
+
+
+
+
 
 
 
@@ -392,7 +395,7 @@ $(\bar{\beta}^\varepsilon_{C,D})_{C<D \leq 10}$}
 
 
 We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{C,D}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}.
-The complexity being linear with the number of classes, a dataset with 100 classes would need $\approx$ 5ms to be treated, 200 images/second per CPU core. We set a threshold of $70\%$ to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
+The complexity being linear with the number of classes, a dataset with 100 classes would need $\approx$ 5ms to be treated, 200 images/second per CPU core. We set a threshold of {\color{blue} $70\%$} to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
 
 
 
@@ -413,25 +416,26 @@ The complexity being linear with the number of classes, a dataset with 100 class
 		\\
 
 		LAE-FMNIST-Conv & 
-		92$\%$ &	86$\%$ &	79$\%$ & {\color{blue} 70$\%$}  & 0.5 ms
+		{\color{blue} 92$\%$} &	{\color{blue}86$\%$} &	{\color{blue}79$\%$} & {\color{blue} 70$\%$}  & 0.5 ms
 		\\\hline
 		
 		CIFAR10-Conv  & 39$\%$ & 0$\%$ & 0$\%$ & 0$\%$ & 0.5 ms
 		\\ 
-		LAE-CIFAR10-Conv  & 92$\%$ & {\color{blue} 72$\%$} & 61$\%$ & 51$\%$ & 0.5 ms
+		LAE-CIFAR10-Conv  & {\color{blue}92$\%$} & {\color{blue} 72$\%$} & 61$\%$ & 51$\%$ & 0.5 ms
 		\\\hline
 	\end{tabular}
 
 	\caption{Percentage of images certified robust in real-time 
 	using the Best computed $(\beta^{1}_{C,D})_{C < D \leq 10}$, 
 	for different values of $L_1$-perturbations.
-	{\color{blue} Blue} depicts the largest perturbation ensuring $\geq 70\%$ of images being robust. The latency overhead is the same as the number of classes (10) for all datasets.}
+	{\color{blue} Blue} depicts perturbation ensuring 
+	{\color{blue} $\geq 70\%$} of images being robust. The latency overhead is the same as the number of classes (10) for all datasets.}
     %Latency overhead are the same as the number of classes is the same (=10) for all datasets.} 
 	%2000 images/s can be treated per cpu core.}
     \label{table.cert}
 \end{table}
 
-With that, we can certify at least $70\%$ of the images for all 3 LAE-DNNs for a $L_1$-perturbation of $1$, and even up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST. We are unable to do it for the non-LAE version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its LAE-version. Overall, LAE-DNNs are amenable to certification in real-time, unlike vanilla DNNs.
+With that, we can certify at least {\color{blue} $70\%$} of the images for all 3 LAE-DNNs for a $L_1$-perturbation of $1$, and even up to perturbation $2$ for CIFAR10 and even $4$ for FMNIST. We are unable to do it for the non-LAE version, but in the case of FMNIST-Conv, with a perturbation 4 times smaller than for its LAE-version. Overall, LAE-DNNs are amenable to certification in real-time, unlike vanilla DNNs.
 
 \iffalse
 To remove improbable images and limit the space of search, 

@@ -6,18 +6,37 @@ Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to
 %Considering the full input space on the original DNN will thus produce high global upper bounds $\bar{\beta}$, no matter the method employed to compute the bound (e.g., MILP). 
 %Restricting to ID inputs seems impractical, as there is no established characterization of ID inputs. 
 
-We propose an efficient  {\em alternative} to use the original vanilla DNN: Construct an AE-DNN, described hereafter, 
-and use it in exploitation instead of the original DNN.
-It keeps very similar behavior on ID inputs (which is what matters in exploitation), but differs vastly on non ID-inputs (which is not important in exploitation) to avoid the large bounds $\bar{\beta}_{C,D}^{\varepsilon}$, and thus AE-DNN is more amenable to real-time certification.
+We propose an efficient  {\em alternative} to using the original vanilla DNN: Construct an AE-DNN, described hereafter, 
+and use it in exploitation instead.
+They have very similar behavior on ID inputs (which is what matters in exploitation), but differ vastly on {\em non} ID-inputs (not important in exploitation) to avoid the large bounds $\bar{\beta}_{C,D}^{\varepsilon}$: AE-DNN is more amenable to real-time certification.
 %To address this, we employ principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
-To do so, we extract the most important components of the ID dataset using an Auto-Encoder (AE), and filter out the other components from an input before feeding it to the DNN. In practice, we train the AE on the ID dataset to obtain an ID-compatible latent space. We then define the {\em AE-DNN architecture} (Fig.~\ref{fig:AE-DNN}): first, use AE-encode to reduce to the latent space, then use AE-decode 
-produce the {\em projected input} (in full space), 
+To do so, we train an Auto-Encoder (AE) on the ID dataset to obtain an ID-compatible latent space. We then define the {\em AE-DNN architecture} (Fig.~\ref{fig:AE-DNN}): first, AE-encode reduces to the latent space, then AE-decode produces the {\em projected input} (in full space), 
 and finally call DNN on this projected input. 
-%Such architecture has been used previously, e.g. by \cite{MEnet}, but for a different purpose.
+%Such architecture has been used previously, e.g. by \cite{MEnet}, but 
+%for a different purpose.
+
+\begin{figure}[t!]
+	\centering
+\includegraphics[scale=0.35]{image.png} 
+\includegraphics[scale=0.35]{perturb.png} \hspace{0.5cm}
+\includegraphics[scale=0.3]{redimage.png}
+\includegraphics[scale=0.3]{redperturb.png}
+\caption{Left: pair ($I$,$I'$) image and its perturbation (in a unique pixel at $x=14$, $y=8$ from top) maximizing $\underline{\beta}^{.5}_{6,8}=.518$ for DNN. Right: a pair ($I$,$I'$) 
+maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LAE-DNN.}
+\label{fig3}
+\end{figure}	
+
+\begin{figure}[b!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{lae-pipeline.pdf}
+    \caption{(L)AE-DNN architecture, filtering out non-ID features before applying DNN.}
+    \label{fig:AE-DNN}
+\end{figure}
+
 
 %AE-DNN will behave largely as the original DNN on ID inputs. However, 
 %
-In the following, we consider {\em Linear} AE-DNN ({\em LAE-DNN}), as the MILP model for {\em non-linear} AE-DNN would be more complex, needing additional integer variables wrt the original DNN or LAE-DNN.
+In the following, we consider {\em Linear} AE-DNN ({\em LAE-DNN}), as the MILP model for {\em non-linear} AE-DNN would be more complex, needing additional integer variables wrt the original DNN.
 %We construct the {\em PCA-DNN} by prepending PCA-encoding and decoding to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
 %This reduced feature space retains the most important features of the dataset. 
 Call $dim$ the dimension of the full space, and $n$ the size of the latent space of the LAE trained on an ID dataset. LAE-decode is a linear function. By optimality, it can be assumed to be of rank $n$: it defines $n$ linearly independent vectors of dimension $1 \times dim$.
@@ -33,23 +52,6 @@ on LAE-DNN is 6 times smaller than on DNN, and corresponds to more ID images, se
 % For all DNN and all latent space dimension $n$, $\beta^\varepsilon_{C,D}(\text{LAE-DNN}) \leq \beta^{\varepsilon}_{C,D}(\text{DNN})$.
 %\end{proposition}
 
-\begin{figure*}[b!]
-	\centering
-\includegraphics[scale=0.35]{image.png} 
-\includegraphics[scale=0.35]{perturb.png} \hspace{0.5cm}
-\includegraphics[scale=0.3]{redimage.png}
-\includegraphics[scale=0.3]{redperturb.png}
-\caption{Left: pair ($I$,$I'$) image and its perturbation (in a unique pixel at $x=14$, $y=8$ from top) maximizing $\underline{\beta}^{.5}_{6,8}=.518$ for DNN. Right: a pair ($I$,$I'$) 
-maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LAE-DNN.}
-\label{fig3}
-\end{figure*}	
-
-\begin{figure}[t!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{lae-pipeline.pdf}
-    \caption{(L)AE-DNN architecture, filtering out non-ID features before applying DNN.}
-    \label{fig:AE-DNN}
-\end{figure}
 
 
 \iffalse
