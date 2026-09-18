@@ -1,11 +1,12 @@
 \subsection{Related Work on Global Robustness}
 
 %
-Some works focus on training DNNs to be globally robust. Specifically, \cite{Leino,Zhang22a,Sun22,Singla22} propose special networks to be learnt with reasonable global bounds, but reduced accuracy.
+Some works focus on training DNNs to be globally robust. Specifically, \cite{Leino,Zhang22a,Sun22,Singla22} propose special architectures with better global bounds, but lower accuracy.
 Further, \cite{Leino,Chen21,Singla22} do not consider $L_\infty$ or $L_1$ norm, while \cite{REGLO} do not consider (non-ID) inputs.
 %A key aspect of global robustness involves ensuring that analyzed data is both semantically meaningful and in-distribution (ID). 
-Our approach is to postprocess DNNs to obtain better global bounds using(linear) auto encoders~\cite{hinton2006reducing}.
-The (L)AE-DNN architectures (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) project the input on a latent space to filter out non-ID features, with limited loss of accuracy, and it can be applied to these other techniques as postprocessing.
+Our approach is to postprocess DNNs to obtain better global bounds using (linear) auto encoders
+%The (L)AE-DNN architectures (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) project the input on a latent space 
+to filter out non-ID features, with limited loss of accuracy, and can be applied as postprocessing to these DNNs.
 
 Some works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g., using probabilistic guarantees \cite{Levy23,Mangal19}.
 %More related, s

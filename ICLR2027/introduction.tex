@@ -23,7 +23,7 @@ $\bar{\beta}^\varepsilon_{C,D}$
 on $\max_{I,I', |I-I'| \leq \epsilon}(
 x_C - x'_C + x'_D - x_D)$, where $x_{C,D},x'_{C,D}$ are the output values of class $C,D$ from image $I$ and $I'$. 
 %
-Unlike local robustness methods, which require $k$ separate, computationally-expensive calls to certify $k$ images, the global upper bound $\bar{\beta}^\varepsilon_{C,D}$ is computed offline once per network and remains valid across the entire input space. 
+Unlike local robustness, which requires $k$ separate, computationally-expensive calls to certify $k$ images, the global upper bound $\bar{\beta}^\varepsilon_{C,D}$ is computed offline once per network and remains valid across the entire input space. 
 
 \textit{Real-Time Verification.} The second step occurs in real-time, after the DNN's inference phase. For a given input image $I$, we identify the class $C$ with the highest output value $x_C$, and check whether for every other class $D \neq C$, 
 $x_C - x_D > \bar{\beta}^\varepsilon_{C,D}$. 
@@ -103,7 +103,8 @@ The abstractions {\em 2b+1} and {\em 1b} variants offer different trade-offs, re
 %Further, using PCA reduces the upper bound $\bar{\beta}^{\varepsilon}_{C,D}$ by $3$ to $20$ times.
 Overall, using {\em Diff}, {\em 2b+1}, and {\em 1b}  MILP models, 
 enables the real-time certification of $\geq 70\%$ of fresh images 
-on LAE-DNNs used in exploitation, for an $L_1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets, respectively, see Table \ref{table.cert}. The online process only adds  $\approx 0.5$ ms of latency per image, and $\approx 2000$ images/second can be treated per CPU core.
+on LAE-DNNs used in exploitation, for an $L_1$-perturbation of $1,4,2$ over the MNIST, Fashion-MNIST, and CIFAR-10 datasets, respectively, see Table \ref{table.cert}. The online process only adds  $\approx 0.5$ ms of latency per image, and $\approx 2000$ images/second.
+% can be treated per CPU core.
 
 This is a Concept and Feasibility paper. 
 Our techniques are tested on several DNNs and datasets, but the DNN size is limited (though concrete examples are tackled). 
