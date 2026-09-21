@@ -2,17 +2,17 @@
 
 %
 Some works focus on training DNNs to be globally robust. Specifically, \cite{Leino,Zhang22a,Sun22,Singla22} propose special architectures with better global bounds, but lower accuracy.
-Further, \cite{Leino,Chen21,Singla22} do not consider $L_\infty$ or $L_1$ norm, while \cite{REGLO} do not consider (non-ID) inputs.
+Further, \citet{Leino,Chen21,Singla22} do not consider $L_\infty$ or $L_1$ norm, while \citet{REGLO} do not consider (non-ID) inputs.
 %A key aspect of global robustness involves ensuring that analyzed data is both semantically meaningful and in-distribution (ID). 
 Our approach is to postprocess DNNs to obtain better global bounds using (linear) auto encoders
 %The (L)AE-DNN architectures (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) project the input on a latent space 
 to filter out non-ID features, with limited loss of accuracy, and can be applied as postprocessing to these DNNs.
 
-Some works \cite{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g., using probabilistic guarantees \cite{Levy23,Mangal19}.
+Some works \citep{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g., using probabilistic guarantees \citep{Levy23,Mangal19}.
 %More related, s
-Others \cite{Marabou,lipshitz,ITNE,GROCET} consider certifying restricted Lipschitz bound, to understand how the output can change given an input perturbation. However, they do not consider whether the classification changes. 
+Others \citep{Marabou,lipshitz,ITNE,GROCET} consider certifying restricted Lipschitz bound, to understand how the output can change given an input perturbation. However, they do not consider whether the classification changes. 
 %
-Closest to our work is VHAGaR \cite{vhagar}, which computes 
+Closest to our work is VHAGaR \citep{vhagar}, which computes 
 bounds $\bar{\alpha}^\varepsilon_{C,D}$ similar to our bounds 
 $\bar{\beta}^\varepsilon_{C,D}$.
 %, but limited to $L_\infty$-perturbations and variants. 
@@ -20,13 +20,13 @@ Crucially, VHAGaR bounds are not small enough for real-time robustness, whereas 
 %One reason is {\em Diff} MILP is more accurate in practice.
 
 Technically, while \cite{diff} does not tackle global robustness, it is one of the first papers to consider {\em differential} verification, introducing the {\em diff} variables that are used here and partly in \cite{ITNE}. 
-The paper \cite{diff} did not consider MILP encoding.
-The MILP-based works \cite{vhagar,lipshitz,ITNE} 
+However, \citet{diff} did not consider MILP encoding.
+The MILP-based works \citep{vhagar,lipshitz,ITNE} 
 use the classical MILP encoding from \cite{MILP}.
 %, and not our novel {\em Diff} model, nor even the "1b" model. 
-ITNE \cite{ITNE} adds explicitly one {\em linear} constraint (Eq. (3) in \cite{ITNE}) on the {\em diff variables} $y,\hat{y}$,
+ITNE \citep{ITNE} adds explicitly one {\em linear} constraint (Eq. (3) in \cite{ITNE}) on the {\em diff variables} $y,\hat{y}$,
 %$\frac{y_i-\gamma_i}{2} \leq \hat{y}_i \leq \frac{y_i+\gamma_i}{2}$ 
-implied by each of our MILP models {\em Diff}, {\em 2b+1} and {\em 1b} models. Vhagar \cite{vhagar} instead adds per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations.
+implied by each of our MILP models {\em Diff}, {\em 2b+1} and {\em 1b} models. VHAGaR \citep{vhagar} instead adds per neuron constraints (depending on the perturbation) between the (binary) variables to simplify the MILP problem, which is well-adapted to occlusion and patches but less to $L_1$-perturbations.
 None of these works consider $L_1$-perturbations.
 
 
