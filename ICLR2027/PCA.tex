@@ -2,7 +2,7 @@
 
 \label{sec.pca}
 
-Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic on vanilla DNN, since they must accommodate all possible inputs, including inputs {\em not} In (training) Distribution (ID) \cite{OOD}. Such samples display large value for $x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left) for MNIST. So no matter what the method employed to compute them, the  upper bounds $\bar{\beta}_{C,D}^{\varepsilon}$ will be overly large as they have to be at least as large as the values obtained for these samples. 
+Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to be overly pessimistic for vanilla DNNs, since they must accommodate all possible inputs, including inputs {\em not} In (training) Distribution (ID) \cite{OOD}. Such samples display large value for $x_C - x'_C + x'_D - x_D$, see Fig.~\ref{fig3} (left) for MNIST. So no matter what method is employed to compute them, the upper bounds $\bar{\beta}_{C,D}^{\varepsilon}$ will be overly large, as they have to be at least as large as the values obtained for these samples. 
 %Considering the full input space on the original DNN will thus produce high global upper bounds $\bar{\beta}$, no matter the method employed to compute the bound (e.g., MILP). 
 %Restricting to ID inputs seems impractical, as there is no established characterization of ID inputs. 
 
@@ -11,7 +11,7 @@ and use it in exploitation instead.
 They have very similar behavior on ID inputs (which is what matters in exploitation), but differ vastly on {\em non} ID-inputs (not important in exploitation) to avoid the large bounds $\bar{\beta}_{C,D}^{\varepsilon}$: AE-DNN is more amenable to real-time certification.
 %To address this, we employ principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
 To do so, we train an Auto-Encoder (AE) on the ID dataset to obtain an ID-compatible latent space. We then define the {\em AE-DNN architecture} (Fig.~\ref{fig:AE-DNN}): first, AE-encode reduces to the latent space, then AE-decode produces the {\em projected input} (in full space), 
-and finally call DNN on this projected input. 
+and finally call the DNN on this projected input. 
 %Such architecture has been used previously, e.g. by \cite{MEnet}, but 
 %for a different purpose.
 
@@ -41,10 +41,10 @@ In the following, we consider {\em Linear} AE-DNN ({\em LAE-DNN}), as the MILP m
 %This reduced feature space retains the most important features of the dataset. 
 Call $dim$ the dimension of the full space, and $n$ the size of the latent space of the LAE trained on an ID dataset. LAE-decode is a linear function. By optimality, it can be assumed to be of rank $n$: it defines $n$ linearly independent vectors of dimension $1 \times dim$.
 %This set of $n$ vectors can be completed with $dim-n$ vectors into a basis of the full space. 
-An optimal choice of LAE-encode is the projection of the input to these $n$ vectors. That is, calling LAE-decode and LAE-encode filters out features not in the latent space.
+An optimal choice of LAE-encode is the projection of the input onto these $n$ vectors. That is, calling LAE-decode and LAE-encode filters out features not in the latent space.
 Hence, on ID inputs, LAE-DNN will behave largely as the original DNN. However, global bounds on the LAE-DNNs will be smaller than on the original DNN, because of the projection to the latent space.
 Indeed, largest $x_C - x'_C + x'_D - x_D$ found 
-on LAE-DNN is 6 times smaller than on DNN, and corresponds to more ID images, see Fig.~\ref{fig3} (right).
+on LAE-DNN is 6 times smaller than on DNN, and corresponds to more ID images; see Fig.~\ref{fig3} (right).
 
 
 

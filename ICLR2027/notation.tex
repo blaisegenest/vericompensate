@@ -3,7 +3,7 @@
 
 	%In this paper, we will use lower case Latin $a$ for scalars, bold $\boldsymbol{z}$ for vectors, 
 	%capitalized bold $\boldsymbol{W}$ for matrices, similar to notations in \cite{crown}.
-	To simplify the notations, we restrict the presentation to feed-forward, 
+	To simplify the notation, we restrict the presentation to feed-forward, 
 	fully connected ReLU Deep Neural Networks (DNN for short), where the activation function is $\ReLU: \mathbb{R} \rightarrow \mathbb{R}$ with
 	$\ReLU(x)=x$ for $x \geq 0$ and $\ReLU(x)=0$ for $x \leq 0$.
 	An $\ell$-layer DNN is provided by $\ell$ weight matrices 
@@ -41,7 +41,7 @@
 	\begin{align*}
 		\forall \boldsymbol{x} \forall\boldsymbol{y} (|f(\boldsymbol{x}) -f(\boldsymbol{y}) |\leq K|\boldsymbol{x}-\boldsymbol{y}|)
 	\end{align*} 
-	In our practice, when we need global robustness, we will compute an optimization question with respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
+	In our practice, when we need global robustness, we will compute an optimization problem with respect to a certain number $\varepsilon$:	\begin{align}\label{global_robustness}
 		\max_{|\boldsymbol{x}-\boldsymbol{y}| \leq \varepsilon} |f(\boldsymbol{x}) -f(\boldsymbol{y}) |
 	\end{align} And this will lead to the following definition
 	
@@ -168,7 +168,7 @@ and $a=1$ if $x> 0$ and $a=0$ if $x< 0$ (both $a=0,1$ are possible if $x=0$).
 	%This exact MILP encoding is often too computationally intensive, as the worst-case complexity of MILP is exponential in the number of integer variables \cite{DivideAndSlide}.
     
     \paragraph{LP relaxation:}
-	MILP instances can be linearly relaxed into LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. Since solving LP instances takes polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds \cite{DivideAndSlide}. This approach is termed the {\em LP relaxation}.
+	MILP instances can be linearly relaxed into an LP over-abstraction, where variables $a$ originally restricted to integers in $\{0,1\}$ (binary) are relaxed to real numbers in the interval $[0,1]$, while maintaining the same encoding. Since solving LP instances takes polynomial time, this optimization is significantly more efficient. However, this efficiency comes at the cost of precision, often resulting in less stringent bounds \cite{DivideAndSlide}. This approach is termed the {\em LP relaxation}.
     % We invoke a folklore result on the LP relaxation of (\ref{eq11}), for which we provide a direct and explicit proof.
 	
 	

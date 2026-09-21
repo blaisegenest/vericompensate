@@ -76,7 +76,7 @@ It remains to consider the (non-linear) ReLU functions from $x_j,x'_j$ and/or $y
 \subsection{The exact {\em Diff} MILP encoding for global robustness}
 	\label{s.diff}
 
-We now present our main methodological contribution, the {\em Diff} MILP encoding. It considers variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em Diff variables} \cite{diff}, with 
+We now present our main methodological contribution, the {\em Diff} MILP encoding. It considers variables $x'_j,\hat{x}'_j, y_j, \hat{y}_j$, where $y_j, \hat{y}_j$ are the {\em Diff variables} \citep{diff}, with 
 	$y_j = x_j - x'_j$ and $\hat{y}_j= \ReLU({x}_j) - \ReLU(x'_j)$. 
 	Note that, since the image $I$ and the deformation $I'$ have perfectly symmetrical roles and assuming that $\gamma_j$ is an {\em upper} bound of $y_j$, then $-\gamma_j$ is a {\em lower} bound for $y_j$.
 
