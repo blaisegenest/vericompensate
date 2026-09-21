@@ -159,9 +159,7 @@ non-ID inputs (see Fig. \ref{fig3}). On vanilla DNN architecture, real-time cert
 Second, we developed the new {\em Diff} MILP method, which is more accurate for global robustness than the classical MILP encoding. This results in $25\%$ lower bounds in average than the state-of-the-art ITNE model \citep{ITNE}. 
 %Following \cite{diff}, the idea is to look at (small) {\em diff}erential variables $y$ natively rather than represent them as the difference of 2 larger variables $x,x'$.
 
-This is a concept and feasibility paper, showing for the first time, to our knowledge, the feasibility 
-of real-time certification. Many implementation details are out of the scope of the paper: testing many LAE algorithms, possibly non-linear, non-MILP techniques, more activation functions, larger DNNs, etc.
-These are left for future work, as there is no theoretical limitations to our two steps technique.
+This is a concept and feasibility paper, showing for the first time, to our knowledge, the feasibility of real-time {\color{red} global robustness certification on pre-trained DNNs}. Many implementation details are out of the scope of the paper: testing many LAE algorithms, possibly non-linear, non-MILP techniques, more activation functions, larger DNNs, etc. These are left for future work, as there is no theoretical limitations to our two-step technique.
 
 
 
@@ -169,6 +167,12 @@ These are left for future work, as there is no theoretical limitations to our tw
 
 \subsection*{AI use statement}
 
+
+
+In this work, we used generative AI tools for text editing. We have not used generative AI tools for any other tasks with required disclosure, and all other required disclosure tasks are not applicable to this work. Additionally, we used generative AI tools for text editing to improve readability and grammar. We have reviewed all AI-assisted work by manually checking the edited text against the original content to ensure the underlying meaning, technical accuracy, and claims remained intact. We take responsibility for the final content of this work, including text, claims or artifacts produced with the aid of generative AI.
+
+{\color{red} anything else to mention? i can't see...}
+\iffalse
 (This section is \textbf{required} and does not count toward the page limit.)
 
 In this work, we used generative AI tools for [tasks with required disclosure].
@@ -178,14 +182,17 @@ Additionally, we used generative AI tools for [tasks with recommended
 disclosure]. We have reviewed all AI-assisted work. [Elaborate. For example, “we
 checked LLM-generated research ideas for potential plagiarism through a manual
 literature survey”, “LLM-generated code was verified and tested for correctness
-by 2 authors”, etc.]. We take responsibility for the final content of this work,
-including text, claims or artifacts produced with the aid of generative AI.
+by 2 authors”, etc.]. We take responsibility for the final content of this work, including text, claims or artifacts produced with the aid of generative AI.
 
 See the ICLR 2027 AI Policy for Authors for more details. This statement should
 not be more than 1 page.
+\fi
 
 \subsection*{Ethics statement}
 
+The proposed work does not involve human subjects, crowdsourcing, or sensitive data, and therefore does not raise any of the ethical concerns described in the guidelines.
+
+\iffalse
 (This section is \textbf{recommended} and does not count toward the page limit.)
 
 If authors feel that their paper submission raises questions regarding the Code
@@ -197,9 +204,13 @@ methodologies and applications, potential conflicts of interest and sponsorship,
 discrimination/bias/fairness concerns, privacy and security issues, legal
 compliance, and research integrity issues (e.g., IRB, documentation, research
 ethics). This statement should not be more than 1 page.
+\fi
 
 \subsection*{Reproducibility statement}
 
+The DNNs are openly available, as well as the datasets. The algorithms are clearly provided, and results can be replicated using Gurobi as solver using one's preferred code base. We will release the code upon acceptance of the paper.
+
+\iffalse
 (This section is \textbf{recommended} and does not count toward the page limit.)
 
 It is important that the work published in ICLR is reproducible. Authors are
@@ -215,6 +226,7 @@ proof of the claims can be included in the appendix; for any datasets used in
 the experiments, a complete description of the data processing steps can be
 provided in the supplementary materials. Each of the above are examples of
 things that can be referenced in the reproducibility statement.
+\fi
 
 \subsubsection*{Author Contributions}
 If you'd like to, you may include  a section for author contributions as is done
