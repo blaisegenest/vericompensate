@@ -48,9 +48,8 @@
 
 \label{sec.exp}
 
-	We implemented our code in Python 3.8.
-	Gurobi 9.52 was used for solving the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory and 2 NVIDIA RTX 4090 (not used, Gurobi is CPU only). 
-	ITNE \cite{ITNE} was reimplemented using the same path as our code, with the MILP variable $x_j$ using the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). The Julia VHAGaR code 
+	We implemented our code in Python 3.8 and Gurobi 9.52 to solve the MILP problems. We conducted our evaluation on an AMD Threadripper 7970X ($32$ cores$@4.0$GHz) with 256 GB of main memory. %and 2 NVIDIA RTX 4090 (not used, Gurobi is CPU only). 
+	ITNE \cite{ITNE} was reimplemented using the same path as our code: the MILP variable $x_j$ uses the classical MILP encoding plus the extra linear constraint Eq.~(\ref{eq.lpr}). VHAGaR's code 
 	from \url{https://github.com/ananmkabaha/VHAGaR} was run on the same hardware.
 	
 	We consider 4 pretrained Vanilla DNNs on 3 different datasets (MNIST, Fashion-MNIST, and CIFAR10). Namely,  MNIST-FC, a fully-connected DNN from \url{https://github.com/eth-sri/eran} ("5x100"), and 3 convolutional DNNs: MNIST-Conv, FMNIST-Conv, and CIFAR10-Conv, 

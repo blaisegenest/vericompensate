@@ -27,7 +27,7 @@ $x_C - x_D > \bar{\beta}^\varepsilon_{C,D}$.
 Thereby, we can formally certify that the image $I$ is robust to perturbation $\varepsilon$.
 % because an $\varepsilon$-perturbed image $I'$ could at most get $x'_D \leq \bar{\beta}^\varepsilon_{C,D}  - (x_C - x_D)  + x'_C < x'_C$, hence $C$ is also the predicted class for image $I'$. 
 %
-This check typically requires only a few dozen CPU instructions, which can be completed under $1$ ms on a single embedded CPU core. When a frame fails this verification, one could either skip it or revert to a safer, degraded mode until a trustworthy, robust frame is received.
+This check requires only a few dozen CPU instructions, which can be completed under $1$ ms on a single embedded CPU core. When a frame fails this verification, one could either skip it or revert to a safer, degraded mode until a trustworthy, robust frame is received.
 
 Our main contributions address the challenge of computing {\em global bounds} $\bar{\beta}^\varepsilon_{C,D}$ for classes $(C,D)$:
 

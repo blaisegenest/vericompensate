@@ -154,11 +154,14 @@ Address \\
 \section{Conclusion}
 \vspace{-0.2cm}
 In this paper, we tackled {\em real-time} (few ms) certification for global robustness. %  which has never been performed before to the best of our knowledge. 
-The main idea is to proceed in 2 steps: first, compute {\em once, offline} global robustness bounds $\bar{\beta}$ on the DNN. Then use a very simplistic look-up table based on $\bar{\beta}$ to perform the {\em online} certification. 
+The main idea is to proceed in 2 steps: first, compute {\em once, offline} global robustness bounds $\bar{\beta}$ on the DNN. Then use a simple
+%very simplistic 
+look-up table based on $\bar{\beta}$ to perform the {\em online} certification. 
 %
 On vanilla DNN architecture, global bounds are too large ( 
-FMNIST-Conv:>4.16, CIFAR10-Conv: >3.38, Table~\ref{table.L1}): real-time certification is not possible, irrespective of the method used to compute the bounds.
-We developed 2 original techniques of independent interest, necessary to obtain offline bounds $\bar{\beta}$ good enough to certify $>70\%$ of images: First, the LAE-DNN architecture, which can be encoded into the original architecture, 
+FMNIST-Conv: $>4.16$, CIFAR10-Conv: $>3.38$, Table~\ref{table.L1}): real-time certification is not possible, irrespective of the method used to compute the bounds.
+We developed 2 original techniques of independent interest, obtaining offline %necessary to obtain offline 
+bounds $\bar{\beta}$ good enough to certify $>70\%$ of images: First, the LAE-DNN architecture, which can be encoded into the original architecture, 
 avoids very large $\beta$ associated with 
 non-ID inputs (see Fig. \ref{fig3}). 
 Second, we developed the new {\em Diff} MILP method, which is more accurate for global robustness than the classical MILP encoding. This results in $25\%$ lower bounds in average than the state-of-the-art ITNE model \citep{ITNE}. 
