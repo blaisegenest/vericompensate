@@ -176,7 +176,7 @@ We tested with 1000s and 14400s (4h) timeout. We report the upper bound $\bar{\a
 \noindent {\bf Discussion:} This test is relatively easy, where the best upper bound $\bar{\alpha}$ is close to the lower bound $\underline{\alpha}$, with at most a $6\%$ gap. Using the {\em 1b} model is not useful, as its abstraction will lose more than $6\%$. 
 %That is why it is not reported in Table \ref{table.classical}. 
 VHAGaR computes upper bounds $\bar{\alpha}$ quite far from the lower bound, with a gap $40-120\%$. Although we are using its benchmarks, VHAGaR methodology is not well-suited for $L_\infty$ (it is more efficient on {\em Patch} \cite{vhagar}): ITNE is better, with gaps from $9-17\%$.
-Our method provides the {\em Best} overall gaps: $.6-6\%$, significantly tighter. Breaking up numbers, {\em 2b+1} is more accurate for shorter timeout, and {\em Diff} is more accurate when there is sufficient time, as expected. 
+Our method provides the {\em Best} overall gaps: $0.6-6\%$, significantly tighter. Breaking up numbers, {\em 2b+1} is more accurate for shorter timeout, and {\em Diff} is more accurate when there is sufficient time, as expected. 
 Anyway, both are better for particular classes $(C,D)$, as {\em Best} is lower than both {\em Diff} and {\em 2b+1} in every test.
 
 
@@ -332,7 +332,7 @@ LAE-DNNs reach much smaller upper bounds $\bar{\beta}$ than DNN: $15$x for MNIST
 LAE-CIFAR10-Conv is the hardest test, because the latent space dimension (60) is not as small as for MNIST and FMNIST (20 and 25), which is due to the fact that the original CIFAR-10 dimensions (3072) is 4x larger than for MNIST (784).
 Further, the {\em upper} bound $\bar{\beta}$ for LAE-CIFAR10-Conv (0.99) is much smaller than the {\em lower} bound $\underline{\beta}$ 
 for CIFAR10-Conv (3.38), meaning that no other method 
-would reach for CIFAR10-Conv a bound less than three times as high as the bound of our MILP models for LAE-CIFAR10-Conv. For FMNIST-Conv, it is 2 times.
+would reach for CIFAR10-Conv a bound less than 3 times as high as the bound of our MILP models for LAE-CIFAR10-Conv. For FMNIST-Conv, it is 2x.
 
 
 
@@ -393,8 +393,9 @@ $(\bar{\beta}^\varepsilon_{C,D})_{C<D \leq 10}$}
 \label{sec:realtime}
 
 
-We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{C,D}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core, which can be deemed {\em real-time}.
-The complexity being linear with the number of classes, a dataset with 100 classes would need $\approx$ 5ms to be treated, 200 images/second per CPU core. We set a threshold of {\color{blue} $70\%$} to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
+We now turn to how many images can be certified robust in real-time using the {\em Best} bounds $\beta^1_{C,D}$ computed in the previous subsection. We report the $\%$ of images certified robust in Table \ref{table.cert}, as well as the latency overhead to certify them: it is half a millisecond in every case (using a single CPU core), as it depends only on the number of outputs of the DNN, which is 10 for all 6 DNNs considered. It means 2000 images can be treated per second by each CPU core.
+The complexity being linear with the number of classes, a dataset with 100 classes would need $\approx$ 5ms to be treated, 200 images/second per CPU core, which can be deemed {\em real-time}. 
+We set a threshold of {\color{blue} $70\%$} to evaluate how large the $L_1$ perturbation can be while still certifying at least this threshold: a threshold much lower would mean labeling too many incoming images as uncertified, which would degrade the system too much.
 
 
 
