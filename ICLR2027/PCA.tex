@@ -6,15 +6,10 @@ Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to
 %Considering the full input space on the original DNN will thus produce high global upper bounds $\bar{\beta}$, no matter the method employed to compute the bound (e.g., MILP). 
 %Restricting to ID inputs seems impractical, as there is no established characterization of ID inputs. 
 
-{\color{red}We propose an efficient  alternative to using
-%for 
-the original vanilla DNN: Construct the following AE-DNN
-and use it in exploitation instead.
-They have very similar behavior on ID-inputs, which is what matters in exploitation, but differ vastly on {\em non} ID-inputs to avoid the large bounds $\bar{\beta}_{C,D}^{\varepsilon}$: AE-DNNs 
-has similar accuracy and is more amenable to real-time certification than Vanilla DNNs.}
+{\color{red}We propose an efficient alternative to the original vanilla DNN: Construct the following AE-DNN and use it in exploitation instead. AE-DNNs exhibit very similar behavior on ID-inputs, which is critical during exploitation, but differ vastly on {\em non} ID-inputs to avoid large bounds $\bar{\beta}_{C,D}^{\varepsilon}$. They also have similar accuracy to vanilla DNNs, while being more amenable to real-time certification.}
 %To address this, we employ principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
-To do so, we train an Auto-Encoder (AE) on the ID dataset to obtain an ID-compatible latent space. We then define the {\em AE-DNN architecture} (Fig.~\ref{fig:AE-DNN}): first, AE-encode reduces to the latent space, then AE-decode produces the {\em projected input} (in full space), 
-and finally call the DNN on this projected input. 
+%
+To do so, we train an Auto-Encoder (AE) on the ID dataset, obtaining an ID-compatible latent space. We then define the {\em AE-DNN architecture} (Fig.~\ref{fig:AE-DNN}): first, AE-encode reduces to the latent space, then AE-decode produces the {\em projected input} (in full space), and last, call the DNN on this projected input. 
 %Such architecture has been used previously, e.g. by \cite{MEnet}, but 
 %for a different purpose.
 
@@ -39,9 +34,9 @@ maximizing $\underline{\beta}^{.5}_{6,8}=.084$ for LAE-DNN.}
 
 %AE-DNN will behave largely as the original DNN on ID inputs. However, 
 %
-{\color{red} In the following, we consider {\em Linear} AE-DNN ({\em LAE-DNN}), as the MILP model for {\em non-linear} AE-DNN needs additional (expansive) integer variables wrt (LEA-)DNN.
+In the following, we consider {\em Linear} AE-DNN ({\em LAE-DNN}), as the MILP model for {\em non-linear} AE-DNN needs additional (expensive) integer variables wrt (LEA-)DNN.
 Further, the original DNN architecture 
-can be {\em retained}, by absorbing the LEA layers of LEA-DNN into the DNN first layer's weights (Appendix X).}
+can be {\em retained} by absorbing the LEA layers of LEA-DNN into the DNN first layer's weights (Appendix X).
 %Further, LAE-DNN can retain the original DNN architecture by absorbing its linear transformation into the first layer's weights (Appendix X).
 %We construct the {\em PCA-DNN} by prepending PCA-encoding and decoding to the original DNN, transforming an image into its {\em PCA-representation}, see Fig.~\ref{fig.MNIST}.
 %This reduced feature space retains the most important features of the dataset. 
