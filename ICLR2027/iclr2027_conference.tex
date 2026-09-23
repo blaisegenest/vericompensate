@@ -159,9 +159,10 @@ The main idea is to proceed in 2 steps: first, compute {\em once, offline} globa
 look-up table based on $\bar{\beta}$ to perform the {\em online} certification. 
 %
 On vanilla DNN architecture, global bounds are too large ($\gg 4.16$ for FMNIST-Conv, $3.38$ for CIFAR10-Conv, Table~\ref{table.L1}): real-time certification is not possible, irrespective of the method used to compute the bounds.
-We developed 2 original techniques of independent interest, obtaining offline %necessary to obtain offline 
-bounds $\bar{\beta}$ good enough to certify $>70\%$ of images: First, the LAE-DNN architecture, which avoids very large $\beta$ 
-($3$-$15$x lower $\bar{\beta}$) associated with non-ID inputs (see Fig. \ref{fig3}), and retains high accuracy. 
+{\color{red} We developed 2 complementary techniques, 
+together resulting in offline %necessary to obtain offline 
+bounds $\bar{\beta}$ good enough to certify $>70\%$ of images: First, the LAE-DNN architecture  retains high accuracy and avoids very large $\beta$ associated with non-ID inputs (see Fig. \ref{fig3}):
+the $\bar{\beta}$ computed are $3$-$15$x lower.}
 Second, we developed the new {\em Diff} MILP method, which is more accurate for global robustness than the classical MILP encoding. This results in $25\%$ lower bounds in average than the state-of-the-art ITNE model \citep{ITNE}. 
 %Following \cite{diff}, the idea is to look at (small) {\em diff}erential variables $y$ natively rather than represent them as the difference of 2 larger variables $x,x'$.
 
