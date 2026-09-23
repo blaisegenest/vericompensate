@@ -1,17 +1,16 @@
 \subsection{Related Work on Global Robustness}
 
 %
-\eca{Some works rely on specialized architectures or dedicated robust training procedures that ofer better global bounds, but suffer from lower clean accuracy \citep{Leino,Zhang22a,Sun22,Singla22, Chen21}. However, these methods are also frequently constrained by specific thread models: \citet{Singla22} is restricted to the $L_2$ norm, \citet{Zhang22a} to the $L_{\infty}$ norm, while \citet{Chen21} considers non-$L_p$ security properties. \citet{REGLO} provides a post-hoc DNN repair method and is thus restricted to local/in-distribution (ID) regions rather than the full-input domain.
-In contrast, our approach postprocesses standard pretrained DNNs by integrating (linear) autoencoders to filter out non-ID features. This allows to tightly control the accuracy loss by tuning the latent dimension size.}
+%\eca{Some works rely on specialized architectures or dedicated robust training procedures that offer better global bounds, but suffer from lower clean accuracy \citep{Leino,Zhang22a,Sun22,Singla22, Chen21}. However, these methods are also frequently constrained by specific thread models: \citet{Singla22} is restricted to the $L_2$ norm, \citet{Zhang22a} to the $L_{\infty}$ norm, while \citet{Chen21} considers non-$L_p$ security properties. \citet{REGLO} provides a post-hoc DNN repair method and is thus restricted to local/in-distribution (ID) regions rather than the full-input domain.
+%In contrast, our approach postprocesses standard pretrained DNNs by integrating (linear) autoencoders to filter out non-ID features. This allows to tightly control the accuracy loss by tuning the latent dimension size.
 
-\iffalse
-Some works focus on training DNNs to be globally robust. Specifically, \cite{Leino,Zhang22a,Sun22,Singla22} propose special architectures with better global bounds, but lower accuracy.
-Further, \citet{Leino,Chen21,Singla22} do not consider $L_\infty$ or $L_1$ norm, while \citet{REGLO} do not consider (non-ID) inputs.
-%A key aspect of global robustness involves ensuring that analyzed data is both semantically meaningful and in-distribution (ID). 
-Our approach is to postprocess DNNs to obtain better global bounds using (linear) auto encoders
+
+Some works focus on training DNNs to be more globally robust, either through dedicated architectures, albeit with lower accuracy \citep{Leino,Zhang22a,Sun22,Singla22}, or do not consider (non-ID) inputs \citep{REGLO}. Further, \citet{Leino,Chen21,Singla22} do not consider $L_\infty$ or $L_1$ norm. 
+%A key aspect of global robustness involves ensuring that analyzed data is both semantically meaningful and in-distribution (ID).
+Our LAE-DNN approach does not require any change of architecture and thus accuracy change is limited (see Section~\ref{sec.pca}).  %cis to postprocess DNNs to obtain better global bounds using (linear) auto encoders
 %The (L)AE-DNN architectures (Fig.~\ref{fig:AE-DNN} in Section \ref{sec.pca}) project the input on a latent space 
-to filter out non-ID features, with limited loss of accuracy, and can be applied as postprocessing to these DNNs.
-\fi
+%to filter out non-ID features, with limited loss of accuracy, and can be applied as postprocessing to these DNNs.
+
 
 Some works \citep{Bastani16,Ruan19,Gopinath18} estimate global robustness bounds, but without hard verification certificates, e.g., using probabilistic guarantees \citep{Levy23,Mangal19}.
 %More related, s

@@ -155,12 +155,19 @@ Address \\
 \vspace{-0.2cm}
 In this paper, we tackled {\em real-time} (few ms) certification for global robustness. %  which has never been performed before to the best of our knowledge. 
 The main idea is to proceed in 2 steps: first, compute {\em once, offline} global robustness bounds $\bar{\beta}$ on the DNN. Then use a very simplistic look-up table based on $\bar{\beta}$ to perform the {\em online} certification. 
-We developed 2 original techniques of independent interest, necessary to obtain offline bounds $\bar{\beta}$ good enough to certify $>70\%$ of images: First, the LAE-DNN architecture, which filters out non-ID features, avoiding very large $\beta$ associated with 
-non-ID inputs (see Fig. \ref{fig3}). On vanilla DNN architecture, real-time certification is not possible (lower bounds imply that), irrespective of the method used to compute the bounds.
+%
+On vanilla DNN architecture, global bounds are too large ( 
+FMNIST-Conv:>4.16, CIFAR10-Conv: >3.38, Table~\ref{table.L1}): real-time certification is not possible, irrespective of the method used to compute the bounds.
+We developed 2 original techniques of independent interest, necessary to obtain offline bounds $\bar{\beta}$ good enough to certify $>70\%$ of images: First, the LAE-DNN architecture, which can be encoded into the original architecture, 
+avoids very large $\beta$ associated with 
+non-ID inputs (see Fig. \ref{fig3}). 
 Second, we developed the new {\em Diff} MILP method, which is more accurate for global robustness than the classical MILP encoding. This results in $25\%$ lower bounds in average than the state-of-the-art ITNE model \citep{ITNE}. 
 %Following \cite{diff}, the idea is to look at (small) {\em diff}erential variables $y$ natively rather than represent them as the difference of 2 larger variables $x,x'$.
 
-This is a concept and feasibility paper, showing for the first time, to our knowledge, the feasibility of real-time {\color{red} global robustness certification on pre-trained DNNs}. Many implementation details are out of the scope of the paper: testing many LAE algorithms, possibly non-linear, non-MILP techniques, more activation functions, larger DNNs, etc. These are left for future work, as there is no theoretical limitations to our two-step technique.
+This is a concept and feasibility paper,
+showing the feasibility of real-time robustness certification with limited accuracy loss.
+%, showing for the first time, to our knowledge, the feasibility of real-time {\color{red} global robustness certification on pre-trained DNNs}. 
+Many implementation details are out of the scope of the paper: testing other (L)AEs, non-MILP techniques, more activation functions, larger DNNs, etc. These are left for future work, as there is no theoretical limitations to our two-step technique.
 
 
 

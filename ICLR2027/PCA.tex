@@ -44,7 +44,7 @@ Call $dim$ the dimension of the full space, and $n$ the size of the latent space
 An optimal choice of LAE-encode is the projection of the input onto these $n$ vectors. That is, calling LAE-decode and LAE-encode filters out features not in the latent space.
 Hence, on ID inputs, LAE-DNN will behave largely as the original DNN. However, global bounds on the LAE-DNNs will be smaller than on the original DNN, because of the projection to the latent space.
 Indeed, largest $x_C - x'_C + x'_D - x_D$ found 
-on LAE-DNN is 6 times smaller than on DNN, and corresponds to more ID images; see Fig.~\ref{fig3} (right). \eca{In addition, the LAE-DNN can have the same architecture as the original DNN: it suffices to absorb its linear transformation into the DNN's first layer's weights (see Appendix XXX).}
+on LAE-DNN is 6 times smaller than on DNN, and corresponds to more ID images; see Fig.~\ref{fig3} (right). \eca{In addition, the LAE-DNN can have the same architecture as the original DNN: its linear transformation can be absorbed into the DNN's first layer's weights (see Appendix XXX).}
 
 
 
