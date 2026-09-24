@@ -56,80 +56,41 @@ $\alpha^{\varepsilon}_{C,D}$ is not symmetrical, while
 $\beta^{\varepsilon}_{C,D}$ is.
 
 
-\section{Appendix for Section 4: Architecture of LAE-DNNs}
+\section{Appendix for Section 4: LAE-DNN}
 \label{app.lae.folding}
 
-Section~4 constructs an AE-DNN by applying an autoencoder before the
-original DNN. For the linear autoencoders considered in this paper,
-the encoder-decoder transformation does not need to be implemented as
-additional layers during exploitation: it can be absorbed into the
-first linear layer of the original DNN. We formalize this observation
-below.
+We show that an LAE-DNN can be represented with the same architecture
+as the original DNN by absorbing the linear transformation of
+LAE-encode and LAE-decode into the first linear layer of the DNN.
 
-Let the encoder and decoder of the LAE be given by
-\begin{align*}
-	\operatorname{Enc}(\boldsymbol{x})
-	&=
-	\boldsymbol{W}^{\mathrm{enc}}\boldsymbol{x}
-	+\vb^{\mathrm{enc}}, \\
-	\operatorname{Dec}(\boldsymbol{u})
-	&=
-	\boldsymbol{W}^{\mathrm{dec}}\boldsymbol{u}
-	+\vb^{\mathrm{dec}},
-\end{align*}
-where
+Let LAE-encode be represented by a matrix
+$\boldsymbol{W}^{\mathrm{enc}}\in\mathbb{R}^{n\times d_0}$ and
+LAE-decode by a matrix
+$\boldsymbol{W}^{\mathrm{dec}}\in\mathbb{R}^{d_0\times n}$.
+Hence, for an input $\boldsymbol{x}\in\mathbb{R}^{d_0}$, the projected
+input produced by the LAE is
 \[
-\boldsymbol{W}^{\mathrm{enc}}
-\in \mathbb{R}^{n\times d_0},
-\qquad
 \boldsymbol{W}^{\mathrm{dec}}
-\in \mathbb{R}^{d_0\times n}.
+\boldsymbol{W}^{\mathrm{enc}}\boldsymbol{x}.
 \]
-Their composition is the affine transformation
-\begin{align*}
-	T(\boldsymbol{x})
-	&=
-	\operatorname{Dec}(\operatorname{Enc}(\boldsymbol{x})) \\
-	&=
-	\boldsymbol{W}^{\mathrm{dec}}
-	\boldsymbol{W}^{\mathrm{enc}}\boldsymbol{x}
-	+
-	\boldsymbol{W}^{\mathrm{dec}}\vb^{\mathrm{enc}}
-	+
-	\vb^{\mathrm{dec}}.
-\end{align*}
 
-\begin{proposition}
-	\label{prop.lae.folding}
-	Let $f$ be an $\ell$-layer DNN with weight matrices
+\noindent\textbf{Proposition.}
+\emph{Let $f$ be an $\ell$-layer DNN with weight matrices
 	$\boldsymbol{W}^i$ and bias vectors $\vb^i$, as defined in
-	Section~\ref{s.notation}. The LAE-DNN
-	\[
-	f_{\mathrm{LAE}}(\boldsymbol{x})
-	=
-	f(T(\boldsymbol{x}))
-	\]
-	can be represented by an $\ell$-layer DNN having the same layer
-	dimensions and ReLU activations as $f$. It suffices to replace the
-	weight matrix and bias vector of the first layer.
-\end{proposition}
+	Section~\ref{s.notation}. The LAE-DNN can be represented by an
+	$\ell$-layer DNN with the same layer dimensions and ReLU activations
+	as $f$, by changing only the weight matrix of its first layer.}
 
-\begin{proof}
-	For an input $\boldsymbol{x}$, the pre-activation values of the first
-	layer of the LAE-DNN are
+
+\begin{proof}[Proof]
+	The pre-activation values of the first layer of the LAE-DNN are
 	\begin{align*}
 		\boldsymbol{z}_{\mathrm{LAE}}^1
-		&=
-		\boldsymbol{W}^1T(\boldsymbol{x})+\vb^1 \\
 		&=
 		\boldsymbol{W}^1
 		\left(
 		\boldsymbol{W}^{\mathrm{dec}}
 		\boldsymbol{W}^{\mathrm{enc}}\boldsymbol{x}
-		+
-		\boldsymbol{W}^{\mathrm{dec}}\vb^{\mathrm{enc}}
-		+
-		\vb^{\mathrm{dec}}
 		\right)
 		+\vb^1 \\
 		&=
@@ -138,87 +99,40 @@ Their composition is the affine transformation
 		\boldsymbol{W}^{\mathrm{dec}}
 		\boldsymbol{W}^{\mathrm{enc}}
 		\right)\boldsymbol{x}
-		+
-		\boldsymbol{W}^1
-		\left(
-		\boldsymbol{W}^{\mathrm{dec}}\vb^{\mathrm{enc}}
-		+
-		\vb^{\mathrm{dec}}
-		\right)
 		+\vb^1.
 	\end{align*}
-	
-	Define the new weight matrix and bias vector of the first layer by
-	\begin{align*}
-		\widetilde{\boldsymbol{W}}^1
-		&=
-		\boldsymbol{W}^1
-		\boldsymbol{W}^{\mathrm{dec}}
-		\boldsymbol{W}^{\mathrm{enc}}, \\
-		\widetilde{\vb}^1
-		&=
-		\boldsymbol{W}^1
-		\left(
-		\boldsymbol{W}^{\mathrm{dec}}\vb^{\mathrm{enc}}
-		+
-		\vb^{\mathrm{dec}}
-		\right)
-		+\vb^1.
-	\end{align*}
+	Define
+	\[
+	\widetilde{\boldsymbol{W}}^1
+	=
+	\boldsymbol{W}^1
+	\boldsymbol{W}^{\mathrm{dec}}
+	\boldsymbol{W}^{\mathrm{enc}}.
+	\]
 	We then have
 	\[
 	\boldsymbol{z}_{\mathrm{LAE}}^1
 	=
 	\widetilde{\boldsymbol{W}}^1\boldsymbol{x}
-	+
-	\widetilde{\vb}^1,
+	+\vb^1.
 	\]
-	and consequently
-	\[
-	\hat{\boldsymbol{z}}_{\mathrm{LAE}}^1
-	=
-	\ReLU\left(
-	\widetilde{\boldsymbol{W}}^1\boldsymbol{x}
-	+
-	\widetilde{\vb}^1
-	\right).
-	\]
+	Thus, the LAE transformation is absorbed into the weight matrix of
+	the first layer, while its bias vector remains unchanged.
 	
-	For every subsequent layer $i\in\{2,\ldots,\ell\}$, we keep
-	\[
-	\widetilde{\boldsymbol{W}}^i=\boldsymbol{W}^i,
-	\qquad
-	\widetilde{\vb}^i=\vb^i.
-	\]
-	Since the post-activation values of the first layer are identical,
-	it follows inductively that the pre-activation and post-activation
-	values of all subsequent layers are also identical. In particular,
-	the output $\boldsymbol{z}^{\ell}$ is unchanged.
+	All subsequent weight matrices and bias vectors remain unchanged.
+	Therefore, all subsequent pre-activation and post-activation values,
+	and in particular the output $\boldsymbol{z}^{\ell}$, are identical.
 	
-	Moreover,
+	Finally,
 	\[
 	\widetilde{\boldsymbol{W}}^1
 	\in\mathbb{R}^{d_1\times d_0},
-	\qquad
-	\widetilde{\vb}^1\in\mathbb{R}^{d_1}.
 	\]
-	Thus, folding the LAE transformation into the first linear layer
-	changes neither the number of layers nor their dimensions. The
-	resulting DNN computes exactly the same function as the explicit
-	composition of the LAE and the original DNN.
+	which is the same dimension as $\boldsymbol{W}^1$. Hence, this
+	transformation changes neither the number of layers nor their
+	dimensions, and the resulting DNN computes exactly the same function
+	as the LAE-DNN.
 \end{proof}
-
-If the encoder and decoder contain no bias terms, the construction
-simplifies to
-\[
-\widetilde{\boldsymbol{W}}^1
-=
-\boldsymbol{W}^1
-\boldsymbol{W}^{\mathrm{dec}}
-\boldsymbol{W}^{\mathrm{enc}},
-\qquad
-\widetilde{\vb}^1=\vb^1.
-\]
 
 
 %\section{Appendix for Section 5: LAE-DNN}
