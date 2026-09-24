@@ -154,13 +154,11 @@ Address \\
 \section{Conclusion}
 \vspace{-0.2cm}
 In this paper, we tackled {\em real-time} (few ms) certification for global robustness. %  which has never been performed before to the best of our knowledge. 
-The main idea is to proceed in 2 steps: first, compute {\em once, offline} global robustness bounds $\bar{\beta}$ on the DNN. Then use a simple
-%very simplistic 
-look-up table based on $\bar{\beta}$ to perform the {\em online} certification. 
+The main idea is to proceed in 2 steps: first, compute {\em once, offline} global robustness bounds $\bar{\beta}$ on the DNN; then,  use a simple look-up table based on $\bar{\beta}$ to perform the {\em online} certification. 
 %
-On vanilla DNN architecture, global bounds are too large ($\gg 4.16$ for FMNIST-Conv, $3.38$ for CIFAR10-Conv, Table~\ref{table.L1}): real-time certification is not possible, irrespective of the method used to compute the bounds.
-We developed 2 complementary techniques that together yield offline bounds $\bar{\beta}$ good enough to certify $>70\%$ of images. First, the LAE-DNN architecture retains high accuracy and avoids very large $\beta$ associated with non-ID inputs (see Fig. \ref{fig3}):
-the $\bar{\beta}$ computed are $3$-$15$x lower.
+On vanilla DNN architectures, global bounds are too large ($\gg 4.16$ for FMNIST-Conv, $3.38$ for CIFAR10-Conv, Table~\ref{table.L1}): real-time certification is impossible, irrespective of the method used to compute the bounds. 
+To overcome this, we developed 2 complementary techniques that together yield offline bounds $\bar{\beta}$ good enough to certify $>70\%$ of images. First, the LAE-DNN architecture retains high accuracy and avoids the very large $\beta$ associated with non-ID inputs (see Fig. \ref{fig3}):
+the $\bar{\beta}$ computed are $3$--$15$x lower.
 Second, our new {\em Diff} MILP method, which is more accurate for global robustness than the classical MILP encoding, yields, on average, $25\%$ lower bounds than the state-of-the-art ITNE model \citep{ITNE}.
 %Following \cite{diff}, the idea is to look at (small) {\em diff}erential variables $y$ natively rather than represent them as the difference of 2 larger variables $x,x'$.
 
