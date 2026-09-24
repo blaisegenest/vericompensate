@@ -6,8 +6,7 @@ Global upper bounds $\bar{\beta}$ obtained across the entire input space tend to
 %Considering the full input space on the original DNN will thus produce high global upper bounds $\bar{\beta}$, no matter the method employed to compute the bound (e.g., MILP). 
 %Restricting to ID inputs seems impractical, as there is no established characterization of ID inputs. 
 
-We propose an efficient alternative to the original vanilla DNN: 
-{\color{red}Construct AE-DNNs as follows and use them in exploitation instead. AE-DNNs exhibit very similar behavior on ID-inputs, which is critical for exploitation, but can differ vastly on {\em non} ID-inputs, to avoid large bounds $\bar{\beta}_{C,D}^{\varepsilon}$. Hence, AE-DNN has similar accuracy as DNN, while being more amenable to real-time certification.}
+We propose an efficient alternative to the original vanilla DNN: Construct AE-DNNs as follows and use them in exploitation instead. AE-DNNs exhibit very similar behavior on ID-inputs, which is critical for exploitation, but can differ vastly on {\em non} ID-inputs to avoid large bounds $\bar{\beta}_{C,D}^{\varepsilon}$. Hence, AE-DNNs achieve accuracy similar to vanilla DNNs while being more amenable to real-time certification.
 %To address this, we employ principal component analysis (PCA) \cite{Paco}, a technique from engineering science, to restrict the output (hence lowering the bounds) {\em without} restricting the input.
 %
 To do so, we train an Auto-Encoder (AE) on the ID dataset, obtaining an ID-compatible latent space. We then define the {\em AE-DNN architecture} (Fig.~\ref{fig:AE-DNN}): first, AE-encode reduces to the latent space, then AE-decode produces the {\em projected input} (in full space), and last, call the DNN on this projected input. 
