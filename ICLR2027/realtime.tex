@@ -50,7 +50,9 @@ Assume we have computed (offline) $\bar{\beta}^{\varepsilon}_{C,D}$ for each $C,
 \begin{enumerate}  
   \item[0] Run inference on the DNN to obtain the values $x_D$ of output neuron for each class D. Let $C$ be the class with maximal $x_{C}$, that is, the class predicted by the DNN. These are the basic inference operations standardly performed for classification by a DNN.
   \item[1] Compute for each class $D \neq C$
-  a bit $b_D=1$ iff $x_D +\bar{\beta}^{\varepsilon}_{C,D} > x_C$.
+  a bit $b_D=1$ iff
+  $x_D+\bar{\beta}^{\varepsilon}_{C,D}
+  \textcolor{red}{\geq} x_C$.
   \item[2] Return "certified robust" iff $\bigvee_{D \neq C}(b_D)=0$.
 \end{enumerate}
 
