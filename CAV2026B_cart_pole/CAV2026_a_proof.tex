@@ -61,175 +61,171 @@
 
 \begin{document}
 
-
 \section{Preliminaries}
 
-
-
-We will use $||.||$ as the $L_{\infty}$ distance.
-For $\varepsilon>0$ and a set $Y$ of configuration, we define 
-$B_\epsilon(Y) = \{z \mid \exists y\in Y, \ ||y-z||<\epsilon \}$
-the open ball of distance $\varepsilon$ around $Y$.
-A function $f : A \rightarrow 2^B$
-is Lipschitz continuous if there exists a constant $\ell$ (Lipschitz constant) such that for any $x,x'$:
- $f(x') \subseteq B_{\ell \cdot ||x'-x||}(f(x))$.
-
+We use $\|\cdot\|$ for the $L_\infty$ norm. For $\varepsilon>0$ and a set $Y$ of configurations, define
+\[
+B_\varepsilon(Y)=\{z\mid \exists y\in Y,\ \|y-z\|<\varepsilon\}.
+\]
+A set-valued function $f:A\rightarrow 2^B\setminus\{\emptyset\}$ is Lipschitz continuous if there is a constant $\ell\geq0$ such that, for all $x,x'\in A$ and every $y'\in f(x')$, there exists $y\in f(x)$ with
+$\|y'-y\|\leq\ell\|x'-x\|$.
+For single-valued functions this is the usual Lipschitz condition.
 
 \begin{definition}
-		A system $S$ is a 5-tuple $(X,C,succ, U, I)$ with: \begin{itemize}
-			\item $X\subseteq \mathbb{R}^n$ is the set of configurations,
-			\item The set $C$ is a set of controlled actions,
-			\item The successor function $succ: X\times C \rightarrow 2^X \setminus \emptyset$ is a Lipschitz continuous and provides the set $succ(x,c)$ of possible successor when chosing action $c$ from configuration $x$,
-			\item The set of unsafe configurations $U\subseteq X$,
-			\item and the set of initial configurations $I\subseteq X$, $>\varepsilon$ away from $U$ for some $\varepsilon$,
-		\end{itemize}
+A system $S$ is a 5-tuple $(X,C,succ,U,I)$ with:
+\begin{itemize}
+\item $X\subseteq\mathbb{R}^n$ the set of configurations;
+\item $C\subseteq\mathbb{R}^m$ the set of control actions;
+\item $succ:X\times C\rightarrow 2^X\setminus\{\emptyset\}$ the successor function, jointly Lipschitz continuous with constant $L_s$ for the product norm
+$\|(x,c)-(x',c')\|=\max\{\|x-x'\|,\|c-c'\|\}$;
+\item $U\subseteq X$ the set of unsafe configurations;
+\item $I\subseteq X$ the set of initial configurations, with
+$d_I=\operatorname{dist}_\infty(I,U)>0$.
+\end{itemize}
 \end{definition}
 
 \paragraph{Policy}
-A policy $\sigma$ for system $S = (X,C,succ, U, I)$ is a function 
-$\sigma: X\rightarrow C$. Given $\sigma$, we define 
-$succ_\sigma: X\rightarrow 2^X$ by $succ_\sigma(x) = succ(x,\sigma(x))$.
-A run under $\sigma$ is a sequence $(x_i)_{i \in \mathbb{N}}$ such that
-$x_0 \in I$ and for all $i \geq 0$, $x_{i+1} \in succ_\sigma(x_i)$.
-We define $Reach^S(\sigma) = \{x \mid \exists i, (x_n)_{n \in \mathbb{N}} \text{ a run under } \sigma, x_i=x\}$ the set of state reachable by $\sigma$ in $S$ (in particular from initial states $I$ of $S$).
+A policy $\sigma$ for $S$ is a function $\sigma:X\rightarrow C$.
+Define $succ_\sigma(x)=succ(x,\sigma(x))$.
+A run under $\sigma$ is a sequence $(x_i)_{i\in\mathbb{N}}$ with $x_0\in I$ and $x_{i+1}\in succ_\sigma(x_i)$ for all $i\geq0$.
+We write $Reach^S(\sigma)$ for the set of states occurring in such runs.
 
-
-
-If $\sigma$ is provided as a decision tree where each leave $i$ is associated with a Lipschitz continuous function $f_i$, then it descirbes a piecewise Lipschitz continuous funciton $f$, and we can $\sigma$ a 
-piecewise Lipschitz continuous DT.
+We consider finite decision trees with affine tests, where each leaf is associated with a Lipschitz continuous function giving the action. Such a policy is called a piecewise Lipschitz continuous DT policy. For an axis-aligned DT, each test involves only one state coordinate.
 
 \paragraph{Perturbed system}
-
-
 \begin{definition}
-	For a system $S=(X,C,succ,U,I)$, we define its 
-	$\delta$-perturbation $S_\delta = (X,C, succ_\delta,U,I)$, where: 
-		$succ_\delta(x,c) = (succ(B_\delta(x),c))$.
-	A policy $\sigma$ of $S$ is also a policy for $S_\delta$.
-	We defined $Reach^S_\delta(\sigma) = Reach^{S_\delta}(\sigma)$.
+For $\delta>0$, the $\delta$-perturbation of $S$ is
+$S_\delta=(X,C,succ_\delta,U,I)$, where
+\[
+succ_\delta(x,c)=B_\delta(succ(x,c))\cap X.
+\]
+Thus the disturbance is added to the successor state; the initial set is unchanged.
+We define $Reach^S_\delta(\sigma)=Reach^{S_\delta}(\sigma)$.
 \end{definition}
 
-
-
-A policy $\sigma$ of $S$ is said to be {\em safe} if $Reach^S(\sigma) \cup U = \emptyset$. Policy $\sigma$ is {\em $\delta$-robustly safe} if 
-$Reach_\delta^S(\sigma) \cup U = \emptyset$, and $\sigma$ is {\em robustly safe}
-if it is {\em $\delta$-robustly safe} for some $\delta>0$.
-
+A policy $\sigma$ is \emph{safe} if $Reach^S(\sigma)\cap U=\emptyset$.
+It is \emph{$\delta$-robustly safe} if $Reach^S_\delta(\sigma)\cap U=\emptyset$, and \emph{robustly safe} if this holds for some $\delta>0$.
 
 \paragraph{Certificate}
-
-
 \begin{definition}
-	A certificate for policy $\sigma$ of system $S=(X,C,succ,U,I)$ is a function 
-	$f : X \rightarrow \{0,1\}$ such that:
-	\begin{itemize}
-		\item $I \subseteq f^{-1}(1)$, 
-		
-		\item $f^{-1}(1)\cap U = \emptyset$,
-		
-		\item For any $x,x' \in X$ such that $f(x)=1$ and $x' \in succ_p(x)$,
-		we have $f(x')=1$.
+A certificate for $\sigma$ is a function $f:X\rightarrow\{0,1\}$ such that:
+\begin{itemize}
+\item $I\subseteq f^{-1}(1)$;
+\item $f^{-1}(1)\cap U=\emptyset$;
+\item if $f(x)=1$ and $x'\in succ_\sigma(x)$, then $f(x')=1$.
 \end{itemize}
-If $f$ is providede as a DT, where leaves are associated with $\{0,1\}$,
-then $f$ is called a DT-certificate.
+If $f$ is represented by a finite DT with leaves labelled in $\{0,1\}$, it is a DT-certificate.
+A ReLU-DNN certificate is a finite real-valued ReLU network $g$ for which $f(x)=1$ exactly when $g(x)\geq0$ is a certificate. The network has an affine output layer.
 \end{definition}
-	
 
 \section{Results}
 
 \begin{theorem}
-	If a piecewise Lipschitz continuous DT policy $p$ is robustly safe, then
-	there exists a DT-certificate for safety. 
+Assume that the safe region $X\setminus U$ is bounded.
+If a piecewise Lipschitz continuous DT policy $\sigma$ is robustly safe, then there exists a DT-certificate for safety.
 
-	If a piecewise Lipschitz continuous axis aligned DT policy $p$ is robustly safe, then there exists a axis aligned DT-certificate for safety. 
+If $\sigma$ is an axis-aligned DT policy, there exists an axis-aligned DT-certificate.
 
-	If a ReLU-DNN policy $p$ is robustly safe, then
-	there exists a ReLU-DNN certificate for safety. 
+If $\sigma$ is a finite ReLU-DNN policy, there exists a ReLU-DNN certificate.
 \end{theorem}
 
-Let $\sigma$ be a piecewise Lipschitz-continuous policy for system $S=(X,C,succ,U,I)$ which is $\delta$-robustly safe for $\delta>0$.
-Let $R_\varepsilon=Reach^S_\varepsilon(\sigma)$ for all $\varepsilon$.
-It means that $R_\delta \cap U = \emptyset$.
+Let $\sigma$ be $\delta$-robustly safe and write
+$R_\varepsilon=Reach^S_\varepsilon(\sigma)$ for $\varepsilon>0$.
+Then $R_\delta\cap U=\emptyset$ and $R_{\delta/2}\subseteq R_\delta$ is bounded.
+If $I=\emptyset$, the empty set gives a certificate, so assume $I\ne\emptyset$.
 
-Assume the Lipschitz constants for $succ$ and $\sigma$ (on $P$) are $\leq K/2$ for some $K \geq 2$, and consider $R = B_{\delta/K}(R_{\delta/2})$.
-We show that $R$ satisfies:
-$R_{\delta/2} \subsetneq R \subsetneq R_\delta$ 
-with:
-\begin{itemize}
-	\item $I \subseteq R$,
-	\item $B_{\delta/K}(R)\cup U = \emptyset$,
-	meaning that $R$ is away from $U$,
-	\item For all polytope $P$ on which 
-    $\sigma$ is Liptscitz continuous,
-	for all $x \in P \cap R_{\delta/2}$ and 
-	$y\in P$ with $||y-x||<\delta/K$, 
-	$succ(y,\sigma(y)) \subseteq R$.
-\end{itemize}
-
-IT will be sufficient to obtain a DT certificate.
-Only the third item above is non trivial.
-
-\begin{proof}
-	(of the third claim.)
-	
-	First, since $x\in R_{\delta/2}$ and $||y-x||<\delta/K$,  by assumption and definition, we have that $succ(y,\sigma(x))\subseteq  R_{\delta/2}$. 
-	
-	Now, because both $succ$ and $\sigma$ (on $P$) are Lipschitz, we have that \begin{align*}
-		succ(y,\sigma(y)) &\subseteq succ(y,\sigma(B_{\delta/K}(x))) \\
-		&\subseteq succ(y,B_{\delta/K}(\sigma(x))) \\
-		&\subseteq B_{\delta/K}(succ(y,\sigma(x))) \\
-		&\subseteq B_{\delta/K}(R_{\delta/2}).
-	\end{align*}
-	
-	This complete the proof of the claim.
-\end{proof}
-
-
-
-To complete our conclusion, we need the following lemmas.
+Choose $0<\eta<d_I$ and define the safe enclosure
+\[
+\widetilde R_\delta=R_\delta\cup(B_\eta(I)\cap X).
+\]
+Then $\widetilde R_\delta\cap U=\emptyset$, and for
+$0<\rho\leq\min\{\eta,\delta/2\}$ we have
+\begin{equation}\label{eq:safe-enclosure}
+B_\rho(R_{\delta/2})\cap X\subseteq\widetilde R_\delta.
+\end{equation}
+Indeed, a point of $R_{\delta/2}$ in $I$ is covered by $B_\eta(I)$.
+Any other point $x\in R_{\delta/2}$ is reached after at least one step, so there are $z\in R_{\delta/2}$ and $w\in succ_\sigma(z)$ with $\|x-w\|<\delta/2$.
+For $y\in B_\rho(x)\cap X$, we have $\|y-w\|<\delta$; hence $y\in R_\delta$.
+We only use $\widetilde R_\delta$ as a safe enclosure, not as a reachable or invariant set.
 
 \begin{lemma}
-	There exists a finite polytopes decompose of $X=\bigcup_{i\in I,\ I\text{ is finite}} Q_i$ (they may include or exclude their boundaries) and Lipschitz continuous functions $f_i$ assigned for each polytopes that can define $p$:\begin{align*}
-		p(x) = f_i(x)\quad \text{if }x\in Q_i
-	\end{align*}
+A DT policy has a finite partition $X=\bigcup_{j\in J}Q_j$ and Lipschitz continuous functions $f_j$ such that
+\[
+\sigma(x)=f_j(x)\qquad\text{for }x\in Q_j.
+\]
+Each $Q_j$ is given by finitely many affine inequalities, possibly strict, intersected with $X$. For an axis-aligned DT these inequalities are axis-aligned.
 \end{lemma}
 
 \begin{proof}
-	This is because $p$ is a piecewise  Lipschitz continuous DT policy.
+Take the regions and functions associated with the leaves of the tree.
 \end{proof}
 
-
-
-
+Let $L_j$ be a Lipschitz constant of $f_j$, and set
+\[
+L=\max\{1,\ L_s\max_{j\in J}\max\{1,L_j\}\}.
+\]
+Thus $succ_\sigma$ is Lipschitz with constant at most $L$ on each $Q_j$.
+Choose
+\[
+0<r<\min\left\{\frac{\eta}{2},\frac{\delta}{4},\frac{\delta}{2L}\right\},
+\qquad B^\star=B_r(R_{\delta/2})\cap X.
+\]
+By (\ref{eq:safe-enclosure}) and the triangle inequality,
+\[
+I\subseteq R_{\delta/2}\subseteq B^\star\subseteq\widetilde R_\delta,
+\qquad B_r(B^\star)\cap U=\emptyset.
+\]
+The set $B^\star$ provides a safety margin. To obtain invariance we keep the policy regions in the following construction.
 
 \begin{lemma}
-	There exists $\varepsilon >0$ such that $R_{\delta/2}(I)$ is attractive in the region $\bigcup_{i\in I}B_\varepsilon(R_{\delta/2}(I)\cap Q_i)\cap Q_i$.
+For
+\[
+N_r=\bigcup_{j\in J}\left(B_r(R_{\delta/2}\cap Q_j)\cap Q_j\right),
+\]
+we have $R_{\delta/2}\subseteq N_r\subseteq B^\star$, and
+$succ_\sigma(y)\subseteq R_{\delta/2}$ for every $y\in N_r$.
 \end{lemma}
 
 \begin{proof}
-	We use $R_i$ to denote each $R_{\delta/2}(I)\cap Q_i$.	By assumption, each $Q_i$ is assigned with a Lipschitz continuous function $f_i$ with Lipschitz constant $K_i$. Let $K = \max_{i\in I} K_i$ and $\varepsilon = \frac{\delta}{2K+2} < \delta/2$ (for $L_\infty$ distance; for other distance as $L_2$, $L_1$, $\varepsilon$ should be smaller). 
-	
-	For a point $y$ in $B_\varepsilon(R_i)\cap Q_i$, there exists $x\in R_i\subseteq Q_i$ such that $d(x,y)<\varepsilon$. We consider $succ_p(y)$ and $succ_p(x)$. 
-	
-	Since $x,y\in Q_i$, $d(p(x),p(y))\leq K_i d(x,y) < K \varepsilon<\delta/2$.  By assumptions, we have $succ_p(y)\subseteq B_{\delta/2}(succ_p(x))$. Because $x\in R_i\subseteq R_{\delta/2}(I)$, by definition, we have that $succ_p(y)\subseteq R_{\delta/2}(I)$.
-	
-	This is what we want to show.
+For $y\in N_r$, choose $x\in R_{\delta/2}\cap Q_j$ in the same region as $y$, with $\|y-x\|<r$.
+The Lipschitz bound and $Lr<\delta/2$ give
+\[
+succ_\sigma(y)
+\subseteq B_{\delta/2}(succ_\sigma(x))\cap X
+=succ_{\delta/2}(x,\sigma(x))
+\subseteq R_{\delta/2}.
+\]
+The remaining inclusions follow from the definition of $N_r$.
 \end{proof}
 
+\paragraph{Finite DT certificate}
+Take the grid of closed axis-aligned cubes of side length $h$, where $0<h<r$.
+For each $j$, retain the cubes $D$ with $D\cap R_{\delta/2}\cap Q_j\ne\emptyset$, and let
+\[
+A=\bigcup_{j\in J}\ \bigcup_{D:\ D\cap R_{\delta/2}\cap Q_j\ne\emptyset}(D\cap Q_j).
+\]
+There are only finitely many such cubes because $R_{\delta/2}$ is bounded.
+Any $y\in D\cap Q_j$ is at distance at most $h<r$ from a point of $D\cap R_{\delta/2}\cap Q_j$.
+Consequently,
+\[
+I\subseteq R_{\delta/2}\subseteq A\subseteq N_r\subseteq B^\star,
+\qquad succ_\sigma(A)\subseteq R_{\delta/2}\subseteq A,
+\]
+where $succ_\sigma(A)=\bigcup_{x\in A}succ_\sigma(x)$.
+Thus $A\cap U=\emptyset$ and $A$ is a safety certificate.
+It is a finite union of regions given by affine inequalities, relative to $X$, so its indicator on $X$ can be represented by a finite DT.
+If the policy is axis-aligned, all the inequalities in this construction are axis-aligned, giving an axis-aligned DT-certificate.
 
-%\begin{lemma}
-%	There is a region $A$ satisfying the following:
-%	\begin{itemize}
-%			\item A is a union of polytopes.
-%		\item $A\supseteq R_{\delta/2}(I)$
-%		\item $A\subseteq\bigcup_{i\in I}B_\varepsilon(R_{\delta/2}(I)\cap Q_i)\cap Q_i$
-%	\end{itemize}
-%	Hence, from $A$ we can construct a DT certificate.
-%\end{lemma}
-
-
-
-
-
+\paragraph{ReLU-DNN certificate}
+A finite ReLU-DNN policy is globally Lipschitz. Thus $succ_\sigma$ has a global Lipschitz bound $L\geq1$, and the preceding neighbourhood argument applies with the single region $Q_1=X$.
+Using the same choice of $r$ with this bound, take all closed grid cubes meeting $R_{\delta/2}$, without clipping them by activation regions.
+Their finite union, intersected with $X$, is a safety certificate by the same argument.
+For the retained cubes $D_k=\prod_{i=1}^n[a_{ki},b_{ki}]$, define
+\[
+g(x)=\max_k\ \min_{1\leq i\leq n}\{x_i-a_{ki},\ b_{ki}-x_i\}.
+\]
+Then $\{x\in X:g(x)\geq0\}=X\cap\bigcup_kD_k$.
+Finite minima and maxima of affine functions can be implemented by ReLU networks, using $\max\{u,v\}=v+\ReLU(u-v)$ and $\min\{u,v\}=u-\ReLU(u-v)$.
+Hence $g$ is a ReLU-DNN certificate, completing the proof.
 
 \end{document}
