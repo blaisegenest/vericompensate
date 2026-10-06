@@ -67,17 +67,16 @@ We use $\|\cdot\|$ for the $L_\infty$ norm. For $\varepsilon>0$ and a set $Y$ of
 \[
 B_\varepsilon(Y)=\{z\mid \exists y\in Y,\ \|y-z\|<\varepsilon\}.
 \]
-A set-valued function $f:A\rightarrow 2^B\setminus\{\emptyset\}$ is Lipschitz continuous if there is a constant $\ell\geq0$ such that, for all $x,x'\in A$ and every $y'\in f(x')$, there exists $y\in f(x)$ with
-$\|y'-y\|\leq\ell\|x'-x\|$.
+A set-valued function $f:A\rightarrow 2^B\setminus\{\emptyset\}$ is Lipschitz continuous if there is a constant $\ell\geq0$ such that, {\color{red} for all $x,x'\in A$ and every $y'\in f(x')$, there exists $y\in f(x)$ with
+$\|y'-y\|\leq\ell\|x'-x\|$.}
 For single-valued functions this is the usual Lipschitz condition.
 
 \begin{definition}
 A system $S$ is a 5-tuple $(X,C,succ,U,I)$ with:
 \begin{itemize}
 \item $X\subseteq\mathbb{R}^n$ the set of configurations;
-\item $C\subseteq\mathbb{R}^m$ the set of control actions;
-\item $succ:X\times C\rightarrow 2^X\setminus\{\emptyset\}$ the successor function, jointly Lipschitz continuous with constant $L_s$ for the product norm
-$\|(x,c)-(x',c')\|=\max\{\|x-x'\|,\|c-c'\|\}$;
+\item $C$ {\color{red} a finite discrete set of control actions};
+\item $succ:X\times C\rightarrow 2^X\setminus\{\emptyset\}$ the successor function, {\color{red} with $succ(\cdot,c)$ Lipschitz continuous in the state argument, uniformly over $c\in C$, with constant $L_s$};
 \item $U\subseteq X$ the set of unsafe configurations;
 \item $I\subseteq X$ the set of initial configurations, with
 $d_I=\operatorname{dist}_\infty(I,U)>0$.
@@ -90,14 +89,14 @@ Define $succ_\sigma(x)=succ(x,\sigma(x))$.
 A run under $\sigma$ is a sequence $(x_i)_{i\in\mathbb{N}}$ with $x_0\in I$ and $x_{i+1}\in succ_\sigma(x_i)$ for all $i\geq0$.
 We write $Reach^S(\sigma)$ for the set of states occurring in such runs.
 
-We consider finite decision trees with affine tests, where each leaf is associated with a Lipschitz continuous function giving the action. Such a policy is called a piecewise Lipschitz continuous DT policy. For an axis-aligned DT, each test involves only one state coordinate.
+We consider finite decision trees with affine tests, where {\color{red} each leaf is labelled by a fixed action in $C$}. Such a policy is called a DT policy. For an axis-aligned DT, each test involves only one state coordinate.
 
 \paragraph{Perturbed system}
 \begin{definition}
 For $\delta>0$, the $\delta$-perturbation of $S$ is
 $S_\delta=(X,C,succ_\delta,U,I)$, where
 \[
-succ_\delta(x,c)=B_\delta(succ(x,c))\cap X.
+succ_\delta(x,c)={\color{red} B_\delta(succ(x,c))}.
 \]
 Thus the disturbance is added to the successor state; the initial set is unchanged.
 We define $Reach^S_\delta(\sigma)=Reach^{S_\delta}(\sigma)$.
@@ -115,92 +114,91 @@ A certificate for $\sigma$ is a function $f:X\rightarrow\{0,1\}$ such that:
 \item if $f(x)=1$ and $x'\in succ_\sigma(x)$, then $f(x')=1$.
 \end{itemize}
 If $f$ is represented by a finite DT with leaves labelled in $\{0,1\}$, it is a DT-certificate.
-A ReLU-DNN certificate is a finite real-valued ReLU network $g$ for which $f(x)=1$ exactly when $g(x)\geq0$ is a certificate. The network has an affine output layer.
+
+%A ReLU-DNN certificate is a finite \ProofChange{real-valued} ReLU network $g$ for which $f(x)=1$ exactly when \ProofChange{$g(x)\geq0$} is a certificate. The network has an \ProofChange{affine output layer}.
 \end{definition}
 
 \section{Results}
 
 \begin{theorem}
-Assume that the safe region $X\setminus U$ is bounded.
-If a piecewise Lipschitz continuous DT policy $\sigma$ is robustly safe, then there exists a DT-certificate for safety.
+Assume that the safe region {\color{red} $X\setminus U$ is bounded}.
+If a DT policy $\sigma$ is robustly safe, then there exists a DT-certificate for safety.
 
-If $\sigma$ is an axis-aligned DT policy, there exists an axis-aligned DT-certificate.
+If the robustly safe DT policy $\sigma$ is additionally axis-aligned, there exists an axis-aligned DT-certificate.
 
 If $\sigma$ is a finite ReLU-DNN policy, there exists a ReLU-DNN certificate.
 \end{theorem}
 
-Let $\sigma$ be $\delta$-robustly safe and write
-$R_\varepsilon=Reach^S_\varepsilon(\sigma)$ for $\varepsilon>0$.
-Then $R_\delta\cap U=\emptyset$ and $R_{\delta/2}\subseteq R_\delta$ is bounded.
-If $I=\emptyset$, the empty set gives a certificate, so assume $I\ne\emptyset$.
-
-Choose $0<\eta<d_I$ and define the safe enclosure
+\paragraph{Bounded safety region for CartPole}
+For the two-dimensional CartPole model with state $(\theta,\omega)$, one can use a possibly loose finite angular-velocity limit $M$ and formulate the unsafe set as
 \[
-\widetilde R_\delta=R_\delta\cup(B_\eta(I)\cap X).
+U_M=\{(\theta,\omega)\in X:\ |\theta|>\theta_{\max}\ \text{or}\ |\omega|>M\}.
 \]
-Then $\widetilde R_\delta\cap U=\emptyset$, and for
-$0<\rho\leq\min\{\eta,\delta/2\}$ we have
-\begin{equation}\label{eq:safe-enclosure}
-B_\rho(R_{\delta/2})\cap X\subseteq\widetilde R_\delta.
-\end{equation}
-Indeed, a point of $R_{\delta/2}$ in $I$ is covered by $B_\eta(I)$.
-Any other point $x\in R_{\delta/2}$ is reached after at least one step, so there are $z\in R_{\delta/2}$ and $w\in succ_\sigma(z)$ with $\|x-w\|<\delta/2$.
-For $y\in B_\rho(x)\cap X$, we have $\|y-w\|<\delta$; hence $y\in R_\delta$.
-We only use $\widetilde R_\delta$ as a safe enclosure, not as a reachable or invariant set.
+Its safe region is contained in $[-\theta_{\max},\theta_{\max}]\times[-M,M]$ and is therefore bounded.
+To apply the theorem with $U=U_M$, choose $M$ so that $\operatorname{dist}_\infty(I,U_M)>0$ and establish $\delta$-robust safety for $U_M$ for some $\delta>0$.
+The angular-velocity bound must hold for all states reachable in the perturbed system; a loose finite bound suffices.
 
 \begin{lemma}
-A DT policy has a finite partition $X=\bigcup_{j\in J}Q_j$ and Lipschitz continuous functions $f_j$ such that
+A DT policy has a finite partition $X=\bigcup_{j\in J}Q_j$ and actions $c_j\in C$ such that
 \[
-\sigma(x)=f_j(x)\qquad\text{for }x\in Q_j.
+\sigma(x)=c_j\qquad\text{for }x\in Q_j.
 \]
 Each $Q_j$ is given by finitely many affine inequalities, possibly strict, intersected with $X$. For an axis-aligned DT these inequalities are axis-aligned.
 \end{lemma}
 
 \begin{proof}
-Take the regions and functions associated with the leaves of the tree.
+Take the regions and action labels associated with the leaves of the tree.
 \end{proof}
 
-Let $L_j$ be a Lipschitz constant of $f_j$, and set
+\paragraph{Choice of constants}
+Let $\sigma$ be $\delta$-robustly safe and write
+$R_\varepsilon=Reach^S_\varepsilon(\sigma)$ for $\varepsilon>0$.
+Then $R_\delta\cap U=\emptyset$ and $R_{\delta/2}\subseteq R_\delta$ is bounded.
+If $I=\emptyset$, the empty set gives a certificate, so assume $I\ne\emptyset$.
+
+%For a ReLU-DNN policy, use $J=\{1\}$, $Q_1=X$, and a global Lipschitz constant $L_1$ of the policy.
+
+Since $\sigma$ is constant on each $Q_j$, the fixed-action Lipschitz assumption gives a bound $L_s$ for $succ_\sigma$ on each $Q_j$. Set
 \[
-L=\max\{1,\ L_s\max_{j\in J}\max\{1,L_j\}\}.
+m=\min\{d_I,\delta/2\},\qquad L=\max\{1,L_s\},\qquad
+0<r<\min\left\{m,\frac{\delta}{2L}\right\}.
 \]
-Thus $succ_\sigma$ is Lipschitz with constant at most $L$ on each $Q_j$.
-Choose
+
+\paragraph{Safety margin}
+We claim that
 \[
-0<r<\min\left\{\frac{\eta}{2},\frac{\delta}{4},\frac{\delta}{2L}\right\},
-\qquad B^\star=B_r(R_{\delta/2})\cap X.
+B_m(R_{\delta/2})\cap U=\emptyset.
 \]
-By (\ref{eq:safe-enclosure}) and the triangle inequality,
-\[
-I\subseteq R_{\delta/2}\subseteq B^\star\subseteq\widetilde R_\delta,
-\qquad B_r(B^\star)\cap U=\emptyset.
-\]
-The set $B^\star$ provides a safety margin. To obtain invariance we keep the policy regions in the following construction.
+For $y\in B_m(R_{\delta/2})$, choose $x\in R_{\delta/2}$ with $\|y-x\|<m$.
+If $x\in I$, then $\|y-x\|<d_I$, so $y\notin U$.
+Otherwise, $x$ is reached after at least one step, so there are $z\in R_{\delta/2}$ and $w\in succ_\sigma(z)$ with $\|x-w\|<\delta/2$.
+Since $m\leq\delta/2$, we have $\|y-w\|<\delta$; hence $y\in R_\delta$ and $y\notin U$.
+In particular, $B_r(R_{\delta/2})\cap U=\emptyset$.
+To obtain invariance we keep the policy regions in the following construction.
 
 \begin{lemma}
 For
 \[
 N_r=\bigcup_{j\in J}\left(B_r(R_{\delta/2}\cap Q_j)\cap Q_j\right),
 \]
-we have $R_{\delta/2}\subseteq N_r\subseteq B^\star$, and
+we have $R_{\delta/2}\subseteq N_r\subseteq B_r(R_{\delta/2})$, and
 $succ_\sigma(y)\subseteq R_{\delta/2}$ for every $y\in N_r$.
 \end{lemma}
 
 \begin{proof}
 For $y\in N_r$, choose $x\in R_{\delta/2}\cap Q_j$ in the same region as $y$, with $\|y-x\|<r$.
-The Lipschitz bound and $Lr<\delta/2$ give
+Since $\sigma(x)=\sigma(y)=c_j$, the fixed-action Lipschitz bound and $L_s r<\delta/2$ give
 \[
 succ_\sigma(y)
-\subseteq B_{\delta/2}(succ_\sigma(x))\cap X
+\subseteq B_{\delta/2}(succ_\sigma(x))
 =succ_{\delta/2}(x,\sigma(x))
 \subseteq R_{\delta/2}.
 \]
 The remaining inclusions follow from the definition of $N_r$.
 \end{proof}
 
-\paragraph{Finite DT certificate}
-Take the grid of closed axis-aligned cubes of side length $h$, where $0<h<r$.
-For each $j$, retain the cubes $D$ with $D\cap R_{\delta/2}\cap Q_j\ne\emptyset$, and let
+{\color{red} \paragraph{Proof for Finite DT certificate}
+Take the grid of closed axis-aligned cubes of side length $0<h<r$ and let
 \[
 A=\bigcup_{j\in J}\ \bigcup_{D:\ D\cap R_{\delta/2}\cap Q_j\ne\emptyset}(D\cap Q_j).
 \]
@@ -208,24 +206,28 @@ There are only finitely many such cubes because $R_{\delta/2}$ is bounded.
 Any $y\in D\cap Q_j$ is at distance at most $h<r$ from a point of $D\cap R_{\delta/2}\cap Q_j$.
 Consequently,
 \[
-I\subseteq R_{\delta/2}\subseteq A\subseteq N_r\subseteq B^\star,
-\qquad succ_\sigma(A)\subseteq R_{\delta/2}\subseteq A,
+I\subseteq R_{\delta/2}\subseteq A\subseteq N_r\subseteq B_r(R_{\delta/2}),
+\]
+\[
+succ_\sigma(A)\subseteq R_{\delta/2}\subseteq A,
 \]
 where $succ_\sigma(A)=\bigcup_{x\in A}succ_\sigma(x)$.
 Thus $A\cap U=\emptyset$ and $A$ is a safety certificate.
 It is a finite union of regions given by affine inequalities, relative to $X$, so its indicator on $X$ can be represented by a finite DT.
-If the policy is axis-aligned, all the inequalities in this construction are axis-aligned, giving an axis-aligned DT-certificate.
+If the policy is axis-aligned, all the inequalities in this construction are axis-aligned, giving an axis-aligned DT-certificate.}
 
-\paragraph{ReLU-DNN certificate}
-A finite ReLU-DNN policy is globally Lipschitz. Thus $succ_\sigma$ has a global Lipschitz bound $L\geq1$, and the preceding neighbourhood argument applies with the single region $Q_1=X$.
-Using the same choice of $r$ with this bound, take all closed grid cubes meeting $R_{\delta/2}$, without clipping them by activation regions.
-Their finite union, intersected with $X$, is a safety certificate by the same argument.
-For the retained cubes $D_k=\prod_{i=1}^n[a_{ki},b_{ki}]$, define
-\[
-g(x)=\max_k\ \min_{1\leq i\leq n}\{x_i-a_{ki},\ b_{ki}-x_i\}.
-\]
-Then $\{x\in X:g(x)\geq0\}=X\cap\bigcup_kD_k$.
-Finite minima and maxima of affine functions can be implemented by ReLU networks, using $\max\{u,v\}=v+\ReLU(u-v)$ and $\min\{u,v\}=u-\ReLU(u-v)$.
-Hence $g$ is a ReLU-DNN certificate, completing the proof.
+
+
+%\paragraph{ReLU-DNN certificate}
+%For a finite ReLU-DNN policy, the bound $L$ fixed above is global, so the preceding neighbourhood argument applies with the single region \ProofChange{$Q_1=X$}.
+%Take all closed grid cubes of side length $h$ meeting $R_{\delta/2}$, without clipping them by activation regions.
+%Their finite union, intersected with $X$, is a safety certificate by the same argument.
+%For the retained cubes $D_k=\prod_{i=1}^n[a_{ki},b_{ki}]$, define
+%\[
+%\ProofChange{g(x)=\max_k\ \min_{1\leq i\leq n}\{x_i-a_{ki},\ b_{ki}-x_i\}.}
+%\]
+%Then $\{x\in X:g(x)\geq0\}=X\cap\bigcup_kD_k$.
+%Finite minima and maxima of affine functions can be implemented by ReLU networks, using $\max\{u,v\}=v+\ReLU(u-v)$ and $\min\{u,v\}=u-\ReLU(u-v)$.
+%Hence $g$ is a ReLU-DNN certificate, completing the proof.
 
 \end{document}
