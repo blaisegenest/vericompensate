@@ -1,58 +1,53 @@
 # Reviewer 1 (BZVB)
 
-First, we would like to thank you for your constructive review.
+First, we thank you for your constructive review.
 
 ## Critical Weaknesses:
 
 > Weakness 1. The certified guarantee is about a different model than the deployed task requires.
 
-As emphasized throughout the paper, we propose to *deploy* the AE-DNN rather than the original vanilla DNN (e.g., in the abstract: "We propose alternative 'AE-DNNs' to vanilla DNNs to use in exploitation"). 
-As you rightly notes, *"The paper shows global bounds on vanilla DNNs are irreducibly pessimistic."* Thus, to achieve real-time certification, the original vanilla DNN cannot be used during deployment.
+As we emphasize throughout the paper, we propose *deploying* the AE-DNN rather than the original vanilla DNN (e.g., in the abstract: "We propose alternative 'AE-DNNs' to vanilla DNNs to use in exploitation"). As you rightly note, *"The paper shows global bounds on vanilla DNNs are irreducibly pessimistic."* Thus, to achieve real-time certification, the original vanilla DNN cannot be used during deployment.
 
 > Weakness 2. No adaptive attacks against the projected model. Robustness claims on non-ID regions rest only on indirect evidence (bounds, visualizations). No attack success rate is reported for LAE-DNNs. For a paper whose central contribution is an architecture filtering non-ID inputs, adversarial validation of exactly that boundary is the minimum expected evidence.
 
-Our central claim is not that the AE-DNN is inherently more robust on in-distribution data, but that it enables tighter bounds (which it does). Still we agree with you that the robustness numbers are interesting. 
+Our central claim is not that the AE-DNN is inherently more robust on in-distribution data, but that it enables tighter bounds (which it does). Still, we agree with you that the robustness numbers are interesting. 
 
 We provide two tests: 
 1. original dataset: only in-distribution data, for which we do not expect much change? [EC change on what? on accuracy?]
 2. random images: mostly out-of-distribution data, where we expect AE-DNN to be more robust by filtering perturbations. 
 
-These results are summarized in the table below and have been incorporated into the revised manuscript. ___TODO TODO__
+These results are summarized in the table below and have been incorporated into the revised manuscript. 
+___TODO TODO__
 
 > Weakness 3. Offline cost is unbounded and unreported. The tightest LAE-CIFAR10 bound required a 60-hour Gurobi timeout; total cost over all 45 class pairs, and re-computation after retraining, are never quantified. Combined with small networks and linear-AE-only experiments, feasibility beyond toy scale remains an assumption, not a finding.
 
-Constructing the AE-DNN offline takes negligible computation time ($X$ seconds). 
+Constructing the AE-DNN offline takes negligible computation time ($X$ seconds). In addition, as per Table 3, precomputing the bounds across all 45 classes [_EC_ why 45? isn't it 10 classes as CIFAR10-Conv?]  (2 runs) requires 120 hours (60h or 14400s per run) using 23 parallel threads on a 32-core CPU for the longest timeout setting (this holds for both Diff MILP and ITNE). Using additional CPU cores or machines would directly reduce this runtime (e.g., 60 hours). Importantly, this is a *one-time cost*, since the network is fixed for deployment. 
 
-As per Table 3, precomputing the bounds across all 45 classes [_EC_ 10 ? CIFAR10-Conv?]  (2 runs) requires 120 hours (60h or 14400s per run) using 23 parallel threads on a 32-core CPU for the longest timeout setting (this holds for both Diff MILP and ITNE).
-
-Using additional CPU cores or machines would directly reduce this runtime (e.g., 60 hours). Importantly, this is a *one-time cost*, since the network is fixed for deployment. 
-
-Also, note that extending the solver timeout from 4 hours (14400s) to 60 hours does not significantly improve the bounds. The impact on the the real-time certification rate would be only a few percentage points: the computational cost can be reduced without much affecting the result. What we suggest is thus to use a feasible runtime and proceed with the bounds produced. 
+Also, note that extending the solver timeout from 4 hours (14400s) to 60 hours does not significantly improve the bounds. The impact on the real-time certification rate would be only a few percentage points: the computational cost can be reduced without much affecting the result. What we suggest is thus to use a feasible runtime and proceed with the bounds produced. 
 
 ## Answers to Questions For Authors:
 
 > In what precise sense is the resulting guarantee a robustness certificate "for the model in deployment"?
 
-The model in deployment is the AE-DNN itself, hence maintaining high accuracy on the AE-DNN is crucial.
+The model in deployment is the AE-DNN itself; hence, maintaining high accuracy on the AE-DNN is crucial.
 
 > Please state the certified perturbation set explicitly,
 
-The certified perturbation set is any continuous image bounded by a given norm ($L_\infty$, $L_1$, or a conjunction of both), with each pixel values constrained to $[0,1]$.
+The certified perturbation set is any continuous image bounded by a given norm ($L_\infty$, $L_1$, or a conjunction of both), with each pixel value constrained to $[0,1]$.
 
 > whether a component-wise adversary exploiting exactly these filtered directions is considered in-scope, out-of-scope, or excluded by assumption.
 
 An adversary can exploit any direction in the input space, so in particular it can use filtered directions. As you remark, the first 2 layers (encode + decode) of AE-DNN would project away these components. 
 So, for the AE-DNN this makes no difference, but it can vary it.
-[[EC: Exploiting these filtered directions is out-of-scope of the present work, yet the bounds remain significantly tighter with our method.]]
+[[EC: Exploiting these filtered directions is out-of-scope of the present work, yet the bounds remain significantly tighter with our method.???]]
 
 > The paper's central claim concerns behavior on non-ID inputs, yet no attack success rate against LAE-DNNs is reported. Did you run any adaptive attack (e.g., PGD or a targeted attack through the projection P, or an attack searching in latent space) on the deployed LAE-DNNs?
 
-We evaluated our models using $\alpha,\beta$-CROWN, which has its own attack, and, if not sucessful, tries to prove robustness. The proportion of unknown cases is very low: the attack itself would not change the results.
+We evaluated our models using $\alpha,\beta$-CROWN, which has its own attack and, if not successful, tries to prove robustness. The proportion of unknown cases is very low: the attack itself would not change the results.
 
-> Accuracy loss reaches ≤1% only at latent dimension 60 for CIFAR-10, after a plateau of 5–16% at smaller dimensions. Do you have any evidence (even preliminary) on whether the ≤1% budget remains attainable at ImageNet-scale inputs, or does the required latent
-dimension grow superlinearly with data complexity?
+> Accuracy loss reaches ≤1% only at latent dimension 60 for CIFAR-10, after a plateau of 5–16% at smaller dimensions. Do you have any evidence (even preliminary) on whether the ≤1% budget remains attainable at ImageNet-scale inputs, or does the required latent dimension grow superlinearly with data complexity?
 
-We did not yet experiment on DNNs for ImageNet. [[EC: Extending our framework for higher-dimensional datasets is a key direction for future work.]]
+We have not experimented on DNNs for ImageNet. Extending our framework for higher-dimensional datasets is a valuable direction for future work.
 
 # Review 2 (MLsQ)
 
