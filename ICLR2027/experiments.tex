@@ -552,10 +552,11 @@ $(\bar{\beta}^{0.01}_{C,D})_{C<D \leq 10}$}
 \label{sec:realtimeinf}
 
 Finally, we consider real-time certification for robustness to $L_\infty$ perturbations. This allows us to compare Diff, 2b+1 and Vhagar with 
-scalable abstract interpretation techniques for computing global differential bounds, such as DiffPoly (PLDI 2024) \cite{DiffPoly}, as implemented in SaBRe and RaVeN \cite{sabre,raven}. We experiment on LAE-FMNIST-Conv.
+scalable abstract interpretation techniques for computing global differential bounds, such as DiffPoly, as implemented in 
+RaVeN \cite{raven} and SaBRe \cite{sabre}. We experiment on LAE-FMNIST-Conv.
 The results are reported in Table \ref{table5}
 
-\begin{table}[t!]
+\begin{table}[h!]
 	\centering
 	\begin{tabular}{|c c| c c c c c|}\hline
 		$L_\infty=0.01$ & Timeout & Vhagar & SaBRe & RaVeN & {\em Diff} & {\em 2b+1} \\\hline \hline 
@@ -568,7 +569,7 @@ The results are reported in Table \ref{table5}
 	\label{table5}
 \end{table}
 
-Finally,  in Table \ref{table6}, we report the \% of images that can certify in real time for $L_{\infty}$ perturbations:
+In Table \ref{table6}, we report the \% of images that can certify in real time for $L_{\infty}$ perturbations:
 
 \begin{table}[h!]
 	\centering
