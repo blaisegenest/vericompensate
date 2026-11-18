@@ -390,7 +390,7 @@ ITNE, $1000$ &  $1.371$ & $.085$& {\bf .085}  \\\hline\hline
 %\paragraph{Reduced Space}
 
 
-We compare in Table \ref{tab:dnn_comparison} the performance of DNNs vs LAE-DNNs in terms of accuracy and robustness to attacks, for the different DNNs considered in Tables \ref{table.L1} and \ref{table.cert}.
+We compare, in Table \ref{tab:dnn_comparison}, the performance of DNNs vs. LAE-DNNs in terms of accuracy and robustness to attacks for the different DNNs listed in Tables \ref{table.L1} and \ref{table.cert}. \textcolor{red}{The results indicate that the LAE-DNN retains the same performance characteristics as the DNN, with only a small percentage of images (at most 10\%) having a different classification result than the original network, i.e., switching. \textbf{(lower is better, right???).}} 
 
 \begin{table}[h!]
     \centering
@@ -551,21 +551,19 @@ $(\bar{\beta}^{0.01}_{C,D})_{C<D \leq 10}$}
 
 \label{sec:realtimeinf}
 
-Finally, we consider real-time certification for robustness to $L_\infty$ perturbations. This allows us to compare Diff, 2b+1 and Vhagar with 
-scalable abstract interpretation techniques for computing global differential bounds, such as DiffPoly, as implemented in 
-RaVeN \cite{raven} and SaBRe \cite{sabre}. We experiment on LAE-FMNIST-Conv.
-The results are reported in Table \ref{table5}
+Finally, we consider real-time certification for robustness to $L_\infty$ perturbations. This allows us to compare Diff, 2b+1, and VHAGaR with 
+scalable abstract interpretation techniques for computing global differential bounds, such as DiffPoly, as implemented in RaVeN~\citep{raven} and SaBRe~\cite{sabre}. We experiment on (LAE-)FMNIST-Conv and report the results in Table \ref{table5}. {\color{red} Our approach obtains better bounds, especially when considering the LAE variant, which improvements the bounds by up to a factor of 3x, akin to $L_1$ performance (Table~\ref{table.L1}).}
 
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{|c c| c c c c c|}\hline
-		$L_\infty=0.01$ & Timeout & Vhagar & SaBRe & RaVeN & {\em Diff} & {\em 2b+1} \\\hline \hline 
+		$L_\infty=0.01$ & Timeout & VHAGaR & SaBRe & RaVeN & {\em Diff} & {\em 2b+1} \\\hline \hline 
 		FMNIST-Conv & 100s & 74.48 & 11.98 & 11.98 & 7.62 &	?\\
-		\underline{$\beta$}= & 1000s & 51.29 & 11.98 & 11.98 & 6.02 & 5.78	\\ \hline 
-		LEA-FMNIST-Conv & 1000s & ? & 20.52 & 20.52 &  & 4.32 \\
-		\underline{$\beta$}= & 14400s & ? & 20.52 & 20.52 & 2.94 & \\ \hline 
+		\underline{$\beta$}= & 1000s & 51.29 & 11.98 & 11.98 & 6.02 & \textbf{5.78}	\\ \hline 
+		LAE-FMNIST-Conv & \textcolor{red}{1000s? 100s?} & ? & 20.52 & 20.52 &  & 4.32 \\
+		\underline{$\beta$}= & \textcolor{red}{14400s? 1000s?} & ? & 20.52 & 20.52 & 2.94 & \\ \hline 
 	\end{tabular}
-	\caption{$\beta$ Bounds on (LEA)-FMNIST-Conv using Vhagar, SaBRe, RaVeN, {\em Diff} and {\em 2b+1}.}
+	\caption{$\beta$ Bounds on (LAE)-FMNIST-Conv using VHAGaR, SaBRe, RaVeN, {\em Diff} and {\em 2b+1}.}
 	\label{table5}
 \end{table}
 
