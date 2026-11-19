@@ -551,11 +551,12 @@ $(\bar{\beta}^{0.01}_{C,D})_{C<D \leq 10}$}
 
 \label{sec:realtimeinf}
 
-Finally, we consider real-time certification for robustness to $L_\infty$ perturbations. This allows us to compare Diff, 2b+1 and Vhagar with 
+Finally, we consider real-time certification for robustness to $L_\infty$ perturbations. This allows us to compare {\em Diff} and {\em 2b+1} with 
 scalable abstract interpretation techniques for computing global differential bounds, such as DiffPoly, as implemented in 
 RaVeN \cite{raven} and SaBRe \cite{sabre}. We experiment on LAE-FMNIST-Conv.
 The results are reported in Table \ref{table5}
 
+\iffalse
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{|c c| c c c c c|}\hline
@@ -568,6 +569,25 @@ The results are reported in Table \ref{table5}
 	\caption{$\beta$ Bounds on (LEA)-FMNIST-Conv using Vhagar, SaBRe, RaVeN, {\em Diff} and {\em 2b+1}.}
 	\label{table5}
 \end{table}
+\fi
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c c| c c c c|}\hline
+		$L_\infty=0.01$ & Timeout & SaBRe & RaVeN & {\em Diff} & {\em 2b+1} \\\hline \hline 
+		FMNIST-Conv & 100s &  10.35 & 10.35 & 5.97 & ?	\\
+		\underline{$\beta$} = \, 4.85 & 1000s & 10.35 & 10.35 & {\bf 5.09} & 5.30	\\ \hline 
+		 & 100s & 9.77 & 9.77? & {\bf 4.99} & ? \\
+		LEA-FMNIST-Conv & 1000s & 9.76 & 9.76? & 4.33 & {\bf 4.08} \\
+		\underline{$\beta$}= & 14400s & 9.76 & 9.76? & {\bf 3.33} & ?\\ \hline 
+	\end{tabular}
+	\caption{$\beta$ Bounds on (LEA)-FMNIST-Conv using Vhagar, SaBRe, RaVeN, {\em Diff} and {\em 2b+1}.}
+	\label{table5}
+\end{table}
+
+
+
+
 
 In Table \ref{table6}, we report the \% of images that can certify in real time for $L_{\infty}$ perturbations:
 
@@ -592,9 +612,13 @@ In Table \ref{table6}, we report the \% of images that can certify in real time 
 	using the Best computed $(\beta^{1}_{C,D})_{C < D \leq 10}$, 
 	for different values of $L_\infty$-perturbations.
 	{\color{blue} Blue} depicts perturbation ensuring 
-	{\color{blue} $\geq 70\%$} of images being robust. The latency overhead is the same as the number of classes (10) for all datasets.}
+	{\color{blue} $\geq 70\%$} of images being robust.}
     %Latency overhead are the same as the number of classes is the same (=10) for all datasets.} 
 	%2000 images/s can be treated per cpu core.}
     \label{table6}
 \end{table}
+
+As with $L_1$ perturbations, results with $L_\infty$ perturbations  on LAE-FMNIST-Conv are better than for FMNIST-Conv: We obtained bounds of 3.33, 
+while a lower bound show that no algorithm can find bound lower than 4.85 on the original FMNIST-Conv. 
+Notice that computing bounds for FMNIST-Conv is relatively easy (upper bound of 5.09 close to the lower bound 4.85), so that using LAE-FMNIST-Conv is not as advantageous than in the case of $L_\infty$ bounds.
 
