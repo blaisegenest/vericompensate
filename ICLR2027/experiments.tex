@@ -390,7 +390,8 @@ ITNE, $1000$ &  $1.371$ & $.085$& {\bf .085}  \\\hline\hline
 %\paragraph{Reduced Space}
 
 
-We compare, in Table \ref{tab:dnn_comparison}, the performance of DNNs vs. LAE-DNNs in terms of accuracy and robustness to attacks for the different DNNs listed in Tables \ref{table.L1} and \ref{table.cert}. \textcolor{red}{The results indicate that the LAE-DNN retains the same performance characteristics as the DNN, with only a small percentage of images (at most 10\%) having a different classification result than the original network, i.e., switching. \textbf{(lower is better, right???).}} 
+We compare, in Table \ref{tab:dnn_comparison}, the performance of DNNs vs. LAE-DNNs in terms of accuracy and robustness to attacks for the different DNNs listed in Tables \ref{table.L1} and \ref{table.cert}. The results indicate that the LAE-DNN retains the same performance characteristics as the DNN, with only a small percentage of images (at most 5\% of switch) having a different classification result than the original network (which sometimes means LEA-DNN is accurate on an image while DNN was not), i.e., switching. Notice the larger difference in brittleness to PGD attacks by CIFAR10-Conv: LAE-DNN restricts
+a tangible number of PGD attacks as some non-ID directions are projected away by the LAE layers.
 
 \begin{table}[h!]
     \centering
@@ -559,9 +560,9 @@ We experiment on (LAE-)FMNIST-Conv.
 The results are reported in Table \ref{table5}.
 Our approach obtains better bounds than using DiffPoly.
 
-As with $L_1$ perturbations, results with $L_\infty$ perturbations  on LAE-FMNIST-Conv are better than for FMNIST-Conv: We obtained bounds of 3.33, 
+As with $L_1$ perturbations, results with $L_\infty$ perturbations  on LAE-FMNIST-Conv are better than for FMNIST-Conv, on all 3 verification tools: Using {\em 2b+1}, we obtained bounds of 3.19, 
 while a lower bound show that no algorithm can find bound lower than 4.85 on the original FMNIST-Conv. 
-Notice that computing bounds for FMNIST-Conv is relatively easy (upper bound of 5.09 close to the lower bound 4.85), so that using LAE-FMNIST-Conv is not as advantageous than in the case of $L_\infty$ bounds.
+Notice that computing bounds for FMNIST-Conv is relatively easy (upper bound of 4.94 close to the lower bound 4.85), so that using LAE-FMNIST-Conv is not as advantageous than in the case of $L_\infty$ bounds.
 
 
 %especially when considering the LAE variant, which improvements the bounds, similar to performance with $L_1$ perturbations (Table~\ref{table.L1}).
@@ -587,12 +588,12 @@ Notice that computing bounds for FMNIST-Conv is relatively easy (upper bound of 
 	\centering
 	\begin{tabular}{|c c| c c c|}\hline
 		$L_\infty=0.01$ & Timeout & SaBRe & {\em Diff} & {\em 2b+1} \\\hline \hline 
-		FMNIST-Conv & 100s &  10.35  & 5.97 & {\bf 5.84}	\\
+		FMNIST-Conv & 100s &  10.35  & 5.97 & {\bf 5.28}	\\
 		\underline{$\beta$} = \, 4.85 & 1000s & 10.35 & 5.09 & 
 		{\bf 4.94}	\\ \hline 
-		 & 100s & 9.77 & 4.99 & {\bf 4.72}\\
-		LEA-FMNIST-Conv & 1000s & 9.76 & 4.33 & {\bf 4.08} \\
-		\underline{$\beta$}= 2.15 & 14400s & 9.76 & 3.33 & {\bf 3.19}\\ \hline 
+		 & 100s & 6.04 & 4.99 & {\bf 4.81}\\
+		LEA-FMNIST-Conv & 1000s & 6.01 & 4.33 & {\bf 4.08} \\
+		\underline{$\beta$}= 2.15 & 14400s & 6.01 & 3.33 & {\bf 3.19}\\ \hline 
 	\end{tabular}
 	\caption{$\beta$ Bounds on (LEA)-FMNIST-Conv using SaBRe, {\em Diff} and {\em 2b+1}.}
 	\label{table5}
@@ -632,4 +633,4 @@ In Table \ref{table6}, we report the \% of images that can certify in real time 
 \end{table}
 
 
-Hence, we can certify in real-time 78$\%$ of images for LAE-FMNIST-Conv for a $L_\infty$ perturbation of $0.02$ (that is a perturbation of up to 5 levels of grey scale on each pixel). Notice that using SaBRe bounds, we could only certify $61\%$ of incoming images for a $L_\infty$ perturbation of 0.01 (2 levels of grey scale) in real-time using either FMNIST-Conv or LEA-FMNIST-Conv.
+Hence, we can certify in real-time 78$\%$ of images for LAE-FMNIST-Conv for a $L_\infty$ perturbation of $0.02$ (that is a perturbation of up to 5 levels of grey scale on each pixel). Notice that using SaBRe bounds, we could only certify $61\%$ of incoming images for a $L_\infty$ perturbation of 0.01 (2 levels of grey scale) in real-time using FMNIST-Conv, and $79\%$ on LEA-FMNIST-Conv.
